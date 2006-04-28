@@ -1,0 +1,6 @@
+export(toggleDebug, generateTwoWayMappings, generateTableObjects)
+
+
+exportClasses("AnnotDbTable", "AnnotDbTableTwoWayMap")
+exportMethods("$", "[", "[[", initialize, mget, names, ncol, nrow,
+              queryTable, show)
