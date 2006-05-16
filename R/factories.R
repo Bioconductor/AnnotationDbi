@@ -70,6 +70,32 @@ generateAnnotTableObj <- function( objName, objClass, tableName, pkgName, col, r
         assign(objName, obj, envir=ns)
 }
 
+# FIXME: this function need to be more general in the future...
+generateQC <- function(pkgName, objPrefix=pkgName) {
+	if(!missing(pkgName))
+		ns <- asNamespace(pkgName)
+	else
+		ns <- .GlobalEnv
+	tableNames <- ls(ns)
+	tableCounts <- unlist(lapply(tableNames, function(x) {
+			thisTable <- get(x, envir=ns)
+			if (is(thisTable, "AnnotDbTable")) 
+				length(ls(thisTable))
+			else 
+				 NA
+		}))
+	names(tableCounts) <- tableNames
+	tableCounts <- tableCounts[!is.na(tableCounts)]
+	assign(paste(objPrefix, "MAPCOUNTS", sep=""), tableCounts, envir=ns)
+	tableQC <- paste("\t", names(tableCounts), "found", tableCounts,  
+			sep=" ", collapse="\n")
+	tableQC <- paste("\n\nQuality control information for ", pkgName, "\n",
+			"\nMappings found for non-probe based rda files:\n", 
+			tableQC, "\n\n", 
+			sep="", collapse="")
+	assign(paste(objPrefix, "QC", sep=""), tableQC, envir=ns)
+}
+
 compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50) {
 	if( ! paste("package", pkg1, sep=":") %in% search()) {
 		cat("library(", pkg1, ")\n")
@@ -98,7 +124,7 @@ compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50) {
 	objValid <- unlist(lapply(objs, function(x) {
 			xo <- get(x, envir=ns1)
 			is(xo, "AnnotDbTable")||is(xo, "environment")
-		}))
+         }))
 	objs <- objs[objValid]
 	lapply(objs, function(annObj) {
 		cat("\n====== ", annObj, " ======\n")
@@ -128,10 +154,10 @@ compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50) {
 		    identicalK <- unlist(lapply(k, function(x) {
 			x1 <- get(x, envir=ao1)
 			x2 <- get(x, envir=ao2)
-			## x1/2 can be instances of class "GOTerms", which 
-			## can't be sort.
-			if(length(x1)>1) x1 <- sort(x1)
-			if(length(x1)>1) x2 <- sort(x2)
+			## x1/2 can be a list or an instances of class "GOTerms",
+			## which can't be sort.
+			if(typeof(x1)!= "list") x1 <- sort(x1)
+			if(typeof(x2)!= "list") x2 <- sort(x2)
 			identical(x1, x2) 
 		    }))
 		    diffK <- k[!identicalK]

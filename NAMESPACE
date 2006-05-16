@@ -1,5 +1,5 @@
 import("annotate")
-export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, compareAnnotation)
+export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, generateQC, compareAnnotation)
 
 
 exportClasses("functionORNULL", "AnnotDbTable", "AnnotDbTableTwoWayMap", "AnnotMultiColTable", "AnnotThreeColTable", "AnnotGOTermsTable")
