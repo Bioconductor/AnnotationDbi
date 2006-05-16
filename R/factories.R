@@ -54,4 +54,96 @@ generateTwoWayMappings <- function(table, package) {
     }
 }
 
+generateAnnotTableObj <- function( objName, objClass, tableName, pkgName, col, rsProcessor=NULL) {
+        if(!missing(pkgName))
+                ns <- asNamespace(pkgName)
+        else
+                ns <- .GlobalEnv
+	cat("generate ", objName, "\n")
+        getDb <- get("getDb", ns)
+        obj <- switch(objClass,
+            "AnnotDbTable"=new("AnnotDbTable", tableName, getDb, rsProcessor),
+            "AnnotDbTableTwoWayMap"=new("AnnotDbTableTwoWayMap", tableName, getDb, col[1], col[2], rsProcessor),
+            "AnnotMultiColTable"=new("AnnotMultiColTable", tableName, getDb, col[1], rsProcessor),
+            "AnnotGOTermsTable"=new("AnnotGOTermsTable", tableName, getDb, col[1], rsProcessor),
+            "AnnotThreeColTable"=new("AnnotThreeColTable", tableName, getDb, col[1], col[2], col[3], rsProcessor))
+        assign(objName, obj, envir=ns)
+}
 
+compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50) {
+	if( ! paste("package", pkg1, sep=":") %in% search()) {
+		cat("library(", pkg1, ")\n")
+		library(pkg1, character.only=T, warn.conflicts=F)
+	}
+	if( ! paste("package", pkg2, sep=":") %in% search()) {
+		cat("library(", pkg2, ")\n")
+		library(pkg2, character.only=T, warn.conflicts=F)
+	}
+	pkgName1 <- paste(pkg1, packageDescription(pkg1, field="Version"), sep="_", collapse="")
+	pkgName2 <- paste(pkg2, packageDescription(pkg2, field="Version"), sep="_", collapse="")
+	ns1 <- as.environment(paste("package", pkg1, sep=":"))
+	ns2 <- as.environment(paste("package", pkg2, sep=":"))
+	cat("===============================\n",
+	    "  ", pkgName1, " vs ", pkgName2, "\n",
+	    "===============================\n")
+	if ( missing(objs)) {
+		objs1 <- ls(ns1); objs2 <- ls(ns2)
+		objs <- objs1[objs1 %in% objs2]
+		objs1 <- objs1[! objs1 %in% objs]; objs2 <- objs2[! objs2 %in% objs]
+		cat("Available Objects:\n",
+		    "\tThere are", length(objs), " objects appear in both packages: ", objs, ".\n",
+		    "\t", length(objs1), " objects in ", pkgName1, " only: ", objs1, ".\n",
+		    "\t", length(objs2), " objects in ", pkgName2, " only: ", objs2, ".\n")
+	}
+	objValid <- unlist(lapply(objs, function(x) {
+			xo <- get(x, envir=ns1)
+			is(xo, "AnnotDbTable")||is(xo, "environment")
+		}))
+	objs <- objs[objValid]
+	lapply(objs, function(annObj) {
+		cat("\n====== ", annObj, " ======\n")
+		ao1 <- get(annObj, envir=ns1); ao2 <- get(annObj, envir=ns2)
+		k1 <- ls(ao1); k2 <- ls(ao2)
+		if (nona2) {
+			k2na <- unlist(lapply(k2, function(x) 
+					identical(get(x, envir=ao2), NA)
+				))
+			k2 <- k2[!k2na]
+		}
+		k <- k1[k1 %in% k2]
+		k1 <- k1[! k1 %in% k]; k2 <-k2[! k2 %in% k]
+		if (length(k1)>5) 
+			ks1 <- c(k1[1:5], "...")
+		else
+			ks1 <- k1
+		if (length(k2)>5)
+			ks2 <- c(k2[1:5], "...")
+		else
+			ks2 <- k2
+		cat("\tThe two ", annObj, " have ", length(k), " variables in common.\n",
+		    "\t", length(k1), " objects in ", pkgName1, " only: ", ks1, ".\n",
+		    "\t", length(k2), " objects in ", pkgName2, " only: ", ks2, ".\n")
+		if(length(k)>0) {
+		    if(length(k)>maxCompare) k <- k[1:maxCompare]
+		    identicalK <- unlist(lapply(k, function(x) {
+			x1 <- get(x, envir=ao1)
+			x2 <- get(x, envir=ao2)
+			## x1/2 can be instances of class "GOTerms", which 
+			## can't be sort.
+			if(length(x1)>1) x1 <- sort(x1)
+			if(length(x1)>1) x2 <- sort(x2)
+			identical(x1, x2) 
+		    }))
+		    diffK <- k[!identicalK]
+		    if (length(diffK)>5)
+			diffKS <- c(diffK[1:5], "...")
+		    else
+			diffKS <- diffK 
+		    cat("\tAmong the first ", length(k), "variables that are in common, ",
+			length(k[identicalK]), 
+		    " have identical values in the two packages, \n\tand ", 
+		    length(diffK), " have different values: ", diffKS, ".\n")
+		}
+	})
+	""
+}

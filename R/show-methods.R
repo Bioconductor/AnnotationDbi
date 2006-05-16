@@ -19,3 +19,4 @@ setMethod("show", signature(object="AnnotDbTable"),
                   cat(pad, nm, "    ", val, "\n", sep="")
               }
           })
+

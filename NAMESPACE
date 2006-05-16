@@ -1,6 +1,8 @@
-export(toggleDebug, generateTwoWayMappings, generateTableObjects)
+import("annotate")
+export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, compareAnnotation)
 
 
-exportClasses("AnnotDbTable", "AnnotDbTableTwoWayMap")
-exportMethods("$", "[", "[[", initialize, mget, names, ncol, nrow,
-              queryTable, show)
+exportClasses("functionORNULL", "AnnotDbTable", "AnnotDbTableTwoWayMap", "AnnotMultiColTable", "AnnotThreeColTable", "AnnotGOTermsTable")
+
+exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow,
+              queryTable, show, ls)
