@@ -72,7 +72,7 @@ setMethod("mget", signature(x="vector", envir="AnnotGOTermsTable",
 		## and all values in col GOID are the same, so do cols
 		## Term and Definition. But cols Synonym and Secondary can
 		## have multiple values.
-		if( all(is.na(x$Secondary)) || all("NA"==x$Secondary))
+		if( all(is.na(x$Secondary)))
 			theSecondary <- character(0)
 		else
 			theSecondary <- x$Secondary
@@ -80,7 +80,7 @@ setMethod("mget", signature(x="vector", envir="AnnotGOTermsTable",
 				Term=as.character(x$Term[1]),
 				Synonym=as.character(x$Synonym),
 				Secondary=theSecondary,
-				Definition=as.character(x$Definition),
+				Definition=as.character(x$Definition[1]),
 				Ontology=as.character(x$Ontology[1]))
 	    }
         })
