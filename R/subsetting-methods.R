@@ -8,16 +8,13 @@ doLookupComplex <- function(obj, selCol, whCol, whVal) {
 		sep=" ", collapse="") 
     	if (globals$DEBUG)
       		cat("DEBUG: ", sql, "\n")
-	cat("got sql...\n")
     	ans <- tryCatch(
 		    dbGetQuery(obj@dbRefGetter(), sql),
                     error=function(e) {
                         cat("query attempted:\n", sql)
                         stop(e)
                     })
-	cat("get ans...\n")
 	if (!is.null(obj@rsProcessor) && !is.null(ans)){
-		cat("post process...\n")
 		ans <- obj@rsProcessor(ans)
 	}
 	ans
@@ -32,10 +29,8 @@ setMethod("mget", signature(x="vector", envir="AnnotDbTableTwoWayMap",
 	if (is.null(ans)){
 		ans <- list()
 	} else {	
-		cat("split...\n")
 		ans <- split(ans[,2], ans[,1])
 	}
-	cat("assemble res...\n")
 	res <- lapply(x, function(i) ans[[i]])
         names(res) <- as.character(x)
         res
@@ -50,10 +45,19 @@ setMethod("mget", signature(x="vector", envir="AnnotMultiColTable",
 	if(is.null(ans)) {
 		ans <- list()
 	} else {
-		cat("split data ...\n")
+		nc <- ncol(ans)-1
+		cname <- colnames(ans)[-1]
+		ans <- as.matrix(ans) ## WARNING: everything converted to character
 		ans <- split(ans[,-1], ans[,1])
+		ans <- lapply(ans, function(y) {
+			dim(y) <- c(length(y)/nc, nc)
+			lapply(seq(length(y)/nc), function(j) {
+				rs <- as.list(y[j,])
+				names(rs) <- cname
+				rs
+			})
+		})
 	}
-	cat("assemble result...\n")
 	res <- lapply(x, function(i) ans[[i]])
         names(res) <- as.character(x)
         res
@@ -66,32 +70,38 @@ setMethod("mget", signature(x="vector", envir="AnnotGOTermsTable",
         ans <- doLookupComplex(envir, selCol=envir@fieldNames, 
                     whCol=envir@keyCol, whVal=x)
 	if ( is.null(ans)) {
-		ans <- list()
+	    goid <- character(0)
 	} else {
-	    cat("split data...\n")
-	    ans <- split(ans, ans[,1])
-	    cat("construct GOTerms...\n")
-            ans <- lapply(ans, function(i) {
-		## create instances of Class 'GOTerms'
-		## implicitly assume that x is a data.frame with colnames as
-		## GOID, Term, Synonym, Secondary, Defintion, Ontology 
-		## and all values in col GOID are the same, so do cols
-		## Term and Definition. But cols Synonym and Secondary can
-		## have multiple values.
-		if( all(is.na(i$Secondary)))
+	    goid <- as.factor(ans$GOID)
+	    term <- split(ans$Term, goid)
+	    synonym <- split(ans$Synonym, goid)
+	    secondary <- split(ans$Secondary, goid)
+	    definition <- split(ans$Definition, goid)
+	    ontology <- split(ans$Ontology, goid)	
+	    goid <- levels(goid)	
+	}
+        res <- lapply(x, function(i) {
+	    if(i %in% goid) {
+		  ## create instances of Class 'GOTerms'
+		  ## implicitly assume that x is a data.frame with colnames as
+		  ## GOID, Term, Synonym, Secondary, Defintion, Ontology 
+		  ## and all values in col GOID are the same, so do cols
+		  ## Term and Definition. But cols Synonym and Secondary can
+		  ## have multiple values.
+		  if( all(is.na(secondary[[i]])))
 			theSecondary <- character(0)
-		else
-			theSecondary <- i$Secondary
-		new("GOTerms", GOID=i$GOID[1],
-				Term=as.character(i$Term[1]),
-				Synonym=as.character(i$Synonym),
+		  else
+			theSecondary <- secondary[[i]]
+		  new("GOTerms", GOID=i,
+				Term=as.character(term[[i]][1]),
+				Synonym=as.character(synonym[[i]]),
 				Secondary=theSecondary,
-				Definition=as.character(i$Definition[1]),
-				Ontology=as.character(i$Ontology[1]))
-	    })
-        }
-	cat("assemble result...\n")
-	res <- lapply(x, function(i) ans[[i]])
+				Definition=as.character(definition[[i]][1]),
+				Ontology=as.character(ontology[[1]]))
+	   } else {
+		  NULL
+           }
+	})
         names(res) <- as.character(x)
         res
     })
@@ -104,19 +114,22 @@ setMethod("mget", signature(x="vector", envir="AnnotThreeColTable",
                 selCol=c(envir@keyCol, envir@nameCol, envir@valCol), 
                 whCol=envir@keyCol, whVal=x)
         if(is.null(ans)) {
-                ans <- list()
-        } else {
-		cat("split...\n")
-                ans <- split(ans, ans[,1])
-		cat("construct named vector...\n")
-                ans <- lapply(ans, function(i) {
-				val <- i[, envir@valCol]
-				names(val) <- i[, envir@nameCol]
-				val
-		})
-        }
-	cat("assemble results...\n")
-        res <- lapply(x, function(i) ans[[i]])
+		keyCol <- NULL
+	} else { 
+		keyCol <- as.factor(ans[,1])
+		valCol <- split(ans[,3], keyCol)
+		nameCol <- split(ans[,2], keyCol)
+		keyCol <- levels(keyCol)
+	}
+        res <- lapply(x, function(i) {
+		if (i %in% keyCol) {
+			val <- valCol[[i]]
+			names(val) <- nameCol[[i]]
+			val
+		} else {
+			NULL
+		}
+        })
         names(res) <- as.character(x)
         res
     })
