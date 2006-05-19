@@ -2,7 +2,7 @@ import("annotate")
 export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, generateQC, compareAnnotation)
 
 
-exportClasses("functionORNULL", "AnnotDbTable", "AnnotDbTableTwoWayMap", "AnnotMultiColTable", "AnnotThreeColTable", "AnnotGOTermsTable")
+exportClasses("functionORNULL", "AnnotDbTable", "AnnotDbEnv", "AnnotDbTableTwoWayMap", "AnnotMultiColTable", "AnnotThreeColTable", "AnnotGOTermsTable", "AnnotTwoColTable")
 
-exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow,
-              queryTable, show, ls)
+exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow, contents,
+              queryTable, show, ls, as.list, eapply, countBy, getCol, is.environment)

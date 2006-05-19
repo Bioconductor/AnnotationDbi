@@ -72,13 +72,26 @@ setMethod("initialize", signature(.Object="AnnotMultiColTable"),
 		.Object
 	})
 
+setMethod("initialize", signature(.Object="AnnotMultiColTwoKeyTable"),
+          function(.Object, tableName, dbRefGetter, keyCol, secKey, rsProcessor=NULL, ...) {
+              .Object <- callNextMethod(.Object=.Object,
+                                        tableName=tableName,
+                                        dbRefGetter=dbRefGetter,
+                                        keyCol=keyCol,
+                                        rsProcessor=rsProcessor)
+        if (!(secKey %in% .Object@fieldNames))
+            stop("Secondary key column ", secKey, " is not a valid field name. Valid field names are:\n", paste(.Object@fieldNames, collapse=", "))
+        .Object@secKey <- secKey
+        .Object
+    })
+    
 setMethod("initialize", signature(.Object="AnnotThreeColTable"),
           function(.Object, tableName, dbRefGetter, keyCol, nameCol, valCol, rsProcessor=NULL, ...) {
               .Object <- callNextMethod(.Object=.Object,
                                         tableName=tableName,
                                         dbRefGetter=dbRefGetter,
-					keyCol=keyCol,
-					rsProcessor=rsProcessor)
+					                    keyCol=keyCol,
+				                        rsProcessor=rsProcessor)
 		if (!(nameCol %in% .Object@fieldNames))
 			stop("Name column ", nameCol, " is not a valid field name. Valid field names are:\n", paste(.Object@fieldNames, collapse=", "))
 	

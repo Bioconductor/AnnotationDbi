@@ -62,11 +62,20 @@ generateAnnotTableObj <- function( objName, objClass, tableName, pkgName, col, r
 	cat("generate ", objName, "\n")
         getDb <- get("getDb", ns)
         obj <- switch(objClass,
-            "AnnotDbTable"=new("AnnotDbTable", tableName, getDb, rsProcessor),
-            "AnnotDbTableTwoWayMap"=new("AnnotDbTableTwoWayMap", tableName, getDb, col[1], col[2], rsProcessor),
-            "AnnotMultiColTable"=new("AnnotMultiColTable", tableName, getDb, col[1], rsProcessor),
-            "AnnotGOTermsTable"=new("AnnotGOTermsTable", tableName, getDb, col[1], rsProcessor),
-            "AnnotThreeColTable"=new("AnnotThreeColTable", tableName, getDb, col[1], col[2], col[3], rsProcessor))
+            "AnnotDbTable" = new("AnnotDbTable", 
+                                            tableName, getDb, rsProcessor),
+            "AnnotDbTableTwoWayMap" = new("AnnotDbTableTwoWayMap", 
+                                            tableName, getDb, col[1], col[2], rsProcessor),
+            "AnnotTwoColTable" = new("AnnotTwoColTable", 
+                                            tableName, getDb, col[1], col[2], rsProcessor),
+            "AnnotMultiColTable" = new("AnnotMultiColTable", 
+                                            tableName, getDb, col[1], rsProcessor),
+            "AnnotMultiColTwoKeyTable" = new("AnnotMultiColTwoKeyTable", 
+                                            tableName, getDb, col[1], col[2], rsProcessor),
+            "AnnotGOTermsTable" = new("AnnotGOTermsTable", 
+                                            tableName, getDb, col[1], rsProcessor),
+            "AnnotThreeColTable" = new("AnnotThreeColTable", 
+                                            tableName, getDb, col[1], col[2], col[3], rsProcessor))
         assign(objName, obj, envir=ns)
 }
 

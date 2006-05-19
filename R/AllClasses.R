@@ -5,13 +5,20 @@ setClass("AnnotDbTable", representation(tableName="character",
                                         nrow="integer",
                                         firstRow="data.frame",
                                         dbRefGetter="function",
-					rsProcessor="functionORNULL"))
+					                    rsProcessor="functionORNULL"))
+
+setClass("AnnotDbEnv", contains="AnnotDbTable")
 
 setClass("AnnotDbTableTwoWayMap", contains="AnnotDbTable",
-         representation(LHS="character", RHS="character"))
+     representation(LHS="character", RHS="character"))
 
-setClass("AnnotMultiColTable", contains="AnnotDbTable", 
+setClass("AnnotTwoColTable", contains=c("AnnotDbEnv", "AnnotDbTableTwoWayMap"))
+
+setClass("AnnotMultiColTable", contains=c("AnnotDbEnv", "AnnotDbTable"), 
 	representation(keyCol="character"))
+
+setClass("AnnotMultiColTwoKeyTable", contains=c("AnnotMultiColTable"),
+    representation(secKey="character"))
 
 setClass("AnnotThreeColTable", contains="AnnotMultiColTable", 
 	representation(nameCol="character", valCol="character"))
