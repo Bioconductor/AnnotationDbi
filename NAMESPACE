@@ -1,4 +1,5 @@
 import("annotate")
+importMethodsFrom("Biobase", "contents")
 export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, generateQC, compareAnnotation)
 
 

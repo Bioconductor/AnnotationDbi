@@ -1,11 +1,52 @@
 #################################################
 ##  Utility Functions
 #################################################
+## almost the same as sqliteFetch, just remove the for loop of type.convert
+sqliteFetchwoCvt <- function (res, n = 0, ...)
+{
+    if (!isIdCurrent(res))
+        stop("invalid result handle")
+    n <- as(n, "integer")
+    rsId <- as(res, "integer")
+    rel <- .Call("RS_SQLite_fetch", rsId, nrec = n, PACKAGE = "RSQLite")
+    if (length(rel) == 0 || length(rel[[1]]) == 0)
+        return(data.frame(NULL))
+    cnt <- dbGetRowCount(res)
+    nrec <- length(rel[[1]])
+    indx <- seq(from = cnt - nrec + 1, length = nrec)
+    attr(rel, "row.names") <- as.character(indx)
+    class(rel) <- "data.frame"
+    rel
+}
+
+## almost the same as sqliteQuickSQL, just call sqliteFetchwoCvt instead of 
+## sqliteFetch
+dbGetQuerywoCvt <- function (con, statement, ...) 
+{
+    nr <- length(dbListResults(con))
+    if (nr > 0) {
+        new.con <- dbConnect(con)
+        on.exit(dbDisconnect(new.con))
+        rs <- sqliteExecStatement(new.con, statement)
+    }
+    else rs <- sqliteExecStatement(con, statement)
+    if (dbHasCompleted(rs)) {
+        dbClearResult(rs)
+        invisible()
+        return(NULL)
+    }
+    res <- sqliteFetchwoCvt(rs, n = -1, ...)
+    if (dbHasCompleted(rs))
+        dbClearResult(rs)
+    else warning("pending rows")
+    res
+}
+
 doLookupComplex <- function(obj, selCol, whCol=NULL, whVal) {
     if (missing(whVal)) {
         whStr <- ""
     } else {
-	   quoteStr <- ifelse(is(whVal, "character"), "'", "")
+	   quoteStr <- ifelse(is(whVal, "character"), '"', "")
 	   whVal <-paste(quoteStr, whVal, quoteStr, sep="", collapse=", ")
        whStr <- paste("WHERE", whCol, "IN (", whVal, ")")
     }
@@ -17,7 +58,7 @@ doLookupComplex <- function(obj, selCol, whCol=NULL, whVal) {
     if (globals$DEBUG)
       		cat("DEBUG: ", sql, "\n")
     	ans <- tryCatch(
-		    dbGetQuery(obj@dbRefGetter(), sql),
+		    dbGetQuerywoCvt(obj@dbRefGetter(), sql),
                     error=function(e) {
                         cat("query attempted:\n", sql)
                         stop(e)
@@ -39,7 +80,7 @@ countByUtil <- function(obj, countCol, groupCol) {
     if (globals$DEBUG)
             cat("DEBUG: ", sql, "\n")
     ans <- tryCatch(
-            dbGetQuery(obj@dbRefGetter(), sql),
+            dbGetQuerywoCvt(obj@dbRefGetter(), sql),
                     error=function(e) {
                         cat("query attempted:\n", sql)
                         stop(e)
@@ -50,7 +91,7 @@ countByUtil <- function(obj, countCol, groupCol) {
 getSingleColumn <- function(column, table, db, rsProcessor=NULL, 
         query=paste("SELECT", column, "FROM", table)) 
 {
-    ans <- tryCatch(dbGetQuery(db, query),
+    ans <- tryCatch(dbGetQuerywoCvt(db, query),
                     error=function(e) {
                         cat("query attempted:\n", query)
                         stop(e)
