@@ -105,7 +105,7 @@ generateQC <- function(pkgName, objPrefix=pkgName) {
 	assign(paste(objPrefix, "QC", sep=""), tableQC, envir=ns)
 }
 
-compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50) {
+compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50, printSize=5) {
 	if( ! paste("package", pkg1, sep=":") %in% search()) {
 		cat("library(", pkg1, ")\n")
 		library(pkg1, character.only=T, warn.conflicts=F)
@@ -147,19 +147,19 @@ compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50) {
 		}
 		k <- k1[k1 %in% k2]
 		k1 <- k1[! k1 %in% k]; k2 <-k2[! k2 %in% k]
-		if (length(k1)>5) 
-			ks1 <- c(k1[1:5], "...")
+		if (length(k1)>printSize) 
+			ks1 <- c(k1[1:printSize], "...")
 		else
 			ks1 <- k1
-		if (length(k2)>5)
-			ks2 <- c(k2[1:5], "...")
+		if (length(k2)>printSize)
+			ks2 <- c(k2[1:printSize], "...")
 		else
 			ks2 <- k2
 		cat("\tThe two ", annObj, " have ", length(k), " variables in common.\n",
 		    "\t", length(k1), " objects in ", pkgName1, " only: ", ks1, ".\n",
 		    "\t", length(k2), " objects in ", pkgName2, " only: ", ks2, ".\n")
 		if(length(k)>0) {
-		    if(length(k)>maxCompare) k <- k[1:maxCompare]
+		    if(length(k)>maxCompare) k <- sample(k, maxCompare)
 		    identicalK <- unlist(lapply(k, function(x) {
 			x1 <- get(x, envir=ao1)
 			x2 <- get(x, envir=ao2)
@@ -170,11 +170,11 @@ compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50) {
 			identical(x1, x2) 
 		    }))
 		    diffK <- k[!identicalK]
-		    if (length(diffK)>5)
-			diffKS <- c(diffK[1:5], "...")
+		    if (length(diffK)>printSize)
+			diffKS <- c(diffK[1:printSize], "...")
 		    else
 			diffKS <- diffK 
-		    cat("\tAmong the first ", length(k), "variables that are in common, ",
+		    cat("\tAmong a random sample of ", length(k), "variables that are in common, ",
 			length(k[identicalK]), 
 		    " have identical values in the two packages, \n\tand ", 
 		    length(diffK), " have different values: ", diffKS, ".\n")
