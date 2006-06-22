@@ -105,7 +105,27 @@ generateQC <- function(pkgName, objPrefix=pkgName) {
 	assign(paste(objPrefix, "QC", sep=""), tableQC, envir=ns)
 }
 
-compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50, printSize=5) {
+setGeneric("NoNaLs", function(x, ...)
+    standardGeneric("NoNaLs"))
+
+setMethod("NoNaLs",
+    signature(x="AnnotDbTable"),
+    function(x, ...) {
+	k1na <- sapply(as.list(x), is.null)
+	names(k1na)[!k1na]
+    })
+
+setMethod("NoNaLs",
+    signature(x="environment"),
+    function(x, ...) {
+	k2 <- ls(x)
+	k2na <- unlist(lapply(k2, function(y) 
+			identical(get(y, envir=x), NA)
+		))
+	k2[!k2na]
+    })
+
+compareAnnotation <- function(pkg1, pkg2, objs, nona1=FALSE, nona2=FALSE, maxCompare=50, printSize=5) {
 	if( ! paste("package", pkg1, sep=":") %in% search()) {
 		cat("library(", pkg1, ")\n")
 		library(pkg1, character.only=T, warn.conflicts=F)
@@ -138,13 +158,14 @@ compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50, prin
 	lapply(objs, function(annObj) {
 		cat("\n====== ", annObj, " ======\n")
 		ao1 <- get(annObj, envir=ns1); ao2 <- get(annObj, envir=ns2)
-		k1 <- ls(ao1); k2 <- ls(ao2)
-		if (nona2) {
-			k2na <- unlist(lapply(k2, function(x) 
-					identical(get(x, envir=ao2), NA)
-				))
-			k2 <- k2[!k2na]
-		}
+		if (nona1) 
+			k1 <- NoNaLs(ao1)
+		else
+			k1 <- ls(ao1)
+		if (nona2)
+			k2 <- NoNaLs(ao2)
+		else
+			k2 <- ls(ao2)	
 		k <- k1[k1 %in% k2]
 		k1 <- k1[! k1 %in% k]; k2 <-k2[! k2 %in% k]
 		if (length(k1)>printSize) 
@@ -179,6 +200,55 @@ compareAnnotation <- function(pkg1, pkg2, objs, nona2=FALSE, maxCompare=50, prin
 		    " have identical values in the two packages, \n\tand ", 
 		    length(diffK), " have different values: ", diffKS, ".\n")
 		}
+	})
+	""
+}
+
+comparePerf <- function(pkg1, pkg2, objs) {
+	if( ! paste("package", pkg1, sep=":") %in% search()) {
+		cat("library(", pkg1, ")\n")
+		library(pkg1, character.only=T, warn.conflicts=F)
+	}
+	if( ! paste("package", pkg2, sep=":") %in% search()) {
+		cat("library(", pkg2, ")\n")
+		library(pkg2, character.only=T, warn.conflicts=F)
+	}
+	pkgName1 <- paste(pkg1, packageDescription(pkg1, field="Version"), sep="_", collapse="")
+	pkgName2 <- paste(pkg2, packageDescription(pkg2, field="Version"), sep="_", collapse="")
+	ns1 <- as.environment(paste("package", pkg1, sep=":"))
+	ns2 <- as.environment(paste("package", pkg2, sep=":"))
+	cat("===============================\n",
+	    "  ", pkgName1, " vs ", pkgName2, "\n",
+	    "===============================\n")
+	if ( missing(objs)) {
+		objs1 <- ls(ns1); objs2 <- ls(ns2)
+		objs <- objs1[objs1 %in% objs2]
+	}
+	objValid <- unlist(lapply(objs, function(x) {
+			xo <- get(x, envir=ns1)
+			is(xo, "AnnotDbTable")||is(xo, "environment")
+         }))
+	objs <- objs[objValid]
+	resColNames <- c("Query#", pkgName1, pkgName2)
+	lapply(objs, function(annObj) {
+		cat("\n====== ", annObj, " ======\n")
+		ao1 <- get(annObj, envir=ns1); ao2 <- get(annObj, envir=ns2)
+		k1 <- ls(ao1); k2 <- ls(ao2)
+		k <- k1[k1 %in% k2]
+		kLength <- length(k)
+		cat("\tThe two ", annObj, " have ", kLength, " variables in common.\n")
+		tt <- numeric()
+		while(kLength>0) {
+		    tt<-c(tt, kLength)
+		    tt <- c(tt, system.time(mget(k, ao1))[1])
+		    tt <- c(tt, system.time(mget(k, ao2))[1])
+		    kLength <- floor(kLength/10)
+		    if (kLength>0)
+		    	k <- sample(k, kLength)
+		}
+		tt <- matrix(data=tt, ncol=3, byrow=T)
+		colnames(tt) <- resColNames
+		print(tt) 
 	})
 	""
 }

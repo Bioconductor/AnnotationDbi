@@ -1,6 +1,6 @@
 import("annotate")
 importMethodsFrom("Biobase", "contents")
-export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, generateQC, compareAnnotation)
+export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, generateQC, compareAnnotation, comparePerf)
 
 
 exportClasses("functionORNULL", "AnnotDbTable", "AnnotDbEnv", "AnnotDbTableTwoWayMap", "AnnotMultiColTable", "AnnotThreeColTable", "AnnotGOTermsTable", "AnnotTwoColTable")
