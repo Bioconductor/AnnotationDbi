@@ -1,0 +1,399 @@
+
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+% \VignetteIndexEntry{Using AnnotationDbi}
+%\VignetteDepends{GO, hgu95av2, GOstats, GOdb, hgu95av2db}
+%\VignetteKeywords{annotation, database}
+%\VignettePackage{AnnotationDbi}
+\documentclass[11pt]{article}
+
+%\usepackage{times}
+%\usepackage{hyperref}
+
+%\usepackage[authoryear,round]{natbib}
+%\usepackage{times}
+%\usepackage{comment}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+
+
+\bibliographystyle{plainnat}
+
+\title{Using Utility Functions in Metadata Packages}
+\author{Nianhua Li}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Background information: comparison between SQLite-based data packages and 
+Environment-based data packages goes here... 
+
+Many utility functions have been defined in AnnotationDbi to take advantage of 
+the flexibilities of the SQLite-based framework. These functions are illustrated
+below with an interesting comparison between the two frameworks.
+<<Setup, echo=FALSE, results=hide>>=
+library("GOdb")
+library("GO", warn.conflicts=F)
+library("hgu95av2db")
+library("hgu95av2", warn.conflicts=F)
+library("GOstats")
+options(width=40)
+@
+
+<<RgraphvizPlotHelper, echo=FALSE, results=hide>>=
+## Define a method for plotting graphs if no Rgraphviz is available
+haveRgraphviz <- suppressWarnings(require("Rgraphviz", quietly=TRUE))
+if (!haveRgraphviz) {
+    setMethod("plot", signature(x="graph"),
+              function(x, y, ...) {
+                  plot(1, 1, type="n", xlim=c(0, 1), ylim=c(0, 1), 
+                       xlab="", ylab="")
+                  text(0.5, 1, "Plot not available, Rgraphviz not found")
+              })
+}
+@ 
+
+\section{Counting Data By Category}
+
+Most of the information in data packages is mapping information, such
+as mappings between Affymetrix probeset IDs to Entrez Gene IDs, 
+chromosome locations, or pathways. Sometimes users want to learn the
+overall statistics rather than mapping details. For example, they are more 
+interested in the number of probeset IDs belonging to each pathway, than which 
+probeset IDs belong to pathway ``Apoptosis''. Similarily, when 
+one asks whether a annotation category (say a GO term) is overrepresented in 
+the probes that were selected by some particular procedure then multiplicities 
+in probe-to-gene mappings need to be obtained before making that assessment. Both
+examples require counting annotation data by certain categories. 
+
+The environment-base framework does not have handy functions for this type of 
+query. The normal step is to obtain all the data and then use \Rfunction{table} 
+to achieve the goal, as illustrated in the four examples below: 
+\Rfunction{GOcount} function counts the number of GO terms in each of the three 
+categories: Biological Process, Cellular Component, and Molecular Function.
+Similarily \Rfunction{Evicount} function counts the number of \textit{is a} and 
+\textit{partof} relationships in the Biological Process. \Rfunction{GO2LLcount} 
+function shows a histogram of the logarithm of the number of EntrezGene 
+identifiers per GO term. Finally, \Rfunction{GeneCount} function computs the 
+multiplicities in the probe-to-gene mapping in \Rpackage{hgu95av2}.
+
+<<countEnv, echo=TRUE>>=
+## Count the Number of GO Terms in Each Category: 
+## Biological Process, Cellular Component, and Molecular Function 
+GOcount <- function() {
+ goCats <- unlist(eapply(GOTERM, Ontology))
+ gCnums <- table(goCats)[c("BP","CC", "MF")]
+ matrix(as.integer(gCnums), 
+                 dimnames=list(c("BP","CC", "MF"), "Number of Terms"))
+}
+system.time(x <- GOcount())
+x
+
+## Count the number of is-a and partof relationships in the Biological Process 
+## category
+Evicount <- function() {
+  BPisa=eapply(GOBPPARENTS, function(x) names(x))
+  table(unlist(BPisa))
+}
+system.time(x <- Evicount())
+x
+
+## Multiplicities in the probe-to-gene mapping in hgu95av2
+GeneCount <- function() {
+ lls <- unlist(as.list(hgu95av2LOCUSID))
+ tab <- table(table(lls))
+ cat("Multiplicity      ", sapply(names(tab),
+     function(x) sprintf("%4s", x)),
+    "\nNo. EntrezGene IDs ", sapply(tab,
+     function(x) sprintf("%4d", x)), "\n")
+ remove(lls)
+}
+system.time(x <- GeneCount())
+@
+
+<<GO2LLEnv, fig=TRUE, echo=TRUE>>=
+## A histogram of the logarithm of the number of EntrezGene identifiers per GO term
+GO2LLcount <- function() {
+ go2LLcounts <- unlist(eapply(GOHUMAN, length))
+ hist(log(go2LLcounts), main="Log Counts of EntrezGene IDs per GO ID for HUMAN",
+      xlab="")
+}
+system.time(x <- GO2LLcount())
+@
+
+The same tasks can be achieved in the SQLite-based framework by using the utility
+functions of \Rpackage{AnnotationDbi}.
+
+<<countDB, echo=TRUE>>=
+## Count the Number of GO Terms in Each Category
+GOcount <- function() {
+ countBy(GOdb::GOTERM, "Term", "Ontology")
+}
+system.time(x <- GOcount())
+x
+
+## Count the number of is-a and partof relationships in the Biological Process 
+## category
+Evicount <- function() {
+  countBy(GOdb::GOBPPARENTS, "GOID", "Evidence")
+}
+system.time(x <- Evicount())
+x
+
+## Multiplicities in the probe-to-gene mapping in hgu95av2
+## Solution 1
+GeneCount <- function() {
+ lls <- countBy(hgu95av2db::hgu95av2LOCUSID, "probe_id", "gene_id")
+ tab <- table(unlist(lls))
+ cat("Multiplicity      ", sapply(names(tab),
+     function(x) sprintf("%4s", x)),
+    "\nNo. EntrezGene IDs ", sapply(tab,
+     function(x) sprintf("%4d", x)), "\n")
+ remove(lls)
+}
+system.time(x <- GeneCount())
+
+## Solution 2
+GeneCount2 <- function() {
+ sqlStr <- paste(
+            "SELECT probe_count, count(probe_count)",
+            "FROM",
+            "(SELECT count(probe_id) as probe_count",
+            "FROM probe2gene GROUP BY gene_id)",
+            "GROUP BY probe_count"
+           )
+ tab <- dbGetQuery(hgu95av2db::hgu95av2LOCUSID, sqlStr)
+ colnames(tab) <- c("Multiplicity", "No. EntrezGene IDs")
+ tab
+}
+system.time(x <- GeneCount2())
+x
+@ 
+
+<<GO2LLDB, fig=TRUE, echo=TRUE>>=
+## A histogram of the logarithm of the number of EntrezGene identifiers per GO term
+GO2LLcount <- function() {
+ go2LLcounts <- unlist(countBy(GOdb::GOHUMAN, "GeneID", "GOID"))
+ hist(log(go2LLcounts), main="Log Counts of EntrezGene IDs per GO ID for HUMAN",
+      xlab="")
+}
+system.time(x <- GO2LLcount())
+@
+
+In the third example above, \Rfunction{GeneCount} and \Rfunction{GeneCount2} 
+achieve the same goal through different approaches. \Rfunction{GeneCount} obtains
+the number of probeset IDs per EntrezGene IDs first, and then uses \Rfunction{table}
+function to get multiplicities. \Rfunction{GeneCount2} obtains the multiplicities
+information directly from SQLite. \Robject{hgu95av2HUMAN} is a high-level interface
+between R and table \textit{probe2gene} in the SQLite database. Even though 
+\Rpackage{AnnotationDbi} has some utilities functions available for this interface,
+it is still not as flexiable as the low-level interface provided by SQLite. Users
+who are familiar with SQL can query the SQLite database directly just like what 
+\Rfunction{GeneCount2} does. This two-level interface setting ensures both 
+conveniency and scalability of the SQLite-base framework. 
+   
+\section{Filtering Data By Criteria}
+
+Several subsetting methods have already been provided in both frameworks, such as
+\Rfunction{get}, \Rfunction{mget} for horizontal filtering, and \Rfunction{ls} for
+vertical filtering. These functions are not enough, however, when additional criteria
+is required to narrow down data domain or to improve data quality. For example, 
+mget(``1006\_at'', hgu95av2GO) provides the GO identifiers that are directly associate 
+with the probeset ``1006\_at'' of Affymetrix GeneChip hgu95av2, along with the Evidence 
+code of each mapping. The GO identifiers can belong to three categories: BP, MF, 
+and CC. Also, the probeset-to-GO mapping is identified by various approaches
+with different qualities, which is represented by Evidence code. It is often 
+necessary to filter the result by either GO category or Evidence code: 
+
+<<filterEnv, echo=TRUE>>=
+getBP <- function() {
+    res <- hgu95av2GO[["1006_at"]]
+    getOntology(res, "BP")
+}
+system.time(x <- getBP())
+x
+
+rmECode <- function() {
+    affyEv <- eapply(hgu95av2GO, dropECode, c("IEA", "NR"))
+    affyEv[["1006_at"]]    
+}
+system.time(x <- rmECode())
+x
+@
+
+Above are examples of post-query filtering in the environment-based framework.
+In the SQLite-based framework, the filter condition (e.g. Ontology=``BP'') is 
+combined with the initial query (e.g. PROBE=``1006\_at'') to form a complex query
+for the SQLite database. The database performs both querying and filtering, and 
+returns the filtered result to R.
+
+<<filterDB, echo=TRUE>>=
+getBP <- function() {
+    subByRow(hgu95av2db::hgu95av2GO, whCol=c("PROBE", "Ontology"), 
+        whVal=list("1006_at", "BP"))
+}
+system.time(x <- getBP())
+x
+
+rmECode <- function() {
+    affyEv <- subByRow(hgu95av2db::hgu95av2GO, whCol="Evidence", 
+                whVal=list(c("IEA", "NR")), include=FALSE)
+    affyEv[["1006_at"]]    
+}
+system.time(x <- rmECode())
+x
+@
+
+As mentioned above, most objects in annotation packages represent mapping 
+information. For example, the objects in \Rpackage{hgu95av2} represent the 
+mappings between probeset identifiers of Affymetrix GeneChip hgu95av2 and various
+annotations: GO, chromosome location, etc. In the environment-based framework of
+\Rpackage{hgu95av2}, all the probeset identifiers of GeneChip hgu95av2 are 
+included as the key for each environment. If a probeset identifier does not have
+annotation, then a missing value indicator NA is presented as the value in the 
+environment. Most of the time, missing data is unuseful and needs to be excluded 
+before analysis. The following example shows how to remove the probeset 
+identifiers without any Entrez Gene mapping:
+
+<<missingEnv, echo=TRUE>>=
+length(hgu95av2LOCUSID)
+entrezIds <- contents(hgu95av2LOCUSID)
+haveEntrezId <- names(entrezIds)[sapply(entrezIds, function(x) !is.na(x))]
+length(haveEntrezId)
+@
+
+In SQLite-based framework, however, most objects does not include missing data. 
+For example, \Robject{hgu95av2LOCUSID} contains only those probeset identifiers 
+that have Entrez Gene mapping. Therefore, the same object, say 
+\Robject{hgu95av2LOCUSID}, may have different lengths in the two frameworks.
+However, annotations with partially missing data are included. \Robject{GOTERM},
+for example, provides the name, synonym, ontology category, and definition of 
+every GO identifier. Many GO identifiers do not have synonyms. 
+\Rfunction{noMissing} helps to select or filter out missing data:
+
+<<missingDB, echo=TRUE>>=
+length(GOdb::GOTERM)
+## select GO terms with synonyms
+x <- noMissing(GOdb::GOTERM, "Synonym")
+length(x)
+## select GO terms without synonyms
+## y <- noMissing(GOdb::GOTERM, "Synonym", reverse=FALSE)
+@
+
+\section{Database Interface}
+In the SQLite-based framework, data can be accessed through three interfaces:
+(1) \Rpackage{AnnotationDbi} provides a high-level interface that mimics the 
+Environment-based framework; (2)\Rpackage{RSQLite} and \Rpackage{DBI} allow 
+users to access SQLite data from by using SQL or other SQLite-specific commends. 
+\Rpackage{AnnotationDbi} has a few functions to bridge this interface with the 
+high-level one; (3)SQLite interface can also be used directly outside of R.
+
+For users who are familiar with SQL, the low-level interface to SQLite offers
+much more flexiabilities and possibly more efficiencies than the high-level interface.
+The following examples just show a tip of the iceberg. 
+
+To find GO terms with character string ``molecular\_function'' in it:
+<<like, echo=TRUE>>=
+    GOdb::GOTERM
+    sqlStr <- paste("SELECT GOID FROM GOTERM",
+                    "WHERE Term LIKE '%molecular_function%'")
+    x <- dbGetQuery(GOdb::GOTERM,sqlStr) 
+    x
+    mget(x[,1], GOdb::GOTERM) ## to validate the result
+@
+
+\Robject{GOTERM} is an instance of S4 Class \Robject{AnnotationDbi}. Each 
+instance of \Robject{AnnotationDbi} is a R interface to a SQLite table. The print 
+statement above (e.g. \Robject{GOdb::GOTERM}) provides the details of the underlying SQLite 
+table, which in turn is used to construct the SQL statement: \textit{SELECT GOID 
+FROM GOTERM WHERE Term LIKE ``\%molecular\_function\%''}. The SQL statement retrieves
+information from SQLite table \textit{GOTERM}. It first finds the rows whose 
+values in column \textit{Term} contain character string 
+\textit{molecular\_function}, and then retrieve the values in column \textit{GOID}
+of the selected rows. The percent symbol matches any sequence of zero or more 
+characters in the string. The SQL statement is feeded into \Rfunction{dbGetQuery}
+along with \Robject{GOTERM}. \Robject{GOTERM} contributes nothing but a database
+connection to the method.
+
+To get the annotations of those Affymetrix probeset identifiers whose targetting 
+genes locate on chromosome 16:
+<<chr16, echo=TRUE>>=
+hgu95av2db::hgu95av2CHRLOC
+hgu95av2db::hgu95av2GENENAME
+hgu95av2db::hgu95av2SYMBOL
+
+## create a temporary table
+sqlstr <- paste("CREATE TEMP TABLE MYTABLE AS",
+                "SELECT GENEINFO.PROBE as PROBE, CHRLOC, GENENAME, SYMBOL",
+                "FROM CHRLOC, GENEINFO",
+                "WHERE CHRLOC.CHR='16' AND GENEINFO.PROBE=CHRLOC.PROBE",
+                "ORDER BY CHRLOC")
+x <- sqliteQuickSQL(hgu95av2db::getDb(), sqlstr)
+
+## create an interface
+generateAnnotTableObj(objName="mytable", 
+                      objClass="AnnotMultiColTable", 
+                      tableName="MYTABLE", 
+                      col="PROBE")
+mytable
+@                
+
+In the above codes, we first create a temporary table \textit{MYTABLE} in the 
+SQLite database of \Rpackage{hgu95av2db}. The table contains the
+name, symbol and chromosome location of the genes on chromosome 16, along with 
+their matching Affymetrix probeset identifiers. The genes are ordered by their
+chromosome location. And then we create an interface \Robject{mytable} for it.
+
+There are 4 types of interfaces. All of them aim to mimic R environment. Their 
+differences are the data type of the ``Environment'' value.
+
+\textit{AnnotTwoColTable}: value is a simple vector. Examples are 
+\Robject{GOBPANCESTOR}, \Robject{hgu95av2PATH}:
+<<twocol, echo=TRUE>>=
+get("GO:0000018", GOdb::GOBPANCESTOR)
+@
+
+\textit{AnnotThreeColTable}: value is a named vector. Examples are 
+\Robject{GOHUMAN}, \Robject{hgu95av2GO2PROBE}:
+<<threecol, echo=TRUE>>=
+get("GO:0000018", GOdb::GOHUMAN)
+@
+
+\textit{AnnotMultiColTable}: value is a named list, the names are the column 
+names of the SQLite table. \Robject{mytable} above is an example:
+<<multicol, echo=TRUE>>=
+get("1000_at", mytable)
+@
+
+\textit{AnnotMultiColTwoWayTable}: value is a named list of named lists. Examples
+are \Robject{GOHUMAN2GO}, \Robject{hgu95av2GO}:
+<<multicoltwoway, echo=TRUE>>=
+get("1042_at", hgu95av2GO)
+@
+
+\section*{Version Information}
+
+<<versionInfo, echo=FALSE, results=tex>>=
+toLatex(sessionInfo())
+@ 
+
+%\bibliography{AnnotationDbi}
+
+\end{document}

@@ -1,23 +1,45 @@
-updateCache <- function(obj) {
+## fieldNames must be valid column names of obj@tableName
+## keyCol must be the first item in obj@fieldNames, if not, switch the order
+updateCache <- function(obj, tableName, dbRefGetter,
+			fieldNames=NULL, keyCol=NULL, 
+			rsProcessor=NULL) {
     ## Retreive and cache field names, row count, and first row data
-    tableName <- obj@tableName
-    db <- obj@dbRefGetter()
-    
-    obj@fieldNames <- dbListFields(db, tableName)
+    obj@tableName <- tableName
+    obj@dbRefGetter <- dbRefGetter
+    db <- dbRefGetter()
+    if (!is.null(rsProcessor))
+	obj@rsProcessor=rsProcessor
+
+    validFieldNames <- dbListFields(db, tableName)
+    if (is.null(fieldNames)) {
+	fieldNames <- validFieldNames
+	if (!is.null(keyCol) && (match(keyCol, fieldNames)>1)) {
+		fieldNames[match(keyCol, fieldNames)] <- fieldNames[1]
+		fieldNames[1]<- keyCol
+	}	
+    } else {
+	if (!all(fieldNames %in% validFieldNames)) 
+                stop(fieldNames, " must be one of:\n",
+                     paste(validFieldNames, collapse=", "))
+    }
+    obj@fieldNames <- fieldNames
+    if (!is.null(keyCol))
+	obj@keyCol <- keyCol
 
     rowCntSql <- paste("SELECT count(*) FROM", tableName)
     obj@nrow <- as.integer(dbGetQuery(db, rowCntSql)[1, 1])
+    rowOneSql <- paste("SELECT ", 
+			paste(fieldNames, sep="", collapse=", "),
+			"FROM", tableName, "LIMIT 1")
+    obj@firstRow <- dbGetQuery(db, rowOneSql)
 
     obj
 }
     
 setMethod("initialize", signature(.Object="AnnotDbTable"),
-          function(.Object, tableName, dbRefGetter, rsProcessor=NULL, ...) {
-              .Object@tableName <- tableName
-              .Object@dbRefGetter <- dbRefGetter
-	      .Object@rsProcessor <- rsProcessor
-              ## Retreive and cache field names, row count, first row
-              .Object <- updateCache(.Object)
+          function(.Object, tableName, dbRefGetter, rsProcessor=NULL, ...){ 
+              .Object <- updateCache(.Object, tableName, 
+				dbRefGetter, rsProcessor=rsProcessor)
               .Object
           })
 
@@ -32,13 +54,9 @@ setMethod("initialize", signature(.Object="AnnotDbTable"),
 
 setMethod("initialize", signature(.Object="AnnotDbTableTwoWayMap"),
           function(.Object, tableName, dbRefGetter, LHS, RHS, rsProcessor=NULL, ...) {
-              .Object <- callNextMethod(.Object=.Object,
-                                        tableName=tableName,
-                                        dbRefGetter=dbRefGetter,
-					rsProcessor=rsProcessor)
-              if (!all(c(LHS, RHS) %in% .Object@fieldNames))
-                stop("LHS and RHS must be one of:\n",
-                     paste(.Object@fieldNames, collapse=", "))
+              .Object <- updateCache(.Object, tableName, dbRefGetter, 
+				fieldNames=c(LHS, RHS), 
+				rsProcessor=rsProcessor)
               .Object@LHS <- LHS
               .Object@RHS <- RHS
               .Object
@@ -46,39 +64,15 @@ setMethod("initialize", signature(.Object="AnnotDbTableTwoWayMap"),
 
 setMethod("initialize", signature(.Object="AnnotMultiColTable"),
 	function(.Object, tableName, dbRefGetter, keyCol, rsProcessor=NULL, ...) {
-#              .Object <- callNextMethod(.Object=.Object,
-#                                        tableName=tableName,
-#                                        dbRefGetter=dbRefGetter)
-		#copy from parent initializer
-                .Object@tableName <- tableName
-                .Object@dbRefGetter <- dbRefGetter
-		.Object@rsProcessor <- rsProcessor
-                .Object <- updateCache(.Object)
-		#end of copy
-		keyIndex <- match(keyCol, .Object@fieldNames)
-		if (is.na(keyIndex))
-			stop("Key column ", keyCol, " is not a valid field name. Valid field names are:\n", paste(.Object@fieldNames, collapse=", "))	
-		.Object@keyCol <- keyCol
-		if (keyIndex != 1) {
-			.Object@fieldNames[[keyIndex]] <- .Object@fieldNames[[1]]
-			.Object@fieldNames[[1]] <- keyCol
-			rowOneSql <- paste("SELECT ", 
-				paste(.Object@fieldNames, sep="", collapse=", "),
-				"FROM",
-				.Object@tableName, 
-				"LIMIT 1")
-    			.Object@firstRow <- dbGetQuery(.Object@dbRefGetter(), rowOneSql)
-		}	
+		.Object <- updateCache(.Object, tableName, dbRefGetter,
+				keyCol=keyCol, rsProcessor=rsProcessor)
 		.Object
 	})
 
 setMethod("initialize", signature(.Object="AnnotMultiColTwoKeyTable"),
           function(.Object, tableName, dbRefGetter, keyCol, secKey, rsProcessor=NULL, ...) {
-              .Object <- callNextMethod(.Object=.Object,
-                                        tableName=tableName,
-                                        dbRefGetter=dbRefGetter,
-                                        keyCol=keyCol,
-                                        rsProcessor=rsProcessor)
+        .Object <- updateCache(.Object, tableName, dbRefGetter,
+			keyCol=keyCol, rsProcessor=rsProcessor)
         if (!(secKey %in% .Object@fieldNames))
             stop("Secondary key column ", secKey, " is not a valid field name. Valid field names are:\n", paste(.Object@fieldNames, collapse=", "))
         .Object@secKey <- secKey
@@ -87,16 +81,10 @@ setMethod("initialize", signature(.Object="AnnotMultiColTwoKeyTable"),
     
 setMethod("initialize", signature(.Object="AnnotThreeColTable"),
           function(.Object, tableName, dbRefGetter, keyCol, nameCol, valCol, rsProcessor=NULL, ...) {
-              .Object <- callNextMethod(.Object=.Object,
-                                        tableName=tableName,
-                                        dbRefGetter=dbRefGetter,
-					                    keyCol=keyCol,
-				                        rsProcessor=rsProcessor)
-		if (!(nameCol %in% .Object@fieldNames))
-			stop("Name column ", nameCol, " is not a valid field name. Valid field names are:\n", paste(.Object@fieldNames, collapse=", "))
-	
-		if (!(valCol %in% .Object@fieldNames))
-			stop("Value column ", valCol, " is not a valid field name. Valid field names are:\n", paste(.Object@fieldNames, collapse=", "))
+              .Object <- updateCache(.Object, tableName, dbRefGetter,
+				fieldNames=c(keyCol, nameCol, valCol),
+				keyCol=keyCol,
+				rsProcessor=rsProcessor)
 		.Object@nameCol <- nameCol
 		.Object@valCol <- valCol
 		.Object

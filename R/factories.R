@@ -79,6 +79,28 @@ generateAnnotTableObj <- function( objName, objClass, tableName, pkgName, col, r
         assign(objName, obj, envir=ns)
 }
 
+userTable <- function( tableType, col, baseObj) {
+        tableName <- baseObj@tableName
+        getDb <- baseObj@dbRefGetter
+        rsProcessor <- baseObj@rsProcessor
+        obj <- switch(tableType,
+            "AnnotDbTable" = new("AnnotDbTable", 
+                                            tableName, getDb, rsProcessor),
+            "AnnotDbTableTwoWayMap" = new("AnnotDbTableTwoWayMap", 
+                                            tableName, getDb, col[1], col[2], rsProcessor),
+            "AnnotTwoColTable" = new("AnnotTwoColTable", 
+                                            tableName, getDb, col[1], col[2], rsProcessor),
+            "AnnotMultiColTable" = new("AnnotMultiColTable", 
+                                            tableName, getDb, col[1], rsProcessor),
+            "AnnotMultiColTwoKeyTable" = new("AnnotMultiColTwoKeyTable", 
+                                            tableName, getDb, col[1], col[2], rsProcessor),
+            "AnnotGOTermsTable" = new("AnnotGOTermsTable", 
+                                            tableName, getDb, col[1], rsProcessor),
+            "AnnotThreeColTable" = new("AnnotThreeColTable", 
+                                            tableName, getDb, col[1], col[2], col[3], rsProcessor))
+        obj
+}
+
 # FIXME: this function need to be more general in the future...
 generateQC <- function(pkgName, objPrefix=pkgName) {
 	if(!missing(pkgName))
