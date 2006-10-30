@@ -49,9 +49,9 @@ Many utility functions have been defined in AnnotationDbi to take advantage of
 the flexibilities of the SQLite-based framework. These functions are illustrated
 below with an interesting comparison between the two frameworks.
 <<Setup, echo=FALSE, results=hide>>=
-library("GOdb")
+try(library("GOdb"))
 library("GO", warn.conflicts=F)
-library("hgu95av2db")
+try(library("hgu95av2db"))
 library("hgu95av2", warn.conflicts=F)
 library("GOstats")
 options(width=40)
