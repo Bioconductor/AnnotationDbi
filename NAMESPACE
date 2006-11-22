@@ -6,5 +6,18 @@ export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotT
 exportClasses("functionORNULL", "AnnotDbTable", "AnnotDbEnv", "AnnotDbTableTwoWayMap", "AnnotMultiColTable", "AnnotThreeColTable", "AnnotGOTermsTable", "AnnotTwoColTable")
 
 exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow, contents,
-              queryTable, show, ls, as.list, eapply, countBy, getCol, subByRow, 
+              queryTable, show, ls, as.list, eapply, countBy, getCol, subByRow,
 	      is.environment, length, dbGetQuery, noMissing)
+
+## These are prototypes and subject to change
+export(
+       allPMIds,
+       allMMIds,
+       allPMAllele,
+       allPMStrand,
+       pmIdsByAllele1,
+       pmIdsByAllele2,
+       pmFeatures,
+       allFeatureSetIds
+       )
+
