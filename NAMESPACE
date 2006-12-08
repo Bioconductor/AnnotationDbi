@@ -3,11 +3,15 @@ importMethodsFrom("Biobase", "contents")
 export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, generateQC, userTable, compareAnnotation, comparePerf)
 
 
-exportClasses("functionORNULL", "AnnotDbTable", "AnnotDbEnv", "AnnotDbTableTwoWayMap", "AnnotMultiColTable", "AnnotThreeColTable", "AnnotGOTermsTable", "AnnotTwoColTable")
+exportClasses("functionORNULL",
+              "AnnotDbTable", "AnnotDbEnv", "AnnotDbTableTwoWayMap", "AnnotMultiColTable",
+              "AnnotThreeColTable", "AnnotGOTermsTable", "AnnotTwoColTable",
+              "SQLiteAnnDataPkgSeed")
 
 exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow, contents,
               queryTable, show, ls, as.list, eapply, countBy, getCol, subByRow,
-	      is.environment, length, dbGetQuery, noMissing)
+	      is.environment, length, dbGetQuery, noMissing,
+              makeDataPackage)
 
 ## These are prototypes and subject to change
 export(

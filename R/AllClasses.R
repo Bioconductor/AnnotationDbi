@@ -25,3 +25,17 @@ setClass("AnnotThreeColTable", contains="AnnotMultiColTable",
 
 setClass("AnnotGOTermsTable", contains="AnnotMultiColTable")
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setClass(
+    "SQLiteAnnDataPkgSeed",
+    representation(
+        chipShortName="character",
+        organism="character",
+        species="character",
+        manufacturer="character",
+        chipName="character",
+        manufacturerUrl="character"
+    )
+)
+
