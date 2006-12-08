@@ -4,14 +4,20 @@
 setMethod(Biobase::makeDataPackage,
     signature(object="SQLiteAnnDataPkgSeed"),
     function(object, author, email, packageName, packageVersion,
-             license, biocViews, filePath, sqliteFilePath, quiet=FALSE,
-             unlink=FALSE)
+             license, biocViews, filePath,
+             sqliteFilePath, sqliteVersion, unlink=FALSE, quiet=FALSE)
     {
         if (missing(email) || !is.character(email)
          || length(email) != 1 || grep("@", email) != 1)
             stop("invalid email address")
         extdataDir <- file.path(filePath, packageName, "inst", "extdata")
         dbFileName <- paste(object@chipShortName, "sqlite", sep=".")
+        if (missing(sqliteVersion)) {
+            cran.pkgs <- available.packages(contrib.url("http://cran.fhcrc.org"))
+            if (nrow(cran.pkgs) == 0)
+                stop("unable to retrieve version of last available RSQLite package from CRAN, please provide a 'sqliteVersion' arg")
+            sqliteVersion <- cran.pkgs['RSQLite', 'Version']
+        }
         syms <- list(CHIPSHORTNAME=object@chipShortName,
                      ORGANISM=object@organism,
                      SPECIES=object@species,
@@ -20,16 +26,16 @@ setMethod(Biobase::makeDataPackage,
                      MANUFURL=object@manufacturerUrl,
                      AUTHOR=author,
                      AUTHOREMAIL=email,
-                     PKGNAME=packageName,
                      VERSION=packageVersion,
                      LIC=license,
                      BIOCVIEWS=biocViews,
-                     DBFILE=dbFileName)
+                     DBFILE=dbFileName,
+                     SQLITEVERSION=sqliteVersion)
         templateDir <- system.file("SQLiteAnnData.PKG.template",
                                    package="AnnotationDbi")
         createPackage(pkgname=packageName, destinationDir=filePath,
                       originDir=templateDir,
-                      symbolValues=syms, quiet=quiet, unlink=unlink)
+                      symbolValues=syms, unlink=unlink, quiet=quiet)
         dbFilePath <- file.path(extdataDir, dbFileName)
         if (!dir.create(dbFilePath, showWarnings=FALSE, recursive=TRUE))
           stop("unable to create directory: ", dbFilePath)
