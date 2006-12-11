@@ -5,18 +5,18 @@ setMethod(Biobase::makeDataPackage,
     signature(object="SQLiteAnnDataPkgSeed"),
     function(object, author, email, packageName, packageVersion,
              license, biocViews, filePath,
-             sqliteFilePath, sqliteVersion, unlink=FALSE, quiet=FALSE)
+             sqliteFilePath, RSQLiteVersion, unlink=FALSE, quiet=FALSE)
     {
         if (missing(email) || !is.character(email)
          || length(email) != 1 || grep("@", email) != 1)
             stop("invalid email address")
         extdataDir <- file.path(filePath, packageName, "inst", "extdata")
         dbFileName <- paste(object@chipShortName, "sqlite", sep=".")
-        if (missing(sqliteVersion)) {
+        if (missing(RSQLiteVersion)) {
             cran.pkgs <- available.packages(contrib.url("http://cran.fhcrc.org"))
             if (nrow(cran.pkgs) == 0)
-                stop("unable to retrieve version of last available RSQLite package from CRAN, please provide a 'sqliteVersion' arg")
-            sqliteVersion <- cran.pkgs['RSQLite', 'Version']
+                stop("unable to retrieve version of last available RSQLite package from CRAN, please provide a 'RSQLiteVersion' arg")
+            RSQLiteVersion <- cran.pkgs['RSQLite', 'Version']
         }
         syms <- list(CHIPSHORTNAME=object@chipShortName,
                      ORGANISM=object@organism,
@@ -30,15 +30,13 @@ setMethod(Biobase::makeDataPackage,
                      LIC=license,
                      BIOCVIEWS=biocViews,
                      DBFILE=dbFileName,
-                     SQLITEVERSION=sqliteVersion)
+                     RSQLITEVERSION=RSQLiteVersion)
         templateDir <- system.file("SQLiteAnnData.PKG.template",
                                    package="AnnotationDbi")
         createPackage(pkgname=packageName, destinationDir=filePath,
                       originDir=templateDir,
                       symbolValues=syms, unlink=unlink, quiet=quiet)
         dbFilePath <- file.path(extdataDir, dbFileName)
-        if (!dir.create(dbFilePath, showWarnings=FALSE, recursive=TRUE))
-          stop("unable to create directory: ", dbFilePath)
         if (!file.copy(sqliteFilePath, dbFilePath))
           stop("unable to copy SQLite DB to destination")
         return(invisible(TRUE))
