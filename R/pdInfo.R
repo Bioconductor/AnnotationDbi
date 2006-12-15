@@ -5,6 +5,7 @@ setClass("PDInfo",
            genome_build="character"))
 
 setClass("SNPPDInfo", contains="PDInfo")
+setClass("AffySNPPDInfo", contains="PDInfo")
 
 
 allPMIds <- function(map) {
