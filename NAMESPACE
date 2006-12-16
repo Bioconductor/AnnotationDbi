@@ -13,19 +13,3 @@ exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow, contents
 	      is.environment, length, dbGetQuery, noMissing,
               makeDataPackage)
 
-## These are prototypes and subject to change
-export(
-       allPMIds,
-       allMMIds,
-       allPMAllele,
-       allPMStrand,
-       pmIdsByAllele1,
-       pmIdsByAllele2,
-       pmFeatures,
-       allFeatureSetIds
-       )
-
-exportClasses(
-              PDInfo,
-              SNPPDInfo
-              )
