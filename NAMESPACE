@@ -13,3 +13,5 @@ exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow, contents
 	      is.environment, length, dbGetQuery, noMissing,
               makeDataPackage)
 
+### envir-based API:
+exportClasses("ProbesetMap", "ProbesetSimpleMap", "ProbesetNamedMap", "ProbesetGOMap", "ProbesetReverseMap")

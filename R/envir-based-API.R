@@ -1,0 +1,143 @@
+PROBESETID_COL <- "probe_id"
+
+getProbesetSubmap  <- function(con, probeset, mapTable, mapCols, isLeft=TRUE)
+{
+    if (!is.character(probeset) || any(is.na(probeset)))
+        stop("invalid first argument")
+    sql <- paste("SELECT ", PROBESETID_COL, ",", paste(mapCols, collapse=","), sep="")
+    if (isLeft) joinType <- "LEFT" else joinType <- "INNER"
+    sql <- paste(sql, " FROM probes ", joinType, " JOIN ", mapTable, sep="")
+    sql <- paste(sql, " ON (probes.id = ", mapTable, ".id)", sep="")
+    sql <- paste(sql, " WHERE ", PROBESETID_COL, " IN ('", paste(probeset, collapse="','"), "')", sep="")
+    #cat(sql, "\n")
+    data <- dbGetQuery(con, sql)
+    if (isLeft) {
+        not_found <- which(!(probeset %in% data[[PROBESETID_COL]]))
+        if (length(not_found) != 0)
+            stop("value for '", probeset[not_found[1]], "' not found")
+    }
+    data
+}
+
+getProbesetReverseSubmap  <- function(con, value, mapTable, mapCol)
+{
+    if (!is.character(value) || any(is.na(value)))
+        stop("invalid first argument")
+    sql <- paste("SELECT ", mapCol, ",", PROBESETID_COL, sep="")
+    sql <- paste(sql, " FROM ", mapTable, " LEFT JOIN probes", sep="")
+    sql <- paste(sql, " ON (", mapTable, ".id = probes.id)", sep="")
+    sql <- paste(sql, " WHERE ", mapCol, " IN ('", paste(value, collapse="','"), "')", sep="")
+    dbGetQuery(con, sql)
+    not_found <- which(!(value %in% data[[mapCol]]))
+    if (length(not_found) != 0)
+        stop("value for '", value[not_found[1]], "' not found")
+    data
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+setClass("ProbesetMap" , representation(con="SQLiteConnection"))
+
+setClass(
+    "ProbesetSimpleMap", contains="ProbesetMap",
+    representation(
+        mapTable="character",
+        mapCol="character"
+    )
+)
+
+setClass("ProbesetNamedMap", contains="ProbesetSimpleMap", representation(namesCol="character"))
+
+setClass("ProbesetGOMap", contains="ProbesetMap")
+
+setClass("ProbesetReverseMap", contains="ProbesetSimpleMap")
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+setGeneric("mget", function(x, envir, mode, ifnotfound, inherits) standardGeneric("mget"))
+
+setMethod("mget", signature(envir="ProbesetSimpleMap"),
+    function(x, envir, mode, ifnotfound, inherits)
+    {
+        if (length(x) == 0)
+            return(list())
+        data <- getProbesetSubmap(envir@con, x, envir@mapTable, envir@mapCol)
+        split(data[[envir@mapCol]], data[[PROBESETID_COL]])
+    }
+)
+
+setMethod("mget", signature(envir="ProbesetNamedMap"),
+    function(x, envir, mode, ifnotfound, inherits)
+    {
+        if (length(x) == 0)
+            return(list())
+        data <- getProbesetSubmap(envir@con, x, envir@mapTable, c(envir@mapCol, envir@namesCol))
+        submap <- data[[envir@mapCol]]
+        names(submap) <- data[[envir@namesCol]]
+        split(submap, data[[PROBESETID_COL]])
+    }
+)
+
+setMethod("mget", signature(envir="ProbesetGOMap"),
+    function(x, envir, mode, ifnotfound, inherits)
+    {
+        makeGONodeList <- function(GOIDs, Evidences, Ontology)
+        {
+            ans <- lapply(1:length(GOIDs), function(x) list(GOID=GOIDs[x], Evidence=Evidences[x], Ontology=Ontology))
+            names(ans) <- GOIDs
+            ans
+        }
+        getProbesetGoMap <- function(probeset, table, Ontology)
+        {
+            data <- getProbesetSubmap(envir@con, probeset, table, c("go_id", "evidence"), isLeft=FALSE)
+            if (nrow(data) == 0)
+                return(list())
+            GOIDs <- split(data$go_id, data$probe_id)
+            Evidences <- split(data$evidence, data$probe_id)
+            sapply(names(GOIDs), function(x) makeGONodeList(GOIDs[[x]], Evidences[[x]], Ontology))
+        }
+        if (length(x) == 0)
+            return(list())
+        submap1 <- getProbesetGoMap(x, "go_bp", "BP")
+        submap2 <- getProbesetGoMap(x, "go_cc", "CC")
+        submap3 <- getProbesetGoMap(x, "go_mf", "MF")
+        ## submap1[x][[1]] is a trick to ensure _exact_ matching! (we don't want partial matching)
+        submap <- lapply(x, function(xx)
+                            {
+                                y <- c(submap1[xx][[1]], submap2[xx][[1]], submap3[xx][[1]])
+                                if (length(y) == 0) NA else y
+                            }
+                        )
+        names(submap) <- x
+        submap
+    }
+)
+
+setMethod("mget", signature(envir="ProbesetReverseMap"),
+    function(x, envir, mode, ifnotfound, inherits)
+    {
+        if (length(x) == 0)
+            return(list())
+        data <- getProbesetReverseSubmap(envir@con, x, envir@mapTable, envir@mapCol)
+        split(data[[PROBESETID_COL]], data[[envir@mapCol]])
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+setGeneric("get", function(x, pos, envir, mode, inherits) standardGeneric("get"))
+
+setMethod("get", signature(envir="ProbesetMap"),
+    function(x, pos, envir, mode, inherits)
+    {
+        mget(x[1], envir)[[1]]
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### add more here, like "length", "[[", "ls", "as.list", "is.environment", "eapply", etc...
+
