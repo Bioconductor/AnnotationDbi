@@ -1,6 +1,10 @@
 import("annotate")
+
 importMethodsFrom("Biobase", "contents")
-export(toggleDebug, generateTwoWayMappings, generateTableObjects, generateAnnotTableObj, generateQC, userTable, compareAnnotation, comparePerf)
+
+export(toggleDebug, generateTwoWayMappings, generateTableObjects,
+       generateAnnotTableObj, generateQC, userTable, compareAnnotation,
+       comparePerf)
 
 
 exportClasses("functionORNULL",
@@ -8,13 +12,38 @@ exportClasses("functionORNULL",
               "AnnotThreeColTable", "AnnotGOTermsTable", "AnnotTwoColTable",
               "SQLiteAnnDataPkgSeed")
 
-exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow, contents,
-              queryTable, show, ls, as.list, eapply, countBy, getCol, subByRow,
-	      is.environment, length, dbGetQuery, noMissing,
-              makeDataPackage)
+exportMethods(
+              "$",
+              "[",
+              "[[",
+              "as.list",
+              "contents",
+              "countBy",
+              "db",
+              "dbGetQuery",
+              "eapply",
+              "get",
+              "getCol",
+              "initialize",
+              "is.environment",
+              "length",
+              "ls",
+              "makeDataPackage",
+              "mget",
+              "names",
+              "ncol",
+              "noMissing",
+              "nrow",
+              "queryTable",
+              "show",
+              "subByRow")
 
 ### envir-based API:
-exportClasses("ProbesetBasedVirtualMap", "ProbesetBasedMap", "ProbesetBasedNamedMap",
-              "ProbesetBasedGOMap", "ProbesetBasedReverseMap")
+exportClasses("ProbesetBasedVirtualMap",
+              "ProbesetBasedMap",
+              "ProbesetBasedNamedMap",
+              "ProbesetBasedGOMap",
+              "ProbesetBasedReverseMap")
+
 export(allMaps)
 

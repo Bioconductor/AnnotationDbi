@@ -56,6 +56,11 @@ setClass("ProbesetBasedReverseMap", contains="ProbesetBasedMap")
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+setGeneric("db", function(object) standardGeneric("db"))
+
+setMethod("db", "ProbesetBasedVirtualMap",
+          function(object) object@con)
+
 setGeneric("mget", function(x, envir, mode, ifnotfound, inherits) standardGeneric("mget"))
 
 setMethod("mget", signature(envir="ProbesetBasedMap"),
@@ -63,7 +68,7 @@ setMethod("mget", signature(envir="ProbesetBasedMap"),
     {
         if (length(x) == 0)
             return(list())
-        data <- extractProbesetBasedSubmap(envir@con, x, envir@mapTable, envir@mapCol)
+        data <- extractProbesetBasedSubmap(db(envir), x, envir@mapTable, envir@mapCol)
         split(data[[envir@mapCol]], data[[PROBESETID_COL]])
     }
 )
@@ -73,7 +78,7 @@ setMethod("mget", signature(envir="ProbesetBasedNamedMap"),
     {
         if (length(x) == 0)
             return(list())
-        data <- extractProbesetBasedSubmap(envir@con, x, envir@mapTable, c(envir@mapCol, envir@namesCol))
+        data <- extractProbesetBasedSubmap(db(envir), x, envir@mapTable, c(envir@mapCol, envir@namesCol))
         submap <- data[[envir@mapCol]]
         names(submap) <- data[[envir@namesCol]]
         split(submap, data[[PROBESETID_COL]])
@@ -91,7 +96,7 @@ setMethod("mget", signature(envir="ProbesetBasedGOMap"),
         }
         getProbesetBasedGoMap <- function(probeset, table, Ontology)
         {
-            data <- extractProbesetBasedSubmap(envir@con, probeset, table, c("go_id", "evidence"), isLeft=FALSE)
+            data <- extractProbesetBasedSubmap(db(envir), probeset, table, c("go_id", "evidence"), isLeft=FALSE)
             if (nrow(data) == 0)
                 return(list())
             GOIDs <- split(data$go_id, data$probe_id)
@@ -120,7 +125,7 @@ setMethod("mget", signature(envir="ProbesetBasedReverseMap"),
     {
         if (length(x) == 0)
             return(list())
-        data <- getProbesetBasedReverseSubmap(envir@con, x, envir@mapTable, envir@mapCol)
+        data <- getProbesetBasedReverseSubmap(db(envir), x, envir@mapTable, envir@mapCol)
         split(data[[PROBESETID_COL]], data[[envir@mapCol]])
     }
 )
@@ -152,39 +157,40 @@ setMethod("get", signature(envir="ProbesetBasedVirtualMap"),
 allMaps <- function(con)
 {
     maps <- list(
-        ACCNUM=new("ProbesetBasedMap",
-                mapTable="accessions", mapCol="accession", con=con),
-        CHR=new("ProbesetBasedMap",
-                mapTable="chromosomes", mapCol="chromosome", con=con),
-        CHRLOC=new("ProbesetBasedNamedMap",
-                mapTable="chromosome_locations", mapCol="start_location", namesCol="chromosome", con=con),
-        ENTREZID=new("ProbesetBasedMap",
-                mapTable="genes", mapCol="gene_id", con=con),
-        ENZYME=new("ProbesetBasedMap",
-                mapTable="ec", mapCol="ec_number", con=con),
-        GENENAME=new("ProbesetBasedMap",
-                mapTable="gene_info", mapCol="gene_name", con=con),
-        GO=new("ProbesetBasedGOMap",
-                con=con),
-        MAP=new("ProbesetBasedMap",
-                mapTable="cytogenetic_locations", mapCol="cytogenetic_location", con=con),
-        OMIM=new("ProbesetBasedMap",
-                mapTable="omim", mapCol="omim_id", con=con),
-        PATH=new("ProbesetBasedMap",
-                mapTable="kegg", mapCol="kegg_id", con=con),
-        PFAM=new("ProbesetBasedNamedMap",
-                mapTable="pfam", mapCol="pfam_id", namesCol="ipi_id", con=con),
-        PMID=new("ProbesetBasedMap",
-                mapTable="pubmed", mapCol="pubmed_id", con=con),
-        PROSITE=new("ProbesetBasedNamedMap",
-                mapTable="prosite", mapCol="prosite_id", namesCol="ipi_id", con=con),
-        REFSEQ=new("ProbesetBasedMap",
-                mapTable="refseq", mapCol="accession", con=con),
-        SYMBOL=new("ProbesetBasedMap",
-                mapTable="gene_info", mapCol="symbol", con=con),
-        UNIGENE=new("ProbesetBasedMap",
-                mapTable="unigene", mapCol="unigene_id", con=con)
-    )
+                 ACCNUM=new("ProbesetBasedMap",
+                   mapTable="accessions", mapCol="accession", con=con),
+                 CHR=new("ProbesetBasedMap",
+                   mapTable="chromosomes", mapCol="chromosome", con=con),
+                 CHRLOC=new("ProbesetBasedNamedMap",
+                   mapTable="chromosome_locations", mapCol="start_location",
+                   namesCol="chromosome", con=con),
+                 ENTREZID=new("ProbesetBasedMap",
+                   mapTable="genes", mapCol="gene_id", con=con),
+                 ENZYME=new("ProbesetBasedMap",
+                   mapTable="ec", mapCol="ec_number", con=con),
+                 GENENAME=new("ProbesetBasedMap",
+                   mapTable="gene_info", mapCol="gene_name", con=con),
+                 GO=new("ProbesetBasedGOMap",
+                   con=con),
+                 MAP=new("ProbesetBasedMap",
+                   mapTable="cytogenetic_locations", mapCol="cytogenetic_location", con=con),
+                 OMIM=new("ProbesetBasedMap",
+                   mapTable="omim", mapCol="omim_id", con=con),
+                 PATH=new("ProbesetBasedMap",
+                   mapTable="kegg", mapCol="kegg_id", con=con),
+                 PFAM=new("ProbesetBasedNamedMap",
+                   mapTable="pfam", mapCol="pfam_id", namesCol="ipi_id", con=con),
+                 PMID=new("ProbesetBasedMap",
+                   mapTable="pubmed", mapCol="pubmed_id", con=con),
+                 PROSITE=new("ProbesetBasedNamedMap",
+                   mapTable="prosite", mapCol="prosite_id", namesCol="ipi_id", con=con),
+                 REFSEQ=new("ProbesetBasedMap",
+                   mapTable="refseq", mapCol="accession", con=con),
+                 SYMBOL=new("ProbesetBasedMap",
+                   mapTable="gene_info", mapCol="symbol", con=con),
+                 UNIGENE=new("ProbesetBasedMap",
+                   mapTable="unigene", mapCol="unigene_id", con=con)
+                 )
     maps$ENZYME2PROBE <- new("ProbesetBasedReverseMap", maps$ENZYME)
     maps$PATH2PROBE <- new("ProbesetBasedReverseMap", maps$PATH)
     maps$PMID2PROBE <- new("ProbesetBasedReverseMap", maps$PMID)
