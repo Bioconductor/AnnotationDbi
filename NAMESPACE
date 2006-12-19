@@ -14,4 +14,7 @@ exportMethods("$", "[", "[[", initialize, get, mget, names, ncol, nrow, contents
               makeDataPackage)
 
 ### envir-based API:
-exportClasses("ProbesetMap", "ProbesetSimpleMap", "ProbesetNamedMap", "ProbesetGOMap", "ProbesetReverseMap")
+exportClasses("ProbesetBasedVirtualMap", "ProbesetBasedMap", "ProbesetBasedNamedMap",
+              "ProbesetBasedGOMap", "ProbesetBasedReverseMap")
+export(allMaps)
+

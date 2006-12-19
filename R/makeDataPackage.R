@@ -55,7 +55,7 @@ make_hgu95av2db <- function(filePath, sqliteFilePath, ...)
                    chipName="Human Genome U95 Set",
                    manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95")
     makeDataPackage(pkgseed, "Nianhua Li, Seth Falcon", "biocannotation@lists.fhcrc.org",
-                    "hgu95av2db", "1.13.999", "LGPL",
+                    "hgu95av2db", "1.13.9999", "LGPL",
                     "AnnotationData, hgu95av2, AffymetrixChip, Homo_sapiens",
                     filePath, sqliteFilePath, ...)
 }
