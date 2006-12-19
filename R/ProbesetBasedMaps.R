@@ -144,6 +144,11 @@ setMethod("get", signature(envir="ProbesetBasedVirtualMap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+### TODO: The following maps are missing for now:
+###   ProbesetBasedMap: SUMFUNC
+###   ProbesetBasedGOReverseMap: GO2ALLPROBES, GO2PROBE
+###   misceallenous maps: CHRLENGTHS, MAPCOUNTS
 allMaps <- function(con)
 {
     maps <- list(
