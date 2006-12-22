@@ -19,6 +19,7 @@ exportMethods(
               "as.list",
               "contents",
               "countBy",
+              "countMappedKeys",
               "db",
               "dbGetQuery",
               "eapply",

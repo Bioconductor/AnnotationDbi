@@ -46,6 +46,18 @@ subsetTable <- function(con, table, index, subset, cols, add_probes=FALSE)
     dbGetQuery(con, sql)
 }
 
+countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, add_probes=FALSE)
+{
+    if (add_probes) {
+        table <- sqlJoin(table, "probes", "id", "INNER")
+    }
+    sql <- paste("SELECT COUNT(DISTINCT ", index, ") FROM ", table, sep="")
+    sql <- paste(sql, " WHERE ", cols[1], " IS NOT NULL", sep="")
+    if (!is.null(subset))
+        sql <- paste(sql, " AND ", index, " IN ('", paste(subset, collapse="','"), "')", sep="")
+    dbGetQuery(con, sql)[[1]]
+}
+
 fromValueToProbesetIDs  <- function(con, value, mapTable, mapCol)
 {
     sql <- paste("SELECT ", mapCol, ",", PROBESETID_COL, sep="")
@@ -232,6 +244,12 @@ subset.AtomicAnnMap <- function(map, subset=NULL)
     normaliseSubmapKeys(submap, subset)
 }
 
+countMappedKeys.AtomicAnnMap <- function(map, subset=NULL)
+{
+    cols <- map@mapCol
+    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols)
+}
+
 subset.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- map@mapCol
@@ -242,6 +260,12 @@ subset.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
     normaliseSubmapKeys(submap, subset)
 }
 
+countMappedKeys.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
+{
+    cols <- map@mapCol
+    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, add_probes=TRUE)
+}
+
 subset.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
 {
     data <- fromValueToProbesetIDs(db(map), subset, map@mapTable, map@mapCol)
@@ -249,6 +273,12 @@ subset.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
     if (is.null(subset))
         subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
+}
+
+countMappedKeys.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
+{
+    cols <- PROBESETID_COL
+    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, map@mapCol, subset, cols, add_probes=TRUE)
 }
 
 subset.NamedGeneBasedAtomicAnnMap <- function(map, subset=NULL)
@@ -385,6 +415,12 @@ setMethod("mget", signature(envir="ReverseGeneBasedGOAnnMap"),
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "as.list" generic
+### 'as.list(map)' could be simply defined as 'mget(ls(map), map)' but this
+### would result in having a very long IN clause in the SELECT that we send
+### to the database.
+### Note that for a real "environment", 'as.list(envir)' is not identical
+### to 'mget(ls(envir), envir)': the 2 lists have the same elements but not
+### necesarily in the same order!
 
 setMethod("as.list", "AtomicAnnMap",
     function(x, ...)
@@ -430,6 +466,44 @@ setMethod("as.list", "ReverseGeneBasedGOAnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "countmapped" new generic
+
+setGeneric("countMappedKeys", function(map) standardGeneric("countMappedKeys"))
+
+setMethod("countMappedKeys", "AtomicAnnMap",
+    function(map)
+    {
+        countMappedKeys.AtomicAnnMap(map)
+    }
+)
+
+setMethod("countMappedKeys", "GeneBasedAtomicAnnMap",
+    function(map)
+    {
+        countMappedKeys.GeneBasedAtomicAnnMap(map)
+    }
+)
+
+setMethod("countMappedKeys", "ReverseGeneBasedAtomicAnnMap",
+    function(map)
+    {
+        countMappedKeys.ReverseGeneBasedAtomicAnnMap(map)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "eapply" new generic
+
+setMethod("eapply", signature(env="AnnMap"),
+    function(env, FUN, ..., all.names)
+    {
+        lapply(as.list(env), FUN)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "get" new generic
 
 setMethod("get", signature(envir="AnnMap"),
@@ -470,10 +544,6 @@ setMethod("[[", "AnnMap",
         get(i, envir=x)
     }
 )
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### add more generics and methods here, like "eapply", etc...
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
