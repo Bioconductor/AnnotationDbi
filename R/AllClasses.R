@@ -28,7 +28,7 @@ setClass("AnnotGOTermsTable", contains="AnnotMultiColTable")
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 setClass(
-    "SQLiteAnnDataPkgSeed",
+    "AnnDataPkgSeed",
     representation(
         templateName="character",
         chipShortName="character",

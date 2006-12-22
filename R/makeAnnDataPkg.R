@@ -1,8 +1,8 @@
 ###
-### The makeDataPackage method for SQLiteAnnDataPkgSeed objects
+### The makeAnnDataPkg method for AnnDataPkgSeed objects
 ###
-setMethod(Biobase::makeDataPackage,
-    signature(object="SQLiteAnnDataPkgSeed"),
+setMethod(Biobase::makeAnnDataPkg,
+    signature(object="AnnDataPkgSeed"),
     function(object, author, email, packageName, packageVersion,
              license, biocViews, filePath,
              sqliteFilePath, RSQLiteVersion, unlink=FALSE, quiet=FALSE)
@@ -48,7 +48,7 @@ setMethod(Biobase::makeDataPackage,
 ###   AnnotationDbi:::make_hgu95av2db("/tmp", "path/to/hgu95av2.sqlite")
 make_hgu95av2db <- function(filePath, sqliteFilePath, ...)
 {
-    pkgseed <- new("SQLiteAnnDataPkgSeed",
+    pkgseed <- new("AnnDataPkgSeed",
                    templateName="hgu95av2db",
                    chipShortName="hgu95av2",
                    organism="Homo sapiens",
@@ -56,9 +56,9 @@ make_hgu95av2db <- function(filePath, sqliteFilePath, ...)
                    manufacturer="Affymetrix",
                    chipName="Human Genome U95 Set",
                    manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95")
-    makeDataPackage(pkgseed, "Nianhua Li, Seth Falcon", "biocannotation@lists.fhcrc.org",
-                    "hgu95av2db", "1.13.9999", "LGPL",
-                    "AnnotationData, hgu95av2, AffymetrixChip, Homo_sapiens",
-                    filePath, sqliteFilePath, ...)
+    makeAnnDataPkg(pkgseed, "Nianhua Li, Seth Falcon", "biocannotation@lists.fhcrc.org",
+                   "hgu95av2db", "1.13.9999", "LGPL",
+                   "AnnotationData, hgu95av2, AffymetrixChip, Homo_sapiens",
+                   filePath, sqliteFilePath, ...)
 }
 

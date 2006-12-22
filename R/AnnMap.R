@@ -436,8 +436,9 @@ createMAPCOUNTS <- function(maps)
 
 ### TODO: The following maps are missing for now:
 ###   GeneBasedAtomicAnnMap: SUMFUNC
-###   misceallenous maps: CHRLENGTHS, MAPCOUNTS
-allAnnMaps <- function(pkgname, con, datacache)
+###   misceallenous maps: CHRLENGTHS
+### 'chipname' is this chip "shortname" e.g. "hgu95av2" for the hgu95av2db package
+initAnnDataObjects <- function(chipname, con, datacache)
 {
     cachePROBESET2GENE(con, datacache)
     maps <- list(
@@ -482,8 +483,8 @@ allAnnMaps <- function(pkgname, con, datacache)
     maps$ENZYME2PROBE <- new("ReverseGeneBasedAtomicAnnMap", maps$ENZYME)
     maps$PATH2PROBE <- new("ReverseGeneBasedAtomicAnnMap", maps$PATH)
     maps$PMID2PROBE <- new("ReverseGeneBasedAtomicAnnMap", maps$PMID)
-    names(maps) <- paste(pkgname, names(maps), sep="")
-    maps[[paste(pkgname, "MAPCOUNTS", sep="")]] <- createMAPCOUNTS(maps)
+    names(maps) <- paste(chipname, names(maps), sep="")
+    maps[[paste(chipname, "MAPCOUNTS", sep="")]] <- createMAPCOUNTS(maps)
     maps
 }
 

@@ -4,9 +4,8 @@ datacache <- new.env(hash=TRUE)
     require("methods", quietly=TRUE)
     ## Establish a connection to the SQLite DB
     initDbConnection()
-    ## ... and init all the maps
-    maps <- allAnnMaps(getDb(), datacache)
-    names(maps) <- paste("@CHIPSHORTNAME@", names(maps), sep="")
+    ## ... and init the data
+    maps <- initAnnDataObjects("@CHIPSHORTNAME@", getDb(), datacache)
     ns <- asNamespace(pkgname)
     for (mapname in names(maps)) {
         assign(mapname, maps[[mapname]], envir=ns)
