@@ -39,11 +39,13 @@ exportMethods(
               "subByRow")
 
 ### envir-based API:
-exportClasses("ProbesetBasedVirtualMap",
-              "ProbesetBasedMap",
-              "ProbesetBasedNamedMap",
-              "ProbesetBasedGOMap",
-              "ProbesetBasedReverseMap")
+exportClasses("AnnMap",
+              "AtomicAnnMap",
+              "GeneBasedAtomicAnnMap",
+              "ReverseGeneBasedAtomicAnnMap",
+              "NamedGeneBasedAtomicAnnMap",
+              "GeneBasedGOAnnMap",
+              "ReverseGeneBasedGOAnnMap")
 
-export(allMaps)
+export(allAnnMaps)
 

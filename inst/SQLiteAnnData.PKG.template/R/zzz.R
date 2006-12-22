@@ -1,9 +1,11 @@
+datacache <- new.env(hash=TRUE)
+
 .onLoad <- function(libname, pkgname) {
     require("methods", quietly=TRUE)
     ## Establish a connection to the SQLite DB
     initDbConnection()
     ## ... and init all the maps
-    maps <- allMaps(getDb())
+    maps <- allAnnMaps(getDb(), datacache)
     names(maps) <- paste("@CHIPSHORTNAME@", names(maps), sep="")
     ns <- asNamespace(pkgname)
     for (mapname in names(maps)) {
