@@ -40,24 +40,24 @@ subsetTable <- function(con, table, index, subset, cols, add_probes=FALSE)
             cols <- append(cols, PROBESETID_COL)
         table <- sqlJoin(table, "probes", "id", "INNER")
     }
-    sql <- paste("SELECT ", paste(cols, collapse=","),
-                 " FROM ", table,
-                 " WHERE ", index, " IN ('", paste(subset, collapse="','"), "')",
-                 sep="")
+    sql <- paste("SELECT ", paste(cols, collapse=","), " FROM ", table, sep="")
+    if (!is.null(subset))
+        sql <- paste(sql, " WHERE ", index, " IN ('", paste(subset, collapse="','"), "')", sep="")
     dbGetQuery(con, sql)
 }
 
 fromValueToProbesetIDs  <- function(con, value, mapTable, mapCol)
 {
-    if (!is.character(value) || any(is.na(value)))
-        stop("invalid first argument")
     sql <- paste("SELECT ", mapCol, ",", PROBESETID_COL, sep="")
     sql <- paste(sql, " FROM ", sqlJoin(mapTable, "probes", "id"), sep="")
-    sql <- paste(sql, " WHERE ", mapCol, " IN ('", paste(value, collapse="','"), "')", sep="")
+    if (!is.null(value))
+        sql <- paste(sql, " WHERE ", mapCol, " IN ('", paste(value, collapse="','"), "')", sep="")
     data <- dbGetQuery(con, sql)
-    not_found <- which(!(value %in% data[[mapCol]]))
-    if (length(not_found) != 0)
-        stop("value for '", value[not_found[1]], "' not found")
+    if (!is.null(value)) {
+        not_found <- which(!(value %in% data[[mapCol]]))
+        if (length(not_found) != 0)
+            stop("value for '", value[not_found[1]], "' not found")
+    }
     data
 }
 
@@ -75,7 +75,7 @@ cachePROBESET2GENE <- function(con, datacache)
 
 checkProbeset <- function(probeset, datacache)
 {
-    if (!is.character(probeset) || any(is.na(probeset)))
+    if (is.null(probeset) || !is.character(probeset) || any(is.na(probeset)))
         stop("invalid first argument")
     PROBESET2GENE <- get("PROBESET2GENE", envir=datacache)
     not_found <- which(!(probeset %in% names(PROBESET2GENE)))
@@ -219,94 +219,145 @@ setMethod("show", "AnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Those functions are called by the "mget" and "as.list" methods for doing
+### the real job.
+
+subset.AtomicAnnMap <- function(map, subset=NULL)
+{
+    cols <- map@mapCol
+    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols)
+    submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
+    normaliseSubmapKeys(submap, subset)
+}
+
+subset.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
+{
+    cols <- map@mapCol
+    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, add_probes=TRUE)
+    submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
+    normaliseSubmapKeys(submap, subset)
+}
+
+subset.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
+{
+    data <- fromValueToProbesetIDs(db(map), subset, map@mapTable, map@mapCol)
+    submap <- split(data[[PROBESETID_COL]], data[[map@mapCol]])
+    normaliseSubmapKeys(submap, subset)
+}
+
+subset.NamedGeneBasedAtomicAnnMap <- function(map, subset=NULL)
+{
+    cols <- c(map@mapCol, map@namesCol)
+    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, add_probes=TRUE)
+    submap <- data[[map@mapCol]]
+    names(submap) <- data[[map@namesCol]]
+    submap <- split(submap, data[[PROBESETID_COL]])
+    normaliseSubmapKeys(submap, subset)
+}
+
+subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
+{
+    makeGONodeList <- function(GOIDs, Evidences, Ontology)
+    {
+        ans <- lapply(1:length(GOIDs), function(x) list(GOID=GOIDs[x], Evidence=Evidences[x], Ontology=Ontology))
+        names(ans) <- GOIDs
+        ans
+    }
+    cols <- c("go_id", "evidence")
+    getPartialSubmap <- function(table, Ontology)
+    {
+        data <- subsetTable(db(map), table, PROBESETID_COL, subset, cols, add_probes=TRUE)
+        if (nrow(data) == 0)
+            return(list())
+        GOIDs <- split(data[["go_id"]], data[[PROBESETID_COL]])
+        Evidences <- split(data[["evidence"]], data[[PROBESETID_COL]])
+        sapply(names(GOIDs), function(x) makeGONodeList(GOIDs[[x]], Evidences[[x]], Ontology))
+    }
+    submap1 <- getPartialSubmap("go_bp", "BP")
+    submap2 <- getPartialSubmap("go_cc", "CC")
+    submap3 <- getPartialSubmap("go_mf", "MF")
+    ## submap1[x][[1]] is a trick to ensure _exact_ matching! (we don't want partial matching)
+    submap <- lapply(subset,
+                     function(x)
+                     {
+                         y <- c(submap1[x][[1]], submap2[x][[1]], submap3[x][[1]])
+                         if (length(y) == 0) NA else y
+                     })
+    names(submap) <- subset
+    submap
+}
+
+subset.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
+{
+    cols <- "evidence"
+    getPartialSubmap <- function(table)
+    {
+        data <- subsetTable(db(map), table, "go_id", subset, cols, add_probes=TRUE)
+        if (nrow(data) == 0)
+            return(list())
+        submap <- data[[PROBESETID_COL]]
+        names(submap) <- data[["evidence"]]
+        split(submap, data[["go_id"]])
+    }
+    mapTables <- GOtables(map@all)
+    submap <- c(getPartialSubmap(mapTables[1]),
+                getPartialSubmap(mapTables[2]),
+                getPartialSubmap(mapTables[3]))
+    normaliseSubmapKeys(submap, subset)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "mget" new generic
 
 setMethod("mget", signature(envir="AtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
+        checkProbeset(x, envir@datacache)
         if (length(x) == 0)
             return(list())
-        checkProbeset(x, envir@datacache)
-        cols <- envir@mapCol
-        data <- subsetTable(db(envir), envir@mapTable, PROBESETID_COL, x, cols)
-        submap <- split(data[[envir@mapCol]], data[[PROBESETID_COL]])
-        normaliseSubmapKeys(submap, x)
+        subset.AtomicAnnMap(envir, x)
     }
 )
 
 setMethod("mget", signature(envir="GeneBasedAtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
+        checkProbeset(x, envir@datacache)
         if (length(x) == 0)
             return(list())
-        checkProbeset(x, envir@datacache)
-        cols <- envir@mapCol
-        data <- subsetTable(db(envir), envir@mapTable, PROBESETID_COL, x, cols, add_probes=TRUE)
-        submap <- split(data[[envir@mapCol]], data[[PROBESETID_COL]])
-        normaliseSubmapKeys(submap, x)
+        subset.GeneBasedAtomicAnnMap(envir, x)
     }
 )
 
 setMethod("mget", signature(envir="ReverseGeneBasedAtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
+        if (is.null(x) || !is.character(x) || any(is.na(x)))
+            stop("invalid first argument")
         if (length(x) == 0)
             return(list())
-        data <- fromValueToProbesetIDs(db(envir), x, envir@mapTable, envir@mapCol)
-        submap <- split(data[[PROBESETID_COL]], data[[envir@mapCol]])
-        normaliseSubmapKeys(submap, x)
+        subset.ReverseGeneBasedAtomicAnnMap(envir, x)
     }
 )
 
 setMethod("mget", signature(envir="NamedGeneBasedAtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
+        checkProbeset(x, envir@datacache)
         if (length(x) == 0)
             return(list())
-        checkProbeset(x, envir@datacache)
-        cols <- c(envir@mapCol, envir@namesCol)
-        data <- subsetTable(db(envir), envir@mapTable, PROBESETID_COL, x, cols, add_probes=TRUE)
-        submap <- data[[envir@mapCol]]
-        names(submap) <- data[[envir@namesCol]]
-        submap <- split(submap, data[[PROBESETID_COL]])
-        normaliseSubmapKeys(submap, x)
+        subset.NamedGeneBasedAtomicAnnMap(envir, x)
     }
 )
 
 setMethod("mget", signature(envir="GeneBasedGOAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
+        checkProbeset(x, envir@datacache)
         if (length(x) == 0)
             return(list())
-        checkProbeset(x, envir@datacache)
-        makeGONodeList <- function(GOIDs, Evidences, Ontology)
-        {
-            ans <- lapply(1:length(GOIDs), function(x) list(GOID=GOIDs[x], Evidence=Evidences[x], Ontology=Ontology))
-            names(ans) <- GOIDs
-            ans
-        }
-        cols <- c("go_id", "evidence")
-        getPartialSubmap <- function(table, Ontology)
-        {
-            data <- subsetTable(db(envir), table, PROBESETID_COL, x, cols, add_probes=TRUE)
-            if (nrow(data) == 0)
-                return(list())
-            GOIDs <- split(data[["go_id"]], data[[PROBESETID_COL]])
-            Evidences <- split(data[["evidence"]], data[[PROBESETID_COL]])
-            sapply(names(GOIDs), function(x) makeGONodeList(GOIDs[[x]], Evidences[[x]], Ontology))
-        }
-        submap1 <- getPartialSubmap("go_bp", "BP")
-        submap2 <- getPartialSubmap("go_cc", "CC")
-        submap3 <- getPartialSubmap("go_mf", "MF")
-        ## submap1[xx][[1]] is a trick to ensure _exact_ matching! (we don't want partial matching)
-        submap <- lapply(x, function(xx)
-                            {
-                                y <- c(submap1[xx][[1]], submap2[xx][[1]], submap3[xx][[1]])
-                                if (length(y) == 0) NA else y
-                            }
-                        )
-        names(submap) <- x
-        submap
+        subset.GeneBasedGOAnnMap(envir, x)
     }
 )
 
@@ -315,21 +366,7 @@ setMethod("mget", signature(envir="ReverseGeneBasedGOAnnMap"),
     {
         if (length(x) == 0)
             return(list())
-        cols <- "evidence"
-        getPartialSubmap <- function(table)
-        {
-            data <- subsetTable(db(envir), table, "go_id", x, cols, add_probes=TRUE)
-            if (nrow(data) == 0)
-                return(list())
-            submap <- data[[PROBESETID_COL]]
-            names(submap) <- data[["evidence"]]
-            split(submap, data[["go_id"]])
-        }
-        mapTables <- GOtables(envir@all)
-        submap <- c(getPartialSubmap(mapTables[1]),
-                    getPartialSubmap(mapTables[2]),
-                    getPartialSubmap(mapTables[3]))
-        normaliseSubmapKeys(submap, x)
+        subset.ReverseGeneBasedGOAnnMap(envir, x)
     }
 )
 
@@ -340,42 +377,42 @@ setMethod("mget", signature(envir="ReverseGeneBasedGOAnnMap"),
 setMethod("as.list", "AtomicAnnMap",
     function(x, ...)
     {
-        cat("coming soon...\n")
+        subset.AtomicAnnMap(x)
     }
 )
 
 setMethod("as.list", "GeneBasedAtomicAnnMap",
     function(x, ...)
     {
-        cat("coming soon...\n")
+        subset.GeneBasedAtomicAnnMap(x)
     }
 )
 
 setMethod("as.list", "ReverseGeneBasedAtomicAnnMap",
     function(x, ...)
     {
-        cat("coming soon...\n")
+        subset.ReverseGeneBasedAtomicAnnMap(x)
     }
 )
 
 setMethod("as.list", "NamedGeneBasedAtomicAnnMap",
     function(x, ...)
     {
-        cat("coming soon...\n")
+        subset.NamedGeneBasedAtomicAnnMap(x)
     }
 )
 
 setMethod("as.list", "GeneBasedGOAnnMap",
     function(x, ...)
     {
-        cat("coming soon...\n")
+        subset.GeneBasedGOAnnMap(x)
     }
 )
 
 setMethod("as.list", "ReverseGeneBasedGOAnnMap",
     function(x, ...)
     {
-        cat("coming soon...\n")
+        subset.ReverseGeneBasedGOAnnMap(x)
     }
 )
 
@@ -431,6 +468,6 @@ setMethod("[[", "AnnMap",
 
 createMAPCOUNTS <- function(maps)
 {
-    sapply(maps, length)
+    #sapply(maps, length)
 }
 
