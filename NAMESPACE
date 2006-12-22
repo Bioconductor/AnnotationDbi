@@ -10,7 +10,7 @@ export(toggleDebug, generateTwoWayMappings, generateTableObjects,
 exportClasses("functionORNULL",
               "AnnotDbTable", "AnnotDbEnv", "AnnotDbTableTwoWayMap", "AnnotMultiColTable",
               "AnnotThreeColTable", "AnnotGOTermsTable", "AnnotTwoColTable",
-              "SQLiteAnnDataPkgSeed")
+              "AnnDataPkgSeed")
 
 exportMethods(
               "$",

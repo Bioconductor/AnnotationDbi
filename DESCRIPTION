@@ -10,7 +10,7 @@ Imports: Biobase, annotate, GOstats
 Suggests: GOdb, GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R initialize-methods.R
          db.R factories.R subsetting-methods.R show-methods.R
-         AnnMap.R makeDataPackage.R
+         AnnMap.R initAnnDataObjects.R makeAnnDataPkg.R
          zzz.R
 License: LGPL
 
