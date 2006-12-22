@@ -227,6 +227,8 @@ subset.AtomicAnnMap <- function(map, subset=NULL)
     cols <- map@mapCol
     data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols)
     submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
+    if (is.null(subset))
+        subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
 }
 
@@ -235,6 +237,8 @@ subset.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
     cols <- map@mapCol
     data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, add_probes=TRUE)
     submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
+    if (is.null(subset))
+        subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
 }
 
@@ -242,6 +246,8 @@ subset.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
 {
     data <- fromValueToProbesetIDs(db(map), subset, map@mapTable, map@mapCol)
     submap <- split(data[[PROBESETID_COL]], data[[map@mapCol]])
+    if (is.null(subset))
+        subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
 }
 
@@ -252,6 +258,8 @@ subset.NamedGeneBasedAtomicAnnMap <- function(map, subset=NULL)
     submap <- data[[map@mapCol]]
     names(submap) <- data[[map@namesCol]]
     submap <- split(submap, data[[PROBESETID_COL]])
+    if (is.null(subset))
+        subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
 }
 
@@ -276,6 +284,8 @@ subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
     submap1 <- getPartialSubmap("go_bp", "BP")
     submap2 <- getPartialSubmap("go_cc", "CC")
     submap3 <- getPartialSubmap("go_mf", "MF")
+    if (is.null(subset))
+        subset <- ls(map)
     ## submap1[x][[1]] is a trick to ensure _exact_ matching! (we don't want partial matching)
     submap <- lapply(subset,
                      function(x)
@@ -303,6 +313,8 @@ subset.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
     submap <- c(getPartialSubmap(mapTables[1]),
                 getPartialSubmap(mapTables[2]),
                 getPartialSubmap(mapTables[3]))
+    if (is.null(subset))
+        subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
 }
 
@@ -468,6 +480,6 @@ setMethod("[[", "AnnMap",
 
 createMAPCOUNTS <- function(maps)
 {
-    #sapply(maps, length)
+    sapply(maps, length)
 }
 
