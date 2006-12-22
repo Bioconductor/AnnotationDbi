@@ -5,20 +5,72 @@
 
 PROBESETID_COL <- "probe_id"
 
-extractPROBESET2GENE <- function(con)
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### SQL helper functions
+
+getTable <- function(con, table)
 {
-    sql <- paste("SELECT ", PROBESETID_COL, ",id FROM probes", sep="")
-    data <- dbGetQuery(con, sql)
-    PROBESET2GENE <- data[["id"]]
-    names(PROBESET2GENE) <- data[[PROBESETID_COL]]
-    PROBESET2GENE
+    sql <- paste("SELECT * FROM ", table, sep="")
+    dbGetQuery(con, sql)
 }
 
-extractMapRightValues <- function(con, mapTable, mapCol)
+countUniqueColValues <- function(con, table, col)
 {
-    sql <- paste("SELECT DISTINCT ", mapCol, " FROM ", mapTable, sep="")
+    sql <- paste("SELECT COUNT(DISTINCT ", col, ") FROM ", table, sep="")
+    dbGetQuery(con, sql)[[1]]
+}
+
+uniqueColValues <- function(con, table, col)
+{
+    sql <- paste("SELECT DISTINCT ", col, " FROM ", table, sep="")
+    dbGetQuery(con, sql)[[col]]
+}
+
+sqlJoin <- function(table1, table2, using, joinType="LEFT")
+{
+    paste(table1, " ", joinType, " JOIN ", table2, " USING (", using, ")", sep="")
+}
+
+subsetTable <- function(con, table, index, subset, cols, add_probes=FALSE)
+{
+    cols <- append(index, cols)
+    if (add_probes) {
+        if (!(PROBESETID_COL %in% cols))
+            cols <- append(cols, PROBESETID_COL)
+        table <- sqlJoin(table, "probes", "id", "INNER")
+    }
+    sql <- paste("SELECT ", paste(cols, collapse=","),
+                 " FROM ", table,
+                 " WHERE ", index, " IN ('", paste(subset, collapse="','"), "')",
+                 sep="")
+    dbGetQuery(con, sql)
+}
+
+fromValueToProbesetIDs  <- function(con, value, mapTable, mapCol)
+{
+    if (!is.character(value) || any(is.na(value)))
+        stop("invalid first argument")
+    sql <- paste("SELECT ", mapCol, ",", PROBESETID_COL, sep="")
+    sql <- paste(sql, " FROM ", sqlJoin(mapTable, "probes", "id"), sep="")
+    sql <- paste(sql, " WHERE ", mapCol, " IN ('", paste(value, collapse="','"), "')", sep="")
     data <- dbGetQuery(con, sql)
-    data[[mapCol]]
+    not_found <- which(!(value %in% data[[mapCol]]))
+    if (length(not_found) != 0)
+        stop("value for '", value[not_found[1]], "' not found")
+    data
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Other helper functions
+
+cachePROBESET2GENE <- function(con, datacache)
+{
+    data <- getTable(con, "probes")
+    PROBESET2GENE <- data[["id"]]
+    names(PROBESET2GENE) <- data[[PROBESETID_COL]]
+    assign("PROBESET2GENE", PROBESET2GENE, envir=datacache)
 }
 
 checkProbeset <- function(probeset, datacache)
@@ -31,41 +83,22 @@ checkProbeset <- function(probeset, datacache)
         stop("value for '", probeset[not_found[1]], "' not found")
 }
 
-fromProbesetIDToValues1  <- function(con, probeset, mapTable, mapCol)
+GOtables <- function(all)
 {
-    sql <- paste("SELECT ", PROBESETID_COL, ",", mapCol, sep="")
-    sql <- paste(sql, " FROM ", mapTable, sep="")
-    sql <- paste(sql, " WHERE ", PROBESETID_COL, " IN ('", paste(probeset, collapse="','"), "')", sep="")
-    dbGetQuery(con, sql)
+    tables <- c("go_bp", "go_cc", "go_mf")
+    if (all)
+        tables <- paste(tables, "_all", sep="")
+    tables
 }
 
-getSQLJoin <- function(table1, table2, joinCol, joinType="LEFT")
+normaliseSubmapKeys <- function(submap, keys)
 {
-    paste(table1, " ", joinType, " JOIN ", table2, " USING (", joinCol, ")", sep="")
-}
-
-fromProbesetIDToValues2  <- function(con, probeset, mapTable, mapCols, isLeft=TRUE)
-{
-    sql <- paste("SELECT ", PROBESETID_COL, ",", paste(mapCols, collapse=","), sep="")
-    if (isLeft) joinType <- "LEFT" else joinType <- "INNER"
-    sql <- paste(sql, " FROM ", getSQLJoin("probes", mapTable, "id", joinType), sep="")
-    sql <- paste(sql, " WHERE ", PROBESETID_COL, " IN ('", paste(probeset, collapse="','"), "')", sep="")
-    #cat(sql, "\n")
-    dbGetQuery(con, sql)
-}
-
-fromValueToProbesetIDs  <- function(con, value, mapTable, mapCol)
-{
-    if (!is.character(value) || any(is.na(value)))
-        stop("invalid first argument")
-    sql <- paste("SELECT ", mapCol, ",", PROBESETID_COL, sep="")
-    sql <- paste(sql, " FROM ", getSQLJoin(mapTable, "probes", "id"), sep="")
-    sql <- paste(sql, " WHERE ", mapCol, " IN ('", paste(value, collapse="','"), "')", sep="")
-    data <- dbGetQuery(con, sql)
-    not_found <- which(!(value %in% data[[mapCol]]))
-    if (length(not_found) != 0)
-        stop("value for '", value[not_found[1]], "' not found")
-    data
+    ## Old version, slow
+    #ans <- submap[keys]; ans[sapply(ans, is.null)] <- NA;
+    ## New version, slightly faster
+    ans <- lapply(keys, function(x) {y <- submap[x][[1]]; if (is.null(y)) NA else y})
+    names(ans) <- keys
+    ans
 }
 
 
@@ -100,6 +133,8 @@ setClass("NamedGeneBasedAtomicAnnMap", contains="GeneBasedAtomicAnnMap", represe
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
 setClass("GeneBasedGOAnnMap", contains="AnnMap")
 
+### Maps a GO term to a named character vector containing probeset IDs.
+### Each element of the vector is named with the Evidence code.
 setClass("ReverseGeneBasedGOAnnMap", contains="AnnMap", representation(all="logical"))
 
 
@@ -109,6 +144,36 @@ setClass("ReverseGeneBasedGOAnnMap", contains="AnnMap", representation(all="logi
 setGeneric("db", function(object) standardGeneric("db"))
 
 setMethod("db", "AnnMap", function(object) object@con)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "length" generic
+
+setMethod("length", "AnnMap",
+    function(x)
+    {
+        length(get("PROBESET2GENE", envir=x@datacache))
+    }
+)
+
+setMethod("length", "ReverseAtomicAnnMap",
+    function(x)
+    {
+        countUniqueColValues(db(x), x@mapTable, x@mapCol)
+    }
+)
+
+setMethod("length", "ReverseGeneBasedGOAnnMap",
+    function(x)
+    {
+        mapTables <- GOtables(x@all)
+        ## Our assumption is that a given go_id can only belong to 1 of the 3
+        ## ontologies!
+        countUniqueColValues(db(x), mapTables[1], "go_id") +
+            countUniqueColValues(db(x), mapTables[2], "go_id") +
+            countUniqueColValues(db(x), mapTables[3], "go_id")
+    }
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -124,22 +189,31 @@ setMethod("ls", signature(name="AnnMap"),
 setMethod("ls", signature(name="ReverseAtomicAnnMap"),
     function(name, pos, envir, all.names, pattern)
     {
-        extractMapRightValues(db(name), name@mapTable, name@mapCol)
+        uniqueColValues(db(name), name@mapTable, name@mapCol)
     }
 )
 
 setMethod("ls", signature(name="ReverseGeneBasedGOAnnMap"),
     function(name, pos, envir, all.names, pattern)
     {
-        if (name@all) {
-            c(extractMapRightValues(db(name), "go_bp_all", "go_id"),
-              extractMapRightValues(db(name), "go_cc_all", "go_id"),
-              extractMapRightValues(db(name), "go_mf_all", "go_id"))
-        } else {
-            c(extractMapRightValues(db(name), "go_bp", "go_id"),
-              extractMapRightValues(db(name), "go_cc", "go_id"),
-              extractMapRightValues(db(name), "go_mf", "go_id"))
-        }
+        mapTables <- GOtables(name@all)
+        ## Our assumption is that a given go_id can only belong to 1 of the 3
+        ## ontologies! If we are wrong, then we should apply unique() to the
+        ## result of this concantenation and fix the "length" method above.
+        c(uniqueColValues(db(name), mapTables[1], "go_id"),
+          uniqueColValues(db(name), mapTables[2], "go_id"),
+          uniqueColValues(db(name), mapTables[3], "go_id"))
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "show" generic
+
+setMethod("show", "AnnMap",
+    function(object)
+    {
+        cat("An object of class “", class(object), "”\n", sep="")
     }
 )
 
@@ -153,8 +227,10 @@ setMethod("mget", signature(envir="AtomicAnnMap"),
         if (length(x) == 0)
             return(list())
         checkProbeset(x, envir@datacache)
-        data <- fromProbesetIDToValues1(db(envir), x, envir@mapTable, envir@mapCol)
-        split(data[[envir@mapCol]], data[[PROBESETID_COL]])
+        cols <- envir@mapCol
+        data <- subsetTable(db(envir), envir@mapTable, PROBESETID_COL, x, cols)
+        submap <- split(data[[envir@mapCol]], data[[PROBESETID_COL]])
+        normaliseSubmapKeys(submap, x)
     }
 )
 
@@ -164,8 +240,10 @@ setMethod("mget", signature(envir="GeneBasedAtomicAnnMap"),
         if (length(x) == 0)
             return(list())
         checkProbeset(x, envir@datacache)
-        data <- fromProbesetIDToValues2(db(envir), x, envir@mapTable, envir@mapCol)
-        split(data[[envir@mapCol]], data[[PROBESETID_COL]])
+        cols <- envir@mapCol
+        data <- subsetTable(db(envir), envir@mapTable, PROBESETID_COL, x, cols, add_probes=TRUE)
+        submap <- split(data[[envir@mapCol]], data[[PROBESETID_COL]])
+        normaliseSubmapKeys(submap, x)
     }
 )
 
@@ -175,7 +253,8 @@ setMethod("mget", signature(envir="ReverseGeneBasedAtomicAnnMap"),
         if (length(x) == 0)
             return(list())
         data <- fromValueToProbesetIDs(db(envir), x, envir@mapTable, envir@mapCol)
-        split(data[[PROBESETID_COL]], data[[envir@mapCol]])
+        submap <- split(data[[PROBESETID_COL]], data[[envir@mapCol]])
+        normaliseSubmapKeys(submap, x)
     }
 )
 
@@ -185,37 +264,40 @@ setMethod("mget", signature(envir="NamedGeneBasedAtomicAnnMap"),
         if (length(x) == 0)
             return(list())
         checkProbeset(x, envir@datacache)
-        data <- fromProbesetIDToValues2(db(envir), x, envir@mapTable, c(envir@mapCol, envir@namesCol))
+        cols <- c(envir@mapCol, envir@namesCol)
+        data <- subsetTable(db(envir), envir@mapTable, PROBESETID_COL, x, cols, add_probes=TRUE)
         submap <- data[[envir@mapCol]]
         names(submap) <- data[[envir@namesCol]]
-        split(submap, data[[PROBESETID_COL]])
+        submap <- split(submap, data[[PROBESETID_COL]])
+        normaliseSubmapKeys(submap, x)
     }
 )
 
 setMethod("mget", signature(envir="GeneBasedGOAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
+        if (length(x) == 0)
+            return(list())
+        checkProbeset(x, envir@datacache)
         makeGONodeList <- function(GOIDs, Evidences, Ontology)
         {
             ans <- lapply(1:length(GOIDs), function(x) list(GOID=GOIDs[x], Evidence=Evidences[x], Ontology=Ontology))
             names(ans) <- GOIDs
             ans
         }
-        getProbesetBasedGoMap <- function(probeset, table, Ontology)
+        cols <- c("go_id", "evidence")
+        getPartialSubmap <- function(table, Ontology)
         {
-            data <- fromProbesetIDToValues2(db(envir), probeset, table, c("go_id", "evidence"), isLeft=FALSE)
+            data <- subsetTable(db(envir), table, PROBESETID_COL, x, cols, add_probes=TRUE)
             if (nrow(data) == 0)
                 return(list())
-            GOIDs <- split(data$go_id, data$probe_id)
-            Evidences <- split(data$evidence, data$probe_id)
+            GOIDs <- split(data[["go_id"]], data[[PROBESETID_COL]])
+            Evidences <- split(data[["evidence"]], data[[PROBESETID_COL]])
             sapply(names(GOIDs), function(x) makeGONodeList(GOIDs[[x]], Evidences[[x]], Ontology))
         }
-        if (length(x) == 0)
-            return(list())
-        checkProbeset(x, envir@datacache)
-        submap1 <- getProbesetBasedGoMap(x, "go_bp", "BP")
-        submap2 <- getProbesetBasedGoMap(x, "go_cc", "CC")
-        submap3 <- getProbesetBasedGoMap(x, "go_mf", "MF")
+        submap1 <- getPartialSubmap("go_bp", "BP")
+        submap2 <- getPartialSubmap("go_cc", "CC")
+        submap3 <- getPartialSubmap("go_mf", "MF")
         ## submap1[xx][[1]] is a trick to ensure _exact_ matching! (we don't want partial matching)
         submap <- lapply(x, function(xx)
                             {
@@ -233,7 +315,67 @@ setMethod("mget", signature(envir="ReverseGeneBasedGOAnnMap"),
     {
         if (length(x) == 0)
             return(list())
-        cat("coming soon\n")
+        cols <- "evidence"
+        getPartialSubmap <- function(table)
+        {
+            data <- subsetTable(db(envir), table, "go_id", x, cols, add_probes=TRUE)
+            if (nrow(data) == 0)
+                return(list())
+            submap <- data[[PROBESETID_COL]]
+            names(submap) <- data[["evidence"]]
+            split(submap, data[["go_id"]])
+        }
+        mapTables <- GOtables(envir@all)
+        submap <- c(getPartialSubmap(mapTables[1]),
+                    getPartialSubmap(mapTables[2]),
+                    getPartialSubmap(mapTables[3]))
+        normaliseSubmapKeys(submap, x)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "as.list" generic
+
+setMethod("as.list", "AtomicAnnMap",
+    function(x, ...)
+    {
+        cat("coming soon...\n")
+    }
+)
+
+setMethod("as.list", "GeneBasedAtomicAnnMap",
+    function(x, ...)
+    {
+        cat("coming soon...\n")
+    }
+)
+
+setMethod("as.list", "ReverseGeneBasedAtomicAnnMap",
+    function(x, ...)
+    {
+        cat("coming soon...\n")
+    }
+)
+
+setMethod("as.list", "NamedGeneBasedAtomicAnnMap",
+    function(x, ...)
+    {
+        cat("coming soon...\n")
+    }
+)
+
+setMethod("as.list", "GeneBasedGOAnnMap",
+    function(x, ...)
+    {
+        cat("coming soon...\n")
+    }
+)
+
+setMethod("as.list", "ReverseGeneBasedGOAnnMap",
+    function(x, ...)
+    {
+        cat("coming soon...\n")
     }
 )
 
@@ -250,18 +392,54 @@ setMethod("get", signature(envir="AnnMap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### add more generics and methods here, like "length", "[[", "as.list",
-### "eapply", etc...
+### The "[[" generic
+
+setMethod("[[", "AnnMap",
+    function(x, i, j, ...)
+    {
+        # 'x' is guaranteed to be a "AnnMap" object (if it's not, then the
+        # method dispatch algo will not call this method in the first place),
+        # so nargs() is guaranteed to be >= 1
+        if (nargs() >= 3)
+            stop("too many subscripts")
+        subscripts <- list(...)
+        if (!missing(i))
+            subscripts$i <- i
+        if (!missing(j))
+            subscripts$j <- j
+        # At this point, 'subscripts' should be guaranteed
+        # to be of length <= 1
+        if (length(subscripts) == 0)
+            stop("no index specified")
+        i <- subscripts[[1]]
+        if (length(i) < 1)
+            stop("attempt to select less than one element")
+        if (length(i) > 1)
+            stop("attempt to select more than one element")
+        if (!is.character(i) || is.na(i))
+            stop("wrong argument for subsetting an object of class “", class(x), "“")
+        get(i, envir=x)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### add more generics and methods here, like "eapply", etc...
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+createMAPCOUNTS <- function(maps)
+{
+    sapply(maps, length)
+}
+
 ### TODO: The following maps are missing for now:
 ###   GeneBasedAtomicAnnMap: SUMFUNC
 ###   misceallenous maps: CHRLENGTHS, MAPCOUNTS
-allAnnMaps <- function(con, datacache)
+allAnnMaps <- function(pkgname, con, datacache)
 {
-    assign("PROBESET2GENE", extractPROBESET2GENE(con), envir=datacache)
+    cachePROBESET2GENE(con, datacache)
     maps <- list(
                  ACCNUM=new("AtomicAnnMap",
                    mapTable="accessions", mapCol="accession", con=con, datacache=datacache),
@@ -304,6 +482,8 @@ allAnnMaps <- function(con, datacache)
     maps$ENZYME2PROBE <- new("ReverseGeneBasedAtomicAnnMap", maps$ENZYME)
     maps$PATH2PROBE <- new("ReverseGeneBasedAtomicAnnMap", maps$PATH)
     maps$PMID2PROBE <- new("ReverseGeneBasedAtomicAnnMap", maps$PMID)
+    names(maps) <- paste(pkgname, names(maps), sep="")
+    maps[[paste(pkgname, "MAPCOUNTS", sep="")]] <- createMAPCOUNTS(maps)
     maps
 }
 

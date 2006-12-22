@@ -31,7 +31,8 @@ setMethod(Biobase::makeDataPackage,
                      BIOCVIEWS=biocViews,
                      DBFILE=dbFileName,
                      RSQLITEVERSION=RSQLiteVersion)
-        templateDir <- system.file("SQLiteAnnData.PKG.template",
+        templateDir <- system.file("AnnDataPkg.templates",
+                                   object@templateName,
                                    package="AnnotationDbi")
         createPackage(pkgname=packageName, destinationDir=filePath,
                       originDir=templateDir,
@@ -48,6 +49,7 @@ setMethod(Biobase::makeDataPackage,
 make_hgu95av2db <- function(filePath, sqliteFilePath, ...)
 {
     pkgseed <- new("SQLiteAnnDataPkgSeed",
+                   templateName="hgu95av2db",
                    chipShortName="hgu95av2",
                    organism="Homo sapiens",
                    species="Human",

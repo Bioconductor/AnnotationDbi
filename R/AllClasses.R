@@ -30,6 +30,7 @@ setClass("AnnotGOTermsTable", contains="AnnotMultiColTable")
 setClass(
     "SQLiteAnnDataPkgSeed",
     representation(
+        templateName="character",
         chipShortName="character",
         organism="character",
         species="character",
