@@ -48,5 +48,5 @@ exportClasses("AnnMap",
               "GeneBasedGOAnnMap",
               "ReverseGeneBasedGOAnnMap")
 
-export(initAnnDataObjects)
+export(createAnnDataObjects.hgu95av2db)
 

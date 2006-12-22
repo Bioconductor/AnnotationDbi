@@ -5,7 +5,7 @@ datacache <- new.env(hash=TRUE)
     ## Establish a connection to the SQLite DB
     initDbConnection()
     ## ... and init the data
-    maps <- initAnnDataObjects("@CHIPSHORTNAME@", getDb(), datacache)
+    maps <- createAnnDataObjects.hgu95av2db("@CHIPSHORTNAME@", getDb(), datacache)
     ns <- asNamespace(pkgname)
     for (mapname in names(maps)) {
         assign(mapname, maps[[mapname]], envir=ns)

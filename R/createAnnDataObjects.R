@@ -6,7 +6,7 @@
 ###   GeneBasedAtomicAnnMap: SUMFUNC
 ###   misceallenous maps: CHRLENGTHS
 ### 'chipname' is this chip "shortname" e.g. "hgu95av2" for the hgu95av2db package
-initAnnDataObjects <- function(chipname, con, datacache)
+createAnnDataObjects.hgu95av2db <- function(chipname, con, datacache)
 {
     cachePROBESET2GENE(con, datacache)
     maps <- list(
