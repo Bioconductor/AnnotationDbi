@@ -1,7 +1,7 @@
 ###
-### The makeAnnDataPkg method for AnnDataPkgSeed objects
+### The makeDataPackage method for AnnDataPkgSeed objects
 ###
-setMethod(Biobase::makeAnnDataPkg,
+setMethod(Biobase::makeDataPackage,
     signature(object="AnnDataPkgSeed"),
     function(object, author, email, packageName, packageVersion,
              license, biocViews, filePath,
@@ -56,7 +56,7 @@ make_hgu95av2db <- function(filePath, sqliteFilePath, ...)
                    manufacturer="Affymetrix",
                    chipName="Human Genome U95 Set",
                    manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95")
-    makeAnnDataPkg(pkgseed, "Nianhua Li, Seth Falcon", "biocannotation@lists.fhcrc.org",
+    makeDataPackage(pkgseed, "Nianhua Li, Seth Falcon", "biocannotation@lists.fhcrc.org",
                    "hgu95av2db", "1.13.9999", "LGPL",
                    "AnnotationData, hgu95av2, AffymetrixChip, Homo_sapiens",
                    filePath, sqliteFilePath, ...)
