@@ -14,6 +14,13 @@ extractPROBESET2GENE <- function(con)
     PROBESET2GENE
 }
 
+extractMapRightValues <- function(con, mapTable, mapCol)
+{
+    sql <- paste("SELECT DISTINCT ", mapCol, " FROM ", mapTable, sep="")
+    data <- dbGetQuery(con, sql)
+    data[[mapCol]]
+}
+
 checkProbeset <- function(probeset, datacache)
 {
     if (!is.character(probeset) || any(is.na(probeset)))
@@ -65,7 +72,7 @@ fromValueToProbesetIDs  <- function(con, value, mapTable, mapCol)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Classes representing annotation maps
 
-setClass("AnnMap" , representation(con="DBIConnection", datacache="environment"))
+setClass("AnnMap", representation(con="DBIConnection", datacache="environment"))
 
 ### Maps each probeset ID to an unnamed atomic vector (character or integer)
 setClass(
@@ -76,13 +83,15 @@ setClass(
     )
 )
 
+setClass("ReverseAtomicAnnMap", contains="AtomicAnnMap")
+
 ### Data are "gene based" i.e. maps of class GeneBasedAtomicAnnMap have the
 ### following property:
 ###     if probeset1 and probeset2 have the same ENTREZID
 ###         then map[[probeset1]] == map[[probeset2]]
 setClass("GeneBasedAtomicAnnMap", contains="AtomicAnnMap")
 
-setClass("ReverseGeneBasedAtomicAnnMap", contains="GeneBasedAtomicAnnMap")
+setClass("ReverseGeneBasedAtomicAnnMap", contains="ReverseAtomicAnnMap")
 
 setClass("NamedGeneBasedAtomicAnnMap", contains="GeneBasedAtomicAnnMap", representation(namesCol="character"))
 
@@ -91,7 +100,7 @@ setClass("NamedGeneBasedAtomicAnnMap", contains="GeneBasedAtomicAnnMap", represe
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
 setClass("GeneBasedGOAnnMap", contains="AnnMap")
 
-setClass("ReverseGeneBasedGOAnnMap", contains="GeneBasedGOAnnMap")
+setClass("ReverseGeneBasedGOAnnMap", contains="AnnMap", representation(all="logical")))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -99,19 +108,41 @@ setClass("ReverseGeneBasedGOAnnMap", contains="GeneBasedGOAnnMap")
 
 setGeneric("db", function(object) standardGeneric("db"))
 
-setMethod("db", "AnnMap",
-          function(object) object@con)
+setMethod("db", "AnnMap", function(object) object@con)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "ls" new generic
 
-setMethod("ls", signature(name="GeneBasedAtomicAnnMap"),
+setMethod("ls", signature(name="AnnMap"),
     function(name, pos, envir, all.names, pattern)
     {
         names(get("PROBESET2GENE", envir=name@datacache))
     }
 )
+
+setMethod("ls", signature(name="ReverseAtomicAnnMap"),
+    function(name, pos, envir, all.names, pattern)
+    {
+        extractMapRightValues(db(name), name@mapTable, name@mapCol)
+    }
+)
+
+setMethod("ls", signature(name="ReverseGeneBasedGOAnnMap"),
+    function(name, pos, envir, all.names, pattern)
+    {
+        if (name@all) {
+            c(extractMapRightValues(db(name), "go_bp_all", "go_id"),
+              extractMapRightValues(db(name), "go_cc_all", "go_id"),
+              extractMapRightValues(db(name), "go_mf_all", "go_id"))
+        } else {
+            c(extractMapRightValues(db(name), "go_bp", "go_id"),
+              extractMapRightValues(db(name), "go_cc", "go_id"),
+              extractMapRightValues(db(name), "go_mf", "go_id"))
+        }
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "mget" new generic
@@ -197,6 +228,15 @@ setMethod("mget", signature(envir="GeneBasedGOAnnMap"),
     }
 )
 
+setMethod("mget", signature(envir="ReverseGeneBasedGOAnnMap"),
+    function(x, envir, mode, ifnotfound, inherits)
+    {
+        if (length(x) == 0)
+            return(list())
+        cat("coming soon\n")
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "get" new generic
@@ -218,7 +258,6 @@ setMethod("get", signature(envir="AnnMap"),
 
 ### TODO: The following maps are missing for now:
 ###   GeneBasedAtomicAnnMap: SUMFUNC
-###   ReverseGeneBasedGOAnnMap: GO2ALLPROBES, GO2PROBE
 ###   misceallenous maps: CHRLENGTHS, MAPCOUNTS
 allAnnMaps <- function(con, datacache)
 {
@@ -239,6 +278,10 @@ allAnnMaps <- function(con, datacache)
                    mapTable="gene_info", mapCol="gene_name", con=con, datacache=datacache),
                  GO=new("GeneBasedGOAnnMap",
                    con=con, datacache=datacache),
+                 GO2ALLPROBES=new("ReverseGeneBasedGOAnnMap",
+                   all=TRUE, con=con, datacache=datacache),
+                 GO2PROBE=new("ReverseGeneBasedGOAnnMap",
+                   all=FALSE, con=con, datacache=datacache),
                  MAP=new("GeneBasedAtomicAnnMap",
                    mapTable="cytogenetic_locations", mapCol="cytogenetic_location", con=con, datacache=datacache),
                  OMIM=new("GeneBasedAtomicAnnMap",

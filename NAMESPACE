@@ -41,6 +41,7 @@ exportMethods(
 ### envir-based API:
 exportClasses("AnnMap",
               "AtomicAnnMap",
+              "ReverseAtomicAnnMap",
               "GeneBasedAtomicAnnMap",
               "ReverseGeneBasedAtomicAnnMap",
               "NamedGeneBasedAtomicAnnMap",
