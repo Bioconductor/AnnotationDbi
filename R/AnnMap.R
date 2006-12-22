@@ -466,7 +466,11 @@ setMethod("as.list", "ReverseGeneBasedGOAnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "countmapped" new generic
+### The "countMappedKeys" new generic.
+### 'countMappedKeys(map)' is the number of keys that are mapped to a non-NA
+### value. It could be defined by
+###   sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
+### but this would be too slow...
 
 setGeneric("countMappedKeys", function(map) standardGeneric("countMappedKeys"))
 

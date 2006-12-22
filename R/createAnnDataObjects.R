@@ -58,5 +58,7 @@ createAnnDataObjects.hgu95av2db <- function(chipname, con, datacache)
 
 benchmarks <- function(pkgname)
 {
+    # For each map:
+    #   - compare countMappedKeys(map) with sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
 }
 
