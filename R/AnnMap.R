@@ -100,7 +100,7 @@ setClass("NamedGeneBasedAtomicAnnMap", contains="GeneBasedAtomicAnnMap", represe
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
 setClass("GeneBasedGOAnnMap", contains="AnnMap")
 
-setClass("ReverseGeneBasedGOAnnMap", contains="AnnMap", representation(all="logical")))
+setClass("ReverseGeneBasedGOAnnMap", contains="AnnMap", representation(all="logical"))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
