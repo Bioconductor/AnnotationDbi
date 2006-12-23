@@ -552,8 +552,11 @@ setMethod("[[", "AnnMap",
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-createMAPCOUNTS <- function(maps)
+createMAPCOUNTS <- function(con, chipname)
 {
-    sapply(maps, length)
+    data <- getTable(con, "qcdata")
+    MAPCOUNTS <- data[["count"]]
+    names(MAPCOUNTS) <- paste(chipname, data[["map_name"]], sep="")
+    MAPCOUNTS
 }
 

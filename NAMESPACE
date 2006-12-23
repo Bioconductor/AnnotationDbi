@@ -40,14 +40,18 @@ exportMethods(
               "subByRow")
 
 ### envir-based API:
-exportClasses("AnnMap",
-              "AtomicAnnMap",
-              "ReverseAtomicAnnMap",
-              "GeneBasedAtomicAnnMap",
-              "ReverseGeneBasedAtomicAnnMap",
-              "NamedGeneBasedAtomicAnnMap",
-              "GeneBasedGOAnnMap",
-              "ReverseGeneBasedGOAnnMap")
+exportClasses(
+    "AnnMap",
+    "AtomicAnnMap",
+    "ReverseAtomicAnnMap",
+    "GeneBasedAtomicAnnMap",
+    "ReverseGeneBasedAtomicAnnMap",
+    "NamedGeneBasedAtomicAnnMap",
+    "GeneBasedGOAnnMap",
+    "ReverseGeneBasedGOAnnMap")
 
-export(createAnnDataObjects.hgu95av2db)
+export(
+    createAnnDataObjects.hgu95av2db,
+    checkAnnDataObjects.hgu95av2db
+)
 
