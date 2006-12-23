@@ -329,7 +329,7 @@ subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
 
 countMappedKeys.GeneBasedGOAnnMap <- function(map, subset=NULL)
 {
-    getPartialSubmap <- function(table)
+    getMappedKeys <- function(table)
     {
         data <- subsetTable(db(map), table, PROBESETID_COL, subset, character(0), add_probes=TRUE)
         unique(data[[PROBESETID_COL]])
