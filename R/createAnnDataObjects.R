@@ -70,12 +70,12 @@ createAnnDataObjects.hgu95av2db <- function(chipname, con, datacache)
     maps
 }
 
-checkAnnDataObjects.hgu95av2db <- function(pkgname)
+checkAnnDataObjects.hgu95av2db <- function(pkgname, chipname)
 {
     require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
     getMap <- function(mapname)
     {
-        get(paste(pkgname, mapname, sep=""), envir=asNamespace(pkgname))
+        get(paste(chipname, mapname, sep=""), envir=asNamespace(pkgname))
     }
     MAPCOUNTS <- getMap("MAPCOUNTS")
     for (mapname in names(MAPCOUNTS)) {
