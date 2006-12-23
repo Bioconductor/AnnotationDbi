@@ -337,7 +337,9 @@ countMappedKeys.GeneBasedGOAnnMap <- function(map, subset=NULL)
     keys1 <- getMappedKeys("go_bp")
     keys2 <- getMappedKeys("go_cc")
     keys3 <- getMappedKeys("go_mf")
-    length(intersect(keys1, intersect(keys2, keys3)))
+    keys <- c(keys1, keys2, keys3)
+    # Equivalent to length(unique(keys)) but slightly faster
+    length(keys) - sum(duplicated(keys))
 }
 
 subset.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
