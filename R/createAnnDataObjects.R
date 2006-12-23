@@ -70,7 +70,7 @@ createAnnDataObjects.hgu95av2db <- function(chipname, con, datacache)
     maps
 }
 
-checkAnnDataObjects.hgu95av2db(pkgname)
+checkAnnDataObjects_hgu95av2db <- function(pkgname)
 {
     require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
     getMap <- function(mapname)
@@ -85,10 +85,10 @@ checkAnnDataObjects.hgu95av2db(pkgname)
         cat("  - nbKeys = ", nbKeys, "\n", sep="")
         count0 <- MAPCOUNTS[mapname]
         cat("  - count0 = ", count0, "\n", sep="")
-        count1 <- countMappedKeys(map)
-        cat("  - count1 = ", count1, "\n", sep="")
-        count2 <- sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
-        cat("  - count2 = ", count2, "\n", sep="")
+        t1 <- system.time(count1 <- countMappedKeys(map))
+        cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
+        t2 <- system.time(count2 <- sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x))))
+        cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
         if (count1 != count0 || count2 != count0)
             stop("count0, count1 and count2 not the same")
     }
