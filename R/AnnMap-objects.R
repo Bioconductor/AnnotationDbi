@@ -327,9 +327,22 @@ subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
     submap
 }
 
+countMappedKeys.GeneBasedGOAnnMap <- function(map, subset=NULL)
+{
+    getPartialSubmap <- function(table)
+    {
+        data <- subsetTable(db(map), table, PROBESETID_COL, subset, character(0), add_probes=TRUE)
+        unique(data[[PROBESETID_COL]])
+    }
+    keys1 <- getMappedKeys("go_bp")
+    keys2 <- getMappedKeys("go_cc")
+    keys3 <- getMappedKeys("go_mf")
+    length(intersect(keys1, intersect(keys2, keys3)))
+}
+
 subset.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
 {
-    cols <- "evidence"
+    cols <- c(PROBESETID_COL, "evidence")
     getPartialSubmap <- function(table)
     {
         data <- subsetTable(db(map), table, "go_id", subset, cols, add_probes=TRUE)
@@ -346,6 +359,18 @@ subset.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
     if (is.null(subset))
         subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
+}
+
+countMappedKeys.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
+{
+    mapTables <- GOtables(map@all)
+    count1 <- countUniqueSubsetsInSubsettedTable(db(map), mapTables[1],
+                "go_id", subset, PROBESETID_COL, add_probes=TRUE)
+    count2 <- countUniqueSubsetsInSubsettedTable(db(map), mapTables[2],
+                "go_id", subset, PROBESETID_COL, add_probes=TRUE)
+    count3 <- countUniqueSubsetsInSubsettedTable(db(map), mapTables[3],
+                "go_id", subset, PROBESETID_COL, add_probes=TRUE)
+    count1 + count2 + count3
 }
 
 
@@ -492,6 +517,20 @@ setMethod("countMappedKeys", "ReverseGeneBasedAtomicAnnMap",
     function(map)
     {
         countMappedKeys.ReverseGeneBasedAtomicAnnMap(map)
+    }
+)
+
+setMethod("countMappedKeys", "GeneBasedGOAnnMap",
+    function(map)
+    {
+        countMappedKeys.GeneBasedGOAnnMap(map)
+    }
+)
+
+setMethod("countMappedKeys", "ReverseGeneBasedGOAnnMap",
+    function(map)
+    {
+        countMappedKeys.ReverseGeneBasedGOAnnMap(map)
     }
 )
 
