@@ -75,9 +75,9 @@ checkAnnDataObjects.hgu95av2db <- function(pkgname, chipname)
     require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
     getMap <- function(mapname)
     {
-        get(paste(chipname, mapname, sep=""), envir=asNamespace(pkgname))
+        get(mapname, envir=asNamespace(pkgname))
     }
-    MAPCOUNTS <- getMap("MAPCOUNTS")
+    MAPCOUNTS <- getMap(paste(chipname, "MAPCOUNTS", sep=""))
     for (mapname in names(MAPCOUNTS)) {
         cat("Checking ", mapname, " map:\n", sep="")
         map <- getMap(mapname)
