@@ -557,6 +557,6 @@ createMAPCOUNTS <- function(con, chipname)
     data <- getTable(con, "qcdata")
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(chipname, data[["map_name"]], sep="")
-    MAPCOUNTS
+    MAPCOUNTS[!(MAPCOUNTS %in% "TOTAL")]
 }
 
