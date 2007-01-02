@@ -9,9 +9,11 @@ PROBESETID_COL <- "probe_id"
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SQL helper functions
 
-getTable <- function(con, table)
+getTable <- function(con, table, where=NULL)
 {
     sql <- paste("SELECT * FROM ", table, sep="")
+    if (!is.null(where))
+        sql <- paste(sql, " WHERE ", where, sep="")
     dbGetQuery(con, sql)
 }
 
@@ -275,12 +277,6 @@ subset.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
     normaliseSubmapKeys(submap, subset)
 }
 
-countMappedKeys.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
-{
-    cols <- PROBESETID_COL
-    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, map@mapCol, subset, cols, add_probes=TRUE)
-}
-
 subset.NamedGeneBasedAtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- c(map@mapCol, map@namesCol)
@@ -361,18 +357,6 @@ subset.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
     if (is.null(subset))
         subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
-}
-
-countMappedKeys.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
-{
-    mapTables <- GOtables(map@all)
-    count1 <- countUniqueSubsetsInSubsettedTable(db(map), mapTables[1],
-                "go_id", subset, PROBESETID_COL, add_probes=TRUE)
-    count2 <- countUniqueSubsetsInSubsettedTable(db(map), mapTables[2],
-                "go_id", subset, PROBESETID_COL, add_probes=TRUE)
-    count3 <- countUniqueSubsetsInSubsettedTable(db(map), mapTables[3],
-                "go_id", subset, PROBESETID_COL, add_probes=TRUE)
-    count1 + count2 + count3
 }
 
 
@@ -498,6 +482,8 @@ setMethod("as.list", "ReverseGeneBasedGOAnnMap",
 ### value. It could be defined by
 ###   sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
 ### but this would be too slow...
+### Note that if map is a "reverse" map, then this would be the same than its
+### length.
 
 setGeneric("countMappedKeys", function(map) standardGeneric("countMappedKeys"))
 
@@ -516,10 +502,7 @@ setMethod("countMappedKeys", "GeneBasedAtomicAnnMap",
 )
 
 setMethod("countMappedKeys", "ReverseGeneBasedAtomicAnnMap",
-    function(map)
-    {
-        countMappedKeys.ReverseGeneBasedAtomicAnnMap(map)
-    }
+    function(map) length(map)
 )
 
 setMethod("countMappedKeys", "GeneBasedGOAnnMap",
@@ -530,10 +513,7 @@ setMethod("countMappedKeys", "GeneBasedGOAnnMap",
 )
 
 setMethod("countMappedKeys", "ReverseGeneBasedGOAnnMap",
-    function(map)
-    {
-        countMappedKeys.ReverseGeneBasedGOAnnMap(map)
-    }
+    function(map) length(map)
 )
 
 
@@ -595,9 +575,9 @@ setMethod("[[", "AnnMap",
 
 createMAPCOUNTS <- function(con, chipname)
 {
-    data <- getTable(con, "qcdata")
+    data <- getTable(con, "qcdata", "map_name != 'TOTAL'")
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(chipname, data[["map_name"]], sep="")
-    MAPCOUNTS[!(MAPCOUNTS %in% "TOTAL")]
+    MAPCOUNTS
 }
 
