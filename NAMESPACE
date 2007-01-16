@@ -51,7 +51,8 @@ exportClasses(
     "ReverseGeneBasedGOAnnMap")
 
 export(
-    createAnnDataObjects.hgu95av2db,
-    checkAnnDataObjects.hgu95av2db
+    checkAnnDataObjects,
+    createAnnDataObjects.HGU95AV2DB,
+    createAnnDataObjects.YEAST2DB
 )
 

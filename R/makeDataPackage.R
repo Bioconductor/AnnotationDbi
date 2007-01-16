@@ -19,6 +19,7 @@ setMethod(Biobase::makeDataPackage,
             RSQLiteVersion <- cran.pkgs['RSQLite', 'Version']
         }
         syms <- list(CHIPSHORTNAME=object@chipShortName,
+                     DBSCHEMA=object@dbSchema,
                      ORGANISM=object@organism,
                      SPECIES=object@species,
                      MANUF=object@manufacturer,
@@ -44,21 +45,76 @@ setMethod(Biobase::makeDataPackage,
     }
 )
 
-### Just for testing (not exported). Call with
-###   AnnotationDbi:::make_hgu95av2db("/tmp", "path/to/hgu95av2.sqlite")
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Just for testing (not exported).
+
+### Call with AnnotationDbi:::make_hgu95av2db("/tmp", "path/to/hgu95av2.sqlite")
 make_hgu95av2db <- function(filePath, sqliteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-                   templateName="hgu95av2db",
-                   chipShortName="hgu95av2",
-                   organism="Homo sapiens",
-                   species="Human",
-                   manufacturer="Affymetrix",
-                   chipName="Human Genome U95 Set",
-                   manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95")
-    makeDataPackage(pkgseed, "Nianhua Li, Seth Falcon", "biocannotation@lists.fhcrc.org",
-                   "hgu95av2db", "1.13.9999", "LGPL",
-                   "AnnotationData, hgu95av2, AffymetrixChip, Homo_sapiens",
-                   filePath, sqliteFilePath, ...)
+        chipShortName="hgu95av2",
+        templateName="HGU95AV2DB",
+        dbSchema="HGU95AV2DB",
+        organism="Homo sapiens",
+        species="Human",
+        manufacturer="Affymetrix",
+        chipName="Human Genome U95 Set",
+        manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95"
+    )
+    author <- "Nianhua Li, Seth Falcon"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "hgu95av2db"
+    packageVersion <- "1.13.9999"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, AffymetrixChip, hgu95av2, Homo_sapiens"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, sqliteFilePath, ...)
 }
+
+### Call with AnnotationDbi:::make_yeast2db("/tmp", "path/to/yeast2.sqlite")
+make_yeast2db <- function(filePath, sqliteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        chipShortName="yeast2",
+        templateName="HGU95AV2DB",
+        dbSchema="YEAST2DB",
+        organism="Saccharomyces cerevisiae",
+        species="Yeast",
+        manufacturer="Affymetrix",
+        chipName="Yeast Genome 2.0 Array",
+        manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast-20"
+    )
+    author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "yeast2db"
+    packageVersion <- "1.13.9999"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, AffymetrixChip, yeast2, Saccharomyces_cerevisiae"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, sqliteFilePath, ...)
+}
+
+### Call with AnnotationDbi:::make_ygs98db("/tmp", "path/to/ygs98.sqlite")
+make_ygs98db <- function(filePath, sqliteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        chipShortName="ygs98",
+        templateName="HGU95AV2DB",
+        dbSchema="YEAST2DB",
+        organism="Saccharomyces cerevisiae",
+        species="Yeast",
+        manufacturer="Affymetrix",
+        chipName="Yeast Genome S98 Array",
+        manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast"
+    )
+    author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "ygs98db"
+    packageVersion <- "1.13.9999"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, AffymetrixChip, ygs98, Saccharomyces_cerevisiae"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, sqliteFilePath, ...)
+}
+
 

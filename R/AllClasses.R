@@ -30,8 +30,9 @@ setClass("AnnotGOTermsTable", contains="AnnotMultiColTable")
 setClass(
     "AnnDataPkgSeed",
     representation(
-        templateName="character",
         chipShortName="character",
+        templateName="character", # e.g. "HGU95AV2DB"
+        dbSchema="character", # e.g. "HGU95AV2DB"
         organism="character",
         species="character",
         manufacturer="character",

@@ -34,26 +34,24 @@ sqlJoin <- function(table1, table2, using, joinType="LEFT")
     paste(table1, " ", joinType, " JOIN ", table2, " USING (", using, ")", sep="")
 }
 
-subsetTable <- function(con, table, index, subset, cols, add_probes=FALSE)
+subsetTable <- function(con, table, index, subset, cols, joins=NULL)
 {
     cols <- append(index, cols)
-    if (add_probes) {
-        if (!(PROBESETID_COL %in% cols))
-            cols <- append(cols, PROBESETID_COL)
-        table <- sqlJoin(table, "probes", "id", "INNER")
+    sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
+    if (length(joins) != 0) {
+        sql <- paste(sql, joins)
     }
-    sql <- paste("SELECT ", paste(cols, collapse=","), " FROM ", table, sep="")
     if (!is.null(subset))
         sql <- paste(sql, " WHERE ", index, " IN ('", paste(subset, collapse="','"), "')", sep="")
     dbGetQuery(con, sql)
 }
 
-countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, add_probes=FALSE)
+countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, joins=NULL)
 {
-    if (add_probes) {
-        table <- sqlJoin(table, "probes", "id", "INNER")
-    }
     sql <- paste("SELECT COUNT(DISTINCT ", index, ") FROM ", table, sep="")
+    if (length(joins) != 0) {
+        sql <- paste(sql, joins)
+    }
     sql <- paste(sql, " WHERE ", cols[1], " IS NOT NULL", sep="")
     if (!is.null(subset))
         sql <- paste(sql, " AND ", index, " IN ('", paste(subset, collapse="','"), "')", sep="")
@@ -79,9 +77,9 @@ fromValueToProbesetIDs  <- function(con, value, mapTable, mapCol)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Other helper functions
 
-cachePROBESET2GENE <- function(con, datacache)
+cachePROBESET2GENE <- function(table, con, datacache)
 {
-    data <- getTable(con, "probes")
+    data <- getTable(con, table)
     PROBESET2GENE <- data[["id"]]
     names(PROBESET2GENE) <- data[[PROBESETID_COL]]
     assign("PROBESET2GENE", PROBESET2GENE, envir=datacache)
@@ -119,11 +117,17 @@ normaliseSubmapKeys <- function(submap, keys)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Classes representing annotation maps
 
-setClass("AnnMap", representation(con="DBIConnection", datacache="environment"))
+setClass("AnnMap",
+    representation(
+        joins="character",
+        con="DBIConnection",
+        datacache="environment"
+    )
+)
 
 ### Maps each probeset ID to an unnamed atomic vector (character or integer)
-setClass(
-    "AtomicAnnMap", contains="AnnMap",
+setClass("AtomicAnnMap",
+    contains="AnnMap",
     representation(
         mapTable="character",
         mapCol="character"
@@ -140,7 +144,12 @@ setClass("GeneBasedAtomicAnnMap", contains="AtomicAnnMap")
 
 setClass("ReverseGeneBasedAtomicAnnMap", contains="ReverseAtomicAnnMap")
 
-setClass("NamedGeneBasedAtomicAnnMap", contains="GeneBasedAtomicAnnMap", representation(namesCol="character"))
+setClass("NamedGeneBasedAtomicAnnMap",
+    contains="GeneBasedAtomicAnnMap",
+    representation(
+        namesCol="character"
+    )
+)
 
 ### Maps each probeset ID to a named list of GO nodes, each GO node being
 ### represented as a 3-element list of the form
@@ -149,7 +158,12 @@ setClass("GeneBasedGOAnnMap", contains="AnnMap")
 
 ### Maps a GO term to a named character vector containing probeset IDs.
 ### Each element of the vector is named with the Evidence code.
-setClass("ReverseGeneBasedGOAnnMap", contains="AnnMap", representation(all="logical"))
+setClass("ReverseGeneBasedGOAnnMap",
+    contains="AnnMap",
+    representation(
+        all="logical"
+    )
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -239,7 +253,7 @@ setMethod("show", "AnnMap",
 subset.AtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- map@mapCol
-    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols)
+    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
     submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
     if (is.null(subset))
         subset <- ls(map)
@@ -249,13 +263,13 @@ subset.AtomicAnnMap <- function(map, subset=NULL)
 countMappedKeys.AtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- map@mapCol
-    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols)
+    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
 }
 
 subset.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- map@mapCol
-    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, add_probes=TRUE)
+    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
     submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
     if (is.null(subset))
         subset <- ls(map)
@@ -265,7 +279,7 @@ subset.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
 countMappedKeys.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- map@mapCol
-    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, add_probes=TRUE)
+    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
 }
 
 subset.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
@@ -280,7 +294,7 @@ subset.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
 subset.NamedGeneBasedAtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- c(map@mapCol, map@namesCol)
-    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, add_probes=TRUE)
+    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
     submap <- data[[map@mapCol]]
     names(submap) <- data[[map@namesCol]]
     submap <- split(submap, data[[PROBESETID_COL]])
@@ -300,7 +314,7 @@ subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
     cols <- c("go_id", "evidence")
     getPartialSubmap <- function(table, Ontology)
     {
-        data <- subsetTable(db(map), table, PROBESETID_COL, subset, cols, add_probes=TRUE)
+        data <- subsetTable(db(map), table, PROBESETID_COL, subset, cols, map@joins)
         if (nrow(data) == 0)
             return(list())
         GOIDs <- split(data[["go_id"]], data[[PROBESETID_COL]])
@@ -325,9 +339,10 @@ subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
 
 countMappedKeys.GeneBasedGOAnnMap <- function(map, subset=NULL)
 {
+    cols <- character(0)
     getMappedKeys <- function(table)
     {
-        data <- subsetTable(db(map), table, PROBESETID_COL, subset, character(0), add_probes=TRUE)
+        data <- subsetTable(db(map), table, PROBESETID_COL, subset, cols, map@joins)
         unique(data[[PROBESETID_COL]])
     }
     keys1 <- getMappedKeys("go_bp")
@@ -343,7 +358,7 @@ subset.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
     cols <- c(PROBESETID_COL, "evidence")
     getPartialSubmap <- function(table)
     {
-        data <- subsetTable(db(map), table, "go_id", subset, cols, add_probes=TRUE)
+        data <- subsetTable(db(map), table, "go_id", subset, cols, map@joins)
         if (nrow(data) == 0)
             return(list())
         submap <- data[[PROBESETID_COL]]
@@ -579,5 +594,33 @@ createMAPCOUNTS <- function(con, chipname)
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(chipname, data[["map_name"]], sep="")
     MAPCOUNTS
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+checkAnnDataObjects <- function(pkgname, chipname)
+{
+    require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
+    getMap <- function(mapname)
+    {
+        get(mapname, envir=asNamespace(pkgname))
+    }
+    MAPCOUNTS <- getMap(paste(chipname, "MAPCOUNTS", sep=""))
+    for (mapname in names(MAPCOUNTS)) {
+        cat("Checking ", mapname, " map:\n", sep="")
+        map <- getMap(mapname)
+        nbKeys <- length(map)
+        cat("  - nbKeys = ", nbKeys, "\n", sep="")
+        count0 <- MAPCOUNTS[mapname]
+        cat("  - count0 = ", count0, "\n", sep="")
+        t1 <- system.time(count1 <- countMappedKeys(map))
+        cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
+        t2 <- system.time(count2 <- sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x))))
+        cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
+        if (count1 != count0 || count2 != count0)
+            stop("count0, count1 and count2 not the same")
+    }
+    sort()
 }
 
