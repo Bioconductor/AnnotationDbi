@@ -29,56 +29,39 @@ uniqueColValues <- function(con, table, col)
     dbGetQuery(con, sql)[[col]]
 }
 
-sqlJoin <- function(table1, table2, using, joinType="LEFT")
-{
-    paste(table1, " ", joinType, " JOIN ", table2, " USING (", using, ")", sep="")
-}
-
 subsetTable <- function(con, table, index, subset, cols, joins=NULL)
 {
     cols <- append(index, cols)
     sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
-    if (length(joins) != 0) {
+    if (length(joins) == 1)
         sql <- paste(sql, joins)
-    }
     if (!is.null(subset))
-        sql <- paste(sql, " WHERE ", index, " IN ('", paste(subset, collapse="','"), "')", sep="")
+        sql <- paste(sql, " WHERE ", index,
+                     " IN ('", paste(subset, collapse="','"), "')", sep="")
     dbGetQuery(con, sql)
 }
 
 countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, joins=NULL)
 {
     sql <- paste("SELECT COUNT(DISTINCT ", index, ") FROM ", table, sep="")
-    if (length(joins) != 0) {
+    if (length(joins) == 1)
         sql <- paste(sql, joins)
-    }
     sql <- paste(sql, " WHERE ", cols[1], " IS NOT NULL", sep="")
     if (!is.null(subset))
-        sql <- paste(sql, " AND ", index, " IN ('", paste(subset, collapse="','"), "')", sep="")
+        sql <- paste(sql, " AND ", index,
+                     " IN ('", paste(subset, collapse="','"), "')", sep="")
     dbGetQuery(con, sql)[[1]]
-}
-
-fromValueToProbesetIDs  <- function(con, value, mapTable, mapCol)
-{
-    sql <- paste("SELECT ", mapCol, ",", PROBESETID_COL, sep="")
-    sql <- paste(sql, " FROM ", sqlJoin(mapTable, "probes", "id"), sep="")
-    if (!is.null(value))
-        sql <- paste(sql, " WHERE ", mapCol, " IN ('", paste(value, collapse="','"), "')", sep="")
-    data <- dbGetQuery(con, sql)
-    if (!is.null(value)) {
-        not_found <- which(!(value %in% data[[mapCol]]))
-        if (length(not_found) != 0)
-            stop("value for '", value[not_found[1]], "' not found")
-    }
-    data
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Other helper functions
 
-cachePROBESET2GENE <- function(table, con, datacache)
+cachePROBESET2GENE <- function(con, table, joins, datacache)
 {
+    if (length(joins) == 1) {
+        table <- paste(table, joins)
+    }
     data <- getTable(con, table)
     PROBESET2GENE <- data[["id"]]
     names(PROBESET2GENE) <- data[[PROBESETID_COL]]
@@ -136,16 +119,8 @@ setClass("AtomicAnnMap",
 
 setClass("ReverseAtomicAnnMap", contains="AtomicAnnMap")
 
-### Data are "gene based" i.e. maps of class GeneBasedAtomicAnnMap have the
-### following property:
-###     if probeset1 and probeset2 have the same ENTREZID
-###         then map[[probeset1]] == map[[probeset2]]
-setClass("GeneBasedAtomicAnnMap", contains="AtomicAnnMap")
-
-setClass("ReverseGeneBasedAtomicAnnMap", contains="ReverseAtomicAnnMap")
-
-setClass("NamedGeneBasedAtomicAnnMap",
-    contains="GeneBasedAtomicAnnMap",
+setClass("NamedAtomicAnnMap",
+    contains="AtomicAnnMap",
     representation(
         namesCol="character"
     )
@@ -154,11 +129,11 @@ setClass("NamedGeneBasedAtomicAnnMap",
 ### Maps each probeset ID to a named list of GO nodes, each GO node being
 ### represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
-setClass("GeneBasedGOAnnMap", contains="AnnMap")
+setClass("GOAnnMap", contains="AnnMap")
 
 ### Maps a GO term to a named character vector containing probeset IDs.
 ### Each element of the vector is named with the Evidence code.
-setClass("ReverseGeneBasedGOAnnMap",
+setClass("ReverseGOAnnMap",
     contains="AnnMap",
     representation(
         all="logical"
@@ -191,12 +166,12 @@ setMethod("length", "ReverseAtomicAnnMap",
     }
 )
 
-setMethod("length", "ReverseGeneBasedGOAnnMap",
+setMethod("length", "ReverseGOAnnMap",
     function(x)
     {
         mapTables <- GOtables(x@all)
-        ## Our assumption is that a given go_id can only belong to 1 of the 3
-        ## ontologies!
+        ## Our assumption is that a given go_id can't belong to more
+        ## than 1 of the 3 ontologies!
         countUniqueColValues(db(x), mapTables[1], "go_id") +
             countUniqueColValues(db(x), mapTables[2], "go_id") +
             countUniqueColValues(db(x), mapTables[3], "go_id")
@@ -221,7 +196,7 @@ setMethod("ls", signature(name="ReverseAtomicAnnMap"),
     }
 )
 
-setMethod("ls", signature(name="ReverseGeneBasedGOAnnMap"),
+setMethod("ls", signature(name="ReverseGOAnnMap"),
     function(name, pos, envir, all.names, pattern)
     {
         mapTables <- GOtables(name@all)
@@ -266,32 +241,22 @@ countMappedKeys.AtomicAnnMap <- function(map, subset=NULL)
     countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
 }
 
-subset.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
+subset.ReverseAtomicAnnMap <- function(map, subset=NULL)
 {
-    cols <- map@mapCol
-    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
-    submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
-    if (is.null(subset))
-        subset <- ls(map)
-    normaliseSubmapKeys(submap, subset)
-}
-
-countMappedKeys.GeneBasedAtomicAnnMap <- function(map, subset=NULL)
-{
-    cols <- map@mapCol
-    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
-}
-
-subset.ReverseGeneBasedAtomicAnnMap <- function(map, subset=NULL)
-{
-    data <- fromValueToProbesetIDs(db(map), subset, map@mapTable, map@mapCol)
+    cols <- PROBESETID_COL
+    data <- subsetTable(db(map), map@mapTable, map@mapCol, subset, cols, map@joins)
+    if (!is.null(subset)) {
+        not_found <- which(!(subset %in% data[[map@mapCol]]))
+        if (length(not_found) != 0)
+            stop("value for '", subset[not_found[1]], "' not found")
+    }
     submap <- split(data[[PROBESETID_COL]], data[[map@mapCol]])
     if (is.null(subset))
         subset <- ls(map)
     normaliseSubmapKeys(submap, subset)
 }
 
-subset.NamedGeneBasedAtomicAnnMap <- function(map, subset=NULL)
+subset.NamedAtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- c(map@mapCol, map@namesCol)
     data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
@@ -303,7 +268,7 @@ subset.NamedGeneBasedAtomicAnnMap <- function(map, subset=NULL)
     normaliseSubmapKeys(submap, subset)
 }
 
-subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
+subset.GOAnnMap <- function(map, subset=NULL)
 {
     makeGONodeList <- function(GOIDs, Evidences, Ontology)
     {
@@ -319,7 +284,9 @@ subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
             return(list())
         GOIDs <- split(data[["go_id"]], data[[PROBESETID_COL]])
         Evidences <- split(data[["evidence"]], data[[PROBESETID_COL]])
-        sapply(names(GOIDs), function(x) makeGONodeList(GOIDs[[x]], Evidences[[x]], Ontology))
+        ans <- lapply(names(GOIDs), function(x) makeGONodeList(GOIDs[[x]], Evidences[[x]], Ontology))
+        names(ans) <- names(GOIDs)
+        ans
     }
     submap1 <- getPartialSubmap("go_bp", "BP")
     submap2 <- getPartialSubmap("go_cc", "CC")
@@ -337,7 +304,7 @@ subset.GeneBasedGOAnnMap <- function(map, subset=NULL)
     submap
 }
 
-countMappedKeys.GeneBasedGOAnnMap <- function(map, subset=NULL)
+countMappedKeys.GOAnnMap <- function(map, subset=NULL)
 {
     cols <- character(0)
     getMappedKeys <- function(table)
@@ -353,7 +320,7 @@ countMappedKeys.GeneBasedGOAnnMap <- function(map, subset=NULL)
     length(keys) - sum(duplicated(keys))
 }
 
-subset.ReverseGeneBasedGOAnnMap <- function(map, subset=NULL)
+subset.ReverseGOAnnMap <- function(map, subset=NULL)
 {
     cols <- c(PROBESETID_COL, "evidence")
     getPartialSubmap <- function(table)
@@ -388,53 +355,43 @@ setMethod("mget", signature(envir="AtomicAnnMap"),
     }
 )
 
-setMethod("mget", signature(envir="GeneBasedAtomicAnnMap"),
-    function(x, envir, mode, ifnotfound, inherits)
-    {
-        checkProbeset(x, envir@datacache)
-        if (length(x) == 0)
-            return(list())
-        subset.GeneBasedAtomicAnnMap(envir, x)
-    }
-)
-
-setMethod("mget", signature(envir="ReverseGeneBasedAtomicAnnMap"),
+setMethod("mget", signature(envir="ReverseAtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         if (is.null(x) || !is.character(x) || any(is.na(x)))
             stop("invalid first argument")
         if (length(x) == 0)
             return(list())
-        subset.ReverseGeneBasedAtomicAnnMap(envir, x)
+        subset.ReverseAtomicAnnMap(envir, x)
     }
 )
 
-setMethod("mget", signature(envir="NamedGeneBasedAtomicAnnMap"),
+setMethod("mget", signature(envir="NamedAtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         checkProbeset(x, envir@datacache)
         if (length(x) == 0)
             return(list())
-        subset.NamedGeneBasedAtomicAnnMap(envir, x)
+        subset.NamedAtomicAnnMap(envir, x)
     }
 )
 
-setMethod("mget", signature(envir="GeneBasedGOAnnMap"),
+setMethod("mget", signature(envir="GOAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         checkProbeset(x, envir@datacache)
         if (length(x) == 0)
             return(list())
-        subset.GeneBasedGOAnnMap(envir, x)
+        subset.GOAnnMap(envir, x)
     }
 )
 
-setMethod("mget", signature(envir="ReverseGeneBasedGOAnnMap"),
+setMethod("mget", signature(envir="ReverseGOAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         if (length(x) == 0)
             return(list())
-        subset.ReverseGeneBasedGOAnnMap(envir, x)
+        subset.ReverseGOAnnMap(envir, x)
     }
 )
 
@@ -455,38 +412,31 @@ setMethod("as.list", "AtomicAnnMap",
     }
 )
 
-setMethod("as.list", "GeneBasedAtomicAnnMap",
+setMethod("as.list", "ReverseAtomicAnnMap",
     function(x, ...)
     {
-        subset.GeneBasedAtomicAnnMap(x)
+        subset.ReverseAtomicAnnMap(x)
     }
 )
 
-setMethod("as.list", "ReverseGeneBasedAtomicAnnMap",
+setMethod("as.list", "NamedAtomicAnnMap",
     function(x, ...)
     {
-        subset.ReverseGeneBasedAtomicAnnMap(x)
+        subset.NamedAtomicAnnMap(x)
     }
 )
 
-setMethod("as.list", "NamedGeneBasedAtomicAnnMap",
+setMethod("as.list", "GOAnnMap",
     function(x, ...)
     {
-        subset.NamedGeneBasedAtomicAnnMap(x)
+        subset.GOAnnMap(x)
     }
 )
 
-setMethod("as.list", "GeneBasedGOAnnMap",
+setMethod("as.list", "ReverseGOAnnMap",
     function(x, ...)
     {
-        subset.GeneBasedGOAnnMap(x)
-    }
-)
-
-setMethod("as.list", "ReverseGeneBasedGOAnnMap",
-    function(x, ...)
-    {
-        subset.ReverseGeneBasedGOAnnMap(x)
+        subset.ReverseGOAnnMap(x)
     }
 )
 
@@ -509,25 +459,18 @@ setMethod("countMappedKeys", "AtomicAnnMap",
     }
 )
 
-setMethod("countMappedKeys", "GeneBasedAtomicAnnMap",
-    function(map)
-    {
-        countMappedKeys.GeneBasedAtomicAnnMap(map)
-    }
-)
-
-setMethod("countMappedKeys", "ReverseGeneBasedAtomicAnnMap",
+setMethod("countMappedKeys", "ReverseAtomicAnnMap",
     function(map) length(map)
 )
 
-setMethod("countMappedKeys", "GeneBasedGOAnnMap",
+setMethod("countMappedKeys", "GOAnnMap",
     function(map)
     {
-        countMappedKeys.GeneBasedGOAnnMap(map)
+        countMappedKeys.GOAnnMap(map)
     }
 )
 
-setMethod("countMappedKeys", "ReverseGeneBasedGOAnnMap",
+setMethod("countMappedKeys", "ReverseGOAnnMap",
     function(map) length(map)
 )
 

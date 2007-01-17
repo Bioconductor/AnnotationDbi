@@ -44,11 +44,9 @@ exportClasses(
     "AnnMap",
     "AtomicAnnMap",
     "ReverseAtomicAnnMap",
-    "GeneBasedAtomicAnnMap",
-    "ReverseGeneBasedAtomicAnnMap",
-    "NamedGeneBasedAtomicAnnMap",
-    "GeneBasedGOAnnMap",
-    "ReverseGeneBasedGOAnnMap")
+    "NamedAtomicAnnMap",
+    "GOAnnMap",
+    "ReverseGOAnnMap")
 
 export(
     checkAnnDataObjects,

@@ -1,5 +1,7 @@
 datacache <- new.env(hash=TRUE)
 
+@CHIPSHORTNAME@ORGANISM <- "@ORGANISM@"
+
 .onLoad <- function(libname, pkgname) {
     require("methods", quietly=TRUE)
     ## Establish a connection to the SQLite DB
