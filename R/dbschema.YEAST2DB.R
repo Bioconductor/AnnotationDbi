@@ -5,7 +5,8 @@
 
 ### TODO: The following maps are missing for now:
 ###   misceallenous maps: CHRLENGTHS
-### 'chipname' is this chip "shortname" e.g. "yeast2" for the yeast2db package
+
+### 'chipname' is the chip "shortname" e.g. "yeast2" for the yeast2db package
 createAnnDataObjects.YEAST2DB <- function(chipname, con, datacache)
 {
     joins1 <- "INNER JOIN probes USING (systematic_name)"

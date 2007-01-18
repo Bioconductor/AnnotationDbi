@@ -1,24 +1,24 @@
 ### =========================================================================
 ### Create all data objects for an annotation data package
-### with db schema HGU95AV2DB
+### with db schema AGDB
 ### -------------------------------------------------------------------------
 
-### TODO: The following maps are missing for now:
-###   AtomicAnnMap: SUMFUNC
-###   misceallenous maps: CHRLENGTHS
-
-### 'chipname' is the chip "shortname" e.g. "hgu95av2" for the hgu95av2db package
-createAnnDataObjects.HGU95AV2DB <- function(chipname, con, datacache)
+### 'chipname' is the chip "shortname" e.g. "ag" for the agdb package
+createAnnDataObjects.AGDB <- function(chipname, con, datacache)
 {
     cachePROBESET2GENE(con, "probes", NULL, datacache)
     joins1 <- "INNER JOIN probes USING (id)"
     maps <- list(
-            ACCNUM=new("AtomicAnnMap",
-                mapTable="accessions",
-                mapCol="accession",
-                con=con, datacache=datacache),
+            #ACCNUM=new("AtomicAnnMap",
+            #    mapTable="accessions",
+            #    mapCol="accession",
+            #    con=con, datacache=datacache),
+            ARACYC=new("AtomicAnnMap",
+                mapTable="aracyc",
+                mapCol="pathway_name",
+                joins=joins1, con=con, datacache=datacache),
             CHR=new("AtomicAnnMap",
-                mapTable="chromosomes",
+                mapTable="gene_info",
                 mapCol="chromosome",
                 joins=joins1, con=con, datacache=datacache),
             CHRLOC=new("NamedAtomicAnnMap",
@@ -29,6 +29,7 @@ createAnnDataObjects.HGU95AV2DB <- function(chipname, con, datacache)
             ENTREZID=new("AtomicAnnMap",
                 mapTable="genes",
                 mapCol="gene_id",
+                replace.multiple="multiple",
                 joins=joins1, con=con, datacache=datacache),
             ENZYME=new("AtomicAnnMap",
                 mapTable="ec",
@@ -46,56 +47,29 @@ createAnnDataObjects.HGU95AV2DB <- function(chipname, con, datacache)
             GO2PROBE=new("ReverseGOAnnMap",
                 all=FALSE,
                 joins=joins1, con=con, datacache=datacache),
-            MAP=new("AtomicAnnMap",
-                mapTable="cytogenetic_locations",
-                mapCol="cytogenetic_location",
-                joins=joins1, con=con, datacache=datacache),
-            OMIM=new("AtomicAnnMap",
-                mapTable="omim",
-                mapCol="omim_id",
+            MULTIHIT=new("AtomicAnnMap",
+                mapTable="genes",
+                mapCol="gene_id",
+                replace.single=NA,
                 joins=joins1, con=con, datacache=datacache),
             PATH=new("AtomicAnnMap",
                 mapTable="kegg",
                 mapCol="kegg_id",
                 joins=joins1, con=con, datacache=datacache),
-            PFAM=new("NamedAtomicAnnMap",
-                mapTable="pfam",
-                mapCol="pfam_id",
-                namesCol="ipi_id",
-                joins=joins1, con=con, datacache=datacache),
             PMID=new("AtomicAnnMap",
                 mapTable="pubmed",
                 mapCol="pubmed_id",
                 joins=joins1, con=con, datacache=datacache),
-            PROSITE=new("NamedAtomicAnnMap",
-                mapTable="prosite",
-                mapCol="prosite_id",
-                namesCol="ipi_id",
-                joins=joins1, con=con, datacache=datacache),
-            REFSEQ=new("AtomicAnnMap",
-                mapTable="refseq",
-                mapCol="accession",
-                joins=joins1, con=con, datacache=datacache),
             SYMBOL=new("AtomicAnnMap",
                 mapTable="gene_info",
                 mapCol="symbol",
-                joins=joins1, con=con, datacache=datacache),
-            UNIGENE=new("AtomicAnnMap",
-                mapTable="unigene",
-                mapCol="unigene_id",
                 joins=joins1, con=con, datacache=datacache)
     )
     maps$ENZYME2PROBE <- new("ReverseAtomicAnnMap", maps$ENZYME)
     maps$PATH2PROBE <- new("ReverseAtomicAnnMap", maps$PATH)
     maps$PMID2PROBE <- new("ReverseAtomicAnnMap", maps$PMID)
-    maps$MAPCOUNTS <- createMAPCOUNTS(con, chipname)
+    #maps$MAPCOUNTS <- createMAPCOUNTS(con, chipname)
     names(maps) <- paste(chipname, names(maps), sep="")
     maps
-}
-
-benchmarks <- function(pkgname)
-{
-    # For each map:
-    #   - compare countMappedKeys(map) with sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
 }
 

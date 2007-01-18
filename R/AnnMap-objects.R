@@ -33,7 +33,7 @@ subsetTable <- function(con, table, index, subset, cols, joins=NULL)
 {
     cols <- append(index, cols)
     sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
-    if (length(joins) == 1)
+    if (length(joins) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, joins)
     if (!is.null(subset))
         sql <- paste(sql, " WHERE ", index,
@@ -44,7 +44,7 @@ subsetTable <- function(con, table, index, subset, cols, joins=NULL)
 countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, joins=NULL)
 {
     sql <- paste("SELECT COUNT(DISTINCT ", index, ") FROM ", table, sep="")
-    if (length(joins) == 1)
+    if (length(joins) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, joins)
     sql <- paste(sql, " WHERE ", cols[1], " IS NOT NULL", sep="")
     if (!is.null(subset))
@@ -59,9 +59,8 @@ countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, 
 
 cachePROBESET2GENE <- function(con, table, joins, datacache)
 {
-    if (length(joins) == 1) {
+    if (length(joins) == 1) # will be FALSE for NULL or character(0)
         table <- paste(table, joins)
-    }
     data <- getTable(con, table)
     PROBESET2GENE <- data[["id"]]
     names(PROBESET2GENE) <- data[[PROBESETID_COL]]
@@ -86,12 +85,24 @@ GOtables <- function(all)
     tables
 }
 
-normaliseSubmapKeys <- function(submap, keys)
+formatSubmap <- function(submap, keys, replace.single=NULL, replace.multiple=NULL)
 {
-    ## Old version, slow
-    #ans <- submap[keys]; ans[sapply(ans, is.null)] <- NA;
-    ## New version, slightly faster
-    ans <- lapply(keys, function(x) {y <- submap[x][[1]]; if (is.null(y)) NA else y})
+    format <- function(key)
+    {
+        val <- submap[key][[1]]
+        lval <- length(val)
+        if (lval == 0)
+            return(NA)
+        if (lval == 1) {
+            if (length(replace.single) != 0)
+                return(replace.single)
+            return(val)
+        }
+        if (length(replace.multiple) != 0)
+            return(replace.multiple)
+        return(val)
+    }
+    ans <- lapply(keys, format)
     names(ans) <- keys
     ans
 }
@@ -113,7 +124,16 @@ setClass("AtomicAnnMap",
     contains="AnnMap",
     representation(
         mapTable="character",
-        mapCol="character"
+        mapCol="character",
+        ## The 2 fields below allow dealing with silly maps ENTREZID and
+        ## MULTIHIT in AGDB schema:
+        ##   - for ENTREZID: don't set replace.single (default is character(0)),
+        ##                   use replace.multiple="multiple",
+        ##   - for MULTIHIT: use replace.single=NA,
+        ##                   don't set replace.multiple (default is character(0)),
+        ##   - for any other map: don't set those fields (defaults will be used).
+        replace.single="character",
+        replace.multiple="character"
     )
 )
 
@@ -150,7 +170,8 @@ setMethod("db", "AnnMap", function(object) object@con)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "length" generic
+### The "length" generic.
+### length(x) should always be the same as length(ls(x)).
 
 setMethod("length", "AnnMap",
     function(x)
@@ -222,8 +243,8 @@ setMethod("show", "AnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Those functions are called by the "mget" and "as.list" methods for doing
-### the real job.
+### Those functions are called by the "mget", "as.list" and "countMappedKeys"
+### methods for doing the real job.
 
 subset.AtomicAnnMap <- function(map, subset=NULL)
 {
@@ -232,9 +253,13 @@ subset.AtomicAnnMap <- function(map, subset=NULL)
     submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
     if (is.null(subset))
         subset <- ls(map)
-    normaliseSubmapKeys(submap, subset)
+    formatSubmap(submap, subset, map@replace.single, map@replace.multiple)
 }
 
+### Ignore map@replace.single and map@replace.multiple, hence will give
+### wrong results for maps that have one of those 2 fields with non-default
+### values like silly maps ENTREZID and MULTIHIT in AGDB schema, but who
+### cares, those maps are so silly anyway...
 countMappedKeys.AtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- map@mapCol
@@ -253,7 +278,7 @@ subset.ReverseAtomicAnnMap <- function(map, subset=NULL)
     submap <- split(data[[PROBESETID_COL]], data[[map@mapCol]])
     if (is.null(subset))
         subset <- ls(map)
-    normaliseSubmapKeys(submap, subset)
+    formatSubmap(submap, subset, map@replace.single, map@replace.multiple)
 }
 
 subset.NamedAtomicAnnMap <- function(map, subset=NULL)
@@ -265,7 +290,7 @@ subset.NamedAtomicAnnMap <- function(map, subset=NULL)
     submap <- split(submap, data[[PROBESETID_COL]])
     if (is.null(subset))
         subset <- ls(map)
-    normaliseSubmapKeys(submap, subset)
+    formatSubmap(submap, subset, map@replace.single, map@replace.multiple)
 }
 
 subset.GOAnnMap <- function(map, subset=NULL)
@@ -338,7 +363,7 @@ subset.ReverseGOAnnMap <- function(map, subset=NULL)
                 getPartialSubmap(mapTables[3]))
     if (is.null(subset))
         subset <- ls(map)
-    normaliseSubmapKeys(submap, subset)
+    formatSubmap(submap, subset, map@replace.single, map@replace.multiple)
 }
 
 

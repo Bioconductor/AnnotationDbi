@@ -13,7 +13,7 @@ setMethod(Biobase::makeDataPackage,
          || length(email) != 1 || grep("@", email) != 1)
             stop("invalid email address")
         extdataDir <- file.path(filePath, packageName, "inst", "extdata")
-        dbFileName <- paste(object@chipShortName, "sqlite", sep=".")
+        dbFileName <- paste(object@chipShortName, ".sqlite", sep="")
         if (missing(RSQLiteVersion)) {
             cran.pkgs <- available.packages(contrib.url("http://cran.fhcrc.org"))
             if (nrow(cran.pkgs) == 0)
@@ -56,6 +56,10 @@ setMethod(Biobase::makeDataPackage,
 ###   AnnotationDbi:::make_hgu95av2db(".", "data/hgu95av2.sqlite")
 ###   AnnotationDbi:::make_yeast2db(".", "data/yeast2.sqlite")
 ###   AnnotationDbi:::make_ygs98db(".", "data/ygs98.sqlite")
+###   AnnotationDbi:::make_agdb(".", "data/ag.sqlite")
+###   AnnotationDbi:::make_ath1121501db(".", "data/ath1121501.sqlite")
+### or to make them all:
+###   AnnotationDbi:::make_all("data")
 
 make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
 {
@@ -74,7 +78,7 @@ make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
     packageName <- "hgu95av2db"
     packageVersion <- "1.13.900"
     license <- "LGPL"
-    biocViews <- "AnnotationData, AffymetrixChip, hgu95av2, Homo_sapiens"
+    biocViews <- "AnnotationData, AffymetrixChip, Homo_sapiens, hgu95av2"
     makeDataPackage(pkgseed, author, email, packageName, packageVersion,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
@@ -96,7 +100,7 @@ make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
     packageName <- "yeast2db"
     packageVersion <- "1.13.900"
     license <- "LGPL"
-    biocViews <- "AnnotationData, AffymetrixChip, yeast2, Saccharomyces_cerevisiae"
+    biocViews <- "AnnotationData, AffymetrixChip, Saccharomyces_cerevisiae, yeast2"
     makeDataPackage(pkgseed, author, email, packageName, packageVersion,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
@@ -118,8 +122,68 @@ make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
     packageName <- "ygs98db"
     packageVersion <- "1.13.900"
     license <- "LGPL"
-    biocViews <- "AnnotationData, AffymetrixChip, ygs98, Saccharomyces_cerevisiae"
+    biocViews <- "AnnotationData, AffymetrixChip, Saccharomyces_cerevisiae, ygs98"
     makeDataPackage(pkgseed, author, email, packageName, packageVersion,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+make_agdb <- function(filePath, srcSQLiteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        chipShortName="ag",
+        templateName="HGU95AV2DB",
+        dbSchema="AGDB",
+        organism="Arabidopsis thaliana",
+        species="Arabidopsis",
+        manufacturer="Affymetrix",
+        chipName="Arabidopsis Genome Array",
+        manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=atgenome1"
+    )
+    author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "agdb"
+    packageVersion <- "1.13.900"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, AffymetrixChip, Arabidopsis_thaliana, ag"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        chipShortName="ath1121501",
+        templateName="HGU95AV2DB",
+        dbSchema="AGDB",
+        organism="Arabidopsis thaliana",
+        species="Arabidopsis",
+        manufacturer="Affymetrix",
+        chipName="Arabidopsis ATH1 Genome Array",
+        manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=arab"
+    )
+    author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "ath1121501db"
+    packageVersion <- "1.13.900"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, AffymetrixChip, Arabidopsis_thaliana, ath1121501"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+make_all <- function(srcDir=".", destDir=".")
+{
+    chips <- c(
+        "hgu95av2",
+        "yeast2",
+        "ygs98",
+        "ag",
+        "ath1121501"
+    )
+    for (chip in chips) {
+        funcname <- paste("make_", chip, "db", sep="")
+        srcSQLiteFilePath <- file.path(srcDir, paste(chip, ".sqlite", sep=""))
+        do.call(funcname, list(destDir, srcSQLiteFilePath))
+    }
 }
 
