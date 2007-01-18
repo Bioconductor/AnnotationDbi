@@ -83,9 +83,9 @@ make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
-test_hgu95av2db <- function()
+test_hgu95av2db <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.HGU95AV2DB("hgu95av2", "hgu95av2db", "hgu95av2")
+    compareAnnDataIn2Pkgs.HGU95AV2DB("hgu95av2", "hgu95av2db", "hgu95av2", verbose=verbose)
 }
 
 make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
@@ -110,9 +110,9 @@ make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
-test_yeast2db <- function()
+test_yeast2db <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.YEAST2DB("yeast2", "yeast2db", "yeast2")
+    compareAnnDataIn2Pkgs.YEAST2DB("yeast2", "yeast2db", "yeast2", verbose=verbose)
 }
 
 make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
@@ -137,9 +137,9 @@ make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
-test_ygs98db <- function()
+test_ygs98db <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.YEAST2DB("ygs98", "ygs98db", "ygs98")
+    compareAnnDataIn2Pkgs.YEAST2DB("ygs98", "ygs98db", "ygs98", verbose=verbose)
 }
 
 make_agdb <- function(filePath, srcSQLiteFilePath, ...)
@@ -164,10 +164,10 @@ make_agdb <- function(filePath, srcSQLiteFilePath, ...)
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
-test_agdb <- function()
+test_agdb <- function(verbose=FALSE)
 {
     probes <- c("17096_s_at", "17097_at", "17098_s_at")
-    compareAnnDataIn2Pkgs.AGDB("ag", "agdb", "ag", probes)
+    compareAnnDataIn2Pkgs.AGDB("ag", "agdb", "ag", probes=probes, verbose=verbose)
 }
 
 make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
@@ -192,9 +192,9 @@ make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
-test_ath1121501db <- function()
+test_ath1121501db <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.AGDB("ath1121501", "ath1121501db", "ath1121501")
+    compareAnnDataIn2Pkgs.AGDB("ath1121501", "ath1121501db", "ath1121501", verbose=verbose)
 }
 
 make_all <- function(srcDir=".", destDir=".")

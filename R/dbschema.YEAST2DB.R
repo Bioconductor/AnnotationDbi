@@ -67,7 +67,7 @@ createAnnDataObjects.YEAST2DB <- function(chipname, con, datacache)
     maps
 }
 
-compareAnnDataIn2Pkgs.YEAST2DB <- function(pkgname1, pkgname2, mapprefix, probes=NULL)
+compareAnnDataIn2Pkgs.YEAST2DB <- function(pkgname1, pkgname2, mapprefix, probes=NULL, verbose=FALSE)
 {
     direct_maps <- c(
         "ALIAS",
@@ -88,6 +88,6 @@ compareAnnDataIn2Pkgs.YEAST2DB <- function(pkgname1, pkgname2, mapprefix, probes
         "PATH2PROBE",
         "PMID2PROBE"
     )
-    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes)
+    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes, verbose)
 }
 

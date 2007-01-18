@@ -73,7 +73,7 @@ createAnnDataObjects.AGDB <- function(chipname, con, datacache)
     maps
 }
 
-compareAnnDataIn2Pkgs.AGDB <- function(pkgname1, pkgname2, mapprefix, probes=NULL)
+compareAnnDataIn2Pkgs.AGDB <- function(pkgname1, pkgname2, mapprefix, probes=NULL, verbose=FALSE)
 {
     direct_maps <- c(
         #"ACCNUM",
@@ -96,6 +96,6 @@ compareAnnDataIn2Pkgs.AGDB <- function(pkgname1, pkgname2, mapprefix, probes=NUL
         "PATH2PROBE",
         "PMID2PROBE"
     )
-    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes)
+    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes, verbose)
 }
 
