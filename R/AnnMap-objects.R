@@ -523,7 +523,7 @@ setMethod("get", signature(envir="AnnMap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "[[" generic
+### The "[[" and "$" generics
 
 setMethod("[[", "AnnMap",
     function(x, i, j, ...)
@@ -552,6 +552,8 @@ setMethod("[[", "AnnMap",
         get(i, envir=x)
     }
 )
+
+setMethod("$", "AnnMap", function(x, name) x[[name]])
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
