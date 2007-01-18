@@ -83,6 +83,11 @@ make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
+test_hgu95av2db <- function()
+{
+    compareAnnDataIn2Pkgs.HGU95AV2DB("hgu95av2", "hgu95av2db", "hgu95av2")
+}
+
 make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
@@ -105,6 +110,11 @@ make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
+test_yeast2db <- function()
+{
+    compareAnnDataIn2Pkgs.YEAST2DB("yeast2", "yeast2db", "yeast2")
+}
+
 make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
@@ -125,6 +135,11 @@ make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
     biocViews <- "AnnotationData, AffymetrixChip, Saccharomyces_cerevisiae, ygs98"
     makeDataPackage(pkgseed, author, email, packageName, packageVersion,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+test_ygs98db <- function()
+{
+    compareAnnDataIn2Pkgs.YEAST2DB("ygs98", "ygs98db", "ygs98")
 }
 
 make_agdb <- function(filePath, srcSQLiteFilePath, ...)
@@ -175,6 +190,11 @@ make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
     biocViews <- "AnnotationData, AffymetrixChip, Arabidopsis_thaliana, ath1121501"
     makeDataPackage(pkgseed, author, email, packageName, packageVersion,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+test_ath1121501db <- function()
+{
+    compareAnnDataIn2Pkgs.AGDB("ath1121501", "ath1121501db", "ath1121501")
 }
 
 make_all <- function(srcDir=".", destDir=".")

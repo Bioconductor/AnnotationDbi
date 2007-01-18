@@ -40,5 +40,11 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
         }
         cmp_submap_summary[[mapname]] <- identical(submap1, submap2)
     }
-    cmp_submap_summary
+    cmp_submap_summary <- unlist(cmp_submap_summary)
+    cat("SUMMARY:\n")
+    show(cmp_submap_summary)
+    cat("  - # map comparisons = ", length(cmp_submap_summary), "\n", sep="")
+    cat("  - # successful comparisons = ", sum(cmp_submap_summary), "\n", sep="")
+    cat("  - # failed comparisons = ", sum(!cmp_submap_summary), "\n", sep="")
 }
+

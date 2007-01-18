@@ -93,9 +93,33 @@ createAnnDataObjects.HGU95AV2DB <- function(chipname, con, datacache)
     maps
 }
 
-benchmarks <- function(pkgname)
+compareAnnDataIn2Pkgs.HGU95AV2DB <- function(pkgname1, pkgname2, mapprefix, probes=NULL)
 {
-    # For each map:
-    #   - compare countMappedKeys(map) with sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
+    direct_maps <- c(
+        "ACCNUM",
+        "CHR",
+        "CHRLOC",
+        "ENTREZID",
+        "ENZYME",
+        "GENENAME",
+        "GO",
+        "MAP",
+        "OMIM",
+        "PATH",
+        "PFAM",
+        "PMID",
+        "PROSITE",
+        "REFSEQ",
+        "SYMBOL",
+        "UNIGENE"
+    )
+    reverse_maps <- c(
+        "GO2ALLPROBES",
+        "GO2PROBE",
+        "ENZYME2PROBE",
+        "PATH2PROBE",
+        "PMID2PROBE"
+    )
+    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes)
 }
 
