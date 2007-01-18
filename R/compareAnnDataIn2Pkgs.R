@@ -5,7 +5,7 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
     require(pkgname2, character.only=TRUE) || stop(pkgname2, " package needed")
     getMap <- function(pkgname, mapname)
     {
-        get(mapname, envir=asNamespace(pkgname))
+        get(mapname, envir=as.environment(paste("package", pkgname, sep=":")), inherits=FALSE)
     }
     cmp_submap_summary <- list()
     for (mapshortname in c(direct_maps, reverse_maps)) {
