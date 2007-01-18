@@ -73,3 +73,29 @@ createAnnDataObjects.AGDB <- function(chipname, con, datacache)
     maps
 }
 
+compareAnnPackages.AGDB <- function(pkgname1, pkgname2, mapprefix, probes=NULL)
+{
+    direct_maps <- c(
+        #"ACCNUM",
+        "ARACYC",
+        "CHR",
+        "CHRLOC",
+        "ENTREZID",
+        "ENZYME",
+        "GENENAME",
+        "GO",
+        "MULTIHIT",
+        "PATH",
+        "PMID",
+        "SYMBOL"
+    )
+    reverse_maps <- c(
+        "GO2ALLPROBES",
+        "GO2PROBE",
+        "ENZYME2PROBE",
+        "PATH2PROBE",
+        "PMID2PROBE"
+    )
+    compareAnnPackages(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes)
+}
+

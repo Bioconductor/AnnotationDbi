@@ -363,7 +363,7 @@ subset.ReverseGOAnnMap <- function(map, subset=NULL)
                 getPartialSubmap(mapTables[3]))
     if (is.null(subset))
         subset <- ls(map)
-    formatSubmap(submap, subset, map@replace.single, map@replace.multiple)
+    formatSubmap(submap, subset)
 }
 
 
@@ -578,8 +578,8 @@ checkAnnDataObjects <- function(pkgname, chipname)
     for (mapname in names(MAPCOUNTS)) {
         cat("Checking ", mapname, " map:\n", sep="")
         map <- getMap(mapname)
-        nbKeys <- length(map)
-        cat("  - nbKeys = ", nbKeys, "\n", sep="")
+        nkeys <- length(map)
+        cat("  - nkeys = ", nkeys, "\n", sep="")
         count0 <- MAPCOUNTS[mapname]
         cat("  - count0 = ", count0, "\n", sep="")
         t1 <- system.time(count1 <- countMappedKeys(map))

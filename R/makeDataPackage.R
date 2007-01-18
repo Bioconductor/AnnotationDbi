@@ -59,7 +59,7 @@ setMethod(Biobase::makeDataPackage,
 ###   AnnotationDbi:::make_agdb(".", "data/ag.sqlite")
 ###   AnnotationDbi:::make_ath1121501db(".", "data/ath1121501.sqlite")
 ### or to make them all:
-###   AnnotationDbi:::make_all("data")
+###   AnnotationDbi:::make_all("data", "lastbuilds")
 
 make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
 {
@@ -147,6 +147,12 @@ make_agdb <- function(filePath, srcSQLiteFilePath, ...)
     biocViews <- "AnnotationData, AffymetrixChip, Arabidopsis_thaliana, ag"
     makeDataPackage(pkgseed, author, email, packageName, packageVersion,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+test_agdb <- function()
+{
+    probes <- c("17096_s_at", "17097_at", "17098_s_at")
+    compareAnnPackages.AGDB("ag", "agdb", "ag", probes)
 }
 
 make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
