@@ -50,7 +50,7 @@ createAnnDataObjects.AGDB <- function(chipname, con, datacache)
             MULTIHIT=new("AtomicAnnMap",
                 mapTable="genes",
                 mapCol="gene_id",
-                replace.single=NA,
+                replace.single=as.character(NA),
                 joins=joins1, con=con, datacache=datacache),
             PATH=new("AtomicAnnMap",
                 mapTable="kegg",
