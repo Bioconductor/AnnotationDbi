@@ -1,4 +1,4 @@
 import(methods)
 import(AnnotationDbi)
 
-export("getDb", "closeDb")
+export("getDb", "closeDb", "@CHIPSHORTNAME@ORGANISM")
