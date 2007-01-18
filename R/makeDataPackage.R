@@ -152,7 +152,7 @@ make_agdb <- function(filePath, srcSQLiteFilePath, ...)
 test_agdb <- function()
 {
     probes <- c("17096_s_at", "17097_at", "17098_s_at")
-    compareAnnPackages.AGDB("ag", "agdb", "ag", probes)
+    compareAnnDataIn2Pkgs.AGDB("ag", "agdb", "ag", probes)
 }
 
 make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)

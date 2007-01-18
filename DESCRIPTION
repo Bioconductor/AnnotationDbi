@@ -11,7 +11,7 @@ Suggests: GOdb, GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R initialize-methods.R
          db.R factories.R subsetting-methods.R show-methods.R
          AnnMap-objects.R dbschema.HGU95AV2DB.R dbschema.YEAST2DB.R
-         dbschema.AGDB.R compareAnnPackages.R makeDataPackage.R
+         dbschema.AGDB.R compareAnnDataIn2Pkgs.R makeDataPackage.R
          zzz.R
 License: LGPL
 
