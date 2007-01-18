@@ -85,24 +85,29 @@ GOtables <- function(all)
     tables
 }
 
-formatSubmap <- function(submap, keys, replace.single=NULL, replace.multiple=NULL)
+formatSubmap <- function(submap, keys, type=NULL, replace.single=NULL, replace.multiple=NULL)
 {
-    format <- function(key)
+    formatVal <- function(key)
     {
         val <- submap[key][[1]]
         lval <- length(val)
         if (lval == 0)
-            return(NA)
-        if (lval == 1) {
-            if (length(replace.single) != 0)
-                return(replace.single)
-            return(val)
+            val <- NA
+        else {
+            if (lval == 1) {
+                if (length(replace.single) != 0)
+                    return(replace.single)
+            } else {
+                if (length(replace.multiple) != 0)
+                    return(replace.multiple)
+            }
         }
-        if (length(replace.multiple) != 0)
-            return(replace.multiple)
+        ## We don't want to use 'type' if it's NULL or character(0)
+        if (length(type) == 1 && storage.mode(val) != type)
+            storage.mode(val) <- type
         return(val)
     }
-    ans <- lapply(keys, format)
+    ans <- lapply(keys, formatVal)
     names(ans) <- keys
     ans
 }
@@ -125,6 +130,7 @@ setClass("AtomicAnnMap",
     representation(
         mapTable="character",
         mapCol="character",
+        mapColType="character", # set only if the extracted submap needs coercion
         ## The 2 fields below allow dealing with silly maps ENTREZID and
         ## MULTIHIT in AGDB schema:
         ##   - for ENTREZID: don't set replace.single (default is character(0)),
@@ -253,7 +259,7 @@ subset.AtomicAnnMap <- function(map, subset=NULL)
     submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
     if (is.null(subset))
         subset <- ls(map)
-    formatSubmap(submap, subset, map@replace.single, map@replace.multiple)
+    formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
 }
 
 ### Ignore map@replace.single and map@replace.multiple, hence will give
@@ -278,7 +284,7 @@ subset.ReverseAtomicAnnMap <- function(map, subset=NULL)
     submap <- split(data[[PROBESETID_COL]], data[[map@mapCol]])
     if (is.null(subset))
         subset <- ls(map)
-    formatSubmap(submap, subset, map@replace.single, map@replace.multiple)
+    formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
 }
 
 subset.NamedAtomicAnnMap <- function(map, subset=NULL)
@@ -290,7 +296,7 @@ subset.NamedAtomicAnnMap <- function(map, subset=NULL)
     submap <- split(submap, data[[PROBESETID_COL]])
     if (is.null(subset))
         subset <- ls(map)
-    formatSubmap(submap, subset, map@replace.single, map@replace.multiple)
+    formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
 }
 
 subset.GOAnnMap <- function(map, subset=NULL)

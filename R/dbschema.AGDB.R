@@ -24,6 +24,7 @@ createAnnDataObjects.AGDB <- function(chipname, con, datacache)
             CHRLOC=new("NamedAtomicAnnMap",
                 mapTable="chromosome_locations",
                 mapCol="start_location",
+                mapColType="integer",
                 namesCol="chromosome",
                 joins=joins1, con=con, datacache=datacache),
             ENTREZID=new("AtomicAnnMap",

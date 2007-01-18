@@ -24,6 +24,7 @@ createAnnDataObjects.YEAST2DB <- function(chipname, con, datacache)
             CHRLOC=new("NamedAtomicAnnMap",
                 mapTable="chromosome_features",
                 mapCol="start",
+                mapColType="integer",
                 namesCol="chromosome",
                 joins=joins2, con=con, datacache=datacache),
             DESCRIPTION=new("AtomicAnnMap",
