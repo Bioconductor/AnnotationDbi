@@ -71,7 +71,7 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
     {
         get(mapname, envir=as.environment(paste("package", pkgname, sep=":")), inherits=FALSE)
     }
-    mismatches <- list()
+    mismatch_summary <- list()
     for (mapshortname in c(direct_maps, reverse_maps)) {
         mapname <- paste(mapprefix, mapshortname, sep="")
         cat("*** Comparing ", mapname, " maps:\n", sep="")
@@ -90,7 +90,7 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
         } else {
             testedkeys <- intersect(ls(map1), ls(map2))
         }
-        cat("***   # tested keys = ", length(testedkeys), "\n", sep="")
+        cat("***   nb of tested keys = ", length(testedkeys), "\n", sep="")
         submap1 <- mget(testedkeys, envir=map1)
         if (verbose) {
             cat("***   mget(testedkeys, envir=map1):\n", sep="")
@@ -101,14 +101,16 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
             cat("***   mget(testedkeys, envir=map2):\n", sep="")
             show(submap2)
         }
-        cmp_submaps <- sapply(testedkeys, function(key) identical.collections(submap1[[key]], submap2[[key]]))
-        mismatches[[mapname]] <- sum(!cmp_submaps)
+        OK <- sapply(testedkeys, function(key) identical.collections(submap1[[key]], submap2[[key]]))
+        nmis <- sum(!OK)
+        cat("***   nb of mismatches = ", nmis, "\n", sep="")
+        mismatch_summary[[mapname]] <- nmis
     }
-    mismatches <- unlist(mismatches)
+    mismatch_summary <- unlist(mismatch_summary)
     cat("SUMMARY OF MISMATCHES:\n")
-    show(mismatches)
-    cat("  - # map comparisons = ", length(mismatches), "\n", sep="")
-    cat("  - # PASSED maps = ", sum(mismatches == 0), "\n", sep="")
-    cat("  - # FAILED maps = ", sum(mismatches != 0), "\n", sep="")
+    show(mismatch_summary)
+    cat("  - nb of map comparisons = ", length(mismatch_summary), "\n", sep="")
+    cat("  - nb of PASSED maps = ", sum(mismatch_summary == 0), "\n", sep="")
+    cat("  - nb of FAILED maps = ", sum(mismatch_summary != 0), "\n", sep="")
 }
 
