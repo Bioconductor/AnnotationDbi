@@ -112,5 +112,6 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
     cat("  - nb of map comparisons = ", length(mismatch_summary), "\n", sep="")
     cat("  - nb of PASSED maps = ", sum(mismatch_summary == 0), "\n", sep="")
     cat("  - nb of FAILED maps = ", sum(mismatch_summary != 0), "\n", sep="")
+    mismatch_summary
 }
 
