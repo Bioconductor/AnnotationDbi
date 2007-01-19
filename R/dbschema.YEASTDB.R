@@ -125,7 +125,7 @@ compareAnnDataIn2Pkgs.YEASTDB <- function(pkgname1, pkgname2, mapprefix, probes=
         "COMMON2SYSTEMATIC",
         "ENZYME2PROBE",
         "PATH2PROBE",
-        "PMID2PROBE"
+        "PMID2PROBE",
         "GO2PROBE",
         "GO2ALLPROBES"
     )
