@@ -5,13 +5,15 @@
 
 ### TODO: The following maps are missing for now:
 ###   AtomicAnnMap: SUMFUNC
-###   misceallenous maps: CHRLENGTHS
+###   miscellaneous maps: CHRLENGTHS
 
 HGU95AV2DB_default_joins <- "INNER JOIN probes USING (id)"
 HGU95AV2DB_default_mapColType <- character(0)
 
 ### Mandatory fields: mapName, mapTable and mapCol
-HGU95AV2DB_atomic_ann_maps <- list(
+HGU95AV2DB_AtomicAnnMap_seeds <- list(
+
+    ## AtomicAnnMap objects
         list(
                 mapName="ACCNUM",
                 mapTable="accessions",
@@ -73,17 +75,15 @@ HGU95AV2DB_atomic_ann_maps <- list(
                 mapName="UNIGENE",
                 mapTable="unigene",
                 mapCol="unigene_id"
-        )
-)
+        ),
 
-### Mandatory fields: mapName, mapTable, mapCol and namesCol
-HGU95AV2DB_named_atomic_ann_maps <- list(
+    ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
                 mapTable="chromosome_locations",
                 mapCol="start_location",
-                namesCol="chromosome",
-                mapColType="integer"
+                mapColType="integer",
+                namesCol="chromosome"
         ),
         list(
                 mapName="PFAM",
@@ -102,49 +102,44 @@ HGU95AV2DB_named_atomic_ann_maps <- list(
 createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
 {
     cachePROBESET2GENE(con, "probes", NULL, datacache)
-    maps <- list()
-    completeSeed <- function(seed, Class)
-    {
-        seed$Class <- Class
-        seed$chipShortname <- chipShortname
-        seed$con <- con
-        seed$datacache <- datacache
-        if (is.null(seed["joins"][[1]]))
-            seed$joins <- HGU95AV2DB_default_joins
-        if (is.null(seed["mapColType"][[1]]))
-            seed$mapColType <- HGU95AV2DB_default_mapColType
-        seed
-    }
-    for (seed in HGU95AV2DB_atomic_ann_maps) {
-        seed <- completeSeed(seed, "AtomicAnnMap")
-        str(seed)
-        maps[[seed$mapName]] <- do.call("new", seed)
-    }
-    for (seed in HGU95AV2DB_named_atomic_ann_maps) {
-        seed <- completeSeed(seed, "NamedAtomicAnnMap")
-        str(seed)
-        maps[[seed$mapName]] <- do.call("new", seed)
-    }
-    maps$GO <- new("GOAnnMap",
-            mapName="GO",
-            chipShortname=chipShortname,
-            joins=HGU95AV2DB_default_joins,
-            con=con,
-            datacache=datacache)
-    maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)
-    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", mapName="GO2ALLPROBES", maps$GO, all=TRUE)
+
+    ## AtomicAnnMap objects
+    seed0 <- list(
+        joins=HGU95AV2DB_default_joins,
+        mapColType=HGU95AV2DB_default_mapColType,
+        chipShortname=chipShortname,
+        con=con,
+        datacache=datacache
+    )
+    maps <- createAtomicAnnMapObjects(HGU95AV2DB_AtomicAnnMap_seeds, seed0)
+
+    ## ReverseAtomicAnnMap objects
     maps$ENZYME2PROBE <- new("ReverseAtomicAnnMap", mapName="ENZYME2PROBE", maps$ENZYME)
     maps$PATH2PROBE <- new("ReverseAtomicAnnMap", mapName="PATH2PROBE", maps$PATH)
     maps$PMID2PROBE <- new("ReverseAtomicAnnMap", mapName="PMID2PROBE", maps$PMID)
+
+    ## GOAnnMap objects
+    maps$GO <- new("GOAnnMap",
+            mapName="GO",
+            joins=HGU95AV2DB_default_joins,
+            chipShortname=chipShortname,
+            con=con,
+            datacache=datacache)
+
+    ## ReverseGOAnnMap objects
+    maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)
+    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", mapName="GO2ALLPROBES", maps$GO, all=TRUE)
+
+    ## The MAPCOUNTS object (named integer vector)
     maps$MAPCOUNTS <- createMAPCOUNTS(con, chipShortname)
+
     names(maps) <- paste(chipShortname, names(maps), sep="")
     maps
 }
 
 compareAnnDataIn2Pkgs.HGU95AV2DB <- function(pkgname1, pkgname2, mapprefix, probes=NULL, verbose=FALSE)
 {
-    direct_maps <- c(HGU95AV2DB_atomic_ann_maps, HGU95AV2DB_named_atomic_ann_maps)
-    direct_maps <- sapply(direct_maps, function(x) x$mapName)
+    direct_maps <- sapply(HGU95AV2DB_AtomicAnnMap_seeds, function(x) x$mapName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
         "GO2PROBE",

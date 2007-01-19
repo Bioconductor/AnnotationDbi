@@ -261,7 +261,8 @@ setMethod("ls", signature(name="ReverseGOAnnMap"),
 setMethod("show", "AnnMap",
     function(object)
     {
-        cat("An object of class “", class(object), "”\n", sep="")
+        cat(object@mapName, " map for chip ", object@chipShortname,
+            " (object of class “", class(object), "”)\n", sep="")
     }
 )
 
@@ -592,6 +593,26 @@ createMAPCOUNTS <- function(con, chipShortname)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+createAtomicAnnMapObjects <- function(seeds, seed0)
+{
+    maps <- list()
+    for (seed in seeds) {
+        if (is.null(seed["namesCol"][[1]]))
+            seed$Class <- "AtomicAnnMap"
+        else
+            seed$Class <- "NamedAtomicAnnMap"
+        if (is.null(seed["joins"][[1]]))
+            seed$joins <- seed0$joins
+        if (is.null(seed["mapColType"][[1]]))
+            seed$mapColType <- seed0$mapColType
+        seed$chipShortname <- seed0$chipShortname
+        seed$con <- seed0$con
+        seed$datacache <- seed0$datacache
+        maps[[seed$mapName]] <- do.call("new", seed)
+    }
+    maps
+}
 
 checkAnnDataObjects <- function(pkgname, chipShortname)
 {
