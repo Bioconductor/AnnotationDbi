@@ -7,7 +7,8 @@
 ###   AtomicAnnMap: SUMFUNC
 ###   miscellaneous maps: CHRLENGTHS
 
-HGU95AV2DB_default_joins <- "INNER JOIN probes USING (id)"
+HGU95AV2DB_default_baseJoins <- "INNER JOIN probes USING (id)"
+HGU95AV2DB_baseCol <- "probe_id"
 HGU95AV2DB_default_mapColType <- character(0)
 
 ### Mandatory fields: mapName, mapTable and mapCol
@@ -18,7 +19,7 @@ HGU95AV2DB_AtomicAnnMap_seeds <- list(
                 mapName="ACCNUM",
                 mapTable="accessions",
                 mapCol="accession",
-                joins=character(0) # no join for this map
+                baseJoins=character(0) # no join for this map
         ),
         list(
                 mapName="CHR",
@@ -101,13 +102,14 @@ HGU95AV2DB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
 {
-    cachePROBESET2GENE(con, "probes", NULL, datacache)
+    cacheBASEID2GENE(con, "probes", NULL, HGU95AV2DB_baseCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(
-        joins=HGU95AV2DB_default_joins,
         mapColType=HGU95AV2DB_default_mapColType,
         chipShortname=chipShortname,
+        baseJoins=HGU95AV2DB_default_baseJoins,
+        baseCol=HGU95AV2DB_baseCol,
         con=con,
         datacache=datacache
     )
@@ -121,8 +123,9 @@ createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
     ## GOAnnMap objects
     maps$GO <- new("GOAnnMap",
             mapName="GO",
-            joins=HGU95AV2DB_default_joins,
             chipShortname=chipShortname,
+            baseJoins=HGU95AV2DB_default_baseJoins,
+            baseCol=HGU95AV2DB_baseCol,
             con=con,
             datacache=datacache)
 

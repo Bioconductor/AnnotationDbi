@@ -1,18 +1,17 @@
 ### =========================================================================
 ### Create all data objects for an annotation data package
-### with db schema YEAST2DB
+### with db schema YEASTDB
 ### -------------------------------------------------------------------------
 
 ### TODO: The following maps are missing for now:
-###   miscellaneous maps: CHRLENGTHS
+###   miscellaneous maps: CHRLENGTHS, REJECTORF
 
-YEAST2DB_short_join <- "INNER JOIN probes USING (systematic_name)"
-YEAST2DB_default_baseJoins <- paste("INNER JOIN sgd USING (id)", YEAST2DB_short_join)
-YEAST2DB_baseCol <- "probe_id"
-YEAST2DB_default_mapColType <- character(0)
+YEASTDB_default_baseJoins <- "INNER JOIN sgd using (id)"
+YEASTDB_baseCol <- "systematic_name"
+YEASTDB_default_mapColType <- character(0)
 
 ### Mandatory fields: mapName, mapTable and mapCol
-YEAST2DB_AtomicAnnMap_seeds <- list(
+YEASTDB_AtomicAnnMap_seeds <- list(
 
     ## AtomicAnnMap objects
         list(
@@ -39,12 +38,12 @@ YEAST2DB_AtomicAnnMap_seeds <- list(
                 mapName="GENENAME",
                 mapTable="sgd",
                 mapCol="gene_name",
-                baseJoins=YEAST2DB_short_join
+                baseJoins=character(0)
         ),
         list(
-                mapName="ORF",
-                mapTable="probes",
-                mapCol="systematic_name"
+                mapName="INTERPRO",
+                mapTable="interpro",
+                mapCol="interpro_id"
         ),
         list(
                 mapName="PATH",
@@ -52,9 +51,19 @@ YEAST2DB_AtomicAnnMap_seeds <- list(
                 mapCol="kegg_id"
         ),
         list(
+                mapName="PFAM",
+                mapTable="pfam",
+                mapCol="pfam_id"
+        ),
+        list(
                 mapName="PMID",
                 mapTable="pubmed",
                 mapCol="pubmed_id"
+        ),
+        list(
+                mapName="SMART",
+                mapTable="smart",
+                mapCol="smart_id"
         ),
 
     ## NamedAtomicAnnMap objects
@@ -67,22 +76,23 @@ YEAST2DB_AtomicAnnMap_seeds <- list(
         )
 )
 
-createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
+createAnnDataObjects.YEASTDB <- function(chipShortname, con, datacache)
 {
-    cacheBASEID2GENE(con, "sgd", YEAST2DB_short_join, YEAST2DB_baseCol, datacache)
+    cacheBASEID2GENE(con, "sgd", NULL, YEASTDB_baseCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(
-        mapColType=YEAST2DB_default_mapColType,
+        mapColType=YEASTDB_default_mapColType,
         chipShortname=chipShortname,
-        baseJoins=YEAST2DB_default_baseJoins,
-        baseCol=YEAST2DB_baseCol,
+        baseJoins=YEASTDB_default_baseJoins,
+        baseCol=YEASTDB_baseCol,
         con=con,
         datacache=datacache
     )
-    maps <- createAtomicAnnMapObjects(YEAST2DB_AtomicAnnMap_seeds, seed0)
+    maps <- createAtomicAnnMapObjects(YEASTDB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
+    maps$COMMON2SYSTEMATIC <- new("ReverseAtomicAnnMap", mapName="COMMON2SYSTEMATIC", maps$GENENAME)
     maps$ENZYME2PROBE <- new("ReverseAtomicAnnMap", mapName="ENZYME2PROBE", maps$ENZYME)
     maps$PATH2PROBE <- new("ReverseAtomicAnnMap", mapName="PATH2PROBE", maps$PATH)
     maps$PMID2PROBE <- new("ReverseAtomicAnnMap", mapName="PMID2PROBE", maps$PMID)
@@ -91,8 +101,8 @@ createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
     maps$GO <- new("GOAnnMap",
             mapName="GO",
             chipShortname=chipShortname,
-            baseJoins=YEAST2DB_default_baseJoins,
-            baseCol=YEAST2DB_baseCol,
+            baseJoins=YEASTDB_default_baseJoins,
+            baseCol=YEASTDB_baseCol,
             con=con,
             datacache=datacache)
 
@@ -107,9 +117,9 @@ createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
     maps
 }
 
-compareAnnDataIn2Pkgs.YEAST2DB <- function(pkgname1, pkgname2, mapprefix, probes=NULL, verbose=FALSE)
+compareAnnDataIn2Pkgs.YEASTDB <- function(pkgname1, pkgname2, mapprefix, probes=NULL, verbose=FALSE)
 {
-    direct_maps <- sapply(YEAST2DB_AtomicAnnMap_seeds, function(x) x$mapName)
+    direct_maps <- sapply(YEASTDB_AtomicAnnMap_seeds, function(x) x$mapName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
         "GO2PROBE",

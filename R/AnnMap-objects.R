@@ -10,9 +10,6 @@
 ### -------------------------------------------------------------------------
 
 
-PROBESETID_COL <- "probe_id"
-
-
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SQL helper functions
 
@@ -69,22 +66,22 @@ countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Other helper functions
 
-cachePROBESET2GENE <- function(con, table, joins, datacache)
+cacheBASEID2GENE <- function(con, table, baseJoins, baseCol, datacache)
 {
-    if (length(joins) == 1) # will be FALSE for NULL or character(0)
-        table <- paste(table, joins)
+    if (length(baseJoins) == 1) # will be FALSE for NULL or character(0)
+        table <- paste(table, baseJoins)
     data <- getTable(con, table)
-    PROBESET2GENE <- data[["id"]]
-    names(PROBESET2GENE) <- data[[PROBESETID_COL]]
-    assign("PROBESET2GENE", PROBESET2GENE, envir=datacache)
+    BASEID2GENE <- data[["id"]]
+    names(BASEID2GENE) <- data[[baseCol]]
+    assign("BASEID2GENE", BASEID2GENE, envir=datacache)
 }
 
 checkProbeset <- function(probeset, datacache)
 {
     if (is.null(probeset) || !is.character(probeset) || any(is.na(probeset)))
         stop("invalid first argument")
-    PROBESET2GENE <- get("PROBESET2GENE", envir=datacache)
-    not_found <- which(!(probeset %in% names(PROBESET2GENE)))
+    BASEID2GENE <- get("BASEID2GENE", envir=datacache)
+    not_found <- which(!(probeset %in% names(BASEID2GENE)))
     if (length(not_found) != 0)
         stop("value for '", probeset[not_found[1]], "' not found")
 }
@@ -132,7 +129,8 @@ setClass("AnnMap",
     representation(
         mapName="character",
         chipShortname="character",
-        joins="character",
+        baseCol="character",
+        baseJoins="character",
         con="DBIConnection",
         datacache="environment"
     )
@@ -200,7 +198,7 @@ setMethod("db", "AnnMap", function(object) object@con)
 setMethod("length", "AnnMap",
     function(x)
     {
-        length(get("PROBESET2GENE", envir=x@datacache))
+        length(get("BASEID2GENE", envir=x@datacache))
     }
 )
 
@@ -230,7 +228,7 @@ setMethod("length", "ReverseGOAnnMap",
 setMethod("ls", signature(name="AnnMap"),
     function(name, pos, envir, all.names, pattern)
     {
-        names(get("PROBESET2GENE", envir=name@datacache))
+        names(get("BASEID2GENE", envir=name@datacache))
     }
 )
 
@@ -274,8 +272,8 @@ setMethod("show", "AnnMap",
 subset.AtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- map@mapCol
-    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
-    submap <- split(data[[map@mapCol]], data[[PROBESETID_COL]])
+    data <- subsetTable(db(map), map@mapTable, map@baseCol, subset, cols, map@baseJoins)
+    submap <- split(data[[map@mapCol]], data[[map@baseCol]])
     if (is.null(subset))
         subset <- ls(map)
     formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
@@ -288,19 +286,19 @@ subset.AtomicAnnMap <- function(map, subset=NULL)
 countMappedKeys.AtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- map@mapCol
-    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
+    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, map@baseCol, subset, cols, map@baseJoins)
 }
 
 subset.ReverseAtomicAnnMap <- function(map, subset=NULL)
 {
-    cols <- PROBESETID_COL
-    data <- subsetTable(db(map), map@mapTable, map@mapCol, subset, cols, map@joins)
+    cols <- map@baseCol
+    data <- subsetTable(db(map), map@mapTable, map@mapCol, subset, cols, map@baseJoins)
     if (!is.null(subset)) {
         not_found <- which(!(subset %in% data[[map@mapCol]]))
         if (length(not_found) != 0)
             stop("value for '", subset[not_found[1]], "' not found")
     }
-    submap <- split(data[[PROBESETID_COL]], data[[map@mapCol]])
+    submap <- split(data[[map@baseCol]], data[[map@mapCol]])
     if (is.null(subset))
         subset <- ls(map)
     formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
@@ -309,10 +307,10 @@ subset.ReverseAtomicAnnMap <- function(map, subset=NULL)
 subset.NamedAtomicAnnMap <- function(map, subset=NULL)
 {
     cols <- c(map@mapCol, map@namesCol)
-    data <- subsetTable(db(map), map@mapTable, PROBESETID_COL, subset, cols, map@joins)
+    data <- subsetTable(db(map), map@mapTable, map@baseCol, subset, cols, map@baseJoins)
     submap <- data[[map@mapCol]]
     names(submap) <- data[[map@namesCol]]
-    submap <- split(submap, data[[PROBESETID_COL]])
+    submap <- split(submap, data[[map@baseCol]])
     if (is.null(subset))
         subset <- ls(map)
     formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
@@ -329,11 +327,11 @@ subset.GOAnnMap <- function(map, subset=NULL)
     cols <- c("go_id", "evidence")
     getPartialSubmap <- function(table, Ontology)
     {
-        data <- subsetTable(db(map), table, PROBESETID_COL, subset, cols, map@joins)
+        data <- subsetTable(db(map), table, map@baseCol, subset, cols, map@baseJoins)
         if (nrow(data) == 0)
             return(list())
-        GOIDs <- split(data[["go_id"]], data[[PROBESETID_COL]])
-        Evidences <- split(data[["evidence"]], data[[PROBESETID_COL]])
+        GOIDs <- split(data[["go_id"]], data[[map@baseCol]])
+        Evidences <- split(data[["evidence"]], data[[map@baseCol]])
         ans <- lapply(names(GOIDs), function(x) makeGONodeList(GOIDs[[x]], Evidences[[x]], Ontology))
         names(ans) <- names(GOIDs)
         ans
@@ -359,8 +357,8 @@ countMappedKeys.GOAnnMap <- function(map, subset=NULL)
     cols <- character(0)
     getMappedKeys <- function(table)
     {
-        data <- subsetTable(db(map), table, PROBESETID_COL, subset, cols, map@joins)
-        unique(data[[PROBESETID_COL]])
+        data <- subsetTable(db(map), table, map@baseCol, subset, cols, map@baseJoins)
+        unique(data[[map@baseCol]])
     }
     keys1 <- getMappedKeys("go_bp")
     keys2 <- getMappedKeys("go_cc")
@@ -372,13 +370,13 @@ countMappedKeys.GOAnnMap <- function(map, subset=NULL)
 
 subset.ReverseGOAnnMap <- function(map, subset=NULL)
 {
-    cols <- c(PROBESETID_COL, "evidence")
+    cols <- c(map@baseCol, "evidence")
     getPartialSubmap <- function(table)
     {
-        data <- subsetTable(db(map), table, "go_id", subset, cols, map@joins)
+        data <- subsetTable(db(map), table, "go_id", subset, cols, map@baseJoins)
         if (nrow(data) == 0)
             return(list())
-        submap <- data[[PROBESETID_COL]]
+        submap <- data[[map@baseCol]]
         names(submap) <- data[["evidence"]]
         split(submap, data[["go_id"]])
     }
@@ -602,13 +600,10 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
             seed$Class <- "AtomicAnnMap"
         else
             seed$Class <- "NamedAtomicAnnMap"
-        if (is.null(seed["joins"][[1]]))
-            seed$joins <- seed0$joins
-        if (is.null(seed["mapColType"][[1]]))
-            seed$mapColType <- seed0$mapColType
-        seed$chipShortname <- seed0$chipShortname
-        seed$con <- seed0$con
-        seed$datacache <- seed0$datacache
+        for (slot in names(seed0)) {
+            if (is.null(seed[slot][[1]]))
+                seed[[slot]] <- seed0[[slot]]
+        }
         maps[[seed$mapName]] <- do.call("new", seed)
     }
     maps

@@ -49,20 +49,12 @@ setMethod(Biobase::makeDataPackage,
     }
 )
 
+
 ### =========================================================================
 ### Make and test SQLite-based annotation packages
 ### -------------------------------------------------------------------------
-### Just for testing (not exported).
-### Typical use:
-###   library(AnnotationDbi)
-###   AnnotationDbi:::make_hgu95av2db(".", "data/hgu95av2.sqlite")
-###   AnnotationDbi:::make_yeast2db(".", "data/yeast2.sqlite")
-###   AnnotationDbi:::make_ygs98db(".", "data/ygs98.sqlite")
-###   AnnotationDbi:::make_agdb(".", "data/ag.sqlite")
-###   AnnotationDbi:::make_ath1121501db(".", "data/ath1121501.sqlite")
-###   AnnotationDbi:::make_YEASTdb(".", "data/YEAST.sqlite")
-### or to make them all:
-###   AnnotationDbi:::make_all("data", "lastbuilds")
+### Just for testing (not exported). See at the bottom of this file for
+### typical use of the make_*db functions.
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -224,7 +216,10 @@ make_YEASTdb <- function(filePath, srcSQLiteFilePath, ...)
         templateName="YEASTDB",
         dbSchema="YEASTDB",
         organism="Saccharomyces cerevisiae",
-        species="Yeast"
+        species="Yeast",
+        manufacturer="NA",
+        chipName="NA",
+        manufacturerUrl="NA"
     )
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
@@ -243,7 +238,16 @@ test_YEASTdb <- function(verbose=FALSE)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### To generate all the packages at once.
+### Typical use of the make_*db functions:
+###   library(AnnotationDbi)
+###   AnnotationDbi:::make_hgu95av2db(".", "data/hgu95av2.sqlite")
+###   AnnotationDbi:::make_yeast2db(".", "data/yeast2.sqlite")
+###   AnnotationDbi:::make_ygs98db(".", "data/ygs98.sqlite")
+###   AnnotationDbi:::make_agdb(".", "data/ag.sqlite")
+###   AnnotationDbi:::make_ath1121501db(".", "data/ath1121501.sqlite")
+###   AnnotationDbi:::make_YEASTdb(".", "data/YEAST.sqlite")
+### or to make them all at once:
+###   AnnotationDbi:::make_all("data", "lastbuilds")
 
 make_all <- function(srcDir=".", destDir=".")
 {
