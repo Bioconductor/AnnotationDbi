@@ -102,7 +102,7 @@ HGU95AV2DB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
 {
-    cacheBASEID2GENE(con, "probes", NULL, HGU95AV2DB_baseCol, datacache)
+    cacheBASEIDS(con, "probes", HGU95AV2DB_baseCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(

@@ -66,24 +66,21 @@ countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Other helper functions
 
-cacheBASEID2GENE <- function(con, table, baseJoins, baseCol, datacache)
+cacheBASEIDS <- function(con, baseTable, baseCol, datacache)
 {
-    if (length(baseJoins) == 1) # will be FALSE for NULL or character(0)
-        table <- paste(table, baseJoins)
-    data <- getTable(con, table)
-    BASEID2GENE <- data[["id"]]
-    names(BASEID2GENE) <- data[[baseCol]]
-    assign("BASEID2GENE", BASEID2GENE, envir=datacache)
+    data <- getTable(con, baseTable)
+    BASEIDS <- unique(data[[baseCol]])
+    assign("BASEIDS", BASEIDS, envir=datacache)
 }
 
-checkProbeset <- function(probeset, datacache)
+checkUserBaseIds <- function(baseids, datacache)
 {
-    if (is.null(probeset) || !is.character(probeset) || any(is.na(probeset)))
+    if (is.null(baseids) || !is.character(baseids) || any(is.na(baseids)))
         stop("invalid first argument")
-    BASEID2GENE <- get("BASEID2GENE", envir=datacache)
-    not_found <- which(!(probeset %in% names(BASEID2GENE)))
+    BASEIDS <- get("BASEIDS", envir=datacache)
+    not_found <- which(!(baseids %in% BASEIDS))
     if (length(not_found) != 0)
-        stop("value for '", probeset[not_found[1]], "' not found")
+        stop("value for '", baseids[not_found[1]], "' not found")
 }
 
 GOtables <- function(all)
@@ -136,8 +133,8 @@ setClass("AnnMap",
     )
 )
 
-### An "AtomicAnnMap" object maps each probeset ID to an unnamed atomic vector
-### (character or integer).
+### An "AtomicAnnMap" object maps each BASEID (string) to an unnamed atomic
+### vector (character or integer).
 ### The last 2 slots ('replace.single' and 'replace.multiple') allow dealing
 ### with silly maps ENTREZID and MULTIHIT in AGDB schema: they are complementary
 ### maps that both map probeset ids to Entrez ids. In the ENTREZID map, probeset
@@ -168,12 +165,12 @@ setClass("NamedAtomicAnnMap",
     )
 )
 
-### Maps each probeset ID to a named list of GO nodes, each GO node being
+### Maps each BASEID to a named list of GO nodes, each GO node being
 ### represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
 setClass("GOAnnMap", contains="AnnMap")
 
-### Maps a GO term to a named character vector containing probeset IDs.
+### Maps a GO term to a named character vector containing BASEIDs.
 ### Each element of the vector is named with the Evidence code.
 setClass("ReverseGOAnnMap",
     contains="AnnMap",
@@ -198,7 +195,7 @@ setMethod("db", "AnnMap", function(object) object@con)
 setMethod("length", "AnnMap",
     function(x)
     {
-        length(get("BASEID2GENE", envir=x@datacache))
+        length(get("BASEIDS", envir=x@datacache))
     }
 )
 
@@ -228,7 +225,7 @@ setMethod("length", "ReverseGOAnnMap",
 setMethod("ls", signature(name="AnnMap"),
     function(name, pos, envir, all.names, pattern)
     {
-        names(get("BASEID2GENE", envir=name@datacache))
+        get("BASEIDS", envir=name@datacache)
     }
 )
 
@@ -396,7 +393,7 @@ subset.ReverseGOAnnMap <- function(map, subset=NULL)
 setMethod("mget", signature(envir="AtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
-        checkProbeset(x, envir@datacache)
+        checkUserBaseIds(x, envir@datacache)
         if (length(x) == 0)
             return(list())
         subset.AtomicAnnMap(envir, x)
@@ -417,7 +414,7 @@ setMethod("mget", signature(envir="ReverseAtomicAnnMap"),
 setMethod("mget", signature(envir="NamedAtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
-        checkProbeset(x, envir@datacache)
+        checkUserBaseIds(x, envir@datacache)
         if (length(x) == 0)
             return(list())
         subset.NamedAtomicAnnMap(envir, x)
@@ -427,7 +424,7 @@ setMethod("mget", signature(envir="NamedAtomicAnnMap"),
 setMethod("mget", signature(envir="GOAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
-        checkProbeset(x, envir@datacache)
+        checkUserBaseIds(x, envir@datacache)
         if (length(x) == 0)
             return(list())
         subset.GOAnnMap(envir, x)

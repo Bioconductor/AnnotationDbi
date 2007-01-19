@@ -77,7 +77,7 @@ AGDB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
 {
-    cacheBASEID2GENE(con, "probes", NULL, AGDB_baseCol, datacache)
+    cacheBASEIDS(con, "probes", AGDB_baseCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(

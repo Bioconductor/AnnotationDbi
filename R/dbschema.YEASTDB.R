@@ -78,7 +78,7 @@ YEASTDB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.YEASTDB <- function(chipShortname, con, datacache)
 {
-    cacheBASEID2GENE(con, "sgd", NULL, YEASTDB_baseCol, datacache)
+    cacheBASEIDS(con, "sgd", YEASTDB_baseCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(
