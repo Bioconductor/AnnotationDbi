@@ -1,5 +1,12 @@
 ### =========================================================================
-### Environment-like annotation maps
+### AnnMap objects
+### --------------
+### AnnMap objects are SQLite-based annotation maps.
+### This file defines:
+###   - the "AnnMap" class and subclasses,
+###   - an environment-like API for the "AnnMap" objects (length, ls, mget,
+###     as.list, eapply, get, [[ and $ methods),
+###   - some helper functions used by this environment-like API.
 ### -------------------------------------------------------------------------
 
 
@@ -9,24 +16,29 @@ PROBESETID_COL <- "probe_id"
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SQL helper functions
 
+.dbGetQuery <- function(con, sql)
+{
+    dbGetQuery(con, sql)
+}
+
 getTable <- function(con, table, where=NULL)
 {
     sql <- paste("SELECT * FROM ", table, sep="")
     if (!is.null(where))
         sql <- paste(sql, " WHERE ", where, sep="")
-    dbGetQuery(con, sql)
+    .dbGetQuery(con, sql)
 }
 
 countUniqueColValues <- function(con, table, col)
 {
     sql <- paste("SELECT COUNT(DISTINCT ", col, ") FROM ", table, sep="")
-    dbGetQuery(con, sql)[[1]]
+    .dbGetQuery(con, sql)[[1]]
 }
 
 uniqueColValues <- function(con, table, col)
 {
     sql <- paste("SELECT DISTINCT ", col, " FROM ", table, sep="")
-    dbGetQuery(con, sql)[[col]]
+    .dbGetQuery(con, sql)[[col]]
 }
 
 subsetTable <- function(con, table, index, subset, cols, joins=NULL)
@@ -38,7 +50,7 @@ subsetTable <- function(con, table, index, subset, cols, joins=NULL)
     if (!is.null(subset))
         sql <- paste(sql, " WHERE ", index,
                      " IN ('", paste(subset, collapse="','"), "')", sep="")
-    dbGetQuery(con, sql)
+    .dbGetQuery(con, sql)
 }
 
 countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, joins=NULL)
@@ -50,7 +62,7 @@ countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, 
     if (!is.null(subset))
         sql <- paste(sql, " AND ", index,
                      " IN ('", paste(subset, collapse="','"), "')", sep="")
-    dbGetQuery(con, sql)[[1]]
+    .dbGetQuery(con, sql)[[1]]
 }
 
 
@@ -114,30 +126,36 @@ formatSubmap <- function(submap, keys, type=NULL, replace.single=NULL, replace.m
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Classes representing annotation maps
+### Classes representing SQLite-based annotation maps
 
 setClass("AnnMap",
     representation(
+        mapName="character",
+        chipShortname="character",
         joins="character",
         con="DBIConnection",
         datacache="environment"
     )
 )
 
-### Maps each probeset ID to an unnamed atomic vector (character or integer)
+### An "AtomicAnnMap" object maps each probeset ID to an unnamed atomic vector
+### (character or integer).
+### The last 2 slots ('replace.single' and 'replace.multiple') allow dealing
+### with silly maps ENTREZID and MULTIHIT in AGDB schema: they are complementary
+### maps that both map probeset ids to Entrez ids. In the ENTREZID map, probeset
+### ids that have multiple matches are mapped to "multiple". In the MULTIHIT
+### map, probeset ids that have <= 1 match are mapped to NAs. Sooo:
+###   - for ENTREZID: don't set replace.single (default is character(0)),
+###                   use replace.multiple="multiple",
+###   - for MULTIHIT: use replace.single=NA,
+###                   don't set replace.multiple (default is character(0)),
+###   - for any other map: don't set those fields (defaults will be just fine).
 setClass("AtomicAnnMap",
     contains="AnnMap",
     representation(
         mapTable="character",
         mapCol="character",
         mapColType="character", # set only if the extracted submap needs coercion
-        ## The 2 fields below allow dealing with silly maps ENTREZID and
-        ## MULTIHIT in AGDB schema:
-        ##   - for ENTREZID: don't set replace.single (default is character(0)),
-        ##                   use replace.multiple="multiple",
-        ##   - for MULTIHIT: use replace.single=NA,
-        ##                   don't set replace.multiple (default is character(0)),
-        ##   - for any other map: don't set those fields (defaults will be used).
         replace.single="character",
         replace.multiple="character"
     )
@@ -564,25 +582,25 @@ setMethod("$", "AnnMap", function(x, name) x[[name]])
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-createMAPCOUNTS <- function(con, chipname)
+createMAPCOUNTS <- function(con, chipShortname)
 {
     data <- getTable(con, "qcdata", "map_name != 'TOTAL'")
     MAPCOUNTS <- data[["count"]]
-    names(MAPCOUNTS) <- paste(chipname, data[["map_name"]], sep="")
+    names(MAPCOUNTS) <- paste(chipShortname, data[["map_name"]], sep="")
     MAPCOUNTS
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-checkAnnDataObjects <- function(pkgname, chipname)
+checkAnnDataObjects <- function(pkgname, chipShortname)
 {
     require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
     getMap <- function(mapname)
     {
         get(mapname, envir=asNamespace(pkgname))
     }
-    MAPCOUNTS <- getMap(paste(chipname, "MAPCOUNTS", sep=""))
+    MAPCOUNTS <- getMap(paste(chipShortname, "MAPCOUNTS", sep=""))
     for (mapname in names(MAPCOUNTS)) {
         cat("Checking ", mapname, " map:\n", sep="")
         map <- getMap(mapname)
