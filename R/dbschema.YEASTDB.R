@@ -122,11 +122,12 @@ compareAnnDataIn2Pkgs.YEASTDB <- function(pkgname1, pkgname2, mapprefix, probes=
     direct_maps <- sapply(YEASTDB_AtomicAnnMap_seeds, function(x) x$mapName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
-        "GO2PROBE",
-        "GO2ALLPROBES",
+        "COMMON2SYSTEMATIC",
         "ENZYME2PROBE",
         "PATH2PROBE",
         "PMID2PROBE"
+        "GO2PROBE",
+        "GO2ALLPROBES"
     )
     compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes, verbose)
 }

@@ -145,11 +145,11 @@ compareAnnDataIn2Pkgs.HGU95AV2DB <- function(pkgname1, pkgname2, mapprefix, prob
     direct_maps <- sapply(HGU95AV2DB_AtomicAnnMap_seeds, function(x) x$mapName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
-        "GO2PROBE",
-        "GO2ALLPROBES",
         "ENZYME2PROBE",
         "PATH2PROBE",
-        "PMID2PROBE"
+        "PMID2PROBE",
+        "GO2PROBE",
+        "GO2ALLPROBES"
     )
     compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes, verbose)
 }
