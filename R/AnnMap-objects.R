@@ -34,7 +34,8 @@ countUniqueColValues <- function(con, table, col)
 
 uniqueColValues <- function(con, table, col)
 {
-    sql <- paste("SELECT DISTINCT ", col, " FROM ", table, sep="")
+    sql <- paste("SELECT DISTINCT ", col, " FROM ", table,
+                 " WHERE ", col, " IS NOT NULL", sep="")
     .dbGetQuery(con, sql)[[col]]
 }
 
