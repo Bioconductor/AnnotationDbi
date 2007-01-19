@@ -68,8 +68,7 @@ countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, 
 
 cacheBASEIDS <- function(con, baseTable, baseCol, datacache)
 {
-    data <- getTable(con, baseTable)
-    BASEIDS <- unique(data[[baseCol]])
+    BASEIDS <- uniqueColValues(con, baseTable, baseCol)
     assign("BASEIDS", BASEIDS, envir=datacache)
 }
 
