@@ -1,0 +1,4 @@
+import(methods)
+import(AnnotationDbi)
+
+export("getDb", "closeDb", "@CHIPSHORTNAME@ORGANISM")
