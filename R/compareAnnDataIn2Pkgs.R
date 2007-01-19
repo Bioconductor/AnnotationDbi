@@ -1,6 +1,6 @@
 ### The identical.uulists function is a replacement for setequal when
 ### used on "uulists".
-### Conceptually, an "uulist" is an unordered, unamed list. 2 uulists
+### Conceptually, a "uulist" is an unordered, unamed list. 2 uulists
 ### are identical if they contain the same elements, possibly in
 ### different orders, with different outer names and with different number
 ### of occurences for any given element. 2 elements are considered to be
@@ -33,8 +33,14 @@ identical.uulists <- function(x, y)
 ### Will ignore duplicated elements in the collections.
 identical.collections <- function(x, y)
 {
-    if (typeof(x) != typeof(y))
+    ## If x and y have different types _and_ at least one of them is not a
+    ## single NA then we return FALSE.
+    if (typeof(x) != typeof(y)
+     && (length(x) != 1 || !is.na(x) || length(y) != 1 || !is.na(y)))
         return(FALSE)
+    ## Now we can assume that x and y have the same type _except_ if
+    ## they are both NAs (and in this case we can't just return TRUE
+    ## because we need to compare the names too).
     nmx <- names(x)
     nmy <- names(y)
     if (is.null(nmx) != is.null(nmy))
