@@ -49,7 +49,9 @@ setMethod(Biobase::makeDataPackage,
     }
 )
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### =========================================================================
+### Make and test SQLite-based annotation packages
+### -------------------------------------------------------------------------
 ### Just for testing (not exported).
 ### Typical use:
 ###   library(AnnotationDbi)
@@ -58,8 +60,13 @@ setMethod(Biobase::makeDataPackage,
 ###   AnnotationDbi:::make_ygs98db(".", "data/ygs98.sqlite")
 ###   AnnotationDbi:::make_agdb(".", "data/ag.sqlite")
 ###   AnnotationDbi:::make_ath1121501db(".", "data/ath1121501.sqlite")
+###   AnnotationDbi:::make_YEASTdb(".", "data/YEAST.sqlite")
 ### or to make them all:
 ###   AnnotationDbi:::make_all("data", "lastbuilds")
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### HGU95AV2DB schema
 
 make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
 {
@@ -87,6 +94,10 @@ test_hgu95av2db <- function(verbose=FALSE)
 {
     compareAnnDataIn2Pkgs.HGU95AV2DB("hgu95av2", "hgu95av2db", "hgu95av2", verbose=verbose)
 }
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### YEAST2DB schema
 
 make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
 {
@@ -141,6 +152,10 @@ test_ygs98db <- function(verbose=FALSE)
 {
     compareAnnDataIn2Pkgs.YEAST2DB("ygs98", "ygs98db", "ygs98", verbose=verbose)
 }
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### AGDB schema
 
 make_agdb <- function(filePath, srcSQLiteFilePath, ...)
 {
@@ -198,6 +213,38 @@ test_ath1121501db <- function(verbose=FALSE)
     compareAnnDataIn2Pkgs.AGDB("ath1121501", "ath1121501db", "ath1121501", verbose=verbose)
 }
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### YEASTDB schema
+
+make_YEASTdb <- function(filePath, srcSQLiteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        chipShortName="YEAST",
+        templateName="YEASTDB",
+        dbSchema="YEASTDB",
+        organism="Saccharomyces cerevisiae",
+        species="Yeast"
+    )
+    author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "YEASTdb"
+    packageVersion <- "1.13.900"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, Saccharomyces_cerevisiae"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+test_YEASTdb <- function(verbose=FALSE)
+{
+    compareAnnDataIn2Pkgs.YEASTDB("YEAST", "YEASTdb", "YEAST", verbose=verbose)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### To generate all the packages at once.
+
 make_all <- function(srcDir=".", destDir=".")
 {
     chips <- c(
@@ -205,7 +252,8 @@ make_all <- function(srcDir=".", destDir=".")
         "yeast2",
         "ygs98",
         "ag",
-        "ath1121501"
+        "ath1121501",
+        "YEAST"
     )
     for (chip in chips) {
         funcname <- paste("make_", chip, "db", sep="")
