@@ -1,0 +1,11 @@
+Package: @PKGNAME@
+Title: A data package containing annotation data for @CHIPSHORTNAME@
+Description: Annotation data file for @CHIPSHORTNAME@ assembled using data from public data repositories
+Version: @VERSION@
+Author: @AUTHOR@
+Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
+LazyLoad: yes 
+Depends: R (>= 2.4.0), methods, AnnotationDbi (>= @ANNDBIVERSION@), RSQLite (>= @RSQLITEVERSION@)
+License: @LIC@
+biocViews: @BIOCVIEWS@
+

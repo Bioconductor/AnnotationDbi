@@ -52,6 +52,7 @@ export(
     createAnnDataObjects.HGU95AV2DB,
     createAnnDataObjects.YEAST2DB,
     createAnnDataObjects.AGDB,
+    createAnnDataObjects.LLMAPPINGSDB,
     createAnnDataObjects.YEASTDB
 )
 

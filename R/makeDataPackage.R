@@ -207,6 +207,94 @@ test_ath1121501db <- function(verbose=FALSE)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### LLMAPPINGSDB schema
+
+make_humanLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        chipShortName="humanLLMappings",
+        templateName="LLMAPPINGSDB",
+        dbSchema="LLMAPPINGSDB",
+        organism="NA",
+        species="NA",
+        manufacturer="NA",
+        chipName="NA",
+        manufacturerUrl="NA"
+    )
+    author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "humanLLMappingsdb"
+    packageVersion <- "1.13.900"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, Homo_sapiens, humanLLMappings"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+test_humanLLMappingsdb <- function(verbose=FALSE)
+{
+    compareAnnDataIn2Pkgs.LLMAPPINGSDB("humanLLMappings", "humanLLMappingsdb",
+                                       "humanLLMappings", verbose=verbose)
+}
+
+make_mouseLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        chipShortName="mouseLLMappings",
+        templateName="LLMAPPINGSDB",
+        dbSchema="LLMAPPINGSDB",
+        organism="NA",
+        species="NA",
+        manufacturer="NA",
+        chipName="NA",
+        manufacturerUrl="NA"
+    )
+    author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "mouseLLMappingsdb"
+    packageVersion <- "1.13.900"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, Mus_musculus, mouseLLMappings"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+test_mouseLLMappingsdb <- function(verbose=FALSE)
+{
+    compareAnnDataIn2Pkgs.LLMAPPINGSDB("mouseLLMappings", "mouseLLMappingsdb",
+                                       "mouseLLMappings", verbose=verbose)
+}
+
+make_ratLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        chipShortName="ratLLMappings",
+        templateName="LLMAPPINGSDB",
+        dbSchema="LLMAPPINGSDB",
+        organism="NA",
+        species="NA",
+        manufacturer="NA",
+        chipName="NA",
+        manufacturerUrl="NA"
+    )
+    author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "ratLLMappingsdb"
+    packageVersion <- "1.13.900"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, Rattus_norvegicus, ratLLMappings"
+    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+                    license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+test_ratLLMappingsdb <- function(verbose=FALSE)
+{
+    compareAnnDataIn2Pkgs.LLMAPPINGSDB("ratLLMappings", "ratLLMappingsdb",
+                                       "ratLLMappings", verbose=verbose)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### YEASTDB schema
 
 make_YEASTdb <- function(filePath, srcSQLiteFilePath, ...)
@@ -245,23 +333,29 @@ test_YEASTdb <- function(verbose=FALSE)
 ###   AnnotationDbi:::make_ygs98db(".", "data/ygs98.sqlite")
 ###   AnnotationDbi:::make_agdb(".", "data/ag.sqlite")
 ###   AnnotationDbi:::make_ath1121501db(".", "data/ath1121501.sqlite")
+###   AnnotationDbi:::make_humanLLMappingsdb(".", "data/humanLLMappings.sqlite")
+###   AnnotationDbi:::make_mouseLLMappingsdb(".", "data/mouseLLMappings.sqlite")
+###   AnnotationDbi:::make_ratLLMappingsdb(".", "data/ratLLMappings.sqlite")
 ###   AnnotationDbi:::make_YEASTdb(".", "data/YEAST.sqlite")
 ### or to make them all at once:
 ###   AnnotationDbi:::make_all("data", "lastbuilds")
 
 make_all <- function(srcDir=".", destDir=".")
 {
-    chips <- c(
+    prefixes <- c(
         "hgu95av2",
         "yeast2",
         "ygs98",
         "ag",
         "ath1121501",
+        "humanLLMappings",
+        "mouseLLMappings",
+        "ratLLMappings",
         "YEAST"
     )
-    for (chip in chips) {
-        funcname <- paste("make_", chip, "db", sep="")
-        srcSQLiteFilePath <- file.path(srcDir, paste(chip, ".sqlite", sep=""))
+    for (prefix in prefixes) {
+        funcname <- paste("make_", prefix, "db", sep="")
+        srcSQLiteFilePath <- file.path(srcDir, paste(prefix, ".sqlite", sep=""))
         do.call(funcname, list(destDir, srcSQLiteFilePath))
     }
 }

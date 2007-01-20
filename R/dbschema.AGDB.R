@@ -3,9 +3,10 @@
 ### with db schema AGDB
 ### -------------------------------------------------------------------------
 
-AGDB_default_baseJoins <- "INNER JOIN probes USING (id)"
-AGDB_baseCol <- "probe_id"
+AGDB_default_leftTable <- "probes"
+AGDB_default_leftCol <- "probe_id"
 AGDB_default_mapColType <- character(0)
+AGDB_default_baseJoins <- "INNER JOIN probes USING (id)"
 
 ### Mandatory fields: mapName, mapTable and mapCol
 AGDB_AtomicAnnMap_seeds <- list(
@@ -77,16 +78,19 @@ AGDB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
 {
-    cacheBASEIDS(con, "probes", AGDB_baseCol, datacache)
+    ## The side effect of this is to cache the probeset ids.
+    dbUniqueColVals(con, AGDB_default_leftTable,
+                    AGDB_default_leftCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(
-        mapColType=AGDB_default_mapColType,
         chipShortname=chipShortname,
-        baseJoins=AGDB_default_baseJoins,
-        baseCol=AGDB_baseCol,
         con=con,
-        datacache=datacache
+        datacache=datacache,
+        leftTable=AGDB_default_leftTable,
+        leftCol=AGDB_default_leftCol,
+        baseJoins=AGDB_default_baseJoins,
+        mapColType=AGDB_default_mapColType
     )
     maps <- createAtomicAnnMapObjects(AGDB_AtomicAnnMap_seeds, seed0)
 
@@ -95,14 +99,15 @@ createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
     maps$PATH2PROBE <- new("ReverseAtomicAnnMap", mapName="PATH2PROBE", maps$PATH)
     maps$PMID2PROBE <- new("ReverseAtomicAnnMap", mapName="PMID2PROBE", maps$PMID)
 
-    ## GOAnnMap objects
+    ## GOAnnMap object
     maps$GO <- new("GOAnnMap",
-            mapName="GO",
             chipShortname=chipShortname,
-            baseJoins=AGDB_default_baseJoins,
-            baseCol=AGDB_baseCol,
             con=con,
-            datacache=datacache)
+            datacache=datacache,
+            mapName="GO",
+            leftTable=AGDB_default_leftTable,
+            leftCol=AGDB_default_leftCol,
+            baseJoins=AGDB_default_baseJoins)
 
     ## ReverseGOAnnMap objects
     maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)

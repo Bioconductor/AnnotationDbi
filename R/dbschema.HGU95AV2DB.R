@@ -7,8 +7,9 @@
 ###   AtomicAnnMap: SUMFUNC
 ###   miscellaneous maps: CHRLENGTHS
 
+HGU95AV2DB_default_leftTable <- "probes"
+HGU95AV2DB_default_leftCol <- "probe_id"
 HGU95AV2DB_default_baseJoins <- "INNER JOIN probes USING (id)"
-HGU95AV2DB_baseCol <- "probe_id"
 HGU95AV2DB_default_mapColType <- character(0)
 
 ### Mandatory fields: mapName, mapTable and mapCol
@@ -102,16 +103,19 @@ HGU95AV2DB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
 {
-    cacheBASEIDS(con, "probes", HGU95AV2DB_baseCol, datacache)
+    ## The side effect of this is to cache the probeset ids.
+    dbUniqueColVals(con, HGU95AV2DB_default_leftTable,
+                    HGU95AV2DB_default_leftCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(
-        mapColType=HGU95AV2DB_default_mapColType,
         chipShortname=chipShortname,
-        baseJoins=HGU95AV2DB_default_baseJoins,
-        baseCol=HGU95AV2DB_baseCol,
         con=con,
-        datacache=datacache
+        datacache=datacache,
+        leftTable=HGU95AV2DB_default_leftTable,
+        leftCol=HGU95AV2DB_default_leftCol,
+        baseJoins=HGU95AV2DB_default_baseJoins,
+        mapColType=HGU95AV2DB_default_mapColType
     )
     maps <- createAtomicAnnMapObjects(HGU95AV2DB_AtomicAnnMap_seeds, seed0)
 
@@ -120,14 +124,15 @@ createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
     maps$PATH2PROBE <- new("ReverseAtomicAnnMap", mapName="PATH2PROBE", maps$PATH)
     maps$PMID2PROBE <- new("ReverseAtomicAnnMap", mapName="PMID2PROBE", maps$PMID)
 
-    ## GOAnnMap objects
+    ## GOAnnMap object
     maps$GO <- new("GOAnnMap",
-            mapName="GO",
             chipShortname=chipShortname,
-            baseJoins=HGU95AV2DB_default_baseJoins,
-            baseCol=HGU95AV2DB_baseCol,
             con=con,
-            datacache=datacache)
+            datacache=datacache,
+            mapName="GO",
+            leftTable=HGU95AV2DB_default_leftTable,
+            leftCol=HGU95AV2DB_default_leftCol,
+            baseJoins=HGU95AV2DB_default_baseJoins)
 
     ## ReverseGOAnnMap objects
     maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)

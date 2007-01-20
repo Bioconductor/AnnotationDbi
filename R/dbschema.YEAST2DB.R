@@ -6,9 +6,10 @@
 ### TODO: The following maps are missing for now:
 ###   miscellaneous maps: CHRLENGTHS
 
+YEAST2DB_default_leftTable <- "probes"
+YEAST2DB_default_leftCol <- "probe_id"
 YEAST2DB_short_join <- "INNER JOIN probes USING (systematic_name)"
 YEAST2DB_default_baseJoins <- paste("INNER JOIN sgd USING (id)", YEAST2DB_short_join)
-YEAST2DB_baseCol <- "probe_id"
 YEAST2DB_default_mapColType <- character(0)
 
 ### Mandatory fields: mapName, mapTable and mapCol
@@ -69,16 +70,19 @@ YEAST2DB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
 {
-    cacheBASEIDS(con, "sgd", YEAST2DB_baseCol, datacache)
+    ## The side effect of this is to cache the probeset ids.
+    dbUniqueColVals(con, YEAST2DB_default_leftTable,
+                    YEAST2DB_default_leftCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(
-        mapColType=YEAST2DB_default_mapColType,
         chipShortname=chipShortname,
-        baseJoins=YEAST2DB_default_baseJoins,
-        baseCol=YEAST2DB_baseCol,
         con=con,
-        datacache=datacache
+        datacache=datacache,
+        mapColType=YEAST2DB_default_mapColType,
+        leftTable=YEAST2DB_default_leftTable,
+        leftCol=YEAST2DB_default_leftCol,
+        baseJoins=YEAST2DB_default_baseJoins
     )
     maps <- createAtomicAnnMapObjects(YEAST2DB_AtomicAnnMap_seeds, seed0)
 
@@ -87,14 +91,15 @@ createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
     maps$PATH2PROBE <- new("ReverseAtomicAnnMap", mapName="PATH2PROBE", maps$PATH)
     maps$PMID2PROBE <- new("ReverseAtomicAnnMap", mapName="PMID2PROBE", maps$PMID)
 
-    ## GOAnnMap objects
+    ## GOAnnMap object
     maps$GO <- new("GOAnnMap",
-            mapName="GO",
             chipShortname=chipShortname,
-            baseJoins=YEAST2DB_default_baseJoins,
-            baseCol=YEAST2DB_baseCol,
             con=con,
-            datacache=datacache)
+            datacache=datacache,
+            mapName="GO",
+            leftTable=YEAST2DB_default_leftTable,
+            leftCol=YEAST2DB_default_leftCol,
+            baseJoins=YEAST2DB_default_baseJoins)
 
     ## ReverseGOAnnMap objects
     maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)
