@@ -26,39 +26,6 @@ getTable <- function(con, table, where=NULL)
     .dbGetQuery(con, sql)
 }
 
-### If datacache is not NULL, then use a caching mechanism.
-dbUniqueColVals <- function(con, table, col, datacache=NULL)
-{
-    if (!is.null(datacache)) {
-        objname <- paste("dbUniqueColVals", table, col, sep=".")
-        if (exists(objname, envir=datacache, inherits=FALSE)) {
-            vals <- get(objname, envir=datacache, inherits=FALSE)
-            return(vals)
-        }
-    }
-    sql <- paste("SELECT DISTINCT ", col, " FROM ", table,
-                 " WHERE ", col, " IS NOT NULL", sep="")
-    vals <- .dbGetQuery(con, sql)[[col]]
-    if (!is.null(datacache)) {
-        assign(objname, vals, envir=datacache, inherits=FALSE)
-    }
-    return(vals)
-}
-
-### If datacache is not NULL, then use a caching mechanism (read only).
-dbCountUniqueColVals <- function(con, table, col, datacache=NULL)
-{
-    if (!is.null(datacache)) {
-        objname <- paste("dbUniqueColVals", table, col, sep=".")
-        if (exists(objname, envir=datacache, inherits=FALSE)) {
-            count <- length(get(objname, envir=datacache, inherits=FALSE))
-            return(count)
-        }
-    }
-    sql <- paste("SELECT COUNT(DISTINCT ", col, ") FROM ", table, sep="")
-    .dbGetQuery(con, sql)[[1]]
-}
-
 toSQLStringSet <- function(strings)
 {
     strings <- gsub("'", "''", strings, fixed=TRUE)
@@ -89,6 +56,42 @@ countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, 
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### SQL helper functions with caching mechanism.
+
+dbUniqueColVals <- function(con, table, col, datacache=NULL)
+{
+    if (!is.null(datacache)) {
+        objname <- paste("dbUniqueColVals", table, col, sep=".")
+        if (exists(objname, envir=datacache, inherits=FALSE)) {
+            vals <- get(objname, envir=datacache, inherits=FALSE)
+            return(vals)
+        }
+    }
+    sql <- paste("SELECT DISTINCT ", col, " FROM ", table,
+                 " WHERE ", col, " IS NOT NULL", sep="")
+    vals <- .dbGetQuery(con, sql)[[col]]
+    if (!is.null(datacache)) {
+        assign(objname, vals, envir=datacache, inherits=FALSE)
+    }
+    vals
+}
+
+### Read only caching!
+dbCountUniqueColVals <- function(con, table, col, datacache=NULL)
+{
+    if (!is.null(datacache)) {
+        objname <- paste("dbUniqueColVals", table, col, sep=".")
+        if (exists(objname, envir=datacache, inherits=FALSE)) {
+            count <- length(get(objname, envir=datacache, inherits=FALSE))
+            return(count)
+        }
+    }
+    sql <- paste("SELECT COUNT(DISTINCT ", col, ") FROM ", table, sep="")
+    .dbGetQuery(con, sql)[[1]]
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Other helper functions
 
 checkUserLeftIds <- function(leftids, map)
@@ -99,14 +102,6 @@ checkUserLeftIds <- function(leftids, map)
     not_found <- which(!(leftids %in% all_leftids))
     if (length(not_found) != 0)
         stop("value for '", leftids[not_found[1]], "' not found")
-}
-
-GOtables <- function(all)
-{
-    tables <- c("go_bp", "go_cc", "go_mf")
-    if (all)
-        tables <- paste(tables, "_all", sep="")
-    tables
 }
 
 formatSubmap <- function(submap, keys, type=NULL, replace.single=NULL, replace.multiple=NULL)
@@ -134,6 +129,14 @@ formatSubmap <- function(submap, keys, type=NULL, replace.single=NULL, replace.m
     ans <- lapply(keys, formatVal)
     names(ans) <- keys
     ans
+}
+
+GOtables <- function(all)
+{
+    tables <- c("go_bp", "go_cc", "go_mf")
+    if (all)
+        tables <- paste(tables, "_all", sep="")
+    tables
 }
 
 
@@ -229,11 +232,11 @@ setMethod("length", "ReverseGOAnnMap",
     function(x)
     {
         mapTables <- GOtables(x@all)
-        ## Our assumption is that a given go_id can't belong to more
-        ## than 1 of the 3 ontologies!
-        dbCountUniqueColVals(db(x), mapTables[1], "go_id") +
-            dbCountUniqueColVals(db(x), mapTables[2], "go_id") +
-            dbCountUniqueColVals(db(x), mapTables[3], "go_id")
+        ## Our assumption is that a given go_id can only belong to
+        ## 1 of the 3 ontologies!
+        dbCountUniqueColVals(db(x), mapTables[1], "go_id", x@datacache)
+          + dbCountUniqueColVals(db(x), mapTables[2], "go_id", x@datacache)
+          + dbCountUniqueColVals(db(x), mapTables[3], "go_id", x@datacache)
     }
 )
 
@@ -282,132 +285,131 @@ setMethod("show", "AnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Those functions are called by the "mget", "as.list" and "countMappedKeys"
-### methods for doing the real job.
+### The "as.list" generic.
+### Note that all these "as.list" methods have an extra 'subset' arg. and
+### that this arg. is _not_ checked i.e. only NULL or NA-free character
+### vectors are guaranted to work.
 
-subset.AtomicAnnMap <- function(map, subset=NULL)
-{
-    cols <- map@mapCol
-    data <- subsetTable(db(map), map@mapTable, map@leftCol, subset, cols, map@baseJoins)
-    submap <- split(data[[map@mapCol]], data[[map@leftCol]])
-    if (is.null(subset))
-        subset <- ls(map)
-    formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
-}
-
-### Ignore map@replace.single and map@replace.multiple, hence will give
-### wrong results for maps that have one of those 2 fields with non-default
-### values like silly maps ENTREZID and MULTIHIT in AGDB schema, but who
-### cares, those maps are so silly anyway...
-countMappedKeys.AtomicAnnMap <- function(map, subset=NULL)
-{
-    cols <- map@mapCol
-    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, map@leftCol, subset, cols, map@baseJoins)
-}
-
-subset.ReverseAtomicAnnMap <- function(map, subset=NULL)
-{
-    cols <- map@leftCol
-    data <- subsetTable(db(map), map@mapTable, map@mapCol, subset, cols, map@baseJoins)
-    if (!is.null(subset)) {
-        not_found <- which(!(subset %in% data[[map@mapCol]]))
-        if (length(not_found) != 0)
-            stop("value for '", subset[not_found[1]], "' not found")
-    }
-    submap <- split(data[[map@leftCol]], data[[map@mapCol]])
-    if (is.null(subset))
-        subset <- ls(map)
-    formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
-}
-
-subset.NamedAtomicAnnMap <- function(map, subset=NULL)
-{
-    cols <- c(map@mapCol, map@namesCol)
-    data <- subsetTable(db(map), map@mapTable, map@leftCol, subset, cols, map@baseJoins)
-    submap <- data[[map@mapCol]]
-    names(submap) <- data[[map@namesCol]]
-    submap <- split(submap, data[[map@leftCol]])
-    if (is.null(subset))
-        subset <- ls(map)
-    formatSubmap(submap, subset, map@mapColType, map@replace.single, map@replace.multiple)
-}
-
-subset.GOAnnMap <- function(map, subset=NULL)
-{
-    makeGONodeList <- function(GOIDs, Evidences, Ontology)
+setMethod("as.list", "AtomicAnnMap",
+    function(x, subset=NULL)
     {
-        ans <- lapply(1:length(GOIDs), function(x) list(GOID=GOIDs[x], Evidence=Evidences[x], Ontology=Ontology))
-        names(ans) <- GOIDs
-        ans
+        cols <- x@mapCol
+        data <- subsetTable(db(x), x@mapTable, x@leftCol, subset, cols, x@baseJoins)
+        submap <- split(data[[x@mapCol]], data[[x@leftCol]])
+        if (is.null(subset))
+            subset <- ls(x)
+        formatSubmap(submap, subset, x@mapColType, x@replace.single, x@replace.multiple)
     }
-    cols <- c("go_id", "evidence")
-    getPartialSubmap <- function(table, Ontology)
-    {
-        data <- subsetTable(db(map), table, map@leftCol, subset, cols, map@baseJoins)
-        if (nrow(data) == 0)
-            return(list())
-        GOIDs <- split(data[["go_id"]], data[[map@leftCol]])
-        Evidences <- split(data[["evidence"]], data[[map@leftCol]])
-        ans <- lapply(names(GOIDs), function(x) makeGONodeList(GOIDs[[x]], Evidences[[x]], Ontology))
-        names(ans) <- names(GOIDs)
-        ans
-    }
-    submap1 <- getPartialSubmap("go_bp", "BP")
-    submap2 <- getPartialSubmap("go_cc", "CC")
-    submap3 <- getPartialSubmap("go_mf", "MF")
-    if (is.null(subset))
-        subset <- ls(map)
-    ## submap1[x][[1]] is a trick to ensure _exact_ matching! (we don't want partial matching)
-    submap <- lapply(subset,
-                     function(x)
-                     {
-                         y <- c(submap1[x][[1]], submap2[x][[1]], submap3[x][[1]])
-                         if (length(y) == 0) NA else y
-                     })
-    names(submap) <- subset
-    submap
-}
+)
 
-countMappedKeys.GOAnnMap <- function(map, subset=NULL)
-{
-    cols <- character(0)
-    getMappedKeys <- function(table)
+setMethod("as.list", "ReverseAtomicAnnMap",
+    function(x, subset=NULL)
     {
-        data <- subsetTable(db(map), table, map@leftCol, subset, cols, map@baseJoins)
-        unique(data[[map@leftCol]])
+        cols <- x@leftCol
+        data <- subsetTable(db(x), x@mapTable, x@mapCol, subset, cols, x@baseJoins)
+        if (!is.null(subset)) {
+            not_found <- which(!(subset %in% data[[x@mapCol]]))
+            if (length(not_found) != 0)
+                stop("value for '", subset[not_found[1]], "' not found")
+        }
+        submap <- split(data[[x@leftCol]], data[[x@mapCol]])
+        if (is.null(subset))
+            subset <- ls(x)
+        formatSubmap(submap, subset, x@mapColType, x@replace.single, x@replace.multiple)
     }
-    keys1 <- getMappedKeys("go_bp")
-    keys2 <- getMappedKeys("go_cc")
-    keys3 <- getMappedKeys("go_mf")
-    keys <- c(keys1, keys2, keys3)
-    # Equivalent to length(unique(keys)) but slightly faster
-    length(keys) - sum(duplicated(keys))
-}
+)
 
-subset.ReverseGOAnnMap <- function(map, subset=NULL)
-{
-    cols <- c(map@leftCol, "evidence")
-    getPartialSubmap <- function(table)
+setMethod("as.list", "NamedAtomicAnnMap",
+    function(x, subset=NULL)
     {
-        data <- subsetTable(db(map), table, "go_id", subset, cols, map@baseJoins)
-        if (nrow(data) == 0)
-            return(list())
-        submap <- data[[map@leftCol]]
-        names(submap) <- data[["evidence"]]
-        split(submap, data[["go_id"]])
+        cols <- c(x@mapCol, x@namesCol)
+        data <- subsetTable(db(x), x@mapTable, x@leftCol, subset, cols, x@baseJoins)
+        submap <- data[[x@mapCol]]
+        names(submap) <- data[[x@namesCol]]
+        submap <- split(submap, data[[x@leftCol]])
+        if (is.null(subset))
+            subset <- ls(x)
+        formatSubmap(submap, subset, x@mapColType, x@replace.single, x@replace.multiple)
     }
-    mapTables <- GOtables(map@all)
-    submap <- c(getPartialSubmap(mapTables[1]),
-                getPartialSubmap(mapTables[2]),
-                getPartialSubmap(mapTables[3]))
-    if (is.null(subset))
-        subset <- ls(map)
-    formatSubmap(submap, subset)
-}
+)
+
+setMethod("as.list", "GOAnnMap",
+    function(x, subset=NULL)
+    {
+        makeGONodeList <- function(GOIDs, Evidences, Ontology)
+        {
+            ans <- lapply(1:length(GOIDs), function(y)
+                          list(GOID=GOIDs[y], Evidence=Evidences[y], Ontology=Ontology))
+            names(ans) <- GOIDs
+            ans
+        }
+        cols <- c("go_id", "evidence")
+        getPartialSubmap <- function(table, Ontology)
+        {
+            data <- subsetTable(db(x), table, x@leftCol, subset, cols, x@baseJoins)
+            if (nrow(data) == 0)
+                return(list())
+            GOIDs <- split(data[["go_id"]], data[[x@leftCol]])
+            Evidences <- split(data[["evidence"]], data[[x@leftCol]])
+            ans <- lapply(names(GOIDs), function(y)
+                          makeGONodeList(GOIDs[[y]], Evidences[[y]], Ontology))
+            names(ans) <- names(GOIDs)
+            ans
+        }
+        submap1 <- getPartialSubmap("go_bp", "BP")
+        submap2 <- getPartialSubmap("go_cc", "CC")
+        submap3 <- getPartialSubmap("go_mf", "MF")
+        if (is.null(subset))
+            subset <- ls(x)
+        ## submap1[y][[1]] is a trick to ensure _exact_ matching! (we don't want partial matching)
+        submap <- lapply(subset,
+                         function(y)
+                         {
+                             z <- c(submap1[y][[1]], submap2[y][[1]], submap3[y][[1]])
+                             if (length(z) == 0) NA else z
+                         })
+        names(submap) <- subset
+        submap
+    }
+)
+
+setMethod("as.list", "ReverseGOAnnMap",
+    function(x, subset=NULL)
+    {
+        cols <- c(x@leftCol, "evidence")
+        getPartialSubmap <- function(table)
+        {
+            data <- subsetTable(db(x), table, "go_id", subset, cols, x@baseJoins)
+            if (nrow(data) == 0)
+                return(list())
+            submap <- data[[x@leftCol]]
+            names(submap) <- data[["evidence"]]
+            split(submap, data[["go_id"]])
+        }
+        mapTables <- GOtables(x@all)
+        submap <- c(getPartialSubmap(mapTables[1]),
+                    getPartialSubmap(mapTables[2]),
+                    getPartialSubmap(mapTables[3]))
+        if (is.null(subset))
+            subset <- ls(x)
+        formatSubmap(submap, subset)
+    }
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "mget" new generic
+### The "mget" new generic.
+### 'mget(subset, map)' vs 'as.list(map, subset)':
+###   1. mget checks its 'subset' arg. and gracefully fails if it's not of
+###      the expected type (i.e. NULL or NA-free character vector),
+###   2. mget will error on the first string in 'subset' not in 'ls(map)',
+###      as.list will accept those strings and map them to NAs.
+###   3. if 'subset' is a subset of 'ls(map)', then 'mget(subset, map)'
+###      is identical to 'as.list(map, subset)'.
+###   4. 'mget(ls(map), map)' is identical to 'as.list(map)'.
+###      Note that for a real "environment", 'as.list(envir)' is not identical
+###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
+###      not necesarily in the same order!
 
 setMethod("mget", signature(envir="AtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
@@ -415,7 +417,7 @@ setMethod("mget", signature(envir="AtomicAnnMap"),
         checkUserLeftIds(x, envir)
         if (length(x) == 0)
             return(list())
-        subset.AtomicAnnMap(envir, x)
+        as.list(envir, subset=x)
     }
 )
 
@@ -426,27 +428,7 @@ setMethod("mget", signature(envir="ReverseAtomicAnnMap"),
             stop("invalid first argument")
         if (length(x) == 0)
             return(list())
-        subset.ReverseAtomicAnnMap(envir, x)
-    }
-)
-
-setMethod("mget", signature(envir="NamedAtomicAnnMap"),
-    function(x, envir, mode, ifnotfound, inherits)
-    {
-        checkUserLeftIds(x, envir)
-        if (length(x) == 0)
-            return(list())
-        subset.NamedAtomicAnnMap(envir, x)
-    }
-)
-
-setMethod("mget", signature(envir="GOAnnMap"),
-    function(x, envir, mode, ifnotfound, inherits)
-    {
-        checkUserLeftIds(x, envir)
-        if (length(x) == 0)
-            return(list())
-        subset.GOAnnMap(envir, x)
+        as.list(envir, subset=x)
     }
 )
 
@@ -455,87 +437,8 @@ setMethod("mget", signature(envir="ReverseGOAnnMap"),
     {
         if (length(x) == 0)
             return(list())
-        subset.ReverseGOAnnMap(envir, x)
+        as.list(envir, subset=x)
     }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "as.list" generic
-### 'as.list(map)' could be simply defined as 'mget(ls(map), map)' but this
-### would result in having a very long IN clause in the SELECT that we send
-### to the database.
-### Note that for a real "environment", 'as.list(envir)' is not identical
-### to 'mget(ls(envir), envir)': the 2 lists have the same elements but not
-### necesarily in the same order!
-
-setMethod("as.list", "AtomicAnnMap",
-    function(x, ...)
-    {
-        subset.AtomicAnnMap(x)
-    }
-)
-
-setMethod("as.list", "ReverseAtomicAnnMap",
-    function(x, ...)
-    {
-        subset.ReverseAtomicAnnMap(x)
-    }
-)
-
-setMethod("as.list", "NamedAtomicAnnMap",
-    function(x, ...)
-    {
-        subset.NamedAtomicAnnMap(x)
-    }
-)
-
-setMethod("as.list", "GOAnnMap",
-    function(x, ...)
-    {
-        subset.GOAnnMap(x)
-    }
-)
-
-setMethod("as.list", "ReverseGOAnnMap",
-    function(x, ...)
-    {
-        subset.ReverseGOAnnMap(x)
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "countMappedKeys" new generic.
-### 'countMappedKeys(map)' is the number of keys that are mapped to a non-NA
-### value. It could be defined by
-###   sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
-### but this would be too slow...
-### Note that if map is a "reverse" map, then this would be the same than its
-### length.
-
-setGeneric("countMappedKeys", function(map) standardGeneric("countMappedKeys"))
-
-setMethod("countMappedKeys", "AtomicAnnMap",
-    function(map)
-    {
-        countMappedKeys.AtomicAnnMap(map)
-    }
-)
-
-setMethod("countMappedKeys", "ReverseAtomicAnnMap",
-    function(map) length(map)
-)
-
-setMethod("countMappedKeys", "GOAnnMap",
-    function(map)
-    {
-        countMappedKeys.GOAnnMap(map)
-    }
-)
-
-setMethod("countMappedKeys", "ReverseGOAnnMap",
-    function(map) length(map)
 )
 
 
@@ -624,6 +527,67 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
     }
     maps
 }
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "countMappedKeys" new generic.
+### 'countMappedKeys(map)' is the number of keys that are mapped to a non-NA
+### value. It could be defined by
+###   sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
+### but this would be too slow...
+### Note that if map is a "reverse" map, then this would be the same than its
+### length.
+
+setGeneric("countMappedKeys", function(map) standardGeneric("countMappedKeys"))
+
+### Ignore map@replace.single and map@replace.multiple, hence will give
+### wrong results for maps that have one of those 2 fields with non-default
+### values like silly maps ENTREZID and MULTIHIT in AGDB schema, but who
+### cares, those maps are so silly anyway...
+countMappedKeys.AtomicAnnMap <- function(map, subset=NULL)
+{
+    cols <- map@mapCol
+    countUniqueSubsetsInSubsettedTable(db(map), map@mapTable, map@leftCol,
+                                       subset, cols, map@baseJoins)
+}
+
+setMethod("countMappedKeys", "AtomicAnnMap",
+    function(map)
+    {
+        countMappedKeys.AtomicAnnMap(map)
+    }
+)
+
+setMethod("countMappedKeys", "ReverseAtomicAnnMap",
+    function(map) length(map)
+)
+
+countMappedKeys.GOAnnMap <- function(map, subset=NULL)
+{
+    cols <- character(0)
+    getMappedKeys <- function(table)
+    {
+        data <- subsetTable(db(map), table, map@leftCol, subset, cols, map@baseJoins)
+        unique(data[[map@leftCol]])
+    }
+    keys1 <- getMappedKeys("go_bp")
+    keys2 <- getMappedKeys("go_cc")
+    keys3 <- getMappedKeys("go_mf")
+    keys <- c(keys1, keys2, keys3)
+    # Equivalent to length(unique(keys)) but slightly faster
+    length(keys) - sum(duplicated(keys))
+}
+
+setMethod("countMappedKeys", "GOAnnMap",
+    function(map)
+    {
+        countMappedKeys.GOAnnMap(map)
+    }
+)
+
+setMethod("countMappedKeys", "ReverseGOAnnMap",
+    function(map) length(map)
+)
 
 checkAnnDataObjects <- function(pkgname, chipShortname)
 {
