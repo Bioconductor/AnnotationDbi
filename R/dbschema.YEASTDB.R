@@ -9,71 +9,71 @@
 YEASTDB_default_leftTable <- "sgd"
 YEASTDB_default_leftCol <- "systematic_name"
 YEASTDB_default_baseJoins <- "INNER JOIN sgd using (id)"
-YEASTDB_default_mapColType <- character(0)
+YEASTDB_default_rightColType <- character(0)
 
-### Mandatory fields: mapName, mapTable and mapCol
+### Mandatory fields: mapName, rightTable and rightCol
 YEASTDB_AtomicAnnMap_seeds <- list(
 
     ## AtomicAnnMap objects
         list(
                 mapName="ALIAS",
-                mapTable="gene2alias",
-                mapCol="alias"
+                rightTable="gene2alias",
+                rightCol="alias"
         ),
         list(
                 mapName="CHR",
-                mapTable="chromosome_features",
-                mapCol="chromosome"
+                rightTable="chromosome_features",
+                rightCol="chromosome"
         ),
         list(
                 mapName="DESCRIPTION",
-                mapTable="chromosome_features",
-                mapCol="feature_description"
+                rightTable="chromosome_features",
+                rightCol="feature_description"
         ),
         list(
                 mapName="ENZYME",
-                mapTable="ec",
-                mapCol="ec_number"
+                rightTable="ec",
+                rightCol="ec_number"
         ),
         list(
                 mapName="GENENAME",
-                mapTable="sgd",
-                mapCol="gene_name",
+                rightTable="sgd",
+                rightCol="gene_name",
                 baseJoins=character(0)
         ),
         list(
                 mapName="INTERPRO",
-                mapTable="interpro",
-                mapCol="interpro_id"
+                rightTable="interpro",
+                rightCol="interpro_id"
         ),
         list(
                 mapName="PATH",
-                mapTable="kegg",
-                mapCol="kegg_id"
+                rightTable="kegg",
+                rightCol="kegg_id"
         ),
         list(
                 mapName="PFAM",
-                mapTable="pfam",
-                mapCol="pfam_id"
+                rightTable="pfam",
+                rightCol="pfam_id"
         ),
         list(
                 mapName="PMID",
-                mapTable="pubmed",
-                mapCol="pubmed_id"
+                rightTable="pubmed",
+                rightCol="pubmed_id"
         ),
         list(
                 mapName="SMART",
-                mapTable="smart",
-                mapCol="smart_id"
+                rightTable="smart",
+                rightCol="smart_id"
         ),
 
     ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
-                mapTable="chromosome_features",
-                mapCol="start",
-                mapColType="integer",
-                namesCol="chromosome"
+                rightTable="chromosome_features",
+                rightCol="start",
+                rightColType="integer",
+                rightNamesCol="chromosome"
         )
 )
 
@@ -91,7 +91,7 @@ createAnnDataObjects.YEASTDB <- function(chipShortname, con, datacache)
         leftTable=YEASTDB_default_leftTable,
         leftCol=YEASTDB_default_leftCol,
         baseJoins=YEASTDB_default_baseJoins,
-        mapColType=YEASTDB_default_mapColType
+        rightColType=YEASTDB_default_rightColType
     )
     maps <- createAtomicAnnMapObjects(YEASTDB_AtomicAnnMap_seeds, seed0)
 

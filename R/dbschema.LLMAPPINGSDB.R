@@ -6,9 +6,9 @@
 ### TODO: Everything!
 
 LLMAPPINGSDB_default_leftCol <- "gene_id"
-LLMAPPINGSDB_default_mapColType <- character(0)
+LLMAPPINGSDB_default_rightColType <- character(0)
 
-### Mandatory fields: mapName, mapTable and mapCol
+### Mandatory fields: mapName, rightTable and rightCol
 LLMAPPINGSDB_AtomicAnnMap_seeds <- list(
 
     ## AtomicAnnMap objects
@@ -24,7 +24,7 @@ createAnnDataObjects.LLMAPPINGSDB <- function(chipShortname, con, datacache)
         chipShortname=chipShortname,
         con=con,
         datacache=datacache,
-        mapColType=LLMAPPINGSDB_default_mapColType,
+        rightColType=LLMAPPINGSDB_default_rightColType,
         leftCol=LLMAPPINGSDB_default_leftCol
     )
     maps <- createAtomicAnnMapObjects(LLMAPPINGSDB_AtomicAnnMap_seeds, seed0)

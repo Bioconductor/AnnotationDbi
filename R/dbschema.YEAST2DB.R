@@ -10,61 +10,61 @@ YEAST2DB_default_leftTable <- "probes"
 YEAST2DB_default_leftCol <- "probe_id"
 YEAST2DB_short_join <- "INNER JOIN probes USING (systematic_name)"
 YEAST2DB_default_baseJoins <- paste("INNER JOIN sgd USING (id)", YEAST2DB_short_join)
-YEAST2DB_default_mapColType <- character(0)
+YEAST2DB_default_rightColType <- character(0)
 
-### Mandatory fields: mapName, mapTable and mapCol
+### Mandatory fields: mapName, rightTable and rightCol
 YEAST2DB_AtomicAnnMap_seeds <- list(
 
     ## AtomicAnnMap objects
         list(
                 mapName="ALIAS",
-                mapTable="gene2alias",
-                mapCol="alias"
+                rightTable="gene2alias",
+                rightCol="alias"
         ),
         list(
                 mapName="CHR",
-                mapTable="chromosome_features",
-                mapCol="chromosome"
+                rightTable="chromosome_features",
+                rightCol="chromosome"
         ),
         list(
                 mapName="DESCRIPTION",
-                mapTable="chromosome_features",
-                mapCol="feature_description"
+                rightTable="chromosome_features",
+                rightCol="feature_description"
         ),
         list(
                 mapName="ENZYME",
-                mapTable="ec",
-                mapCol="ec_number"
+                rightTable="ec",
+                rightCol="ec_number"
         ),
         list(
                 mapName="GENENAME",
-                mapTable="sgd",
-                mapCol="gene_name",
+                rightTable="sgd",
+                rightCol="gene_name",
                 baseJoins=YEAST2DB_short_join
         ),
         list(
                 mapName="ORF",
-                mapTable="probes",
-                mapCol="systematic_name"
+                rightTable="probes",
+                rightCol="systematic_name"
         ),
         list(
                 mapName="PATH",
-                mapTable="kegg",
-                mapCol="kegg_id"
+                rightTable="kegg",
+                rightCol="kegg_id"
         ),
         list(
                 mapName="PMID",
-                mapTable="pubmed",
-                mapCol="pubmed_id"
+                rightTable="pubmed",
+                rightCol="pubmed_id"
         ),
 
     ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
-                mapTable="chromosome_features",
-                mapCol="start",
-                mapColType="integer",
-                namesCol="chromosome"
+                rightTable="chromosome_features",
+                rightCol="start",
+                rightColType="integer",
+                rightNamesCol="chromosome"
         )
 )
 
@@ -79,7 +79,7 @@ createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
         chipShortname=chipShortname,
         con=con,
         datacache=datacache,
-        mapColType=YEAST2DB_default_mapColType,
+        rightColType=YEAST2DB_default_rightColType,
         leftTable=YEAST2DB_default_leftTable,
         leftCol=YEAST2DB_default_leftCol,
         baseJoins=YEAST2DB_default_baseJoins

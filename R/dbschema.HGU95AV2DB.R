@@ -10,94 +10,94 @@
 HGU95AV2DB_default_leftTable <- "probes"
 HGU95AV2DB_default_leftCol <- "probe_id"
 HGU95AV2DB_default_baseJoins <- "INNER JOIN probes USING (id)"
-HGU95AV2DB_default_mapColType <- character(0)
+HGU95AV2DB_default_rightColType <- character(0)
 
-### Mandatory fields: mapName, mapTable and mapCol
+### Mandatory fields: mapName, rightTable and rightCol
 HGU95AV2DB_AtomicAnnMap_seeds <- list(
 
     ## AtomicAnnMap objects
         list(
                 mapName="ACCNUM",
-                mapTable="accessions",
-                mapCol="accession",
+                rightTable="accessions",
+                rightCol="accession",
                 baseJoins=character(0) # no join for this map
         ),
         list(
                 mapName="CHR",
-                mapTable="chromosomes",
-                mapCol="chromosome"
+                rightTable="chromosomes",
+                rightCol="chromosome"
         ),
         list(
                 mapName="ENTREZID",
-                mapTable="genes",
-                mapCol="gene_id",
-                mapColType="integer"
+                rightTable="genes",
+                rightCol="gene_id",
+                rightColType="integer"
         ),
         list(
                 mapName="ENZYME",
-                mapTable="ec",
-                mapCol="ec_number"
+                rightTable="ec",
+                rightCol="ec_number"
         ),
         list(
                 mapName="GENENAME",
-                mapTable="gene_info",
-                mapCol="gene_name"
+                rightTable="gene_info",
+                rightCol="gene_name"
         ),
         list(
                 mapName="MAP",
-                mapTable="cytogenetic_locations",
-                mapCol="cytogenetic_location"
+                rightTable="cytogenetic_locations",
+                rightCol="cytogenetic_location"
         ),
         list(
                 mapName="OMIM",
-                mapTable="omim",
-                mapCol="omim_id"
+                rightTable="omim",
+                rightCol="omim_id"
         ),
         list(
                 mapName="PATH",
-                mapTable="kegg",
-                mapCol="kegg_id"
+                rightTable="kegg",
+                rightCol="kegg_id"
         ),
         list(
                 mapName="PMID",
-                mapTable="pubmed",
-                mapCol="pubmed_id"
+                rightTable="pubmed",
+                rightCol="pubmed_id"
         ),
         list(
                 mapName="REFSEQ",
-                mapTable="refseq",
-                mapCol="accession"
+                rightTable="refseq",
+                rightCol="accession"
         ),
         list(
                 mapName="SYMBOL",
-                mapTable="gene_info",
-                mapCol="symbol"
+                rightTable="gene_info",
+                rightCol="symbol"
         ),
         list(
                 mapName="UNIGENE",
-                mapTable="unigene",
-                mapCol="unigene_id"
+                rightTable="unigene",
+                rightCol="unigene_id"
         ),
 
     ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
-                mapTable="chromosome_locations",
-                mapCol="start_location",
-                mapColType="integer",
-                namesCol="chromosome"
+                rightTable="chromosome_locations",
+                rightCol="start_location",
+                rightColType="integer",
+                rightNamesCol="chromosome"
         ),
         list(
                 mapName="PFAM",
-                mapTable="pfam",
-                mapCol="pfam_id",
-                namesCol="ipi_id"
+                rightTable="pfam",
+                rightCol="pfam_id",
+                rightNamesCol="ipi_id"
         ),
         list(
                 mapName="PROSITE",
-                mapTable="prosite",
-                mapCol="prosite_id",
-                namesCol="ipi_id"
+                rightTable="prosite",
+                rightCol="prosite_id",
+                rightNamesCol="ipi_id"
         )
 )
 
@@ -115,7 +115,7 @@ createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
         leftTable=HGU95AV2DB_default_leftTable,
         leftCol=HGU95AV2DB_default_leftCol,
         baseJoins=HGU95AV2DB_default_baseJoins,
-        mapColType=HGU95AV2DB_default_mapColType
+        rightColType=HGU95AV2DB_default_rightColType
     )
     maps <- createAtomicAnnMapObjects(HGU95AV2DB_AtomicAnnMap_seeds, seed0)
 

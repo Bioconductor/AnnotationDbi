@@ -5,74 +5,74 @@
 
 AGDB_default_leftTable <- "probes"
 AGDB_default_leftCol <- "probe_id"
-AGDB_default_mapColType <- character(0)
+AGDB_default_rightColType <- character(0)
 AGDB_default_baseJoins <- "INNER JOIN probes USING (id)"
 
-### Mandatory fields: mapName, mapTable and mapCol
+### Mandatory fields: mapName, rightTable and rightCol
 AGDB_AtomicAnnMap_seeds <- list(
 
     ## AtomicAnnMap objects
         #list(
         #        mapName="ACCNUM",
-        #        mapTable="accessions",
-        #        mapCol="accession",
+        #        rightTable="accessions",
+        #        rightCol="accession",
         #        baseJoins=character(0) # no join for this map
         #),
         list(
                 mapName="ARACYC",
-                mapTable="aracyc",
-                mapCol="pathway_name"
+                rightTable="aracyc",
+                rightCol="pathway_name"
         ),
         list(
                 mapName="CHR",
-                mapTable="gene_info",
-                mapCol="chromosome"
+                rightTable="gene_info",
+                rightCol="chromosome"
         ),
         list(
                 mapName="ENTREZID",
-                mapTable="genes",
-                mapCol="gene_id",
+                rightTable="genes",
+                rightCol="gene_id",
                 replace.multiple="multiple"
         ),
         list(
                 mapName="ENZYME",
-                mapTable="ec",
-                mapCol="ec_number"
+                rightTable="ec",
+                rightCol="ec_number"
         ),
         list(
                 mapName="GENENAME",
-                mapTable="gene_info",
-                mapCol="gene_name"
+                rightTable="gene_info",
+                rightCol="gene_name"
         ),
         list(
                 mapName="MULTIHIT",
-                mapTable="genes",
-                mapCol="gene_id",
+                rightTable="genes",
+                rightCol="gene_id",
                 replace.single=as.character(NA)
         ),
         list(
                 mapName="PATH",
-                mapTable="kegg",
-                mapCol="kegg_id"
+                rightTable="kegg",
+                rightCol="kegg_id"
         ),
         list(
                 mapName="PMID",
-                mapTable="pubmed",
-                mapCol="pubmed_id"
+                rightTable="pubmed",
+                rightCol="pubmed_id"
         ),
         list(
                 mapName="SYMBOL",
-                mapTable="gene_info",
-                mapCol="symbol"
+                rightTable="gene_info",
+                rightCol="symbol"
         ),
 
     ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
-                mapTable="chromosome_locations",
-                mapCol="start_location",
-                mapColType="integer",
-                namesCol="chromosome"
+                rightTable="chromosome_locations",
+                rightCol="start_location",
+                rightColType="integer",
+                rightNamesCol="chromosome"
         )
 )
 
@@ -90,7 +90,7 @@ createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
         leftTable=AGDB_default_leftTable,
         leftCol=AGDB_default_leftCol,
         baseJoins=AGDB_default_baseJoins,
-        mapColType=AGDB_default_mapColType
+        rightColType=AGDB_default_rightColType
     )
     maps <- createAtomicAnnMapObjects(AGDB_AtomicAnnMap_seeds, seed0)
 
