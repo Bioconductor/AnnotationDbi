@@ -39,6 +39,12 @@ uniqueColValues <- function(con, table, col)
     .dbGetQuery(con, sql)[[col]]
 }
 
+toSQLStringSet <- function(strings)
+{
+    strings <- gsub("'", "''", strings, fixed=TRUE)
+    paste("'", paste(strings, collapse="','"), "'", sep="")
+}
+
 subsetTable <- function(con, table, index, subset, cols, joins=NULL)
 {
     cols <- append(index, cols)
@@ -46,8 +52,7 @@ subsetTable <- function(con, table, index, subset, cols, joins=NULL)
     if (length(joins) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, joins)
     if (!is.null(subset))
-        sql <- paste(sql, " WHERE ", index,
-                     " IN ('", paste(subset, collapse="','"), "')", sep="")
+        sql <- paste(sql, " WHERE ", index, " IN (", toSQLStringSet(subset), ")", sep="")
     .dbGetQuery(con, sql)
 }
 
@@ -58,8 +63,7 @@ countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, 
         sql <- paste(sql, joins)
     sql <- paste(sql, " WHERE ", cols[1], " IS NOT NULL", sep="")
     if (!is.null(subset))
-        sql <- paste(sql, " AND ", index,
-                     " IN ('", paste(subset, collapse="','"), "')", sep="")
+        sql <- paste(sql, " AND ", index, " IN (", toSQLStringSet(subset), ")", sep="")
     .dbGetQuery(con, sql)[[1]]
 }
 
