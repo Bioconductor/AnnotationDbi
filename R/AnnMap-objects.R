@@ -67,8 +67,8 @@ dbUniqueColVals <- function(con, table, col, datacache=NULL)
             return(vals)
         }
     }
-    sql <- paste("SELECT DISTINCT ", col, " FROM ", table,
-                 " WHERE ", col, " IS NOT NULL", sep="")
+    sql <- paste("SELECT DISTINCT", col, "FROM", table,
+                 "WHERE", col, "IS NOT NULL")
     vals <- .dbGetQuery(con, sql)[[col]]
     if (!is.null(datacache)) {
         assign(objname, vals, envir=datacache, inherits=FALSE)
@@ -581,8 +581,8 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
 ### 'countMappedKeys(map)' is the number of keys that are mapped to a non-NA
 ### value. It could be defined by
 ###   sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x)))
-### but this would be too slow...
-### Note that if map is a "reverse" map, then this would be the same than its
+### but this would be way too slow...
+### Note that if map is a "reverse" map, then this would be the same as its
 ### length.
 
 setGeneric("countMappedKeys", function(map) standardGeneric("countMappedKeys"))
@@ -591,17 +591,12 @@ setGeneric("countMappedKeys", function(map) standardGeneric("countMappedKeys"))
 ### wrong results for maps that have one of those 2 fields with non-default
 ### values like silly maps ENTREZID and MULTIHIT in AGDB schema, but who
 ### cares, those maps are so silly anyway...
-countMappedKeys.AtomicAnnMap <- function(map, subset=NULL)
-{
-    cols <- map@rightCol
-    countUniqueSubsetsInSubsettedTable(db(map), map@rightTable, map@leftCol,
-                                       subset, cols, map@baseJoins)
-}
-
 setMethod("countMappedKeys", "AtomicAnnMap",
     function(map)
     {
-        countMappedKeys.AtomicAnnMap(map)
+        cols <- map@rightCol
+        countUniqueSubsetsInSubsettedTable(db(map), map@rightTable, map@leftCol,
+                                           NULL, cols, map@baseJoins)
     }
 )
 
@@ -609,26 +604,21 @@ setMethod("countMappedKeys", "ReverseAtomicAnnMap",
     function(map) length(map)
 )
 
-countMappedKeys.GOAnnMap <- function(map, subset=NULL)
-{
-    cols <- character(0)
-    getMappedKeys <- function(table)
-    {
-        data <- subsetTable(db(map), table, map@leftCol, subset, cols, map@baseJoins)
-        unique(data[[map@leftCol]])
-    }
-    keys1 <- getMappedKeys("go_bp")
-    keys2 <- getMappedKeys("go_cc")
-    keys3 <- getMappedKeys("go_mf")
-    keys <- c(keys1, keys2, keys3)
-    # Equivalent to length(unique(keys)) but slightly faster
-    length(keys) - sum(duplicated(keys))
-}
-
 setMethod("countMappedKeys", "GOAnnMap",
     function(map)
     {
-        countMappedKeys.GOAnnMap(map)
+        cols <- character(0)
+        getMappedKeys <- function(table)
+        {
+            data <- subsetTable(db(map), table, map@leftCol, NULL, cols, map@baseJoins)
+            unique(data[[map@leftCol]])
+        }
+        keys1 <- getMappedKeys("go_bp")
+        keys2 <- getMappedKeys("go_cc")
+        keys3 <- getMappedKeys("go_mf")
+        keys <- c(keys1, keys2, keys3)
+        # Equivalent to length(unique(keys)) but slightly faster
+        length(keys) - sum(duplicated(keys))
     }
 )
 
