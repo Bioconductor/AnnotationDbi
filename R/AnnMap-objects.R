@@ -131,11 +131,12 @@ formatSubmap <- function(submap, keys, type=NULL, replace.single=NULL, replace.m
     ans
 }
 
-GOtables <- function(all)
+GOtables <- function(all=FALSE)
 {
     tables <- c("go_bp", "go_cc", "go_mf")
     if (all)
         tables <- paste(tables, "_all", sep="")
+    names(tables) <- c("BP", "CC", "MF")
     tables
 }
 
@@ -219,6 +220,76 @@ setMethod("db", "AnnMap", function(object) object@con)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "as.data.frame" generic.
+### Arguments 'row.names' and 'optional' are ignored.
+### The 'subset' arg. can be one of the following:
+###   - NULL: the entire map is converted (equivalent to passing
+###     'subset=ls(x)' but more efficient).
+###   - A NA-free character vector containing keys (symbols): only the rows
+###     matching those keys are returned.
+### Note that the 'subset' arg. is _not_ checked i.e. only NULL and NA-free
+### character vectors are guaranted to work properly.
+
+setMethod("as.data.frame", "AtomicAnnMap",
+    function(x, row.names=NULL, optional=FALSE, subset=NULL)
+    {
+        cols <- x@rightCol
+        subsetTable(db(x), x@rightTable, x@leftCol, subset, cols, x@baseJoins)
+    }
+)
+
+setMethod("as.data.frame", "ReverseAtomicAnnMap",
+    function(x, row.names=NULL, optional=FALSE, subset=NULL)
+    {
+        cols <- x@leftCol
+        subsetTable(db(x), x@rightTable, x@rightCol, subset, cols, x@baseJoins)
+    }
+)
+
+setMethod("as.data.frame", "NamedAtomicAnnMap",
+    function(x, row.names=NULL, optional=FALSE, subset=NULL)
+    {
+        cols <- c(x@rightCol, x@rightNamesCol)
+        subsetTable(db(x), x@rightTable, x@leftCol, subset, cols, x@baseJoins)
+    }
+)
+
+setMethod("as.data.frame", "GOAnnMap",
+    function(x, row.names=NULL, optional=FALSE, subset=NULL)
+    {
+        cols <- c("go_id", "evidence")
+        getPartialSubmap <- function(Ontology)
+        {
+            table <- GOtables()[Ontology]
+            data <- subsetTable(db(x), table, x@leftCol, subset, cols, x@baseJoins)
+            data[["Ontology"]] <- Ontology
+            data
+        }
+        rbind(getPartialSubmap("BP"),
+              getPartialSubmap("CC"),
+              getPartialSubmap("MF"))
+    }
+)
+
+setMethod("as.data.frame", "ReverseGOAnnMap",
+    function(x, row.names=NULL, optional=FALSE, subset=NULL)
+    {
+        cols <- c(x@leftCol, "evidence")
+        getPartialSubmap <- function(Ontology)
+        {
+            table <- GOtables(x@all)[Ontology]
+            data <- subsetTable(db(x), table, "go_id", subset, cols, x@baseJoins)
+            data[["Ontology"]] <- Ontology
+            data
+        }
+        rbind(getPartialSubmap("BP"),
+              getPartialSubmap("CC"),
+              getPartialSubmap("MF"))
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "length" generic.
 ### length(x) should always be the same as length(ls(x)).
 
@@ -242,9 +313,9 @@ setMethod("length", "ReverseGOAnnMap",
         rightTables <- GOtables(x@all)
         ## Our assumption is that a given go_id can only belong to
         ## 1 of the 3 ontologies!
-        dbCountUniqueColVals(db(x), rightTables[1], "go_id", x@datacache)
-          + dbCountUniqueColVals(db(x), rightTables[2], "go_id", x@datacache)
-          + dbCountUniqueColVals(db(x), rightTables[3], "go_id", x@datacache)
+        dbCountUniqueColVals(db(x), rightTables["BP"], "go_id", x@datacache)
+          + dbCountUniqueColVals(db(x), rightTables["CC"], "go_id", x@datacache)
+          + dbCountUniqueColVals(db(x), rightTables["MF"], "go_id", x@datacache)
     }
 )
 
@@ -273,9 +344,9 @@ setMethod("names", "ReverseGOAnnMap",
         ## Our assumption is that a given go_id can only belong to 1 of the 3
         ## ontologies! If we are wrong, then we should apply unique() to the
         ## result of this concantenation and fix the "length" method above.
-        c(dbUniqueColVals(db(x), rightTables[1], "go_id"),
-          dbUniqueColVals(db(x), rightTables[2], "go_id"),
-          dbUniqueColVals(db(x), rightTables[3], "go_id"))
+        c(dbUniqueColVals(db(x), rightTables["BP"], "go_id"),
+          dbUniqueColVals(db(x), rightTables["CC"], "go_id"),
+          dbUniqueColVals(db(x), rightTables["MF"], "go_id"))
     }
 )
 
@@ -320,8 +391,7 @@ setMethod("as.list", "AtomicAnnMap",
             return(list())
         if (is.numeric(subset))
             subset <- ls(x)[subset]
-        cols <- x@rightCol
-        data <- subsetTable(db(x), x@rightTable, x@leftCol, subset, cols, x@baseJoins)
+        data <- as.data.frame(x, subset=subset)
         submap <- split(data[[x@rightCol]], data[[x@leftCol]])
         if (is.null(subset))
             subset <- ls(x)
@@ -336,8 +406,7 @@ setMethod("as.list", "ReverseAtomicAnnMap",
             return(list())
         if (is.numeric(subset))
             subset <- ls(x)[subset]
-        cols <- x@leftCol
-        data <- subsetTable(db(x), x@rightTable, x@rightCol, subset, cols, x@baseJoins)
+        data <- as.data.frame(x, subset=subset)
         if (!is.null(subset)) {
             not_found <- which(!(subset %in% data[[x@rightCol]]))
             if (length(not_found) != 0)
@@ -357,8 +426,7 @@ setMethod("as.list", "NamedAtomicAnnMap",
             return(list())
         if (is.numeric(subset))
             subset <- ls(x)[subset]
-        cols <- c(x@rightCol, x@rightNamesCol)
-        data <- subsetTable(db(x), x@rightTable, x@leftCol, subset, cols, x@baseJoins)
+        data <- as.data.frame(x, subset=subset)
         submap <- data[[x@rightCol]]
         names(submap) <- data[[x@rightNamesCol]]
         submap <- split(submap, data[[x@leftCol]])
@@ -368,6 +436,19 @@ setMethod("as.list", "NamedAtomicAnnMap",
     }
 )
 
+### This new version (0.0.27) is 3 times faster than previous version (0.0.26):
+### Old version:
+###   > system.time(aa<-as.list(hgu95av2GO))
+###      user  system elapsed
+###    76.968   5.692  85.080
+### New version:
+###   > system.time(aa<-as.list(hgu95av2GO))
+###      user  system elapsed
+###    25.305   1.012  27.658
+### Reference (envir-based):
+###   > system.time(aa<-as.list(hgu95av2GO))
+###      user  system elapsed
+###     4.456   0.228   4.953
 setMethod("as.list", "GOAnnMap",
     function(x, subset=NULL)
     {
@@ -375,37 +456,31 @@ setMethod("as.list", "GOAnnMap",
             return(list())
         if (is.numeric(subset))
             subset <- ls(x)[subset]
-        makeGONodeList <- function(GOIDs, Evidences, Ontology)
+        data <- as.data.frame(x, subset=subset)
+        if (nrow(data) == 0)
+            return(list())
+        if (is.null(subset))
+            subset <- ls(x)
+        makeGONodeList <- function(GOIDs, Evidences, Ontologies)
         {
             ans <- lapply(1:length(GOIDs), function(y)
-                          list(GOID=GOIDs[y], Evidence=Evidences[y], Ontology=Ontology))
+                          list(GOID=GOIDs[y],
+                               Evidence=Evidences[y],
+                               Ontology=Ontologies[y]))
             names(ans) <- GOIDs
             ans
         }
-        cols <- c("go_id", "evidence")
-        getPartialSubmap <- function(table, Ontology)
-        {
-            data <- subsetTable(db(x), table, x@leftCol, subset, cols, x@baseJoins)
-            if (nrow(data) == 0)
-                return(list())
-            GOIDs <- split(data[["go_id"]], data[[x@leftCol]])
-            Evidences <- split(data[["evidence"]], data[[x@leftCol]])
-            ans <- lapply(names(GOIDs), function(y)
-                          makeGONodeList(GOIDs[[y]], Evidences[[y]], Ontology))
-            names(ans) <- names(GOIDs)
-            ans
-        }
-        submap1 <- getPartialSubmap("go_bp", "BP")
-        submap2 <- getPartialSubmap("go_cc", "CC")
-        submap3 <- getPartialSubmap("go_mf", "MF")
-        if (is.null(subset))
-            subset <- ls(x)
-        ## submap1[y][[1]] is a trick to ensure _exact_ matching! (we don't want partial matching)
+        GOIDs <- split(data[["go_id"]], data[[x@leftCol]])
+        Evidences <- split(data[["evidence"]], data[[x@leftCol]])
+        Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])
+        mapped_keys <- unique(data[[x@leftCol]])
         submap <- lapply(subset,
                          function(y)
                          {
-                             z <- c(submap1[y][[1]], submap2[y][[1]], submap3[y][[1]])
-                             if (length(z) == 0) NA else z
+                             if (!(y %in% mapped_keys))
+                                 NA
+                             else
+                                 makeGONodeList(GOIDs[[y]], Evidences[[y]], Ontologies[[y]])
                          })
         names(submap) <- subset
         submap

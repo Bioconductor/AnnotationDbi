@@ -36,7 +36,8 @@ exportMethods(
               "nrow",
               "queryTable",
               "show",
-              "subByRow")
+              "subByRow",
+              "as.data.frame")
 
 ### envir-based API:
 exportClasses(
