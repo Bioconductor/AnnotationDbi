@@ -9,7 +9,7 @@
 YEAST2DB_default_leftTable <- "probes"
 YEAST2DB_default_leftCol <- "probe_id"
 YEAST2DB_short_join <- "INNER JOIN probes USING (systematic_name)"
-YEAST2DB_default_baseJoins <- paste("INNER JOIN sgd USING (id)", YEAST2DB_short_join)
+YEAST2DB_default_join <- paste("INNER JOIN sgd USING (id)", YEAST2DB_short_join)
 YEAST2DB_default_rightColType <- character(0)
 
 ### Mandatory fields: mapName, rightTable and rightCol
@@ -40,12 +40,13 @@ YEAST2DB_AtomicAnnMap_seeds <- list(
                 mapName="GENENAME",
                 rightTable="sgd",
                 rightCol="gene_name",
-                baseJoins=YEAST2DB_short_join
+                join=YEAST2DB_short_join
         ),
         list(
                 mapName="ORF",
                 rightTable="probes",
-                rightCol="systematic_name"
+                rightCol="systematic_name",
+                join=character(0)
         ),
         list(
                 mapName="PATH",
@@ -82,7 +83,7 @@ createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
         rightColType=YEAST2DB_default_rightColType,
         leftTable=YEAST2DB_default_leftTable,
         leftCol=YEAST2DB_default_leftCol,
-        baseJoins=YEAST2DB_default_baseJoins
+        join=YEAST2DB_default_join
     )
     maps <- createAtomicAnnMapObjects(YEAST2DB_AtomicAnnMap_seeds, seed0)
 
@@ -99,7 +100,7 @@ createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
             mapName="GO",
             leftTable=YEAST2DB_default_leftTable,
             leftCol=YEAST2DB_default_leftCol,
-            baseJoins=YEAST2DB_default_baseJoins)
+            join=YEAST2DB_default_join)
 
     ## ReverseGOAnnMap objects
     maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)

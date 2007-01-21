@@ -32,25 +32,49 @@ toSQLStringSet <- function(strings)
     paste("'", paste(strings, collapse="','"), "'", sep="")
 }
 
-subsetTable <- function(con, table, index, subset, cols, joins=NULL)
+subsetTable <- function(con, table, join, where_col, where_vals, cols)
 {
-    cols <- append(index, cols)
     sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
-    if (length(joins) == 1) # will be FALSE for NULL or character(0)
-        sql <- paste(sql, joins)
-    if (!is.null(subset))
-        sql <- paste(sql, " WHERE ", index, " IN (", toSQLStringSet(subset), ")", sep="")
+    if (length(join) == 1) # will be FALSE for NULL or character(0)
+        sql <- paste(sql, join)
+    if (!is.null(where_vals))
+        sql <- paste(sql, " WHERE ", where_col, " IN (", toSQLStringSet(where_vals), ")", sep="")
     .dbGetQuery(con, sql)
 }
 
-countUniqueSubsetsInSubsettedTable <- function(con, table, index, subset, cols, joins=NULL)
+subsetTable2 <- function(con, table, join, where_col1, where_vals1,
+                                           where_col2, where_vals2, cols, verbose=FALSE)
 {
-    sql <- paste("SELECT COUNT(DISTINCT ", index, ") FROM ", table, sep="")
-    if (length(joins) == 1) # will be FALSE for NULL or character(0)
-        sql <- paste(sql, joins)
+    sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
+    if (length(join) == 1) # will be FALSE for NULL or character(0)
+        sql <- paste(sql, join)
+    where1 <- where2 <- 1
+    if (!is.null(where_vals1)) {
+        if (length(where_vals1) == 1)
+            where1 <- paste(where_col1, "LIKE", toSQLStringSet(where_vals1))
+        else
+            where1 <- paste(where_col1, " IN (", toSQLStringSet(where_vals1), ")", sep="")
+    }
+    if (!is.null(where_vals2)) {
+        if (length(where_vals2) == 1)
+            where2 <- paste(where_col2, "LIKE", toSQLStringSet(where_vals2))
+        else
+            where2 <- paste(where_col2, " IN (", toSQLStringSet(where_vals2), ")", sep="")
+    }
+    sql <- paste(sql, "WHERE", where1, "AND", where2)
+    if (verbose)
+        cat(sql, "\n", sep="")
+    .dbGetQuery(con, sql)
+}
+
+countUniqueSubsetsInSubsettedTable <- function(con, table, join, where_col, where_vals, cols)
+{
+    sql <- paste("SELECT COUNT(DISTINCT ", where_col, ") FROM ", table, sep="")
+    if (length(join) == 1) # will be FALSE for NULL or character(0)
+        sql <- paste(sql, join)
     sql <- paste(sql, " WHERE ", cols[1], " IS NOT NULL", sep="")
-    if (!is.null(subset))
-        sql <- paste(sql, " AND ", index, " IN (", toSQLStringSet(subset), ")", sep="")
+    if (!is.null(where_vals))
+        sql <- paste(sql, " AND ", where_col, " IN (", toSQLStringSet(where_vals), ")", sep="")
     .dbGetQuery(con, sql)[[1]]
 }
 
@@ -154,7 +178,7 @@ GOtables <- function(all=FALSE)
 ### object. For reverse "AnnMap" objects, the mapping is "right-to-left".
 setClass("AnnMap",
     representation(
-        baseJoins="character",
+        join="character",
         leftCol="character",
         leftTable="character",
         con="DBIConnection",
@@ -221,48 +245,49 @@ setMethod("db", "AnnMap", function(object) object@con)
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "as.data.frame" generic.
+###
+### WORK IN PROGRESS!!! Experimenting a new as.data.frame interface. Use at
+### your own risk!
+###
 ### Arguments 'row.names' and 'optional' are ignored.
-### The 'subset' arg. can be one of the following:
+### The 'symbols' arg. can be one of the following:
 ###   - NULL: the entire map is converted (equivalent to passing
-###     'subset=ls(x)' but more efficient).
+###     'symbols=ls(x)' but more efficient).
 ###   - A NA-free character vector containing keys (symbols): only the rows
 ###     matching those keys are returned.
-### Note that the 'subset' arg. is _not_ checked i.e. only NULL and NA-free
+### Note that the 'symbols' arg. is _not_ checked i.e. only NULL and NA-free
 ### character vectors are guaranted to work properly.
 
 setMethod("as.data.frame", "AtomicAnnMap",
-    function(x, row.names=NULL, optional=FALSE, subset=NULL)
+    function(x, row.names=NULL, optional=FALSE,
+             left.vals=NULL, right.vals=NULL, extra.cols=NULL, verbose=FALSE)
     {
-        cols <- x@rightCol
-        subsetTable(db(x), x@rightTable, x@leftCol, subset, cols, x@baseJoins)
-    }
-)
-
-setMethod("as.data.frame", "ReverseAtomicAnnMap",
-    function(x, row.names=NULL, optional=FALSE, subset=NULL)
-    {
-        cols <- x@leftCol
-        subsetTable(db(x), x@rightTable, x@rightCol, subset, cols, x@baseJoins)
-    }
-)
-
-setMethod("as.data.frame", "NamedAtomicAnnMap",
-    function(x, row.names=NULL, optional=FALSE, subset=NULL)
-    {
-        cols <- c(x@rightCol, x@rightNamesCol)
-        subsetTable(db(x), x@rightTable, x@leftCol, subset, cols, x@baseJoins)
+        if (missing(left.vals))
+            left.vals <- row.names
+        if (missing(right.vals) && !identical(optional, FALSE))
+            right.vals <- optional
+        cols <- c(x@leftCol, x@rightCol)
+        if (!is.null(extra.cols))
+            cols <- c(cols, extra.cols)
+        subsetTable2(db(x), x@rightTable, x@join,
+                            x@leftCol, left.vals,
+                            x@rightCol, right.vals,
+                            cols, verbose)
     }
 )
 
 setMethod("as.data.frame", "GOAnnMap",
-    function(x, row.names=NULL, optional=FALSE, subset=NULL)
+    function(x, row.names=NULL, optional=FALSE, symbols=NULL, all=FALSE)
     {
-        cols <- c("go_id", "evidence")
+        if (missing(symbols))
+            symbols <- row.names
+        cols <- c(x@leftCol, "go_id", "evidence")
         getPartialSubmap <- function(Ontology)
         {
-            table <- GOtables()[Ontology]
-            data <- subsetTable(db(x), table, x@leftCol, subset, cols, x@baseJoins)
-            data[["Ontology"]] <- Ontology
+            table <- GOtables(all)[Ontology]
+            data <- subsetTable(db(x), table, x@join, x@leftCol, symbols, cols)
+            if (nrow(data) != 0)
+                data[["Ontology"]] <- Ontology
             data
         }
         rbind(getPartialSubmap("BP"),
@@ -272,14 +297,17 @@ setMethod("as.data.frame", "GOAnnMap",
 )
 
 setMethod("as.data.frame", "ReverseGOAnnMap",
-    function(x, row.names=NULL, optional=FALSE, subset=NULL)
+    function(x, row.names=NULL, optional=FALSE, symbols=NULL)
     {
-        cols <- c(x@leftCol, "evidence")
+        if (missing(symbols))
+            symbols <- row.names
+        cols <- c(x@leftCol, "go_id", "evidence")
         getPartialSubmap <- function(Ontology)
         {
             table <- GOtables(x@all)[Ontology]
-            data <- subsetTable(db(x), table, "go_id", subset, cols, x@baseJoins)
-            data[["Ontology"]] <- Ontology
+            data <- subsetTable(db(x), table, x@join, "go_id", symbols, cols)
+            if (nrow(data) != 0)
+                data[["Ontology"]] <- Ontology
             data
         }
         rbind(getPartialSubmap("BP"),
@@ -369,70 +397,70 @@ setMethod("show", "AnnMap",
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "as.list" generic.
-### Note that all the "as.list" methods below have an extra 'subset' arg.
-### The 'subset' arg. can be one of the following:
+### Note that all the "as.list" methods below have an extra 'symbols' arg.
+### The 'symbols' arg. can be one of the following:
 ###   - NULL: all map elements are extracted (equivalent to passing
-###           'subset=ls(x)' but more efficient).
+###           'symbols=ls(x)' but more efficient).
 ###   - A NA-free character vector: the names of the returned list will
-###     be those passed in 'subset' in the same order. Names that are not
+###     be those passed in 'symbols' in the same order. Names that are not
 ###     in the map are associated with NAs. Note that, unlike "mget",
 ###     "as.list" doesn't treat differently names that are not in the map
 ###     from names that are in the map but associated with NAs.
 ###   - A NA-free numeric vector: for conveniency 'as.list(x, 1:3)' is a
 ###     shortcut for 'as.list(x, ls(x)[1:3])'. It's identical to
 ###     'as.list(x)[1:3]' but _much_ more efficent of course.
-### Note that the 'subset' arg. is _not_ checked i.e. only NULL, NA-free
+### Note that the 'symbols' arg. is _not_ checked i.e. only NULL, NA-free
 ### character vectors and NA-free numeric vectors are guaranted to work.
 
 setMethod("as.list", "AtomicAnnMap",
-    function(x, subset=NULL)
+    function(x, symbols=NULL)
     {
-        if (!is.null(subset) && length(subset) == 0)
+        if (!is.null(symbols) && length(symbols) == 0)
             return(list())
-        if (is.numeric(subset))
-            subset <- ls(x)[subset]
-        data <- as.data.frame(x, subset=subset)
+        if (is.numeric(symbols))
+            symbols <- ls(x)[symbols]
+        data <- as.data.frame(x, left.vals=symbols)
         submap <- split(data[[x@rightCol]], data[[x@leftCol]])
-        if (is.null(subset))
-            subset <- ls(x)
-        formatSubmap(submap, subset, x@rightColType, x@replace.single, x@replace.multiple)
+        if (is.null(symbols))
+            symbols <- ls(x)
+        formatSubmap(submap, symbols, x@rightColType, x@replace.single, x@replace.multiple)
     }
 )
 
 setMethod("as.list", "ReverseAtomicAnnMap",
-    function(x, subset=NULL)
+    function(x, symbols=NULL)
     {
-        if (!is.null(subset) && length(subset) == 0)
+        if (!is.null(symbols) && length(symbols) == 0)
             return(list())
-        if (is.numeric(subset))
-            subset <- ls(x)[subset]
-        data <- as.data.frame(x, subset=subset)
-        if (!is.null(subset)) {
-            not_found <- which(!(subset %in% data[[x@rightCol]]))
+        if (is.numeric(symbols))
+            symbols <- ls(x)[symbols]
+        data <- as.data.frame(x, right.vals=symbols)
+        if (!is.null(symbols)) {
+            not_found <- which(!(symbols %in% data[[x@rightCol]]))
             if (length(not_found) != 0)
-                stop("value for '", subset[not_found[1]], "' not found")
+                stop("value for '", symbols[not_found[1]], "' not found")
         }
         submap <- split(data[[x@leftCol]], data[[x@rightCol]])
-        if (is.null(subset))
-            subset <- ls(x)
-        formatSubmap(submap, subset, x@rightColType, x@replace.single, x@replace.multiple)
+        if (is.null(symbols))
+            symbols <- ls(x)
+        formatSubmap(submap, symbols, x@rightColType, x@replace.single, x@replace.multiple)
     }
 )
 
 setMethod("as.list", "NamedAtomicAnnMap",
-    function(x, subset=NULL)
+    function(x, symbols=NULL)
     {
-        if (!is.null(subset) && length(subset) == 0)
+        if (!is.null(symbols) && length(symbols) == 0)
             return(list())
-        if (is.numeric(subset))
-            subset <- ls(x)[subset]
-        data <- as.data.frame(x, subset=subset)
+        if (is.numeric(symbols))
+            symbols <- ls(x)[symbols]
+        data <- as.data.frame(x, left.vals=symbols, extra.cols=x@rightNamesCol)
         submap <- data[[x@rightCol]]
         names(submap) <- data[[x@rightNamesCol]]
         submap <- split(submap, data[[x@leftCol]])
-        if (is.null(subset))
-            subset <- ls(x)
-        formatSubmap(submap, subset, x@rightColType, x@replace.single, x@replace.multiple)
+        if (is.null(symbols))
+            symbols <- ls(x)
+        formatSubmap(submap, symbols, x@rightColType, x@replace.single, x@replace.multiple)
     }
 )
 
@@ -450,17 +478,17 @@ setMethod("as.list", "NamedAtomicAnnMap",
 ###      user  system elapsed
 ###     4.456   0.228   4.953
 setMethod("as.list", "GOAnnMap",
-    function(x, subset=NULL)
+    function(x, symbols=NULL)
     {
-        if (!is.null(subset) && length(subset) == 0)
+        if (!is.null(symbols) && length(symbols) == 0)
             return(list())
-        if (is.numeric(subset))
-            subset <- ls(x)[subset]
-        data <- as.data.frame(x, subset=subset)
+        if (is.numeric(symbols))
+            symbols <- ls(x)[symbols]
+        data <- as.data.frame(x, symbols=symbols)
         if (nrow(data) == 0)
             return(list())
-        if (is.null(subset))
-            subset <- ls(x)
+        if (is.null(symbols))
+            symbols <- ls(x)
         makeGONodeList <- function(GOIDs, Evidences, Ontologies)
         {
             ans <- lapply(1:length(GOIDs), function(y)
@@ -474,7 +502,7 @@ setMethod("as.list", "GOAnnMap",
         Evidences <- split(data[["evidence"]], data[[x@leftCol]])
         Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])
         mapped_keys <- unique(data[[x@leftCol]])
-        submap <- lapply(subset,
+        submap <- lapply(symbols,
                          function(y)
                          {
                              if (!(y %in% mapped_keys))
@@ -482,48 +510,43 @@ setMethod("as.list", "GOAnnMap",
                              else
                                  makeGONodeList(GOIDs[[y]], Evidences[[y]], Ontologies[[y]])
                          })
-        names(submap) <- subset
+        names(submap) <- symbols
         submap
     }
 )
 
 setMethod("as.list", "ReverseGOAnnMap",
-    function(x, subset=NULL)
+    function(x, symbols=NULL)
     {
-        if (!is.null(subset) && length(subset) == 0)
+        if (!is.null(symbols) && length(symbols) == 0)
             return(list())
-        if (is.numeric(subset))
-            subset <- ls(x)[subset]
-        cols <- c(x@leftCol, "evidence")
-        getPartialSubmap <- function(table)
-        {
-            data <- subsetTable(db(x), table, "go_id", subset, cols, x@baseJoins)
-            if (nrow(data) == 0)
-                return(list())
-            submap <- data[[x@leftCol]]
-            names(submap) <- data[["evidence"]]
-            split(submap, data[["go_id"]])
+        if (is.numeric(symbols))
+            symbols <- ls(x)[symbols]
+        data <- as.data.frame(x, symbols=symbols)
+        if (!is.null(symbols)) {
+            not_found <- which(!(symbols %in% data[["go_id"]]))
+            if (length(not_found) != 0)
+                stop("value for '", symbols[not_found[1]], "' not found")
         }
-        rightTables <- GOtables(x@all)
-        submap <- c(getPartialSubmap(rightTables[1]),
-                    getPartialSubmap(rightTables[2]),
-                    getPartialSubmap(rightTables[3]))
-        if (is.null(subset))
-            subset <- ls(x)
-        formatSubmap(submap, subset)
+        submap <- data[[x@leftCol]]
+        names(submap) <- data[["evidence"]]
+        submap <- split(submap, data[["go_id"]])
+        if (is.null(symbols))
+            symbols <- ls(x)
+        formatSubmap(submap, symbols)
     }
 )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "mget" new generic.
-### 'mget(subset, map)' vs 'as.list(map, subset)':
-###   1. mget checks its 'subset' arg. and gracefully fails if it's not of
+### 'mget(symbols, map)' vs 'as.list(map, symbols)':
+###   1. mget checks its 'symbols' arg. and gracefully fails if it's not of
 ###      the expected type (i.e. NULL or NA-free character vector),
-###   2. mget will error on the first string in 'subset' not in 'ls(map)',
+###   2. mget will error on the first string in 'symbols' not in 'ls(map)',
 ###      as.list will accept those strings and map them to NAs.
-###   3. if 'subset' is a subset of 'ls(map)', then 'mget(subset, map)'
-###      is identical to 'as.list(map, subset)'.
+###   3. if 'symbols' is a subset of 'ls(map)', then 'mget(symbols, map)'
+###      is identical to 'as.list(map, symbols)'.
 ###   4. 'mget(ls(map), map)' is identical to 'as.list(map)'.
 ###      Note that for a real "environment", 'as.list(envir)' is not identical
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
@@ -533,7 +556,7 @@ setMethod("mget", signature(envir="AtomicAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         checkUserLeftIds(x, envir)
-        as.list(envir, subset=x)
+        as.list(envir, symbols=x)
     }
 )
 
@@ -542,7 +565,7 @@ setMethod("mget", signature(envir="ReverseAtomicAnnMap"),
     {
         if (is.null(x) || !is.character(x) || any(is.na(x)))
             stop("invalid first argument")
-        as.list(envir, subset=x)
+        as.list(envir, symbols=x)
     }
 )
 
@@ -550,7 +573,7 @@ setMethod("mget", signature(envir="GOAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         checkUserLeftIds(x, envir)
-        as.list(envir, subset=x)
+        as.list(envir, symbols=x)
     }
 )
 
@@ -559,7 +582,7 @@ setMethod("mget", signature(envir="ReverseGOAnnMap"),
     {
         if (is.null(x) || !is.character(x) || any(is.na(x)))
             stop("invalid first argument")
-        as.list(envir, subset=x)
+        as.list(envir, symbols=x)
     }
 )
 
@@ -576,12 +599,24 @@ setMethod("eapply", signature(env="AnnMap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "get" new generic
+### The "get" new generic.
+### We want this:
+###   get("1027_at", envir=hgu95av2GO)
+### and this
+###   get("1027_at", hgu95av2GO)
+### to work so we need to dispatch on the 'pos' arg too.
 
 setMethod("get", signature(envir="AnnMap"),
     function(x, pos, envir, mode, inherits)
     {
         mget(x[1], envir)[[1]]
+    }
+)
+
+setMethod("get", signature(pos="AnnMap", envir="missing"),
+    function(x, pos, envir, mode, inherits)
+    {
+        get(x, envir=pos)
     }
 )
 
@@ -670,8 +705,8 @@ setMethod("countMappedKeys", "AtomicAnnMap",
     function(map)
     {
         cols <- map@rightCol
-        countUniqueSubsetsInSubsettedTable(db(map), map@rightTable, map@leftCol,
-                                           NULL, cols, map@baseJoins)
+        countUniqueSubsetsInSubsettedTable(db(map),
+            map@rightTable, map@join, map@leftCol, NULL, cols)
     }
 )
 
@@ -685,7 +720,7 @@ setMethod("countMappedKeys", "GOAnnMap",
         cols <- character(0)
         getMappedKeys <- function(table)
         {
-            data <- subsetTable(db(map), table, map@leftCol, NULL, cols, map@baseJoins)
+            data <- subsetTable(db(map), table, map@join, map@leftCol, NULL, cols)
             unique(data[[map@leftCol]])
         }
         keys1 <- getMappedKeys("go_bp")

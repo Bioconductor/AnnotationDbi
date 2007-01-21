@@ -6,7 +6,7 @@
 AGDB_default_leftTable <- "probes"
 AGDB_default_leftCol <- "probe_id"
 AGDB_default_rightColType <- character(0)
-AGDB_default_baseJoins <- "INNER JOIN probes USING (id)"
+AGDB_default_join <- "INNER JOIN probes USING (id)"
 
 ### Mandatory fields: mapName, rightTable and rightCol
 AGDB_AtomicAnnMap_seeds <- list(
@@ -16,7 +16,7 @@ AGDB_AtomicAnnMap_seeds <- list(
         #        mapName="ACCNUM",
         #        rightTable="accessions",
         #        rightCol="accession",
-        #        baseJoins=character(0) # no join for this map
+        #        join=character(0) # no join for this map
         #),
         list(
                 mapName="ARACYC",
@@ -89,7 +89,7 @@ createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
         datacache=datacache,
         leftTable=AGDB_default_leftTable,
         leftCol=AGDB_default_leftCol,
-        baseJoins=AGDB_default_baseJoins,
+        join=AGDB_default_join,
         rightColType=AGDB_default_rightColType
     )
     maps <- createAtomicAnnMapObjects(AGDB_AtomicAnnMap_seeds, seed0)
@@ -107,7 +107,7 @@ createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
             mapName="GO",
             leftTable=AGDB_default_leftTable,
             leftCol=AGDB_default_leftCol,
-            baseJoins=AGDB_default_baseJoins)
+            join=AGDB_default_join)
 
     ## ReverseGOAnnMap objects
     maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)

@@ -9,7 +9,7 @@
 
 HGU95AV2DB_default_leftTable <- "probes"
 HGU95AV2DB_default_leftCol <- "probe_id"
-HGU95AV2DB_default_baseJoins <- "INNER JOIN probes USING (id)"
+HGU95AV2DB_default_join <- "INNER JOIN probes USING (id)"
 HGU95AV2DB_default_rightColType <- character(0)
 
 ### Mandatory fields: mapName, rightTable and rightCol
@@ -20,7 +20,7 @@ HGU95AV2DB_AtomicAnnMap_seeds <- list(
                 mapName="ACCNUM",
                 rightTable="accessions",
                 rightCol="accession",
-                baseJoins=character(0) # no join for this map
+                join=character(0) # no join for this map
         ),
         list(
                 mapName="CHR",
@@ -114,7 +114,7 @@ createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
         datacache=datacache,
         leftTable=HGU95AV2DB_default_leftTable,
         leftCol=HGU95AV2DB_default_leftCol,
-        baseJoins=HGU95AV2DB_default_baseJoins,
+        join=HGU95AV2DB_default_join,
         rightColType=HGU95AV2DB_default_rightColType
     )
     maps <- createAtomicAnnMapObjects(HGU95AV2DB_AtomicAnnMap_seeds, seed0)
@@ -132,7 +132,7 @@ createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
             mapName="GO",
             leftTable=HGU95AV2DB_default_leftTable,
             leftCol=HGU95AV2DB_default_leftCol,
-            baseJoins=HGU95AV2DB_default_baseJoins)
+            join=HGU95AV2DB_default_join)
 
     ## ReverseGOAnnMap objects
     maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)
