@@ -86,28 +86,29 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
         map2 <- getMap(pkgname2, mapname)
         cat("***   map2 is ", mapname, " from package ", pkgname2, "\n", sep="")
         ## Compare lengths
-        nkeys1 <- length(map1)
-        cat("***   length(map1) = ", nkeys1, "\n", sep="")
-        nkeys2 <- length(map2)
-        cat("***   length(map2) = ", nkeys2, "\n", sep="")
+        nnames1 <- length(map1)
+        cat("***   length(map1) = ", nnames1, "\n", sep="")
+        nnames2 <- length(map2)
+        cat("***   length(map2) = ", nnames2, "\n", sep="")
         ## Compare submaps
         if (mapshortname %in% direct_maps && !is.null(probes)) {
-            testedkeys <- probes
+            tested_names <- probes
         } else {
-            testedkeys <- intersect(ls(map1), ls(map2))
+            tested_names <- intersect(ls(map1), ls(map2))
         }
-        cat("***   nb of tested keys = ", length(testedkeys), "\n", sep="")
-        submap1 <- mget(testedkeys, envir=map1)
+        cat("***   nb of tested names = ", length(tested_names), "\n", sep="")
+        submap1 <- mget(tested_names, envir=map1)
         if (verbose) {
-            cat("***   mget(testedkeys, envir=map1):\n", sep="")
+            cat("***   mget(tested_names, envir=map1):\n", sep="")
             show(submap1)
         }
-        submap2 <- mget(testedkeys, envir=map2)
+        submap2 <- mget(tested_names, envir=map2)
         if (verbose) {
-            cat("***   mget(testedkeys, envir=map2):\n", sep="")
+            cat("***   mget(tested_names, envir=map2):\n", sep="")
             show(submap2)
         }
-        OK <- sapply(testedkeys, function(key) identical.collections(submap1[[key]], submap2[[key]]))
+        OK <- sapply(tested_names,
+                     function(name) identical.collections(submap1[[name]], submap2[[name]]))
         nmis <- sum(!OK)
         cat("***   nb of mismatches = ", nmis, "\n", sep="")
         mismatch_summary[[mapname]] <- nmis
