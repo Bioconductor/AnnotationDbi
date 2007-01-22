@@ -14,8 +14,6 @@ YEAST2DB_default_rightColType <- character(0)
 
 ### Mandatory fields: mapName, rightTable and rightCol
 YEAST2DB_AtomicAnnMap_seeds <- list(
-
-    ## AtomicAnnMap objects
         list(
                 mapName="ALIAS",
                 rightTable="gene2alias",
@@ -58,22 +56,20 @@ YEAST2DB_AtomicAnnMap_seeds <- list(
                 rightTable="pubmed",
                 rightCol="pubmed_id"
         ),
-
-    ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
                 rightTable="chromosome_features",
                 rightCol="start",
                 rightColType="integer",
-                rightNamesCol="chromosome"
+                tagsCol="chromosome"
         )
 )
 
 createAnnDataObjects.YEAST2DB <- function(chipShortname, con, datacache)
 {
     ## The side effect of this is to cache the probeset ids.
-    dbUniqueColVals(con, YEAST2DB_default_leftTable,
-                    YEAST2DB_default_leftCol, datacache)
+    dbUniqueVals(con, YEAST2DB_default_leftTable,
+                      YEAST2DB_default_leftCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(

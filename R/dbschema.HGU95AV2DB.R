@@ -14,8 +14,6 @@ HGU95AV2DB_default_rightColType <- character(0)
 
 ### Mandatory fields: mapName, rightTable and rightCol
 HGU95AV2DB_AtomicAnnMap_seeds <- list(
-
-    ## AtomicAnnMap objects
         list(
                 mapName="ACCNUM",
                 rightTable="accessions",
@@ -78,34 +76,32 @@ HGU95AV2DB_AtomicAnnMap_seeds <- list(
                 rightTable="unigene",
                 rightCol="unigene_id"
         ),
-
-    ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
                 rightTable="chromosome_locations",
                 rightCol="start_location",
                 rightColType="integer",
-                rightNamesCol="chromosome"
+                tagsCol="chromosome"
         ),
         list(
                 mapName="PFAM",
                 rightTable="pfam",
                 rightCol="pfam_id",
-                rightNamesCol="ipi_id"
+                tagsCol="ipi_id"
         ),
         list(
                 mapName="PROSITE",
                 rightTable="prosite",
                 rightCol="prosite_id",
-                rightNamesCol="ipi_id"
+                tagsCol="ipi_id"
         )
 )
 
 createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
 {
     ## The side effect of this is to cache the probeset ids.
-    dbUniqueColVals(con, HGU95AV2DB_default_leftTable,
-                    HGU95AV2DB_default_leftCol, datacache)
+    dbUniqueVals(con, HGU95AV2DB_default_leftTable,
+                      HGU95AV2DB_default_leftCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(

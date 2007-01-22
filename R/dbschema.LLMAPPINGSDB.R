@@ -10,11 +10,6 @@ LLMAPPINGSDB_default_rightColType <- character(0)
 
 ### Mandatory fields: mapName, rightTable and rightCol
 LLMAPPINGSDB_AtomicAnnMap_seeds <- list(
-
-    ## AtomicAnnMap objects
-
-    ## NamedAtomicAnnMap objects
-
 )
 
 createAnnDataObjects.LLMAPPINGSDB <- function(chipShortname, con, datacache)

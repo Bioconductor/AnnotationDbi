@@ -37,14 +37,20 @@ exportMethods(
               "queryTable",
               "show",
               "subByRow",
-              "as.data.frame")
+
+              "as.data.frame",
+              "left.names",
+              "right.names",
+              "names",
+              "mapped.names",
+              "is.na",
+              "count.mapped.names")
 
 ### envir-based API:
 exportClasses(
     "AnnMap",
     "AtomicAnnMap",
     "ReverseAtomicAnnMap",
-    "NamedAtomicAnnMap",
     "GOAnnMap",
     "ReverseGOAnnMap")
 

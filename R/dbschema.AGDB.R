@@ -10,8 +10,6 @@ AGDB_default_join <- "INNER JOIN probes USING (id)"
 
 ### Mandatory fields: mapName, rightTable and rightCol
 AGDB_AtomicAnnMap_seeds <- list(
-
-    ## AtomicAnnMap objects
         #list(
         #        mapName="ACCNUM",
         #        rightTable="accessions",
@@ -65,22 +63,20 @@ AGDB_AtomicAnnMap_seeds <- list(
                 rightTable="gene_info",
                 rightCol="symbol"
         ),
-
-    ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
                 rightTable="chromosome_locations",
                 rightCol="start_location",
                 rightColType="integer",
-                rightNamesCol="chromosome"
+                tagsCol="chromosome"
         )
 )
 
 createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
 {
     ## The side effect of this is to cache the probeset ids.
-    dbUniqueColVals(con, AGDB_default_leftTable,
-                    AGDB_default_leftCol, datacache)
+    dbUniqueVals(con, AGDB_default_leftTable,
+                      AGDB_default_leftCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(

@@ -13,8 +13,6 @@ YEASTDB_default_rightColType <- character(0)
 
 ### Mandatory fields: mapName, rightTable and rightCol
 YEASTDB_AtomicAnnMap_seeds <- list(
-
-    ## AtomicAnnMap objects
         list(
                 mapName="ALIAS",
                 rightTable="gene2alias",
@@ -66,22 +64,20 @@ YEASTDB_AtomicAnnMap_seeds <- list(
                 rightTable="smart",
                 rightCol="smart_id"
         ),
-
-    ## NamedAtomicAnnMap objects
         list(
                 mapName="CHRLOC",
                 rightTable="chromosome_features",
                 rightCol="start",
                 rightColType="integer",
-                rightNamesCol="chromosome"
+                tagsCol="chromosome"
         )
 )
 
 createAnnDataObjects.YEASTDB <- function(chipShortname, con, datacache)
 {
     ## The side effect of this is to cache the systematic gene names.
-    dbUniqueColVals(con, YEASTDB_default_leftTable,
-                    YEASTDB_default_leftCol, datacache)
+    dbUniqueVals(con, YEASTDB_default_leftTable,
+                      YEASTDB_default_leftCol, datacache)
 
     ## AtomicAnnMap objects
     seed0 <- list(
