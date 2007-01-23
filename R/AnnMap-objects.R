@@ -1,13 +1,17 @@
 ### =========================================================================
 ### AnnMap objects
 ### --------------
+###
 ### AnnMap objects are SQLite-based annotation maps.
+###
 ### This file defines:
+###
 ###   a) The "AnnMap" class and subclasses.
+###
 ###   b) A base API for the "AnnMap" objects:
 ###        reverse
 ###        db
-###        as.data.frame
+###        as.data.frame, nrow
 ###        left.names, right.names, names
 ###        left.length, right.length, length
 ###        show, as.list
@@ -15,10 +19,19 @@
 ###        mapped.right.names, count.mapped.right.names
 ###        mapped.names, count.mapped.names
 ###        is.na
+###
+###      NB: "names", "length", "mapped.names" and "count.mapped.names" are
+###      "oriented" methods, i.e. they give a different result on a map and
+###      its "reverse" map (it depend on the orientation of the map).
+###      For each of these methods, there are 2 "unoriented" methods: a left
+###      method and a right method.
+###
 ###   c) An environment-like API for the "AnnMap" objects (methods: ls, mget,
 ###      eapply, get, [[, $) for backward compatibility with the classic
 ###      envir-based annotation maps.
+###
 ###   d) Some helper functions used by this environment-like API.
+###
 ### -------------------------------------------------------------------------
 
 
@@ -44,7 +57,7 @@ toSQLStringSet <- function(names)
     paste("'", paste(names, collapse="','"), "'", sep="")
 }
 
-toSQLInExpr <- function(col, names)
+toSQLWhere <- function(col, names)
 {
     if (is.null(names))
         return(paste(col, "IS NOT NULL"))
@@ -60,12 +73,24 @@ dbMapToDataFrame <- function(con, table, join, left.col, left.names,
     sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
-    where1 <- toSQLInExpr(left.col, left.names)
-    where2 <- toSQLInExpr(right.col, right.names)
+    where1 <- toSQLWhere(left.col, left.names)
+    where2 <- toSQLWhere(right.col, right.names)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(con, sql)
+}
+
+dbCountDataFrameRows <- function(con, table, join, left.col, right.col)
+{
+    cols <- c(left.col, right.col) # we could just use 1 col here
+    sql <- paste("SELECT COUNT(", paste(cols, collapse=","), ") FROM ", table, sep="")
+    if (length(join) == 1) # will be FALSE for NULL or character(0)
+        sql <- paste(sql, join)
+    where1 <- toSQLWhere(left.col, NULL)
+    where2 <- toSQLWhere(right.col, NULL)
+    sql <- paste(sql, "WHERE", where1, "AND", where2)
+    .dbGetQuery(con, sql)[[1]]
 }
 
 
@@ -294,6 +319,12 @@ setMethod("db", "AnnMap", function(object) object@con)
 ### WORK IN PROGRESS!!! Experimenting a new as.data.frame interface. Use at
 ### your own risk!
 ###
+### Note that because we use the same JOIN for a map and its corresponding
+### "reverse" map (this is made possible thanks to an INNER JOIN), then the
+### result returned by "as.data.frame" or "nrow" does not depend on the
+### orientation (direct/reverse) of the map which is a nice property
+### (e.g. 'nrow(map) == nrow(revmap(map))').
+###
 ### Arguments 'row.names' and 'optional' are ignored.
 ### The 'left.names' and 'right.names' args can be one of the following:
 ###   - NULL: the arg is ignored.
@@ -349,7 +380,38 @@ setMethod("as.data.frame", "GOAnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "nrow" new generic.
+###
+### Conceptual definition (for AnnMap object x):
+###     nrow(x) :== nrow(as.data.frame(x))
+###
+### Since "as.data.frame" is unoriented, then "nrow" is unoriented too.
+
+setGeneric("nrow", function(x) standardGeneric("nrow"))
+
+setMethod("nrow", "AtomicAnnMap",
+    function(x)
+    {
+        dbCountDataFrameRows(db(x), x@rightTable, x@join, x@leftCol, x@rightCol)
+    }
+)
+
+setMethod("nrow", "GOAnnMap",
+    function(x)
+    {
+        countRows <- function(Ontology)
+        {
+            table <- GOtables(x@all)[Ontology]
+            dbCountDataFrameRows(db(x), table, x@join, x@leftCol, go_id")
+        }
+        countRows("BP") + countRows("CC") + countRows("MF")
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "left.names", "right.names", "names" and "ls" generics.
+###
 
 setGeneric("left.names", function(x) standardGeneric("left.names"))
 setGeneric("right.names", function(x) standardGeneric("right.names"))
@@ -393,7 +455,9 @@ setMethod("ls", signature(name="AnnMap"),
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "left.length", "right.length" and "length" generic.
 ###
-### length(x) should always be the same as length(names(x)).
+### Conceptual definitions (for AnnMap object x):
+###     left.length(x) :== length(left.names(x))
+###     right.length(x) :== length(right.names(x))
 
 setGeneric("left.length", function(x) standardGeneric("left.length"))
 setGeneric("right.length", function(x) standardGeneric("right.length"))
@@ -716,22 +780,24 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "mapped" family of generics:
+### The "mapped names" family of generics:
 ###   - mapped.left.names, count.mapped.left.names
 ###   - mapped.right.names, count.mapped.right.names
 ###   - mapped.names, count.mapped.names
 ###
-### 'mapped.names(x)' is the subset of 'names(x)' that contains only those
-### names that are actually mapped to something (other than an NA).
-### Note that in a "reverse" map, all names ("right names") should be mapped
-### to a "left name". Hence if 'x' is a "ReverseAnnMap" object, 'names(x)'
-### and 'mapped.names(x)' should have the same elements (something worth
-### checking in a test unit).
-### 'count.mapped.names(x)' is the number of names that are actually mapped
-### to something (other than an NA). Hence it could simply be defined by
-###   length(mapped.names(x))
-### but the implementation below tries to be slightly faster than this in
-### some situations.
+### Conceptual definitions (for AnnMap object x):
+###
+###     mapped.left.names(x) :== unique values in left col (col 1) of
+###                              as.data.frame(x)
+###     count.mapped.left.names(x) :== length(mapped.left.names(x))
+###
+###     mapped.right.names(x) :== unique values in right col (col 2) of
+###                               as.data.frame(x)
+###     count.mapped.right.names(x) :== length(mapped.right.names(x))
+###
+### Note that all "right names" should be mapped to a "left name" hence
+### mapped.right.names(x) should be the same as right.names(x) (something
+### worth checking in a test unit).
 
 setGeneric("mapped.left.names", function(x) standardGeneric("mapped.left.names"))
 setGeneric("count.mapped.left.names", function(x) standardGeneric("count.mapped.left.names"))
