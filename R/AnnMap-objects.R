@@ -83,8 +83,7 @@ dbMapToDataFrame <- function(con, table, join, left.col, left.names,
 
 dbCountDataFrameRows <- function(con, table, join, left.col, right.col)
 {
-    cols <- c(left.col, right.col) # we could just use 1 col here
-    sql <- paste("SELECT COUNT(", paste(cols, collapse=","), ") FROM ", table, sep="")
+    sql <- paste("SELECT COUNT(*) FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
     where1 <- toSQLWhere(left.col, NULL)
