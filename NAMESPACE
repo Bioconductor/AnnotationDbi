@@ -19,7 +19,6 @@ exportMethods(
               "as.list",
               "contents",
               "countBy",
-              "db",
               "dbGetQuery",
               "eapply",
               "get",
@@ -38,13 +37,21 @@ exportMethods(
               "show",
               "subByRow",
 
+              "revmap",
+              "db",
               "as.data.frame",
               "left.names",
               "right.names",
               "names",
+              "left.length",
+              "right.length",
+              "mapped.left.names",
+              "count.mapped.left.names",
+              "mapped.right.names",
+              "count.mapped.right.names",
               "mapped.names",
-              "is.na",
-              "count.mapped.names")
+              "count.mapped.names",
+              "is.na")
 
 ### envir-based API:
 exportClasses(

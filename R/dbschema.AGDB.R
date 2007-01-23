@@ -74,10 +74,6 @@ AGDB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
 {
-    ## The side effect of this is to cache the probeset ids.
-    dbUniqueVals(con, AGDB_default_leftTable,
-                      AGDB_default_leftCol, datacache)
-
     ## AtomicAnnMap objects
     seed0 <- list(
         chipShortname=chipShortname,
@@ -91,9 +87,9 @@ createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
     maps <- createAtomicAnnMapObjects(AGDB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
-    maps$ENZYME2PROBE <- new("ReverseAtomicAnnMap", mapName="ENZYME2PROBE", maps$ENZYME)
-    maps$PATH2PROBE <- new("ReverseAtomicAnnMap", mapName="PATH2PROBE", maps$PATH)
-    maps$PMID2PROBE <- new("ReverseAtomicAnnMap", mapName="PMID2PROBE", maps$PMID)
+    maps$ENZYME2PROBE <- revmap(maps$ENZYME, mapName="ENZYME2PROBE")
+    maps$PATH2PROBE <- revmap(maps$PATH, mapName="PATH2PROBE")
+    maps$PMID2PROBE <- revmap(maps$PMID, mapName="PMID2PROBE")
 
     ## GOAnnMap object
     maps$GO <- new("GOAnnMap",
@@ -103,11 +99,15 @@ createAnnDataObjects.AGDB <- function(chipShortname, con, datacache)
             mapName="GO",
             leftTable=AGDB_default_leftTable,
             leftCol=AGDB_default_leftCol,
-            join=AGDB_default_join)
+            join=AGDB_default_join,
+            all=FALSE)
 
     ## ReverseGOAnnMap objects
-    maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)
-    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", mapName="GO2ALLPROBES", maps$GO, all=TRUE)
+    maps$GO2PROBE <- revmap(maps$GO, mapName="GO2PROBE")
+    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", maps$GO, mapName="GO2ALLPROBES", all=TRUE)
+
+    ## Some pre-caching
+    left.names(maps$GO)
 
     ## The MAPCOUNTS object (named integer vector)
     #maps$MAPCOUNTS <- createMAPCOUNTS(con, chipShortname)

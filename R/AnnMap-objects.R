@@ -3,13 +3,22 @@
 ### --------------
 ### AnnMap objects are SQLite-based annotation maps.
 ### This file defines:
-###   - the "AnnMap" class and subclasses,
-###   - a base API for the "AnnMap" objects (methods: db, length, as.list,
-###     as.data.frame, left.names, right.names, names, show, mapped.names,
-###     is.na, count.mapped.names),
-###   - an environment-like API for the "AnnMap" objects (methods: ls, mget,
-###     eapply, get, [[, $),
-###   - some helper functions used by this environment-like API.
+###   a) The "AnnMap" class and subclasses.
+###   b) A base API for the "AnnMap" objects:
+###        reverse
+###        db
+###        as.data.frame
+###        left.names, right.names, names
+###        left.length, right.length, length
+###        show, as.list
+###        mapped.left.names, count.mapped.left.names
+###        mapped.right.names, count.mapped.right.names
+###        mapped.names, count.mapped.names
+###        is.na
+###   c) An environment-like API for the "AnnMap" objects (methods: ls, mget,
+###      eapply, get, [[, $) for backward compatibility with the classic
+###      envir-based annotation maps.
+###   d) Some helper functions used by this environment-like API.
 ### -------------------------------------------------------------------------
 
 
@@ -38,21 +47,21 @@ toSQLStringSet <- function(names)
 toSQLInExpr <- function(col, names)
 {
     if (is.null(names))
-        return("1")
-    if (length(names) == 1)
-        paste(col, " LIKE ", toSQLStringSet(names), sep="")
-    else
-        paste(col, " IN (", toSQLStringSet(names), ")", sep="")
+        return(paste(col, "IS NOT NULL"))
+    #if (length(names) == 1)
+    #    return(paste(col, " LIKE ", toSQLStringSet(names), sep=""))
+    paste(col, " IN (", toSQLStringSet(names), ")", sep="")
 }
 
-subsetTable <- function(con, table, join, left.names.col, left.names,
-                                          right.names.col, right.names, cols, verbose=FALSE)
+dbMapToDataFrame <- function(con, table, join, left.col, left.names,
+                             right.col, right.names, extra.cols, verbose=FALSE)
 {
+    cols <- c(left.col, right.col, extra.cols)
     sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
-    where1 <- toSQLInExpr(left.names.col, left.names)
-    where2 <- toSQLInExpr(right.names.col, right.names)
+    where1 <- toSQLInExpr(left.col, left.names)
+    where2 <- toSQLInExpr(right.col, right.names)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     if (verbose)
         cat(sql, "\n", sep="")
@@ -95,20 +104,20 @@ dbCountUniqueVals <- function(con, table, col, datacache=NULL)
     .dbGetQuery(con, sql)[[1]]
 }
 
-dbUniqueMappedVals <- function(con, table, join, from_col, to_col, datacache=NULL)
+dbUniqueMappedVals <- function(con, table, join, from.col, to.col, datacache=NULL)
 {
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueMappedVals", table, from_col, to_col, sep=".")
+        objname <- paste("dbUniqueMappedVals", table, from.col, to.col, sep=".")
         if (exists(objname, envir=datacache, inherits=FALSE)) {
             vals <- get(objname, envir=datacache, inherits=FALSE)
             return(vals)
         }
     }
-    sql <- paste("SELECT DISTINCT", from_col, "FROM", table)
+    sql <- paste("SELECT DISTINCT", from.col, "FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
-    sql <- paste(sql, "WHERE", from_col, "IS NOT NULL AND ", to_col, "IS NOT NULL")
-    vals <- .dbGetQuery(con, sql)[[from_col]]
+    sql <- paste(sql, "WHERE", from.col, "IS NOT NULL AND ", to.col, "IS NOT NULL")
+    vals <- .dbGetQuery(con, sql)[[from.col]]
     if (!is.null(datacache)) {
         assign(objname, vals, envir=datacache, inherits=FALSE)
     }
@@ -116,19 +125,19 @@ dbUniqueMappedVals <- function(con, table, join, from_col, to_col, datacache=NUL
 }
 
 ### Read only caching!
-dbCountUniqueMappedVals <- function(con, table, join, from_col, to_col, datacache=NULL)
+dbCountUniqueMappedVals <- function(con, table, join, from.col, to.col, datacache=NULL)
 {
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueMappedVals", table, from_col, to_col, sep=".")
+        objname <- paste("dbUniqueMappedVals", table, from.col, to.col, sep=".")
         if (exists(objname, envir=datacache, inherits=FALSE)) {
             count <- length(get(objname, envir=datacache, inherits=FALSE))
             return(count)
         }
     }
-    sql <- paste("SELECT COUNT(DISTINCT ", from_col, ") FROM ", table, sep="")
+    sql <- paste("SELECT COUNT(DISTINCT ", from.col, ") FROM ", table, sep="")
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
-    sql <- paste(sql, "WHERE", to_col, "IS NOT NULL")
+    sql <- paste(sql, "WHERE", to.col, "IS NOT NULL")
     .dbGetQuery(con, sql)[[1]]
 }
 
@@ -223,18 +232,51 @@ setClass("AtomicAnnMap",
     )
 )
 
+### DON'T ADD ANY SLOT HERE! A given AnnMap subclass and its corresponding
+### "reverse" class should always have exactly the same slots.
 setClass("ReverseAtomicAnnMap", contains=c("ReverseAnnMap", "AtomicAnnMap"))
 
 ### For a "GOAnnMap" object, the right values are named lists of GO nodes,
 ### each GO node being represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
-setClass("GOAnnMap", contains="AnnMap")
+setClass("GOAnnMap",
+    contains="AnnMap",
+    representation(all="logical")
+)
 
 ### Maps a GO term to a named character vector containing left values tagged
 ### with the Evidence code.
-setClass("ReverseGOAnnMap",
-    contains=c("ReverseAnnMap", "GOAnnMap"),
-    representation(all="logical")
+### DON'T ADD ANY SLOT HERE! (Why? See "ReverseAtomicAnnMap" def above.)
+setClass("ReverseGOAnnMap", contains=c("ReverseAnnMap", "GOAnnMap"))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "revmap" new generic
+###
+### Note that I'd like to use "reverse" instead of "revmap" but "reverse" is
+### already defined as a generic in Biostrings and it seems that the second
+### of the 2 packages to be loaded breaks the generic and attached methods
+### defined in the first. Don't know how to deal with this situation :-/
+### The "rev" generic defined in package:base doesn't work neither because
+### we want to be able to use a different signature (2 args).
+
+setGeneric("revmap", function(x, mapName=NA) standardGeneric("revmap"))
+
+setMethod("revmap", "AtomicAnnMap",
+    function(x, mapName=NA)
+        new("ReverseAtomicAnnMap", x, mapName=as.character(mapName))
+)
+setMethod("revmap", "ReverseAtomicAnnMap",
+    function(x, mapName=NA)
+        new("AtomicAnnMap", x, mapName=as.character(mapName))
+)
+setMethod("revmap", "GOAnnMap",
+    function(x, mapName=NA)
+        new("ReverseGOAnnMap", x, mapName=as.character(mapName))
+)
+setMethod("revmap", "ReverseGOAnnMap",
+    function(x, mapName=NA)
+        new("GOAnnMap", x, mapName=as.character(mapName))
 )
 
 
@@ -270,15 +312,12 @@ setMethod("as.data.frame", "AtomicAnnMap",
             left.names <- row.names
         if (missing(right.names) && !identical(optional, FALSE))
             right.names <- optional
-        cols <- c(x@leftCol, x@rightCol)
         if (length(x@tagsCol) == 1)
-            cols <- c(cols, x@tagsCol)
-        if (!is.null(extra.cols))
-            cols <- c(cols, extra.cols)
-        subsetTable(db(x), x@rightTable, x@join,
-                           x@leftCol, left.names,
-                           x@rightCol, right.names,
-                           cols, verbose)
+            extra.cols <- c(x@tagsCol, extra.cols)
+        dbMapToDataFrame(db(x), x@rightTable, x@join,
+                                x@leftCol, left.names,
+                                x@rightCol, right.names,
+                                extra.cols, verbose)
     }
 )
 
@@ -290,19 +329,14 @@ setMethod("as.data.frame", "GOAnnMap",
             left.names <- row.names
         if (missing(right.names) && !identical(optional, FALSE))
             right.names <- optional
-        cols <- c(x@leftCol, "go_id", "evidence")
-        if (!is.null(extra.cols))
-            cols <- c(cols, extra.cols)
-        all <- FALSE
-        if (class(x) == "ReverseGOAnnMap")
-            all <- x@all
+        extra.cols <- c("evidence", extra.cols)
         getPartialSubmap <- function(Ontology)
         {
-            table <- GOtables(all)[Ontology]
-            data <- subsetTable(db(x), table, x@join,
-                                x@leftCol, left.names,
-                                "go_id", right.names,
-                                cols, verbose)
+            table <- GOtables(x@all)[Ontology]
+            data <- dbMapToDataFrame(db(x), table, x@join,
+                                            x@leftCol, left.names,
+                                            "go_id", right.names,
+                                            extra.cols, verbose)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- Ontology
             data
@@ -330,25 +364,20 @@ setMethod("left.names", "AnnMap",
 setMethod("right.names", "AnnMap",
     function(x)
     {
-        dbUniqueVals(db(x), x@rightTable, x@rightCol)
+        dbUniqueVals(db(x), x@rightTable, x@rightCol, x@datacache)
     }
 )
 
 setMethod("right.names", "GOAnnMap",
     function(x)
     {
-        all <- FALSE
-        if (class(x) == "ReverseGOAnnMap")
-            all <- x@all
         getNames <- function(Ontology)
         {
-            table <- GOtables(all)[Ontology]
-            dbUniqueVals(db(x), table, "go_id")
+            table <- GOtables(x@all)[Ontology]
+            dbUniqueVals(db(x), table, "go_id", x@datacache)
         }
-        ## Our assumption is that a given go_id can only belong to 1 of the 3
-        ## ontologies! If we are wrong, then we should apply unique() to the
-        ## result of this concantenation and also fix the "length" method for
-        ## "ReverseGOAnnMap" objects.
+        ## Because a given go_id can only belong to 1 of the 3 ontologies...
+        ## (if not, then apply unique to this result)
         c(getNames("BP"), getNames("CC"), getNames("MF"))
     }
 )
@@ -362,25 +391,29 @@ setMethod("ls", signature(name="AnnMap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "length" generic.
+### The "left.length", "right.length" and "length" generic.
+###
 ### length(x) should always be the same as length(names(x)).
 
+setGeneric("left.length", function(x) standardGeneric("left.length"))
+setGeneric("right.length", function(x) standardGeneric("right.length"))
+
 ### Will catch "AtomicAnnMap" and "GOAnnMap" objects.
-setMethod("length", "AnnMap",
+setMethod("left.length", "AnnMap",
     function(x)
     {
         dbCountUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
     }
 )
 
-setMethod("length", "ReverseAtomicAnnMap",
+setMethod("right.length", "AnnMap",
     function(x)
     {
         dbCountUniqueVals(db(x), x@rightTable, x@rightCol, x@datacache)
     }
 )
 
-setMethod("length", "ReverseGOAnnMap",
+setMethod("right.length", "GOAnnMap",
     function(x)
     {
         countNames <- function(Ontology)
@@ -388,11 +421,13 @@ setMethod("length", "ReverseGOAnnMap",
             table <- GOtables(x@all)[Ontology]
             dbCountUniqueVals(db(x), table, "go_id", x@datacache)
         }
-        ## Our assumption is that a given go_id can only belong to 1 of the 3
-        ## ontologies!
+        ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countNames("BP") + countNames("CC") + countNames("MF")
     }
 )
+
+setMethod("length", "AnnMap", function(x) left.length(x))
+setMethod("length", "ReverseAnnMap", function(x) right.length(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -402,7 +437,7 @@ setMethod("show", "AnnMap",
     function(object)
     {
         cat(object@mapName, " map for chip ", object@chipShortname,
-            " (object of class “", class(object), "”)\n", sep="")
+            " (object of class \"", class(object), "\")\n", sep="")
     }
 )
 
@@ -460,6 +495,25 @@ setMethod("as.list", "AtomicAnnMap",
     }
 )
 
+setMethod("as.list", "ReverseAtomicAnnMap",
+    function(x, names=NULL)
+    {
+        if (!is.null(names) && length(names) == 0)
+            return(list())
+        if (is.numeric(names))
+            names <- names(x)[names]
+        data <- as.data.frame(x, right.names=names)
+        if (!is.null(names) && !all(names %in% data[[x@rightCol]]))
+            .checkNamesExist(names, names(x))
+        if (nrow(data) == 0)
+            return(list())
+        submap <- split(data[[x@leftCol]], data[[x@rightCol]])
+        if (is.null(names))
+            names <- names(x)
+        formatSubmap(submap, names, x@rightColType, x@replace.single, x@replace.multiple)
+    }
+)
+
 ### This new version (0.0.27) is 3 times faster than previous version (0.0.26):
 ### Old version:
 ###   > system.time(aa<-as.list(hgu95av2GO))
@@ -511,22 +565,6 @@ setMethod("as.list", "GOAnnMap",
     }
 )
 
-setMethod("as.list", "ReverseAtomicAnnMap",
-    function(x, names=NULL)
-    {
-        if (!is.null(names) && length(names) == 0)
-            return(list())
-        if (is.numeric(names))
-            names <- names(x)[names]
-        data <- as.data.frame(x, right.names=names)
-        .checkNamesExist(names, data[[x@rightCol]])
-        submap <- split(data[[x@leftCol]], data[[x@rightCol]])
-        if (is.null(names))
-            names <- names(x)
-        formatSubmap(submap, names, x@rightColType, x@replace.single, x@replace.multiple)
-    }
-)
-
 setMethod("as.list", "ReverseGOAnnMap",
     function(x, names=NULL)
     {
@@ -535,7 +573,8 @@ setMethod("as.list", "ReverseGOAnnMap",
         if (is.numeric(names))
             names <- names(x)[names]
         data <- as.data.frame(x, right.names=names)
-        .checkNamesExist(names, data[["go_id"]])
+        if (!is.null(names) && !all(names %in% data[["go_id"]]))
+            .checkNamesExist(names, names(x))
         if (nrow(data) == 0)
             return(list())
         submap <- data[[x@leftCol]]
@@ -677,7 +716,10 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "mapped.names" and "count.mapped.names" new generics.
+### The "mapped" family of generics:
+###   - mapped.left.names, count.mapped.left.names
+###   - mapped.right.names, count.mapped.right.names
+###   - mapped.names, count.mapped.names
 ###
 ### 'mapped.names(x)' is the subset of 'names(x)' that contains only those
 ### names that are actually mapped to something (other than an NA).
@@ -689,7 +731,13 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
 ### to something (other than an NA). Hence it could simply be defined by
 ###   length(mapped.names(x))
 ### but the implementation below tries to be slightly faster than this in
-### in some situations.
+### some situations.
+
+setGeneric("mapped.left.names", function(x) standardGeneric("mapped.left.names"))
+setGeneric("count.mapped.left.names", function(x) standardGeneric("count.mapped.left.names"))
+
+setGeneric("mapped.right.names", function(x) standardGeneric("mapped.right.names"))
+setGeneric("count.mapped.right.names", function(x) standardGeneric("count.mapped.right.names"))
 
 setGeneric("mapped.names", function(x) standardGeneric("mapped.names"))
 setGeneric("count.mapped.names", function(x) standardGeneric("count.mapped.names"))
@@ -698,14 +746,14 @@ setGeneric("count.mapped.names", function(x) standardGeneric("count.mapped.names
 ### wrong results for maps that have one of those 2 fields with non-default
 ### values like silly maps ENTREZID and MULTIHIT in AGDB schema.
 ### But who cares, those maps are silly anyway...
-setMethod("mapped.names", "AtomicAnnMap",
+setMethod("mapped.left.names", "AtomicAnnMap",
     function(x)
     {
         dbUniqueMappedVals(db(x), x@rightTable, x@join,
                            x@leftCol, x@rightCol, x@datacache)
     }
 )
-setMethod("count.mapped.names", "AtomicAnnMap",
+setMethod("count.mapped.left.names", "AtomicAnnMap",
     function(x)
     {
         dbCountUniqueMappedVals(db(x), x@rightTable, x@join,
@@ -713,14 +761,14 @@ setMethod("count.mapped.names", "AtomicAnnMap",
     }
 )
 
-setMethod("mapped.names", "ReverseAtomicAnnMap",
+setMethod("mapped.right.names", "AtomicAnnMap",
     function(x)
     {
         dbUniqueMappedVals(db(x), x@rightTable, x@join,
-                           x@rightCol, x@leftCol)
+                           x@rightCol, x@leftCol, x@datacache)
     }
 )
-setMethod("count.mapped.names", "ReverseAtomicAnnMap",
+setMethod("count.mapped.right.names", "AtomicAnnMap",
     function(x)
     {
         dbCountUniqueMappedVals(db(x), x@rightTable, x@join,
@@ -728,12 +776,12 @@ setMethod("count.mapped.names", "ReverseAtomicAnnMap",
     }
 )
 
-setMethod("mapped.names", "GOAnnMap",
+setMethod("mapped.left.names", "GOAnnMap",
     function(x)
     {
         getMappedNames <- function(Ontology)
         {
-            table <- GOtables()[Ontology]
+            table <- GOtables(x@all)[Ontology]
             dbUniqueMappedVals(db(x), table, x@join,
                                x@leftCol, "go_id", x@datacache)
         }
@@ -743,11 +791,11 @@ setMethod("mapped.names", "GOAnnMap",
         unique(c(names1, names2, names3))
     }
 )
-setMethod("count.mapped.names", "GOAnnMap",
-    function(x) length(mapped.names(x))
+setMethod("count.mapped.left.names", "GOAnnMap",
+    function(x) length(mapped.left.names(x))
 )
 
-setMethod("mapped.names", "ReverseGOAnnMap",
+setMethod("mapped.right.names", "GOAnnMap",
     function(x)
     {
         getMappedNames <- function(Ontology)
@@ -759,14 +807,12 @@ setMethod("mapped.names", "ReverseGOAnnMap",
         names1 <- getMappedNames("BP")
         names2 <- getMappedNames("CC")
         names3 <- getMappedNames("MF")
-        ## Our assumption is that a given go_id can only belong to 1 of the 3
-        ## ontologies! If we are wrong, then we should apply unique() to the
-        ## result of this concantenation and also fix the "length" method for
-        ## "ReverseGOAnnMap" objects.
+        ## Because a given go_id can only belong to 1 of the 3 ontologies...
+        ## (if not, then apply unique to this result)
         c(names1, names2, names3)
     }
 )
-setMethod("count.mapped.names", "ReverseGOAnnMap",
+setMethod("count.mapped.right.names", "GOAnnMap",
     function(x)
     {
         countMappedNames <- function(Ontology)
@@ -775,11 +821,15 @@ setMethod("count.mapped.names", "ReverseGOAnnMap",
             dbCountUniqueMappedVals(db(x), table, x@join,
                                     "go_id", x@leftCol, x@datacache)
         }
-        ## Our assumption is that a given go_id can only belong to 1 of the 3
-        ## ontologies!
+        ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")
     }
 )
+
+setMethod("mapped.names", "AnnMap", function(x) mapped.left.names(x))
+setMethod("mapped.names", "ReverseAnnMap", function(x) mapped.right.names(x))
+setMethod("count.mapped.names", "AnnMap", function(x) count.mapped.left.names(x))
+setMethod("count.mapped.names", "ReverseAnnMap", function(x) count.mapped.right.names(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

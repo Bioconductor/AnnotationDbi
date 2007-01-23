@@ -75,10 +75,6 @@ YEASTDB_AtomicAnnMap_seeds <- list(
 
 createAnnDataObjects.YEASTDB <- function(chipShortname, con, datacache)
 {
-    ## The side effect of this is to cache the systematic gene names.
-    dbUniqueVals(con, YEASTDB_default_leftTable,
-                      YEASTDB_default_leftCol, datacache)
-
     ## AtomicAnnMap objects
     seed0 <- list(
         chipShortname=chipShortname,
@@ -92,10 +88,10 @@ createAnnDataObjects.YEASTDB <- function(chipShortname, con, datacache)
     maps <- createAtomicAnnMapObjects(YEASTDB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
-    maps$COMMON2SYSTEMATIC <- new("ReverseAtomicAnnMap", mapName="COMMON2SYSTEMATIC", maps$GENENAME)
-    maps$ENZYME2PROBE <- new("ReverseAtomicAnnMap", mapName="ENZYME2PROBE", maps$ENZYME)
-    maps$PATH2PROBE <- new("ReverseAtomicAnnMap", mapName="PATH2PROBE", maps$PATH)
-    maps$PMID2PROBE <- new("ReverseAtomicAnnMap", mapName="PMID2PROBE", maps$PMID)
+    maps$COMMON2SYSTEMATIC <- revmap(maps$GENENAME, mapName="COMMON2SYSTEMATIC")
+    maps$ENZYME2PROBE <- revmap(maps$ENZYME, mapName="ENZYME2PROBE")
+    maps$PATH2PROBE <- revmap(maps$PATH, mapName="PATH2PROBE")
+    maps$PMID2PROBE <- revmap(maps$PMID, mapName="PMID2PROBE")
 
     ## GOAnnMap object
     maps$GO <- new("GOAnnMap",
@@ -105,11 +101,15 @@ createAnnDataObjects.YEASTDB <- function(chipShortname, con, datacache)
             mapName="GO",
             leftTable=YEASTDB_default_leftTable,
             leftCol=YEASTDB_default_leftCol,
-            join=YEASTDB_default_join)
+            join=YEASTDB_default_join,
+            all=FALSE)
 
     ## ReverseGOAnnMap objects
-    maps$GO2PROBE <- new("ReverseGOAnnMap", mapName="GO2PROBE", maps$GO, all=FALSE)
-    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", mapName="GO2ALLPROBES", maps$GO, all=TRUE)
+    maps$GO2PROBE <- revmap(maps$GO, mapName="GO2PROBE")
+    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", maps$GO, mapName="GO2ALLPROBES", all=TRUE)
+
+    ## Some pre-caching
+    left.names(maps$GO)
 
     ## The MAPCOUNTS object (named integer vector)
     #maps$MAPCOUNTS <- createMAPCOUNTS(con, chipShortname)
