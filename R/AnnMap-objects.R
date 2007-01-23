@@ -402,7 +402,7 @@ setMethod("nrow", "GOAnnMap",
         countRows <- function(Ontology)
         {
             table <- GOtables(x@all)[Ontology]
-            dbCountDataFrameRows(db(x), table, x@join, x@leftCol, go_id")
+            dbCountDataFrameRows(db(x), table, x@join, x@leftCol, "go_id")
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
