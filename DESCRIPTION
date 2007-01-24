@@ -2,11 +2,11 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 0.0.34
+Version: 0.0.35
 Author: Seth Falcon, Nianhua Li
 Maintainer: Biocore Team <biocpkgs@lists.fhcrc.org>
 Depends: R (>= 2.3.0), methods, Biobase, RSQLite
-Imports: Biobase, annotate, GOstats
+Imports: Biobase
 Suggests: GOdb, GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R initialize-methods.R
          db.R factories.R subsetting-methods.R show-methods.R
