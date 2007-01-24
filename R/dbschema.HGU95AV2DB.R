@@ -18,7 +18,7 @@ HGU95AV2DB_AtomicAnnMap_seeds <- list(
                 mapName="ACCNUM",
                 rightTable="accessions",
                 rightCol="accession",
-                join=character(0) # no join for this map
+                join="INNER JOIN probes USING (probe_id)" # not the default join!
         ),
         list(
                 mapName="CHR",
