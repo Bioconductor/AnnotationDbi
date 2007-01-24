@@ -14,7 +14,8 @@
 ###        as.data.frame, nrow
 ###        left.names, right.names, names
 ###        left.length, right.length, length
-###        show, as.list
+###        show,
+###        as.character, as.list
 ###        mapped.left.names, count.mapped.left.names
 ###        mapped.right.names, count.mapped.right.names
 ###        mapped.names, count.mapped.names
@@ -169,11 +170,11 @@ dbCountUniqueMappedVals <- function(con, table, join, from.col, to.col, datacach
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Other helper functions
 
-formatSubmap <- function(submap, names, type=NULL, replace.single=NULL, replace.multiple=NULL)
+formatAsList <- function(lsubmap, names, type=NULL, replace.single=NULL, replace.multiple=NULL)
 {
     formatVal <- function(key)
     {
-        val <- submap[key][[1]]
+        val <- lsubmap[key][[1]]
         lval <- length(val)
         if (lval == 0)
             val <- NA
@@ -249,8 +250,10 @@ setClass("AtomicAnnMap",
     representation(
         rightTable="character",
         rightCol="character",
-        tagsCol="character",      # set only if right values are named vectors
-        rightColType="character", # set only if the extracted submap needs coercion
+        ## set only if the right names are tagged
+        tagsCol="character", 
+        ## set only if the right names need coercion after extraction
+        rightColType="character",
         replace.single="character",
         replace.multiple="character"
     )
@@ -284,23 +287,39 @@ setClass("ReverseGOAnnMap", contains=c("ReverseAnnMap", "GOAnnMap"))
 ### The "rev" generic defined in package:base doesn't work neither because
 ### we want to be able to use a different signature (2 args).
 
-setGeneric("revmap", function(x, mapName=NA) standardGeneric("revmap"))
+setGeneric("revmap", function(x, mapName=NULL) standardGeneric("revmap"))
 
 setMethod("revmap", "AtomicAnnMap",
-    function(x, mapName=NA)
-        new("ReverseAtomicAnnMap", x, mapName=as.character(mapName))
+    function(x, mapName=NULL)
+    {
+        if (is.null(mapName))
+            mapName <- paste("revmap(", x@mapName, ")", sep="")
+        else
+            mapName <- as.character(mapName)
+        new("ReverseAtomicAnnMap", x, mapName=mapName)
+    }
 )
 setMethod("revmap", "ReverseAtomicAnnMap",
-    function(x, mapName=NA)
-        new("AtomicAnnMap", x, mapName=as.character(mapName))
+    function(x, mapName=NULL)
+    {
+        stop("already a reverse map")
+    }
 )
 setMethod("revmap", "GOAnnMap",
-    function(x, mapName=NA)
-        new("ReverseGOAnnMap", x, mapName=as.character(mapName))
+    function(x, mapName=NULL)
+    {
+        if (is.null(mapName))
+            mapName <- paste("revmap(", x@mapName, ")", sep="")
+        else
+            mapName <- as.character(mapName)
+        new("ReverseGOAnnMap", x, mapName=mapName)
+    }
 )
 setMethod("revmap", "ReverseGOAnnMap",
-    function(x, mapName=NA)
-        new("GOAnnMap", x, mapName=as.character(mapName))
+    function(x, mapName=NULL)
+    {
+        stop("already a reverse map")
+    }
 )
 
 
@@ -506,6 +525,47 @@ setMethod("show", "AnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "as.character" generic.
+###
+### For untagged Reverse/AtomicAnnMap obects only!
+
+### R doesn't let me add a 'names' arg here:
+###  Error in rematchDefinition(definition, fdef, mnames, fnames, signature) :
+###          methods can add arguments to the generic only if '...' is an argument to the generic
+setMethod("as.character", "AtomicAnnMap",
+    function(x)
+    {
+        if (length(x@tagsCol) == 1)
+            stop("cannot coerce to character an AtomicAnnMap object with tags")
+        data <- as.data.frame(x)
+        ans <- data[[x@rightCol]]
+        if (!is.character(ans))
+            ans <- as.character(ans)
+        names(ans) <- data[[x@leftCol]]
+        if (any(duplicated(names(ans))))
+            warning("returned vector has duplicated names")
+        ans
+    }
+)
+
+setMethod("as.character", "ReverseAtomicAnnMap",
+    function(x)
+    {
+        if (length(x@tagsCol) == 1)
+            stop("cannot coerce to character an AtomicAnnMap object with tags")
+        data <- as.data.frame(x)
+        ans <- data[[x@leftCol]]
+        if (!is.character(ans))
+            ans <- as.character(ans)
+        names(ans) <- data[[x@rightCol]]
+        if (any(duplicated(names(ans))))
+            warning("returned vector has duplicated names")
+        ans
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "as.list" generic.
 ###
 ### Note that all the "as.list" methods below have an extra 'names' arg.
@@ -543,18 +603,16 @@ setMethod("as.list", "AtomicAnnMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        if (is.numeric(names))
-            names <- names(x)[names]
         data <- as.data.frame(x, left.names=names)
         if (nrow(data) == 0)
             return(list())
-        submap <- data[[x@rightCol]]
+        lsubmap <- data[[x@rightCol]]
         if (length(x@tagsCol) == 1)
-            names(submap) <- data[[x@tagsCol]]
-        submap <- split(submap, data[[x@leftCol]])
+            names(lsubmap) <- data[[x@tagsCol]]
+        lsubmap <- split(lsubmap, data[[x@leftCol]])
         if (is.null(names))
             names <- names(x)
-        formatSubmap(submap, names, x@rightColType, x@replace.single, x@replace.multiple)
+        formatAsList(lsubmap, names, x@rightColType, x@replace.single, x@replace.multiple)
     }
 )
 
@@ -563,17 +621,15 @@ setMethod("as.list", "ReverseAtomicAnnMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        if (is.numeric(names))
-            names <- names(x)[names]
         data <- as.data.frame(x, right.names=names)
         if (!is.null(names) && !all(names %in% data[[x@rightCol]]))
             .checkNamesExist(names, names(x))
         if (nrow(data) == 0)
             return(list())
-        submap <- split(data[[x@leftCol]], data[[x@rightCol]])
+        lsubmap <- split(data[[x@leftCol]], data[[x@rightCol]])
         if (is.null(names))
             names <- names(x)
-        formatSubmap(submap, names, x@rightColType, x@replace.single, x@replace.multiple)
+        formatAsList(lsubmap, names, x@rightColType, x@replace.single, x@replace.multiple)
     }
 )
 
@@ -595,8 +651,6 @@ setMethod("as.list", "GOAnnMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        if (is.numeric(names))
-            names <- names(x)[names]
         data <- as.data.frame(x, left.names=names)
         if (nrow(data) == 0)
             return(list())
@@ -615,7 +669,7 @@ setMethod("as.list", "GOAnnMap",
         Evidences <- split(data[["evidence"]], data[[x@leftCol]])
         Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])
         mapped_names <- unique(data[[x@leftCol]])
-        submap <- lapply(names,
+        lsubmap <- lapply(names,
                          function(y)
                          {
                              if (!(y %in% mapped_names))
@@ -623,8 +677,8 @@ setMethod("as.list", "GOAnnMap",
                              else
                                  makeGONodeList(GOIDs[[y]], Evidences[[y]], Ontologies[[y]])
                          })
-        names(submap) <- names
-        submap
+        names(lsubmap) <- names
+        lsubmap
     }
 )
 
@@ -633,19 +687,17 @@ setMethod("as.list", "ReverseGOAnnMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        if (is.numeric(names))
-            names <- names(x)[names]
         data <- as.data.frame(x, right.names=names)
         if (!is.null(names) && !all(names %in% data[["go_id"]]))
             .checkNamesExist(names, names(x))
         if (nrow(data) == 0)
             return(list())
-        submap <- data[[x@leftCol]]
-        names(submap) <- data[["evidence"]]
-        submap <- split(submap, data[["go_id"]])
+        lsubmap <- data[[x@leftCol]]
+        names(lsubmap) <- data[["evidence"]]
+        lsubmap <- split(lsubmap, data[["go_id"]])
         if (is.null(names))
             names <- names(x)
-        formatSubmap(submap, names)
+        formatAsList(lsubmap, names)
     }
 )
 
