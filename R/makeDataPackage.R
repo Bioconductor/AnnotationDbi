@@ -61,7 +61,7 @@ setMethod(Biobase::makeDataPackage,
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### HGU95AV2DB schema
 
-make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
+make_hgu95av2db <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
@@ -77,10 +77,9 @@ make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Nianhua Li, Seth Falcon"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "hgu95av2db"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, AffymetrixChip, Homo_sapiens, hgu95av2"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -93,7 +92,7 @@ test_hgu95av2db <- function(verbose=FALSE)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### YEAST2DB schema
 
-make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
+make_yeast2db <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
@@ -109,10 +108,9 @@ make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "yeast2db"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, AffymetrixChip, Saccharomyces_cerevisiae, yeast2"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -121,7 +119,7 @@ test_yeast2db <- function(verbose=FALSE)
     compareAnnDataIn2Pkgs.YEAST2DB("yeast2", "yeast2db", "yeast2", verbose=verbose)
 }
 
-make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
+make_ygs98db <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
@@ -137,10 +135,9 @@ make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "ygs98db"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, AffymetrixChip, Saccharomyces_cerevisiae, ygs98"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -153,7 +150,7 @@ test_ygs98db <- function(verbose=FALSE)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### AGDB schema
 
-make_agdb <- function(filePath, srcSQLiteFilePath, ...)
+make_agdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
@@ -169,10 +166,9 @@ make_agdb <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "agdb"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, AffymetrixChip, Arabidopsis_thaliana, ag"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -183,7 +179,7 @@ test_agdb <- function(verbose=FALSE)
     compareAnnDataIn2Pkgs.AGDB("ag", "agdb", "ag", verbose=verbose)
 }
 
-make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
+make_ath1121501db <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
@@ -199,10 +195,9 @@ make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "ath1121501db"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, AffymetrixChip, Arabidopsis_thaliana, ath1121501"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -215,7 +210,7 @@ test_ath1121501db <- function(verbose=FALSE)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### LLMAPPINGSDB schema
 
-make_humanLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
+make_humanLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="LLMAPPINGSDB",
@@ -231,10 +226,9 @@ make_humanLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "humanLLMappingsdb"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, Homo_sapiens, humanLLMappings"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -244,7 +238,7 @@ test_humanLLMappingsdb <- function(verbose=FALSE)
                                        "humanLLMappings", verbose=verbose)
 }
 
-make_mouseLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
+make_mouseLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="LLMAPPINGSDB",
@@ -260,10 +254,9 @@ make_mouseLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "mouseLLMappingsdb"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, Mus_musculus, mouseLLMappings"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -273,7 +266,7 @@ test_mouseLLMappingsdb <- function(verbose=FALSE)
                                        "mouseLLMappings", verbose=verbose)
 }
 
-make_ratLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
+make_ratLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="LLMAPPINGSDB",
@@ -289,10 +282,9 @@ make_ratLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "ratLLMappingsdb"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, Rattus_norvegicus, ratLLMappings"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -306,7 +298,7 @@ test_ratLLMappingsdb <- function(verbose=FALSE)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### YEASTDB schema
 
-make_YEASTdb <- function(filePath, srcSQLiteFilePath, ...)
+make_YEASTdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="YEASTDB",
@@ -322,10 +314,9 @@ make_YEASTdb <- function(filePath, srcSQLiteFilePath, ...)
     author <- "Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua Zhang, James W. MacDonald"
     email <- "biocannotation@lists.fhcrc.org"
     packageName <- "YEASTdb"
-    packageVersion <- "1.13.900"
     license <- "LGPL"
     biocViews <- "AnnotationData, Saccharomyces_cerevisiae"
-    makeDataPackage(pkgseed, author, email, packageName, packageVersion,
+    makeDataPackage(pkgseed, author, email, packageName, version,
                     license, biocViews, filePath, srcSQLiteFilePath, ...)
 }
 
@@ -338,19 +329,19 @@ test_YEASTdb <- function(verbose=FALSE)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Typical use of the make_*db functions:
 ###   library(AnnotationDbi)
-###   AnnotationDbi:::make_hgu95av2db(".", "data/hgu95av2.sqlite")
-###   AnnotationDbi:::make_yeast2db(".", "data/yeast2.sqlite")
-###   AnnotationDbi:::make_ygs98db(".", "data/ygs98.sqlite")
-###   AnnotationDbi:::make_agdb(".", "data/ag.sqlite")
-###   AnnotationDbi:::make_ath1121501db(".", "data/ath1121501.sqlite")
-###   AnnotationDbi:::make_humanLLMappingsdb(".", "data/humanLLMappings.sqlite")
-###   AnnotationDbi:::make_mouseLLMappingsdb(".", "data/mouseLLMappings.sqlite")
-###   AnnotationDbi:::make_ratLLMappingsdb(".", "data/ratLLMappings.sqlite")
-###   AnnotationDbi:::make_YEASTdb(".", "data/YEAST.sqlite")
+###   AnnotationDbi:::make_hgu95av2db("1.13.90", ".", "data/hgu95av2.sqlite")
+###   AnnotationDbi:::make_yeast2db("1.13.90", ".", "data/yeast2.sqlite")
+###   AnnotationDbi:::make_ygs98db("1.13.90", ".", "data/ygs98.sqlite")
+###   AnnotationDbi:::make_agdb("1.13.90", ".", "data/ag.sqlite")
+###   AnnotationDbi:::make_ath1121501db("1.13.90", ".", "data/ath1121501.sqlite")
+###   AnnotationDbi:::make_humanLLMappingsdb("1.13.90", ".", "data/humanLLMappings.sqlite")
+###   AnnotationDbi:::make_mouseLLMappingsdb("1.13.90", ".", "data/mouseLLMappings.sqlite")
+###   AnnotationDbi:::make_ratLLMappingsdb("1.13.90", ".", "data/ratLLMappings.sqlite")
+###   AnnotationDbi:::make_YEASTdb("1.13.90", ".", "data/YEAST.sqlite")
 ### or to make them all at once:
-###   AnnotationDbi:::make_all("data", "lastbuilds")
+###   AnnotationDbi:::make_all("1.13.90", "data", "lastbuilds")
 
-make_all <- function(srcDir=".", destDir=".")
+make_all <- function(version, srcDir=".", destDir=".")
 {
     library("AnnotationDbi")
     prefixes <- c(
@@ -367,7 +358,7 @@ make_all <- function(srcDir=".", destDir=".")
     for (prefix in prefixes) {
         funcname <- paste("make_", prefix, "db", sep="")
         srcSQLiteFilePath <- file.path(srcDir, paste(prefix, ".sqlite", sep=""))
-        do.call(funcname, list(destDir, srcSQLiteFilePath))
+        do.call(funcname, list(version, destDir, srcSQLiteFilePath))
     }
 }
 
