@@ -129,10 +129,12 @@ dbCountUniqueVals <- function(con, table, col, datacache=NULL)
     .dbGetQuery(con, sql)[[1]]
 }
 
-dbUniqueMappedVals <- function(con, table, join, from.col, to.col, datacache=NULL)
+dbUniqueMappedVals <- function(con, table, join,
+                               from.table, from.col,
+                               to.table, to.col, datacache=NULL)
 {
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueMappedVals", table, from.col, to.col, sep=".")
+        objname <- paste("dbUniqueMappedVals", from.table, from.col, to.table, to.col, sep=".")
         if (exists(objname, envir=datacache, inherits=FALSE)) {
             vals <- get(objname, envir=datacache, inherits=FALSE)
             return(vals)
@@ -150,10 +152,12 @@ dbUniqueMappedVals <- function(con, table, join, from.col, to.col, datacache=NUL
 }
 
 ### Read only caching!
-dbCountUniqueMappedVals <- function(con, table, join, from.col, to.col, datacache=NULL)
+dbCountUniqueMappedVals <- function(con, table, join,
+                                    from.table, from.col,
+                                    to.table, to.col, datacache=NULL)
 {
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueMappedVals", table, from.col, to.col, sep=".")
+        objname <- paste("dbUniqueMappedVals", from.table, from.col, to.table, to.col, sep=".")
         if (exists(objname, envir=datacache, inherits=FALSE)) {
             count <- length(get(objname, envir=datacache, inherits=FALSE))
             return(count)
@@ -764,14 +768,16 @@ setMethod("mapped.left.names", "AtomicAnnMap",
     function(x)
     {
         dbUniqueMappedVals(db(x), x@rightTable, x@join,
-                           x@leftCol, x@rightCol, x@datacache)
+                           x@leftTable, x@leftCol,
+                           x@rightTable, x@rightCol, x@datacache)
     }
 )
 setMethod("count.mapped.left.names", "AtomicAnnMap",
     function(x)
     {
         dbCountUniqueMappedVals(db(x), x@rightTable, x@join,
-                                x@leftCol, x@rightCol, x@datacache)
+                                x@leftTable, x@leftCol,
+                                x@rightTable, x@rightCol, x@datacache)
     }
 )
 
@@ -779,14 +785,16 @@ setMethod("mapped.right.names", "AtomicAnnMap",
     function(x)
     {
         dbUniqueMappedVals(db(x), x@rightTable, x@join,
-                           x@rightCol, x@leftCol, x@datacache)
+                           x@rightTable, x@rightCol,
+                           x@leftTable, x@leftCol, x@datacache)
     }
 )
 setMethod("count.mapped.right.names", "AtomicAnnMap",
     function(x)
     {
         dbCountUniqueMappedVals(db(x), x@rightTable, x@join,
-                                x@rightCol, x@leftCol, x@datacache)
+                                x@rightTable, x@rightCol,
+                                x@leftTable, x@leftCol, x@datacache)
     }
 )
 
@@ -797,7 +805,8 @@ setMethod("mapped.left.names", "GOAnnMap",
         {
             table <- GOtables(x@all)[Ontology]
             dbUniqueMappedVals(db(x), table, x@join,
-                               x@leftCol, "go_id", x@datacache)
+                               x@leftTable, x@leftCol,
+                               table, "go_id", x@datacache)
         }
         names1 <- getMappedNames("BP")
         names2 <- getMappedNames("CC")
@@ -816,7 +825,8 @@ setMethod("mapped.right.names", "GOAnnMap",
         {
             table <- GOtables(x@all)[Ontology]
             dbUniqueMappedVals(db(x), table, x@join,
-                               "go_id", x@leftCol, x@datacache)
+                               table, "go_id",
+                               x@leftTable, x@leftCol, x@datacache)
         }
         names1 <- getMappedNames("BP")
         names2 <- getMappedNames("CC")
@@ -833,7 +843,8 @@ setMethod("count.mapped.right.names", "GOAnnMap",
         {
             table <- GOtables(x@all)[Ontology]
             dbCountUniqueMappedVals(db(x), table, x@join,
-                                    "go_id", x@leftCol, x@datacache)
+                                    table, "go_id",
+                                    x@leftTable, x@leftCol, x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")
