@@ -769,6 +769,29 @@ setMethod("get", signature(pos="AnnMap", envir="missing"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "exists" new generic.
+### We want this:
+###   exists("1027_at", envir=hgu95av2GO)
+### and this
+###   exists("1027_at", hgu95av2GO)
+### to work so we need to dispatch on the 'where' arg too.
+
+setMethod("exists", signature(envir="AnnMap"),
+    function(x, where, envir, frame, mode, inherits)
+    {
+        x %in% names(envir)
+    }
+)
+
+setMethod("exists", signature(where="AnnMap", envir="missing"),
+    function(x, where, envir, frame, mode, inherits)
+    {
+        x %in% names(where)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "[[" and "$" generics
 
 setMethod("[[", "AnnMap",
