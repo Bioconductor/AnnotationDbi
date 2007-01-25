@@ -1,6 +1,6 @@
 datacache <- new.env(hash=TRUE)
 
-@CHIPSHORTNAME@ORGANISM <- "@ORGANISM@"
+@MAPPREFIX@ORGANISM <- "@ORGANISM@"
 
 .onLoad <- function(libname, pkgname) {
     require("methods", quietly=TRUE)

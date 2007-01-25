@@ -13,7 +13,7 @@ setMethod(Biobase::makeDataPackage,
          || length(email) != 1 || grep("@", email) != 1)
             stop("invalid email address")
         extdataDir <- file.path(filePath, packageName, "inst", "extdata")
-        dbFileName <- paste(object@chipShortName, ".sqlite", sep="")
+        dbFileName <- paste(object@mapPrefix, ".sqlite", sep="")
         if (missing(RSQLiteVersion)) {
             cran.pkgs <- available.packages(contrib.url("http://cran.fhcrc.org"))
             if (nrow(cran.pkgs) == 0)
@@ -24,7 +24,6 @@ setMethod(Biobase::makeDataPackage,
         syms <- list(DBSCHEMA=object@dbSchema,
                      MAPPREFIX=object@mapPrefix,
                      MAPTARGET=object@mapTarget,
-                     CHIPSHORTNAME=object@chipShortName,
                      ORGANISM=object@organism,
                      SPECIES=object@species,
                      MANUF=object@manufacturer,
@@ -69,7 +68,6 @@ make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="HGU95AV2DB",
         mapPrefix="hgu95av2",
         mapTarget="chip hgu95av2",
-        chipShortName="hgu95av2",
         organism="Homo sapiens",
         species="Human",
         manufacturer="Affymetrix",
@@ -102,7 +100,6 @@ make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="YEAST2DB",
         mapPrefix="yeast2",
         mapTarget="chip yeast2",
-        chipShortName="yeast2",
         organism="Saccharomyces cerevisiae",
         species="Yeast",
         manufacturer="Affymetrix",
@@ -131,7 +128,6 @@ make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="YEAST2DB",
         mapPrefix="ygs98",
         mapTarget="chip ygs98",
-        chipShortName="ygs98",
         organism="Saccharomyces cerevisiae",
         species="Yeast",
         manufacturer="Affymetrix",
@@ -164,7 +160,6 @@ make_agdb <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="AGDB",
         mapPrefix="ag",
         mapTarget="chip ag",
-        chipShortName="ag",
         organism="Arabidopsis thaliana",
         species="Arabidopsis",
         manufacturer="Affymetrix",
@@ -195,7 +190,6 @@ make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="AGDB",
         mapPrefix="ath1121501",
         mapTarget="chip ath1121501",
-        chipShortName="ath1121501",
         organism="Arabidopsis thaliana",
         species="Arabidopsis",
         manufacturer="Affymetrix",
@@ -228,7 +222,6 @@ make_humanLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="LLMAPPINGSDB",
         mapPrefix="ath1121501",
         mapTarget="human LocusLink ids",
-        chipShortName="NA",
         organism="NA",
         species="NA",
         manufacturer="NA",
@@ -258,7 +251,6 @@ make_mouseLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="LLMAPPINGSDB",
         mapPrefix="mouseLLMappings",
         mapTarget="mouse LocusLink ids",
-        chipShortName="NA",
         organism="NA",
         species="NA",
         manufacturer="NA",
@@ -288,7 +280,6 @@ make_ratLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="LLMAPPINGSDB",
         mapPrefix="ratLLMappings",
         mapTarget="rat LocusLink ids",
-        chipShortName="NA",
         organism="NA",
         species="NA",
         manufacturer="NA",
@@ -322,7 +313,6 @@ make_YEASTdb <- function(filePath, srcSQLiteFilePath, ...)
         dbSchema="YEASTDB",
         mapPrefix="YEAST",
         mapTarget="YEAST",
-        chipShortName="NA",
         organism="Saccharomyces cerevisiae",
         species="Yeast",
         manufacturer="NA",
