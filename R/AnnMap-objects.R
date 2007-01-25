@@ -227,7 +227,7 @@ setClass("AnnMap",
         leftTable="character",
         con="DBIConnection",
         datacache="environment",
-        chipShortname="character",
+        mapTarget="character", # "chip hgu95av2" or "YEAST" or...
         mapName="character"
     )
 )
@@ -515,7 +515,7 @@ setMethod("length", "ReverseAnnMap", function(x) right.length(x))
 setMethod("show", "AnnMap",
     function(object)
     {
-        cat(object@mapName, " map for chip ", object@chipShortname,
+        cat(object@mapName, " map for ", object@mapTarget,
             " (object of class \"", class(object), "\")\n", sep="")
     }
 )
@@ -701,11 +701,11 @@ setMethod("as.list", "ReverseGOAnnMap",
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-createMAPCOUNTS <- function(con, chipShortname)
+createMAPCOUNTS <- function(con, prefix)
 {
     data <- getTable(con, "qcdata", "map_name != 'TOTAL'")
     MAPCOUNTS <- data[["count"]]
-    names(MAPCOUNTS) <- paste(chipShortname, data[["map_name"]], sep="")
+    names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
     MAPCOUNTS
 }
 
@@ -869,14 +869,14 @@ setMethod("is.na", "AnnMap",
 ### For testing only (not exported).
 ###
 
-checkAnnDataObjects <- function(pkgname, chipShortname)
+checkAnnDataObjects <- function(pkgname, prefix)
 {
     require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
     getMap <- function(mapname)
     {
         get(mapname, envir=asNamespace(pkgname))
     }
-    MAPCOUNTS <- getMap(paste(chipShortname, "MAPCOUNTS", sep=""))
+    MAPCOUNTS <- getMap(paste(prefix, "MAPCOUNTS", sep=""))
     for (mapname in names(MAPCOUNTS)) {
         cat("Checking ", mapname, " map:\n", sep="")
         map <- getMap(mapname)

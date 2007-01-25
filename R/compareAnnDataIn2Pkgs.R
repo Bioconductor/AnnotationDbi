@@ -69,7 +69,7 @@ identical.collections <- function(x, y)
 }
 
 compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
-                                  mapprefix="", probes=NULL, verbose=FALSE)
+                                  prefix="", probes=NULL, verbose=FALSE)
 {
     require(pkgname1, character.only=TRUE) || stop(pkgname1, " package needed")
     require(pkgname2, character.only=TRUE) || stop(pkgname2, " package needed")
@@ -79,7 +79,7 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
     }
     mismatch_summary <- list()
     for (mapshortname in c(direct_maps, reverse_maps)) {
-        mapname <- paste(mapprefix, mapshortname, sep="")
+        mapname <- paste(prefix, mapshortname, sep="")
         cat("*** Comparing ", mapname, " maps:\n", sep="")
         map1 <- getMap(pkgname1, mapname)
         cat("***   map1 is ", mapname, " from package ", pkgname1, "\n", sep="")

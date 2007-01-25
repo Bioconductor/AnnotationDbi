@@ -12,11 +12,11 @@ LLMAPPINGSDB_default_rightColType <- character(0)
 LLMAPPINGSDB_AtomicAnnMap_seeds <- list(
 )
 
-createAnnDataObjects.LLMAPPINGSDB <- function(chipShortname, con, datacache)
+createAnnDataObjects.LLMAPPINGSDB <- function(prefix, mapTarget, con, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
-        chipShortname=chipShortname,
+        mapTarget=mapTarget,
         con=con,
         datacache=datacache,
         rightColType=LLMAPPINGSDB_default_rightColType,
@@ -31,18 +31,18 @@ createAnnDataObjects.LLMAPPINGSDB <- function(chipShortname, con, datacache)
     ## ReverseGOAnnMap objects
 
     ## The MAPCOUNTS object (named integer vector)
-    #maps$MAPCOUNTS <- createMAPCOUNTS(con, chipShortname)
+    #maps$MAPCOUNTS <- createMAPCOUNTS(con, prefix)
 
-    names(maps) <- paste(chipShortname, names(maps), sep="")
+    names(maps) <- paste(prefix, names(maps), sep="")
     maps
 }
 
-compareAnnDataIn2Pkgs.LLMAPPINGSDB <- function(pkgname1, pkgname2, mapprefix, probes=NULL, verbose=FALSE)
+compareAnnDataIn2Pkgs.LLMAPPINGSDB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
 {
     direct_maps <- sapply(LLMAPPINGSDB_AtomicAnnMap_seeds, function(x) x$mapName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
     )
-    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes, verbose)
+    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, prefix, probes, verbose)
 }
 

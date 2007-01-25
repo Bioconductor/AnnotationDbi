@@ -97,11 +97,11 @@ HGU95AV2DB_AtomicAnnMap_seeds <- list(
         )
 )
 
-createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
+createAnnDataObjects.HGU95AV2DB <- function(prefix, mapTarget, con, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
-        chipShortname=chipShortname,
+        mapTarget=mapTarget,
         con=con,
         datacache=datacache,
         leftTable=HGU95AV2DB_default_leftTable,
@@ -118,7 +118,7 @@ createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
 
     ## GOAnnMap object
     maps$GO <- new("GOAnnMap",
-            chipShortname=chipShortname,
+            mapTarget=mapTarget,
             con=con,
             datacache=datacache,
             mapName="GO",
@@ -140,13 +140,13 @@ createAnnDataObjects.HGU95AV2DB <- function(chipShortname, con, datacache)
     #mapped.right.names(maps$GO2ALLPROBES)
 
     ## The MAPCOUNTS object (named integer vector)
-    maps$MAPCOUNTS <- createMAPCOUNTS(con, chipShortname)
+    maps$MAPCOUNTS <- createMAPCOUNTS(con, prefix)
 
-    names(maps) <- paste(chipShortname, names(maps), sep="")
+    names(maps) <- paste(prefix, names(maps), sep="")
     maps
 }
 
-compareAnnDataIn2Pkgs.HGU95AV2DB <- function(pkgname1, pkgname2, mapprefix, probes=NULL, verbose=FALSE)
+compareAnnDataIn2Pkgs.HGU95AV2DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
 {
     direct_maps <- sapply(HGU95AV2DB_AtomicAnnMap_seeds, function(x) x$mapName)
     direct_maps <- c(direct_maps, "GO")
@@ -157,6 +157,6 @@ compareAnnDataIn2Pkgs.HGU95AV2DB <- function(pkgname1, pkgname2, mapprefix, prob
         "GO2PROBE",
         "GO2ALLPROBES"
     )
-    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, mapprefix, probes, verbose)
+    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, prefix, probes, verbose)
 }
 

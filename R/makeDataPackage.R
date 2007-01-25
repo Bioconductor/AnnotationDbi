@@ -21,8 +21,10 @@ setMethod(Biobase::makeDataPackage,
             RSQLiteVersion <- cran.pkgs['RSQLite', 'Version']
         }
         AnnDbiVersion <- installed.packages()['AnnotationDbi','Version']
-        syms <- list(CHIPSHORTNAME=object@chipShortName,
-                     DBSCHEMA=object@dbSchema,
+        syms <- list(DBSCHEMA=object@dbSchema,
+                     MAPPREFIX=object@mapPrefix,
+                     MAPTARGET=object@mapTarget,
+                     CHIPSHORTNAME=object@chipShortName,
                      ORGANISM=object@organism,
                      SPECIES=object@species,
                      MANUF=object@manufacturer,
@@ -36,11 +38,11 @@ setMethod(Biobase::makeDataPackage,
                      DBFILE=dbFileName,
                      RSQLITEVERSION=RSQLiteVersion,
                      ANNDBIVERSION=AnnDbiVersion)
-        templateDir <- system.file("AnnDataPkg.templates",
-                                   object@templateName,
-                                   package="AnnotationDbi")
+        template.path <- system.file("AnnDataPkg.templates",
+                                     object@pkg.template,
+                                     package="AnnotationDbi")
         createPackage(pkgname=packageName, destinationDir=filePath,
-                      originDir=templateDir,
+                      originDir=template.path,
                       symbolValues=syms, unlink=unlink, quiet=quiet)
         destSQLiteFilePath <- file.path(extdataDir, dbFileName)
         if (!file.copy(srcSQLiteFilePath, destSQLiteFilePath))
@@ -63,9 +65,11 @@ setMethod(Biobase::makeDataPackage,
 make_hgu95av2db <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="hgu95av2",
-        templateName="HGU95AV2DB",
+        pkg.template="HGU95AV2DB",
         dbSchema="HGU95AV2DB",
+        mapPrefix="hgu95av2",
+        mapTarget="chip hgu95av2",
+        chipShortName="hgu95av2",
         organism="Homo sapiens",
         species="Human",
         manufacturer="Affymetrix",
@@ -94,9 +98,11 @@ test_hgu95av2db <- function(verbose=FALSE)
 make_yeast2db <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="yeast2",
-        templateName="HGU95AV2DB",
+        pkg.template="HGU95AV2DB",
         dbSchema="YEAST2DB",
+        mapPrefix="yeast2",
+        mapTarget="chip yeast2",
+        chipShortName="yeast2",
         organism="Saccharomyces cerevisiae",
         species="Yeast",
         manufacturer="Affymetrix",
@@ -121,9 +127,11 @@ test_yeast2db <- function(verbose=FALSE)
 make_ygs98db <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="ygs98",
-        templateName="HGU95AV2DB",
+        pkg.template="HGU95AV2DB",
         dbSchema="YEAST2DB",
+        mapPrefix="ygs98",
+        mapTarget="chip ygs98",
+        chipShortName="ygs98",
         organism="Saccharomyces cerevisiae",
         species="Yeast",
         manufacturer="Affymetrix",
@@ -152,9 +160,11 @@ test_ygs98db <- function(verbose=FALSE)
 make_agdb <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="ag",
-        templateName="HGU95AV2DB",
+        pkg.template="HGU95AV2DB",
         dbSchema="AGDB",
+        mapPrefix="ag",
+        mapTarget="chip ag",
+        chipShortName="ag",
         organism="Arabidopsis thaliana",
         species="Arabidopsis",
         manufacturer="Affymetrix",
@@ -181,9 +191,11 @@ test_agdb <- function(verbose=FALSE)
 make_ath1121501db <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="ath1121501",
-        templateName="HGU95AV2DB",
+        pkg.template="HGU95AV2DB",
         dbSchema="AGDB",
+        mapPrefix="ath1121501",
+        mapTarget="chip ath1121501",
+        chipShortName="ath1121501",
         organism="Arabidopsis thaliana",
         species="Arabidopsis",
         manufacturer="Affymetrix",
@@ -212,9 +224,11 @@ test_ath1121501db <- function(verbose=FALSE)
 make_humanLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="humanLLMappings",
-        templateName="LLMAPPINGSDB",
+        pkg.template="LLMAPPINGSDB",
         dbSchema="LLMAPPINGSDB",
+        mapPrefix="ath1121501",
+        mapTarget="human LocusLink ids",
+        chipShortName="NA",
         organism="NA",
         species="NA",
         manufacturer="NA",
@@ -240,9 +254,11 @@ test_humanLLMappingsdb <- function(verbose=FALSE)
 make_mouseLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="mouseLLMappings",
-        templateName="LLMAPPINGSDB",
+        pkg.template="LLMAPPINGSDB",
         dbSchema="LLMAPPINGSDB",
+        mapPrefix="mouseLLMappings",
+        mapTarget="mouse LocusLink ids",
+        chipShortName="NA",
         organism="NA",
         species="NA",
         manufacturer="NA",
@@ -268,9 +284,11 @@ test_mouseLLMappingsdb <- function(verbose=FALSE)
 make_ratLLMappingsdb <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="ratLLMappings",
-        templateName="LLMAPPINGSDB",
+        pkg.template="LLMAPPINGSDB",
         dbSchema="LLMAPPINGSDB",
+        mapPrefix="ratLLMappings",
+        mapTarget="rat LocusLink ids",
+        chipShortName="NA",
         organism="NA",
         species="NA",
         manufacturer="NA",
@@ -300,9 +318,11 @@ test_ratLLMappingsdb <- function(verbose=FALSE)
 make_YEASTdb <- function(filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
-        chipShortName="YEAST",
-        templateName="YEASTDB",
+        pkg.template="YEASTDB",
         dbSchema="YEASTDB",
+        mapPrefix="YEAST",
+        mapTarget="YEAST",
+        chipShortName="NA",
         organism="Saccharomyces cerevisiae",
         species="Yeast",
         manufacturer="NA",
@@ -342,6 +362,7 @@ test_YEASTdb <- function(verbose=FALSE)
 
 make_all <- function(srcDir=".", destDir=".")
 {
+    library("AnnotationDbi")
     prefixes <- c(
         "hgu95av2",
         "yeast2",
