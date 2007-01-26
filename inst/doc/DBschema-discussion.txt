@@ -1,0 +1,73 @@
+HGU95AV2DB schema
+-----------------
+
+- make probes.probe_id a PRIMARY KEY. More generally speaking, all chip-based
+  schemas should have a col of reference for storage of all the valid probeset
+  ids and this col should be a PRIMARY KEY. Even more generally speaking,
+  all schemas should have a clearly defined "left col" somewhere that is
+  a PRIMARY KEY.
+
+
+YEASTDB schema
+--------------
+
+- Now supported in AnnotationDbi (except for the CHRLENGTHS and REJECTORF
+  maps that are missing).
+
+- Am I right in assuming that the YEAST package is _not_ probe-based
+  despite the fact that the "quality control" says:
+    Mappings found for probe based rda files:
+          ...
+    Mappings found for non-probe based rda files:
+          ...
+  My understanding is that the YEAST maps are based on the
+  "systematic gene names". Also misleading is the naming of the reverse maps:
+  YEASTENZYME2PROBE, YEASTGO2PROBE, etc... Only 1 reverse map seems to be
+  aknowledging the fact that the package data is based on the systematic gene
+  names, the COMMON2SYSTEMATIC map.
+
+- However, this map name "COMMON2SYSTEMATIC" is inconsistent.
+  It seems to be the reverse map for the GENENAME map.
+  In this case, why isn't it called GENENAME2SYSTEMATIC?
+  (all other reverse maps use this naming convention of prefixing
+  with the name of the direct map).
+
+- Where should I extract the GENENAME map from?
+    o or from the sgd table? (has cols: id, systematic_name, gene_name, sgd_id)
+    o or from the gene2systematic table? (has cols: gene_name, systematic_name)
+  Sometime it gives the same, sometimes not. With YEAST.sqlite:
+    sqlite> select gene_name from sgd where systematic_name='YAL012W';
+    CYS3
+    sqlite> select gene_name from gene2systematic where systematic_name='YAL012W';
+    CYS3
+    CYI1
+    FUN35
+    STR1
+  Using the former seems to give results much closer to the current YEAST
+  package (1.15.2) so this is what I've choosen for the current version of
+  AnnotationDbi (0.0.24). But then the gene2systematic is useless...
+
+
+A note about foreign keys (links)
+---------------------------------
+
+Schemas should define foreign keys (even if they are ignored by SQLite)
+everywhere it makes sense. There are only benefits of doing this:
+  - It makes the schema easier to understand (self-describing): a foreign
+    key not only indicates that the values in the left col must also exist
+    in the right col (referential integrity), but also that this relationship
+    between left and right values is many-to-one.
+  - If indexes are correctly defined on both sides of the links (must be
+    a UNIQUE index or PRIMARY KEY on the right side, this enforces the
+    many-to-one relationship), it makes the joins that follow those links
+    _very_ efficient (especially thanks to the UNIQUE index, most SQL
+    engines know how to take advantage of it). Another advantage of making
+    the right col UNIQUE (or PRIMARY KEY) is that it makes the schema
+    compatible with PostgreSQL which requires it.
+  - It guarantees the referential integrity of the data (well ok, not on
+    SQLite of course, since it ignores them).
+
+Also, for easy importation of the schemas in other RDBMS, tables that are
+referenced by a foreign key should be created _before_ the tables that
+reference them.
+
