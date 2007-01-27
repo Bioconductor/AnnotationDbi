@@ -26,8 +26,8 @@ Some cleaning
     R/AllClasses.R + methods defined for those classes
 
 
-The 'join' slot and "pluggable" maps
-------------------------------------
+The 'join' slot
+---------------
 The slot 'join' for AnnMap objects is not flexible enough. Its names
 is not good neither because it doesn't clearly indicates that it
 must always go in the "reverse" order. Example:
@@ -51,16 +51,52 @@ Note that:
 Advantages:
   - it leaves out SQL syntactic details
   - it's clearly easier to read/maintain and then less error-prone
-  - it allows easy SQL join generation and with a lot of control like the
-    possibility to choose between the direct or reverse join, an INNER or
-    LEFT join, etc...
-  - it will even allow to easily "plug" 2 maps together: if x1@rightTable
-    is the same as x2@leftTable, then c(x1, x2) is a map that goes from
-    x1@leftTable.x1@leftCol to x2@rightTable.x2@rightCol. And the 'L2Rjoin'
-    slot for 'c(x1, x2)' is c(x1@L2Rjoin, x1@rightTable, x2@L2Rjoin).
-    Of course, only maps that belong to the same package will be pluggable
-    this way (e.g. hgu95av2PATH2PROBE and hgu95av2ACCNUM, x1 is a reverse
-    map and x2 a direct map). So not only x1@rightTable and x2@leftTable
-    must be the same, but also the SQL connection ('con' slot).
+  - it's easy to write a low-level helper function that generates the SQL
+    code for this join. Having some extra parameters to this function
+    allow control over exactly what kind of join we want: direct or reverse,
+    INNER or LEFT, etc... The SQL code is controlled in one single place
+    (this helper function) and there is no need to change all the slots
+    (and consequently all the dbschema.*DB.R files) when we decide to change
+    the exact SQL code of the joins.
+
+
+"pluggable" maps
+----------------
+
+If to.table(x1) (the right table for a direct map, the left table for a reverse
+map) is the same as from.table(x2) (the left table for a direct map, the right
+table for a reverse map), then x1 and x2 are "pluggable".
+c(x1, x2), the result of the "plug" operation, is a map that goes from
+from.table(x1) to to.table(x2).
+But this would require to introduce a new class for representing
+"unoriented" maps because c(x1, x2) can't be considered oriented
+anymore (in general). An unoriented map would have from/to slots
+(fromTable, fromCol, toTable, toCol) instead of left/right slots
+(leftTable, leftCol, rightTable, rightCol). Also the L2Rjoin slot
+would need to be renamed to something like fromtoJoin.
+If x1 and x2 are 2 "unoriented" maps then all we need to do for
+x <- c(x1, x2) is:
+    x@fromTable <- x1@fromTable
+    x@toTable <- x2@toTable
+    x@fromtoJoin <- c(x1@fromtoJoin, x1@toTable, x2@fromtoJoin)
+Note that this formula for combining the 2 fromtoJoin slots is really
+simple thanks to the new format of this slot (see "The 'join' slot" section).
+
+The class representing "unoriented" maps would not be part of the current
+AnnMap hierarchy. It could be called GenericMap or SimpleMap or something
+like that, would behave close to current AtomicAnnMap (hence could be called
+AtomicMap too) except that it's unoriented (of course), doesn't
+have left/right methods but from/to methods instead, and... (?)
+Then we also need to be able to convert an AtomicAnnMap (or
+ReverseAtomicAnnMap) object to a GenericMap object (no conversion
+from GenericMap to AtomicAnnMap or ReverseAtomicAnnMap, once a map has lost
+its orientation, it's lost forever). Conversion from GOAnnMap (or
+ReverseGOAnnMap) to GenericMap seems hard to achieve because of the
+current DB schema where we have 3 right tables for those maps.
+
+Of course, only maps that belong to the same package would be pluggable
+this way (e.g. hgu95av2PATH2PROBE and hgu95av2ACCNUM, x1 is a reverse
+map and x2 a direct map). So not only to.table(x1) and from.table(x2)
+must be the same, but also the SQL connection ('con' slot).
 
 
