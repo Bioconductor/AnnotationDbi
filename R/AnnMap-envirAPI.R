@@ -147,7 +147,7 @@ setMethod("[[", "AnnMap",
         if (length(i) > 1)
             stop("attempt to select more than one element")
         if (!is.character(i) || is.na(i))
-            stop("wrong argument for subsetting an object of class “", class(x), "“")
+            stop("wrong argument for subsetting an object of class ", sQuote(class(x)))
         get(i, envir=x)
     }
 )
