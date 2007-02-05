@@ -292,7 +292,6 @@ setClass("ReverseGOAnnMap", contains=c("ReverseAnnMap", "GOAnnMap"))
 ### The "rev" generic defined in package:base doesn't work neither because
 ### we want to be able to use a different signature (2 args).
 
-setGeneric("revmap", function(x, mapName=NULL) standardGeneric("revmap"))
 
 setMethod("revmap", "AtomicAnnMap",
     function(x, mapName=NULL)
@@ -331,7 +330,6 @@ setMethod("revmap", "ReverseGOAnnMap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "db" new generic.
 
-setGeneric("db", function(object) standardGeneric("db"))
 
 setMethod("db", "AnnMap", function(object) object@con)
 
@@ -410,7 +408,6 @@ setMethod("as.data.frame", "GOAnnMap",
 ###
 ### Since "as.data.frame" is unoriented, then "nrow" is unoriented too.
 
-setGeneric("nrow", function(x) standardGeneric("nrow"))
 
 setMethod("nrow", "AtomicAnnMap",
     function(x)
@@ -436,8 +433,6 @@ setMethod("nrow", "GOAnnMap",
 ### The "left.names", "right.names" and "names" generics.
 ###
 
-setGeneric("left.names", function(x) standardGeneric("left.names"))
-setGeneric("right.names", function(x) standardGeneric("right.names"))
 
 setMethod("left.names", "AnnMap",
     function(x)
@@ -478,8 +473,6 @@ setMethod("names", "ReverseAnnMap", function(x) right.names(x))
 ###     left.length(x) :== length(left.names(x))
 ###     right.length(x) :== length(right.names(x))
 
-setGeneric("left.length", function(x) standardGeneric("left.length"))
-setGeneric("right.length", function(x) standardGeneric("right.length"))
 
 ### Will catch "AtomicAnnMap" and "GOAnnMap" objects.
 setMethod("left.length", "AnnMap",
@@ -751,14 +744,8 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
 ### mapped.right.names(x) should be the same as right.names(x) (something
 ### worth checking in a test unit).
 
-setGeneric("mapped.left.names", function(x) standardGeneric("mapped.left.names"))
-setGeneric("count.mapped.left.names", function(x) standardGeneric("count.mapped.left.names"))
 
-setGeneric("mapped.right.names", function(x) standardGeneric("mapped.right.names"))
-setGeneric("count.mapped.right.names", function(x) standardGeneric("count.mapped.right.names"))
 
-setGeneric("mapped.names", function(x) standardGeneric("mapped.names"))
-setGeneric("count.mapped.names", function(x) standardGeneric("count.mapped.names"))
 
 ### Ignore x@replace.single and x@replace.multiple, hence will give
 ### wrong results for maps that have one of those 2 fields with non-default
