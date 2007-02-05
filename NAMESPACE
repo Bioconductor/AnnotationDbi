@@ -1,11 +1,9 @@
-importMethodsFrom("Biobase", "contents")
 
 export(toggleDebug,
        compareAnnotation,
        comparePerf)
 
 exportMethods(
-              "contents",
               "exists",
               "makeDataPackage",
               "revmap",
