@@ -1,29 +1,13 @@
 importMethodsFrom("Biobase", "contents")
 
-export(toggleDebug, generateTwoWayMappings, generateTableObjects,
-       generateAnnotTableObj, generateQC, userTable, compareAnnotation,
+export(toggleDebug,
+       compareAnnotation,
        comparePerf)
-
-
-exportClasses("functionORNULL",
-              "AnnotDbTable", "AnnotDbEnv", "AnnotDbTableTwoWayMap", "AnnotMultiColTable",
-              "AnnotThreeColTable", "AnnotGOTermsTable", "AnnotTwoColTable",
-              "AnnDataPkgSeed")
 
 exportMethods(
               "contents",
-              "countBy",
-              "dbGetQuery",
               "exists",
-              "getCol",
-              "initialize",
-              "is.environment",
               "makeDataPackage",
-              "ncol",
-              "noMissing",
-              "queryTable",
-              "subByRow",
-
               "revmap",
               "db",
               "as.data.frame",
