@@ -709,7 +709,7 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
 
 ### Ignore x@replace.single and x@replace.multiple, hence will give
 ### wrong results for maps that have one of those 2 fields with non-default
-### values like silly maps ENTREZID and MULTIHIT in AGDB schema.
+### values like silly maps ENTREZID and MULTIHIT in AG_DB schema.
 ### But who cares, those maps are silly anyway...
 setMethod("mapped.left.names", "AtomicAnnMap",
     function(x)

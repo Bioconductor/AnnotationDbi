@@ -11,8 +11,14 @@ Suggests: GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R AllGenerics.R
          db.R factories.R
          AnnObject.R AnnMap-envirAPI.R
-         dbschema.HGU95AV2DB.R dbschema.YEAST2DB.R dbschema.AGDB.R
-         dbschema.LLMAPPINGSDB.R dbschema.YEASTDB.R 
-         compareAnnDataIn2Pkgs.R makeDataPackage.R zzz.R
+         dbschema.HGU95AV2_DB.R
+         dbschema.YEAST2_DB.R
+         dbschema.AG_DB.R
+         dbschema.LLMAPPINGS_DB.R
+         dbschema.YEAST_DB.R
+         dbschema.AFFYHUEX_DB.R
+         compareAnnDataIn2Pkgs.R
+         makeDataPackage.R
+         zzz.R
 License: The Artistic License, Version 2.0
 

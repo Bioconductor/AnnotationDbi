@@ -59,13 +59,13 @@ setMethod(Biobase::makeDataPackage,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### HGU95AV2DB schema
+### HGU95AV2_DB schema
 
 make_hgu95av2db <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
-        dbSchema="HGU95AV2DB",
+        dbSchema="HGU95AV2_DB",
         objNamePrefix="hgu95av2",
         objTarget="chip hgu95av2",
         organism="Homo sapiens",
@@ -85,18 +85,18 @@ make_hgu95av2db <- function(version, filePath, srcSQLiteFilePath, ...)
 
 test_hgu95av2db <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.HGU95AV2DB("hgu95av2", "hgu95av2db", "hgu95av2", verbose=verbose)
+    compareAnnDataIn2Pkgs.HGU95AV2_DB("hgu95av2", "hgu95av2db", "hgu95av2", verbose=verbose)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### YEAST2DB schema
+### YEAST2_DB schema
 
 make_yeast2db <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
-        dbSchema="YEAST2DB",
+        dbSchema="YEAST2_DB",
         objNamePrefix="yeast2",
         objTarget="chip yeast2",
         organism="Saccharomyces cerevisiae",
@@ -116,14 +116,14 @@ make_yeast2db <- function(version, filePath, srcSQLiteFilePath, ...)
 
 test_yeast2db <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.YEAST2DB("yeast2", "yeast2db", "yeast2", verbose=verbose)
+    compareAnnDataIn2Pkgs.YEAST2_DB("yeast2", "yeast2db", "yeast2", verbose=verbose)
 }
 
 make_ygs98db <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
-        dbSchema="YEAST2DB",
+        dbSchema="YEAST2_DB",
         objNamePrefix="ygs98",
         objTarget="chip ygs98",
         organism="Saccharomyces cerevisiae",
@@ -143,18 +143,18 @@ make_ygs98db <- function(version, filePath, srcSQLiteFilePath, ...)
 
 test_ygs98db <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.YEAST2DB("ygs98", "ygs98db", "ygs98", verbose=verbose)
+    compareAnnDataIn2Pkgs.YEAST2_DB("ygs98", "ygs98db", "ygs98", verbose=verbose)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### AGDB schema
+### AG_DB schema
 
 make_agdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
-        dbSchema="AGDB",
+        dbSchema="AG_DB",
         objNamePrefix="ag",
         objTarget="chip ag",
         organism="Arabidopsis thaliana",
@@ -175,15 +175,15 @@ make_agdb <- function(version, filePath, srcSQLiteFilePath, ...)
 test_agdb <- function(verbose=FALSE)
 {
     #probes <- c("17096_s_at", "17097_at", "17098_s_at")
-    #compareAnnDataIn2Pkgs.AGDB("ag", "agdb", "ag", probes=probes, verbose=verbose)
-    compareAnnDataIn2Pkgs.AGDB("ag", "agdb", "ag", verbose=verbose)
+    #compareAnnDataIn2Pkgs.AG_DB("ag", "agdb", "ag", probes=probes, verbose=verbose)
+    compareAnnDataIn2Pkgs.AG_DB("ag", "agdb", "ag", verbose=verbose)
 }
 
 make_ath1121501db <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="HGU95AV2DB",
-        dbSchema="AGDB",
+        dbSchema="AG_DB",
         objNamePrefix="ath1121501",
         objTarget="chip ath1121501",
         organism="Arabidopsis thaliana",
@@ -203,18 +203,18 @@ make_ath1121501db <- function(version, filePath, srcSQLiteFilePath, ...)
 
 test_ath1121501db <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.AGDB("ath1121501", "ath1121501db", "ath1121501", verbose=verbose)
+    compareAnnDataIn2Pkgs.AG_DB("ath1121501", "ath1121501db", "ath1121501", verbose=verbose)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### LLMAPPINGSDB schema
+### LLMAPPINGS_DB schema
 
 make_humanLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="LLMAPPINGSDB",
-        dbSchema="LLMAPPINGSDB",
+        dbSchema="LLMAPPINGS_DB",
         objNamePrefix="ath1121501",
         objTarget="human LocusLink ids",
         organism="NA",
@@ -234,7 +234,7 @@ make_humanLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 
 test_humanLLMappingsdb <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.LLMAPPINGSDB("humanLLMappings", "humanLLMappingsdb",
+    compareAnnDataIn2Pkgs.LLMAPPINGS_DB("humanLLMappings", "humanLLMappingsdb",
                                        "humanLLMappings", verbose=verbose)
 }
 
@@ -242,7 +242,7 @@ make_mouseLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="LLMAPPINGSDB",
-        dbSchema="LLMAPPINGSDB",
+        dbSchema="LLMAPPINGS_DB",
         objNamePrefix="mouseLLMappings",
         objTarget="mouse LocusLink ids",
         organism="NA",
@@ -262,7 +262,7 @@ make_mouseLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 
 test_mouseLLMappingsdb <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.LLMAPPINGSDB("mouseLLMappings", "mouseLLMappingsdb",
+    compareAnnDataIn2Pkgs.LLMAPPINGS_DB("mouseLLMappings", "mouseLLMappingsdb",
                                        "mouseLLMappings", verbose=verbose)
 }
 
@@ -270,7 +270,7 @@ make_ratLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="LLMAPPINGSDB",
-        dbSchema="LLMAPPINGSDB",
+        dbSchema="LLMAPPINGS_DB",
         objNamePrefix="ratLLMappings",
         objTarget="rat LocusLink ids",
         organism="NA",
@@ -290,19 +290,19 @@ make_ratLLMappingsdb <- function(version, filePath, srcSQLiteFilePath, ...)
 
 test_ratLLMappingsdb <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.LLMAPPINGSDB("ratLLMappings", "ratLLMappingsdb",
-                                       "ratLLMappings", verbose=verbose)
+    compareAnnDataIn2Pkgs.LLMAPPINGS_DB("ratLLMappings", "ratLLMappingsdb",
+                                        "ratLLMappings", verbose=verbose)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### YEASTDB schema
+### YEAST_DB schema
 
 make_YEASTdb <- function(version, filePath, srcSQLiteFilePath, ...)
 {
     pkgseed <- new("AnnDataPkgSeed",
         pkg.template="YEASTDB",
-        dbSchema="YEASTDB",
+        dbSchema="YEAST_DB",
         objNamePrefix="YEAST",
         objTarget="YEAST",
         organism="Saccharomyces cerevisiae",
@@ -322,7 +322,7 @@ make_YEASTdb <- function(version, filePath, srcSQLiteFilePath, ...)
 
 test_YEASTdb <- function(verbose=FALSE)
 {
-    compareAnnDataIn2Pkgs.YEASTDB("YEAST", "YEASTdb", "YEAST", verbose=verbose)
+    compareAnnDataIn2Pkgs.YEAST_DB("YEAST", "YEASTdb", "YEAST", verbose=verbose)
 }
 
 

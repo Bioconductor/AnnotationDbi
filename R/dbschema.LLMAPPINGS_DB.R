@@ -1,28 +1,28 @@
 ### =========================================================================
 ### Create all data objects for an annotation data package
-### with db schema LLMAPPINGSDB
+### with db schema LLMAPPINGS_DB
 ### -------------------------------------------------------------------------
 
 ### TODO: Everything!
 
-LLMAPPINGSDB_default_leftCol <- "gene_id"
-LLMAPPINGSDB_default_rightColType <- character(0)
+LLMAPPINGS_DB_default_leftCol <- "gene_id"
+LLMAPPINGS_DB_default_rightColType <- character(0)
 
 ### Mandatory fields: objName, rightTable and rightCol
-LLMAPPINGSDB_AtomicAnnMap_seeds <- list(
+LLMAPPINGS_DB_AtomicAnnMap_seeds <- list(
 )
 
-createAnnObjects.LLMAPPINGSDB <- function(prefix, objTarget, conn, datacache)
+createAnnObjects.LLMAPPINGS_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
         objTarget=objTarget,
         conn=conn,
         datacache=datacache,
-        rightColType=LLMAPPINGSDB_default_rightColType,
-        leftCol=LLMAPPINGSDB_default_leftCol
+        rightColType=LLMAPPINGS_DB_default_rightColType,
+        leftCol=LLMAPPINGS_DB_default_leftCol
     )
-    maps <- createAtomicAnnMapObjects(LLMAPPINGSDB_AtomicAnnMap_seeds, seed0)
+    maps <- createAtomicAnnMapObjects(LLMAPPINGS_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
 
@@ -37,9 +37,9 @@ createAnnObjects.LLMAPPINGSDB <- function(prefix, objTarget, conn, datacache)
     maps
 }
 
-compareAnnDataIn2Pkgs.LLMAPPINGSDB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
+compareAnnDataIn2Pkgs.LLMAPPINGS_DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
 {
-    direct_maps <- sapply(LLMAPPINGSDB_AtomicAnnMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(LLMAPPINGS_DB_AtomicAnnMap_seeds, function(x) x$objName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
     )

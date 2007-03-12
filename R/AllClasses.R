@@ -48,7 +48,7 @@ setClass("ReverseAnnMap", representation("VIRTUAL"))
 ### For a "AtomicAnnMap" object, the right values are unnamed atomic vectors
 ### (character or integer).
 ### The last 2 slots ('replace.single' and 'replace.multiple') allow dealing
-### with silly maps ENTREZID and MULTIHIT in AGDB schema: they are complementary
+### with silly maps ENTREZID and MULTIHIT in AG_DB schema: they are complementary
 ### maps that both map probeset ids to Entrez ids. In the ENTREZID map, probeset
 ### ids that have multiple matches are mapped to "multiple". In the MULTIHIT
 ### map, probeset ids that have <= 1 match are mapped to NAs. Sooo:
@@ -93,7 +93,7 @@ setClass(
     "AnnDataPkgSeed",
     representation(
         pkg.template="character",    # e.g. "HGU95AV2DB"
-        dbSchema="character",        # e.g. "HGU95AV2DB"
+        dbSchema="character",        # e.g. "HGU95AV2_DB"
         objNamePrefix="character",   # e.g. "hgu95av2"
         objTarget="character",       # e.g. "chip hgu95av2"
         organism="character",

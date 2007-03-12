@@ -1,19 +1,19 @@
 ### =========================================================================
 ### Create all data objects for an annotation data package
-### with db schema YEAST2DB
+### with db schema YEAST2_DB
 ### -------------------------------------------------------------------------
 
 ### TODO: The following maps are missing for now:
 ###   miscellaneous maps: CHRLENGTHS
 
-YEAST2DB_default_leftTable <- "probes"
-YEAST2DB_default_leftCol <- "probe_id"
-YEAST2DB_short_join <- "INNER JOIN probes USING (systematic_name)"
-YEAST2DB_default_join <- paste("INNER JOIN sgd USING (id)", YEAST2DB_short_join)
-YEAST2DB_default_rightColType <- character(0)
+YEAST2_DB_default_leftTable <- "probes"
+YEAST2_DB_default_leftCol <- "probe_id"
+YEAST2_DB_short_join <- "INNER JOIN probes USING (systematic_name)"
+YEAST2_DB_default_join <- paste("INNER JOIN sgd USING (id)", YEAST2_DB_short_join)
+YEAST2_DB_default_rightColType <- character(0)
 
 ### Mandatory fields: objName, rightTable and rightCol
-YEAST2DB_AtomicAnnMap_seeds <- list(
+YEAST2_DB_AtomicAnnMap_seeds <- list(
         list(
                 objName="ALIAS",
                 rightTable="gene2alias",
@@ -38,7 +38,7 @@ YEAST2DB_AtomicAnnMap_seeds <- list(
                 objName="GENENAME",
                 rightTable="sgd",
                 rightCol="gene_name",
-                join=YEAST2DB_short_join
+                join=YEAST2_DB_short_join
         ),
         list(
                 objName="ORF",
@@ -65,19 +65,19 @@ YEAST2DB_AtomicAnnMap_seeds <- list(
         )
 )
 
-createAnnObjects.YEAST2DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjects.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
         objTarget=objTarget,
         conn=conn,
         datacache=datacache,
-        rightColType=YEAST2DB_default_rightColType,
-        leftTable=YEAST2DB_default_leftTable,
-        leftCol=YEAST2DB_default_leftCol,
-        join=YEAST2DB_default_join
+        rightColType=YEAST2_DB_default_rightColType,
+        leftTable=YEAST2_DB_default_leftTable,
+        leftCol=YEAST2_DB_default_leftCol,
+        join=YEAST2_DB_default_join
     )
-    maps <- createAtomicAnnMapObjects(YEAST2DB_AtomicAnnMap_seeds, seed0)
+    maps <- createAtomicAnnMapObjects(YEAST2_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
     maps$ENZYME2PROBE <- revmap(maps$ENZYME, objName="ENZYME2PROBE")
@@ -90,9 +90,9 @@ createAnnObjects.YEAST2DB <- function(prefix, objTarget, conn, datacache)
             conn=conn,
             datacache=datacache,
             objName="GO",
-            leftTable=YEAST2DB_default_leftTable,
-            leftCol=YEAST2DB_default_leftCol,
-            join=YEAST2DB_default_join,
+            leftTable=YEAST2_DB_default_leftTable,
+            leftCol=YEAST2_DB_default_leftCol,
+            join=YEAST2_DB_default_join,
             all=FALSE)
 
     ## ReverseGOAnnMap objects
@@ -109,9 +109,9 @@ createAnnObjects.YEAST2DB <- function(prefix, objTarget, conn, datacache)
     maps
 }
 
-compareAnnDataIn2Pkgs.YEAST2DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
+compareAnnDataIn2Pkgs.YEAST2_DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
 {
-    direct_maps <- sapply(YEAST2DB_AtomicAnnMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(YEAST2_DB_AtomicAnnMap_seeds, function(x) x$objName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
         "ENZYME2PROBE",

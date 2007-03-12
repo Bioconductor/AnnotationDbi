@@ -1,5 +1,5 @@
-HGU95AV2DB schema
------------------
+HGU95AV2_DB schema
+------------------
 
 - make probes.probe_id a PRIMARY KEY. More generally speaking, all chip-based
   schemas should have a col of reference for storage of all the valid probeset
@@ -8,8 +8,8 @@ HGU95AV2DB schema
   a PRIMARY KEY.
 
 
-YEASTDB schema
---------------
+YEAST_DB schema
+---------------
 
 - Now supported in AnnotationDbi (except for the CHRLENGTHS and REJECTORF
   maps that are missing).
