@@ -1,12 +1,12 @@
 ### =========================================================================
-### AnnMap objects
-### --------------
+### "AnnObject" objects
+### -------------------
 ###
-### AnnMap objects are SQLite-based annotation maps.
+### "AnnObject" objects are containers for SQLite-based annotation data.
 ###
 ### This file defines:
 ###
-###   a) A low-level API for the "AnnMap" objects:
+###   a) A low-level API for the "AnnObject" objects:
 ###        reverse
 ###        db
 ###        as.data.frame, nrow
@@ -65,8 +65,20 @@ toSQLWhere <- function(col, names)
     paste(col, " IN (", toSQLStringSet(names), ")", sep="")
 }
 
-dbMapToDataFrame <- function(conn, table, join, left.col, left.names,
-                             right.col, right.names, extra.cols, verbose=FALSE)
+dbAnnTableToDataFrame <- function(conn, table, join, left.col, left.names, verbose=FALSE)
+{
+    sql <- paste("SELECT * FROM", table)
+    if (length(join) == 1) # will be FALSE for NULL or character(0)
+        sql <- paste(sql, join)
+    where <- toSQLWhere(left.col, left.names)
+    sql <- paste(sql, "WHERE", where)
+    if (verbose)
+        cat(sql, "\n", sep="")
+    .dbGetQuery(conn, sql)
+}
+
+dbAnnMapToDataFrame <- function(conn, table, join, left.col, left.names,
+                                right.col, right.names, extra.cols, verbose=FALSE)
 {
     cols <- c(left.col, right.col, extra.cols)
     sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
@@ -259,7 +271,7 @@ setMethod("revmap", "ReverseGOAnnMap",
 ### The "db" new generic.
 
 
-setMethod("db", "AnnMap", function(object) object@conn)
+setMethod("db", "AnnObject", function(object) object@conn)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -284,6 +296,18 @@ setMethod("db", "AnnMap", function(object) object@conn)
 ### Note that the 'left.names' and 'right.names' args are _not_ checked i.e.
 ### only NULL and NA-free character vectors are guaranted to work properly.
 
+setMethod("as.data.frame", "AnnTable",
+    function(x, row.names=NULL, optional=FALSE,
+             left.names=NULL, verbose=FALSE)
+    {
+        if (missing(left.names))
+            left.names <- row.names
+        dbAnnTableToDataFrame(db(x), x@rightTable, x@join,
+                                     x@leftCol, left.names,
+                                     verbose)
+    }
+)
+
 setMethod("as.data.frame", "AtomicAnnMap",
     function(x, row.names=NULL, optional=FALSE,
              left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
@@ -294,10 +318,10 @@ setMethod("as.data.frame", "AtomicAnnMap",
             right.names <- optional
         if (length(x@tagCol) == 1)
             extra.cols <- c(x@tagCol, extra.cols)
-        dbMapToDataFrame(db(x), x@rightTable, x@join,
-                                x@leftCol, left.names,
-                                x@rightCol, right.names,
-                                extra.cols, verbose)
+        dbAnnMapToDataFrame(db(x), x@rightTable, x@join,
+                                   x@leftCol, left.names,
+                                   x@rightCol, right.names,
+                                   extra.cols, verbose)
     }
 )
 
@@ -313,10 +337,10 @@ setMethod("as.data.frame", "GOAnnMap",
         getPartialSubmap <- function(Ontology)
         {
             table <- GOtables(x@all)[Ontology]
-            data <- dbMapToDataFrame(db(x), table, x@join,
-                                            x@leftCol, left.names,
-                                            "go_id", right.names,
-                                            extra.cols, verbose)
+            data <- dbAnnMapToDataFrame(db(x), table, x@join,
+                                               x@leftCol, left.names,
+                                               "go_id", right.names,
+                                               extra.cols, verbose)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- Ontology
             data
@@ -362,7 +386,7 @@ setMethod("nrow", "GOAnnMap",
 ###
 
 
-setMethod("left.names", "AnnMap",
+setMethod("left.names", "AnnObject",
     function(x)
     {
         dbUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
@@ -403,7 +427,7 @@ setMethod("names", "ReverseAnnMap", function(x) right.names(x))
 
 
 ### Will catch "AtomicAnnMap" and "GOAnnMap" objects.
-setMethod("left.length", "AnnMap",
+setMethod("left.length", "AnnObject",
     function(x)
     {
         dbCountUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
@@ -436,6 +460,14 @@ setMethod("length", "ReverseAnnMap", function(x) right.length(x))
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "show" generic.
+
+setMethod("show", "AnnTable",
+    function(object)
+    {
+        cat(object@objName, " table for ", object@objTarget,
+            " (object of class \"", class(object), "\")\n", sep="")
+    }
+)
 
 setMethod("show", "AnnMap",
     function(object)
