@@ -17,8 +17,7 @@ setClass("AnnObject",
 setClass("AnnTable",
     contains="AnnObject",
     representation(
-        rightTable="character",
-        join="character"
+        from="character"
     )
 )
 

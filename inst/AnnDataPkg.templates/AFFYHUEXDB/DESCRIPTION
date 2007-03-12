@@ -1,0 +1,16 @@
+Package: @PKGNAME@
+Title: @MANUF@ @CHIPNAME@ Annotation Data (@OBJTARGET@)
+Description: @MANUF@ @CHIPNAME@ annotation data (@OBJTARGET@) assembled using data from manufacturer
+Version: @VERSION@
+Author: @AUTHOR@
+Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
+LazyLoad: yes 
+Depends: R (>= 2.4.0), methods, AnnotationDbi (>= @ANNDBIVERSION@), RSQLite (>= @RSQLITEVERSION@)
+License: @LIC@
+organism: @ORGANISM@
+species: @SPECIES@
+manufacturer: @MANUF@
+chipName: @CHIPNAME@
+manufacturerUrl: @MANUFURL@
+biocViews: @BIOCVIEWS@
+

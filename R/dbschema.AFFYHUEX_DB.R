@@ -5,85 +5,41 @@
 
 ### TODO:
 
-AFFYHUEX_DB_default_leftTable <- "probeset"
-AFFYHUEX_DB_default_leftCol <- "probeset_id"
-AFFYHUEX_DB_default_join <- "INNER JOIN probeset USING (probeset_id)"
-AFFYHUEX_DB_default_rightColType <- character(0)
+AFFYHUEX_DB_default_leftTable <- "transcript_cluster"
+AFFYHUEX_DB_default_leftCol <- "transcript_cluster_id"
 
-### Mandatory fields: objName, rightTable and rightCol
-AFFYHUEX_DB_SimpleAnnMap_seeds <- list(
+### Mandatory fields: objName, from
+AFFYHUEX_DB_AnnTable_seeds <- list(
         list(
-                objName="FEATURESET"
-        )
-)
-
-AFFYHUEX_DB_WideAnnMap_seeds <- list(
-        list(
-                objName="GENEASSIGN",
-                rightTable="gene_assignment",
-                rightCol="accession"
+                objName="TRANSCRIPT",
+                from="transcript_cluster"
         ),
         list(
-                objName="MRNAASSIGN",
-                rightTable="mrna_assignment",
-                rightCol="accession"
+                objName="TR2MRNA",
+                from="TR2mrna INNER JOIN mrna USING(_mrna_id) INNER JOIN TR2mrna_details ON(TR2mrna._TR2mrna_id=TR2mrna_details._TR2mrna_id)"
         ),
         list(
-                objName="SWISSPROT",
-                rightTable="swissprot",
-                rightCol="swissprot_accession"
-        ),
-        list(
-                objName="UNIGENE",
-                rightTable="unigene",
-                rightCol="unigene_id"
-        ),
-        list(
-                objName="GOBP",
-                rightTable="GO_biological_process",
-                rightCol="GO_id"
-        ),
-        list(
-                objName="GOCC",
-                rightTable="GO_cellular_component",
-                rightCol="GO_id"
-        ),
-        list(
-                objName="GOMF",
-                rightTable="GO_molecular_function",
-                rightCol="GO_id"
-        ),
-        list(
-                objName="PATHWAY",
-                rightTable="pathway",
-                
-        ),
-        list(
-                objName="PROTDOMAINS",
-                rightTable="protein_domains"
-        ),
-        list(
-                objName="PROTFAMILIES",
-                rightTable="protein_families_desc"
+                objName="MRNA2GENE",
+                from="mrna LEFT JOIN gene USING(entrez_gene_id)",
+                leftTable="mrna",
+                leftCol="accession"
         )
 )
 
 createAnnObjects.AFFYHUEX_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## WideAnnMap objects
+    ## AnnTable objects
     seed0 <- list(
         objTarget=objTarget,
         conn=conn,
         datacache=datacache,
         leftTable=AFFYHUEX_DB_default_leftTable,
-        leftCol=AFFYHUEX_DB_default_leftCol,
-        join=AFFYHUEX_DB_default_join,
-        rightColType=AFFYHUEX_DB_default_rightColType
+        leftCol=AFFYHUEX_DB_default_leftCol
     )
-    maps <- createWideAnnMapObjects(AFFYHUEX_DB_WideAnnMap_seeds, seed0)
+    maps <- createAnnTableObjects(AFFYHUEX_DB_AnnTable_seeds, seed0)
 
     ## Some pre-caching
-    left.names(maps$FEATURESET)
+    left.names(maps$TRANSCRIPT)
 
     names(maps) <- paste(prefix, names(maps), sep="")
     maps

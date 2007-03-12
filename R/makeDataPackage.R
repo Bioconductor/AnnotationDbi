@@ -327,19 +327,46 @@ test_YEASTdb <- function(verbose=FALSE)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### AFFYHUEX_DB schema
+
+make_huex10stv2db <- function(version, filePath, srcSQLiteFilePath, ...)
+{
+    pkgseed <- new("AnnDataPkgSeed",
+        pkg.template="AFFYHUEXDB",
+        dbSchema="AFFYHUEX_DB",
+        objNamePrefix="huex10stv2",
+        objTarget="exon array HuEx-1_0-st-v2",
+        organism="Homo sapiens",
+        species="Human",
+        manufacturer="Affymetrix",
+        chipName="HuEx-1_0-st-v2",
+        manufacturerUrl="NA"
+    )
+    author <- "Herve Pages"
+    email <- "biocannotation@lists.fhcrc.org"
+    packageName <- "huex10stv2db"
+    license <- "LGPL"
+    biocViews <- "AnnotationData, AffymetrixChip, Homo_sapiens, huex10stv2"
+    makeDataPackage(pkgseed, author, email, packageName, version,
+                    license, biocViews, filePath, srcSQLiteFilePath, ...)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Typical use of the make_*db functions:
 ###   library(AnnotationDbi)
-###   AnnotationDbi:::make_hgu95av2db("1.13.90", ".", "data/hgu95av2.sqlite")
-###   AnnotationDbi:::make_yeast2db("1.13.90", ".", "data/yeast2.sqlite")
-###   AnnotationDbi:::make_ygs98db("1.13.90", ".", "data/ygs98.sqlite")
-###   AnnotationDbi:::make_agdb("1.13.90", ".", "data/ag.sqlite")
-###   AnnotationDbi:::make_ath1121501db("1.13.90", ".", "data/ath1121501.sqlite")
-###   AnnotationDbi:::make_humanLLMappingsdb("1.13.90", ".", "data/humanLLMappings.sqlite")
-###   AnnotationDbi:::make_mouseLLMappingsdb("1.13.90", ".", "data/mouseLLMappings.sqlite")
-###   AnnotationDbi:::make_ratLLMappingsdb("1.13.90", ".", "data/ratLLMappings.sqlite")
-###   AnnotationDbi:::make_YEASTdb("1.13.90", ".", "data/YEAST.sqlite")
+###   AnnotationDbi:::make_hgu95av2db("1.13.91", ".", "data/hgu95av2.sqlite")
+###   AnnotationDbi:::make_yeast2db("1.13.91", ".", "data/yeast2.sqlite")
+###   AnnotationDbi:::make_ygs98db("1.13.91", ".", "data/ygs98.sqlite")
+###   AnnotationDbi:::make_agdb("1.13.91", ".", "data/ag.sqlite")
+###   AnnotationDbi:::make_ath1121501db("1.13.91", ".", "data/ath1121501.sqlite")
+###   AnnotationDbi:::make_humanLLMappingsdb("1.13.91", ".", "data/humanLLMappings.sqlite")
+###   AnnotationDbi:::make_mouseLLMappingsdb("1.13.91", ".", "data/mouseLLMappings.sqlite")
+###   AnnotationDbi:::make_ratLLMappingsdb("1.13.91", ".", "data/ratLLMappings.sqlite")
+###   AnnotationDbi:::make_YEASTdb("1.13.91", ".", "data/YEAST.sqlite")
+###   AnnotationDbi:::make_huex10stv2db("1.13.91", ".", "data/huex10stv2.sqlite")
 ### or to make them all at once:
-###   AnnotationDbi:::make_all("1.13.90", "data", "lastbuilds")
+###   AnnotationDbi:::make_all("1.13.91", "data", "lastbuilds")
 
 make_all <- function(version, srcDir=".", destDir=".")
 {

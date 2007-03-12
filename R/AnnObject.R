@@ -65,13 +65,9 @@ toSQLWhere <- function(col, names)
     paste(col, " IN (", toSQLStringSet(names), ")", sep="")
 }
 
-dbAnnTableToDataFrame <- function(conn, table, join, left.col, left.names, verbose=FALSE)
+dbAnnTableToDataFrame <- function(conn, from, left.col, left.names, verbose=FALSE)
 {
-    sql <- paste("SELECT * FROM", table)
-    if (length(join) == 1) # will be FALSE for NULL or character(0)
-        sql <- paste(sql, join)
-    where <- toSQLWhere(left.col, left.names)
-    sql <- paste(sql, "WHERE", where)
+    sql <- paste("SELECT * FROM", from, "WHERE", toSQLWhere(left.col, left.names))
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
@@ -302,9 +298,7 @@ setMethod("as.data.frame", "AnnTable",
     {
         if (missing(left.names))
             left.names <- row.names
-        dbAnnTableToDataFrame(db(x), x@rightTable, x@join,
-                                     x@leftCol, left.names,
-                                     verbose)
+        dbAnnTableToDataFrame(db(x), x@from, x@leftCol, left.names, verbose)
     }
 )
 
@@ -668,6 +662,20 @@ createMAPCOUNTS <- function(conn, prefix)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+createAnnTableObjects <- function(seeds, seed0)
+{
+    maps <- list()
+    for (seed in seeds) {
+        seed$Class <- "AnnTable"
+        for (slot in names(seed0)) {
+            if (is.null(seed[slot][[1]]))
+                seed[[slot]] <- seed0[[slot]]
+        }
+        maps[[seed$objName]] <- do.call("new", seed)
+    }
+    maps
+}
 
 createAtomicAnnMapObjects <- function(seeds, seed0)
 {
