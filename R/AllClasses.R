@@ -1,4 +1,29 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Classes representing SQLite-based annotation data.
+###
+
+setClass("AnnObject",
+    representation(
+        "VIRTUAL",
+        leftCol="character",
+        leftTable="character",
+        conn="DBIConnection",
+        datacache="environment",
+        objTarget="character", # "chip hgu95av2" or "YEAST" or...
+        objName="character"
+    )
+)
+
+setClass("AnnTable",
+    contains="AnnObject",
+    representation(
+        rightTable="character",
+        join="character"
+    )
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Classes representing SQLite-based annotation maps.
 ###
 
@@ -11,15 +36,10 @@
 ### DB of the right values depends on the particular subclass of the "AnnMap"
 ### object. For reverse "AnnMap" objects, the mapping is "right-to-left".
 setClass("AnnMap",
+    contains="AnnObject",
     representation(
         "VIRTUAL",
-        join="character",
-        leftCol="character",
-        leftTable="character",
-        con="DBIConnection",
-        datacache="environment",
-        mapTarget="character", # "chip hgu95av2" or "YEAST" or...
-        mapName="character"
+        join="character"
     )
 )
 
@@ -43,7 +63,7 @@ setClass("AtomicAnnMap",
         rightTable="character",
         rightCol="character",
         ## set only if the right names are tagged
-        tagsCol="character", 
+        tagCol="character", 
         ## set only if the right names need coercion after extraction
         rightColType="character",
         replace.single="character",
@@ -74,8 +94,8 @@ setClass(
     representation(
         pkg.template="character",    # e.g. "HGU95AV2DB"
         dbSchema="character",        # e.g. "HGU95AV2DB"
-        mapPrefix="character",       # e.g. "hgu95av2"
-        mapTarget="character",       # e.g. "chip hgu95av2"
+        objNamePrefix="character",   # e.g. "hgu95av2"
+        objTarget="character",       # e.g. "chip hgu95av2"
         organism="character",
         species="character",
         manufacturer="character",

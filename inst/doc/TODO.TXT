@@ -1,4 +1,3 @@
-
 as.list
 -------
   - add a 'ifnotmapped' arg which indicates which value to attach

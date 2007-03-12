@@ -1,4 +1,4 @@
 import(methods)
 import(AnnotationDbi)
 
-export("getDb", "closeDb", "@MAPPREFIX@ORGANISM")
+export("getDb", "closeDb", "@OBJPREFIX@ORGANISM")

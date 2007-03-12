@@ -11,74 +11,74 @@ YEASTDB_default_leftCol <- "systematic_name"
 YEASTDB_default_join <- "INNER JOIN sgd using (id)"
 YEASTDB_default_rightColType <- character(0)
 
-### Mandatory fields: mapName, rightTable and rightCol
+### Mandatory fields: objName, rightTable and rightCol
 YEASTDB_AtomicAnnMap_seeds <- list(
         list(
-                mapName="ALIAS",
+                objName="ALIAS",
                 rightTable="gene2alias",
                 rightCol="alias"
         ),
         list(
-                mapName="CHR",
+                objName="CHR",
                 rightTable="chromosome_features",
                 rightCol="chromosome"
         ),
         list(
-                mapName="DESCRIPTION",
+                objName="DESCRIPTION",
                 rightTable="chromosome_features",
                 rightCol="feature_description"
         ),
         list(
-                mapName="ENZYME",
+                objName="ENZYME",
                 rightTable="ec",
                 rightCol="ec_number"
         ),
         list(
-                mapName="GENENAME",
+                objName="GENENAME",
                 rightTable="sgd",
                 rightCol="gene_name",
                 join=character(0)
         ),
         list(
-                mapName="INTERPRO",
+                objName="INTERPRO",
                 rightTable="interpro",
                 rightCol="interpro_id"
         ),
         list(
-                mapName="PATH",
+                objName="PATH",
                 rightTable="kegg",
                 rightCol="kegg_id"
         ),
         list(
-                mapName="PFAM",
+                objName="PFAM",
                 rightTable="pfam",
                 rightCol="pfam_id"
         ),
         list(
-                mapName="PMID",
+                objName="PMID",
                 rightTable="pubmed",
                 rightCol="pubmed_id"
         ),
         list(
-                mapName="SMART",
+                objName="SMART",
                 rightTable="smart",
                 rightCol="smart_id"
         ),
         list(
-                mapName="CHRLOC",
+                objName="CHRLOC",
                 rightTable="chromosome_features",
                 rightCol="start",
                 rightColType="integer",
-                tagsCol="chromosome"
+                tagCol="chromosome"
         )
 )
 
-createAnnDataObjects.YEASTDB <- function(prefix, mapTarget, con, datacache)
+createAnnObjects.YEASTDB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
-        mapTarget=mapTarget,
-        con=con,
+        objTarget=objTarget,
+        conn=conn,
         datacache=datacache,
         leftTable=YEASTDB_default_leftTable,
         leftCol=YEASTDB_default_leftCol,
@@ -88,31 +88,31 @@ createAnnDataObjects.YEASTDB <- function(prefix, mapTarget, con, datacache)
     maps <- createAtomicAnnMapObjects(YEASTDB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
-    maps$COMMON2SYSTEMATIC <- revmap(maps$GENENAME, mapName="COMMON2SYSTEMATIC")
-    maps$ENZYME2PROBE <- revmap(maps$ENZYME, mapName="ENZYME2PROBE")
-    maps$PATH2PROBE <- revmap(maps$PATH, mapName="PATH2PROBE")
-    maps$PMID2PROBE <- revmap(maps$PMID, mapName="PMID2PROBE")
+    maps$COMMON2SYSTEMATIC <- revmap(maps$GENENAME, objName="COMMON2SYSTEMATIC")
+    maps$ENZYME2PROBE <- revmap(maps$ENZYME, objName="ENZYME2PROBE")
+    maps$PATH2PROBE <- revmap(maps$PATH, objName="PATH2PROBE")
+    maps$PMID2PROBE <- revmap(maps$PMID, objName="PMID2PROBE")
 
     ## GOAnnMap object
     maps$GO <- new("GOAnnMap",
-            mapTarget=mapTarget,
-            con=con,
+            objTarget=objTarget,
+            conn=conn,
             datacache=datacache,
-            mapName="GO",
+            objName="GO",
             leftTable=YEASTDB_default_leftTable,
             leftCol=YEASTDB_default_leftCol,
             join=YEASTDB_default_join,
             all=FALSE)
 
     ## ReverseGOAnnMap objects
-    maps$GO2PROBE <- revmap(maps$GO, mapName="GO2PROBE")
-    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", maps$GO, mapName="GO2ALLPROBES", all=TRUE)
+    maps$GO2PROBE <- revmap(maps$GO, objName="GO2PROBE")
+    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", maps$GO, objName="GO2ALLPROBES", all=TRUE)
 
     ## Some pre-caching
     left.names(maps$GO)
 
     ## The MAPCOUNTS object (named integer vector)
-    #maps$MAPCOUNTS <- createMAPCOUNTS(con, prefix)
+    #maps$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     names(maps) <- paste(prefix, names(maps), sep="")
     maps
@@ -120,7 +120,7 @@ createAnnDataObjects.YEASTDB <- function(prefix, mapTarget, con, datacache)
 
 compareAnnDataIn2Pkgs.YEASTDB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
 {
-    direct_maps <- sapply(YEASTDB_AtomicAnnMap_seeds, function(x) x$mapName)
+    direct_maps <- sapply(YEASTDB_AtomicAnnMap_seeds, function(x) x$objName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
         "COMMON2SYSTEMATIC",

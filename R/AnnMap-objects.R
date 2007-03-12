@@ -37,17 +37,17 @@
 ### SQL helper functions.
 ###
 
-.dbGetQuery <- function(con, sql)
+.dbGetQuery <- function(conn, sql)
 {
-    dbGetQuery(con, sql)
+    dbGetQuery(conn, sql)
 }
 
-getTable <- function(con, table, where=NULL)
+getTable <- function(conn, table, where=NULL)
 {
     sql <- paste("SELECT * FROM ", table, sep="")
     if (!is.null(where))
         sql <- paste(sql, " WHERE ", where, sep="")
-    .dbGetQuery(con, sql)
+    .dbGetQuery(conn, sql)
 }
 
 toSQLStringSet <- function(names)
@@ -65,7 +65,7 @@ toSQLWhere <- function(col, names)
     paste(col, " IN (", toSQLStringSet(names), ")", sep="")
 }
 
-dbMapToDataFrame <- function(con, table, join, left.col, left.names,
+dbMapToDataFrame <- function(conn, table, join, left.col, left.names,
                              right.col, right.names, extra.cols, verbose=FALSE)
 {
     cols <- c(left.col, right.col, extra.cols)
@@ -77,10 +77,10 @@ dbMapToDataFrame <- function(con, table, join, left.col, left.names,
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     if (verbose)
         cat(sql, "\n", sep="")
-    .dbGetQuery(con, sql)
+    .dbGetQuery(conn, sql)
 }
 
-dbCountDataFrameRows <- function(con, table, join, left.col, right.col)
+dbCountDataFrameRows <- function(conn, table, join, left.col, right.col)
 {
     sql <- paste("SELECT COUNT(*) FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
@@ -88,14 +88,14 @@ dbCountDataFrameRows <- function(con, table, join, left.col, right.col)
     where1 <- toSQLWhere(left.col, NULL)
     where2 <- toSQLWhere(right.col, NULL)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
-    .dbGetQuery(con, sql)[[1]]
+    .dbGetQuery(conn, sql)[[1]]
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SQL helper functions with caching mechanism.
 
-dbUniqueVals <- function(con, table, col, datacache=NULL)
+dbUniqueVals <- function(conn, table, col, datacache=NULL)
 {
     if (!is.null(datacache)) {
         objname <- paste("dbUniqueVals", table, col, sep=".")
@@ -106,7 +106,7 @@ dbUniqueVals <- function(con, table, col, datacache=NULL)
     }
     sql <- paste("SELECT DISTINCT", col, "FROM", table,
                  "WHERE", col, "IS NOT NULL")
-    vals <- .dbGetQuery(con, sql)[[col]]
+    vals <- .dbGetQuery(conn, sql)[[col]]
     if (!is.null(datacache)) {
         assign(objname, vals, envir=datacache, inherits=FALSE)
     }
@@ -114,7 +114,7 @@ dbUniqueVals <- function(con, table, col, datacache=NULL)
 }
 
 ### Read only caching!
-dbCountUniqueVals <- function(con, table, col, datacache=NULL)
+dbCountUniqueVals <- function(conn, table, col, datacache=NULL)
 {
     if (!is.null(datacache)) {
         objname <- paste("dbUniqueVals", table, col, sep=".")
@@ -124,10 +124,10 @@ dbCountUniqueVals <- function(con, table, col, datacache=NULL)
         }
     }
     sql <- paste("SELECT COUNT(DISTINCT ", col, ") FROM ", table, sep="")
-    .dbGetQuery(con, sql)[[1]]
+    .dbGetQuery(conn, sql)[[1]]
 }
 
-dbUniqueMappedVals <- function(con, table, join,
+dbUniqueMappedVals <- function(conn, table, join,
                                from.table, from.col,
                                to.table, to.col, datacache=NULL)
 {
@@ -142,7 +142,7 @@ dbUniqueMappedVals <- function(con, table, join,
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
     sql <- paste(sql, "WHERE", from.col, "IS NOT NULL AND ", to.col, "IS NOT NULL")
-    vals <- .dbGetQuery(con, sql)[[from.col]]
+    vals <- .dbGetQuery(conn, sql)[[from.col]]
     if (!is.null(datacache)) {
         assign(objname, vals, envir=datacache, inherits=FALSE)
     }
@@ -150,7 +150,7 @@ dbUniqueMappedVals <- function(con, table, join,
 }
 
 ### Read only caching!
-dbCountUniqueMappedVals <- function(con, table, join,
+dbCountUniqueMappedVals <- function(conn, table, join,
                                     from.table, from.col,
                                     to.table, to.col, datacache=NULL)
 {
@@ -165,7 +165,7 @@ dbCountUniqueMappedVals <- function(con, table, join,
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
     sql <- paste(sql, "WHERE", to.col, "IS NOT NULL")
-    .dbGetQuery(con, sql)[[1]]
+    .dbGetQuery(conn, sql)[[1]]
 }
 
 
@@ -222,33 +222,33 @@ GOtables <- function(all=FALSE)
 
 
 setMethod("revmap", "AtomicAnnMap",
-    function(x, mapName=NULL)
+    function(x, objName=NULL)
     {
-        if (is.null(mapName))
-            mapName <- paste("revmap(", x@mapName, ")", sep="")
+        if (is.null(objName))
+            objName <- paste("revmap(", x@objName, ")", sep="")
         else
-            mapName <- as.character(mapName)
-        new("ReverseAtomicAnnMap", x, mapName=mapName)
+            objName <- as.character(objName)
+        new("ReverseAtomicAnnMap", x, objName=objName)
     }
 )
 setMethod("revmap", "ReverseAtomicAnnMap",
-    function(x, mapName=NULL)
+    function(x, objName=NULL)
     {
         stop("already a reverse map")
     }
 )
 setMethod("revmap", "GOAnnMap",
-    function(x, mapName=NULL)
+    function(x, objName=NULL)
     {
-        if (is.null(mapName))
-            mapName <- paste("revmap(", x@mapName, ")", sep="")
+        if (is.null(objName))
+            objName <- paste("revmap(", x@objName, ")", sep="")
         else
-            mapName <- as.character(mapName)
-        new("ReverseGOAnnMap", x, mapName=mapName)
+            objName <- as.character(objName)
+        new("ReverseGOAnnMap", x, objName=objName)
     }
 )
 setMethod("revmap", "ReverseGOAnnMap",
-    function(x, mapName=NULL)
+    function(x, objName=NULL)
     {
         stop("already a reverse map")
     }
@@ -259,7 +259,7 @@ setMethod("revmap", "ReverseGOAnnMap",
 ### The "db" new generic.
 
 
-setMethod("db", "AnnMap", function(object) object@con)
+setMethod("db", "AnnMap", function(object) object@conn)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -292,8 +292,8 @@ setMethod("as.data.frame", "AtomicAnnMap",
             left.names <- row.names
         if (missing(right.names) && !identical(optional, FALSE))
             right.names <- optional
-        if (length(x@tagsCol) == 1)
-            extra.cols <- c(x@tagsCol, extra.cols)
+        if (length(x@tagCol) == 1)
+            extra.cols <- c(x@tagCol, extra.cols)
         dbMapToDataFrame(db(x), x@rightTable, x@join,
                                 x@leftCol, left.names,
                                 x@rightCol, right.names,
@@ -440,7 +440,7 @@ setMethod("length", "ReverseAnnMap", function(x) right.length(x))
 setMethod("show", "AnnMap",
     function(object)
     {
-        cat(object@mapName, " map for ", object@mapTarget,
+        cat(object@objName, " map for ", object@objTarget,
             " (object of class \"", class(object), "\")\n", sep="")
     }
 )
@@ -457,7 +457,7 @@ setMethod("show", "AnnMap",
 setMethod("as.character", "AtomicAnnMap",
     function(x)
     {
-        if (length(x@tagsCol) == 1)
+        if (length(x@tagCol) == 1)
             stop("cannot coerce to character an AtomicAnnMap object with tags")
         data <- as.data.frame(x)
         ans <- data[[x@rightCol]]
@@ -473,7 +473,7 @@ setMethod("as.character", "AtomicAnnMap",
 setMethod("as.character", "ReverseAtomicAnnMap",
     function(x)
     {
-        if (length(x@tagsCol) == 1)
+        if (length(x@tagCol) == 1)
             stop("cannot coerce to character an AtomicAnnMap object with tags")
         data <- as.data.frame(x)
         ans <- data[[x@leftCol]]
@@ -529,8 +529,8 @@ setMethod("as.list", "AtomicAnnMap",
         if (nrow(data) == 0)
             return(list())
         lsubmap <- data[[x@rightCol]]
-        if (length(x@tagsCol) == 1)
-            names(lsubmap) <- data[[x@tagsCol]]
+        if (length(x@tagCol) == 1)
+            names(lsubmap) <- data[[x@tagCol]]
         lsubmap <- split(lsubmap, data[[x@leftCol]])
         if (is.null(names))
             names <- names(x)
@@ -626,9 +626,9 @@ setMethod("as.list", "ReverseGOAnnMap",
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-createMAPCOUNTS <- function(con, prefix)
+createMAPCOUNTS <- function(conn, prefix)
 {
-    data <- getTable(con, "qcdata", "map_name != 'TOTAL'")
+    data <- getTable(conn, "qcdata", "map_name != 'TOTAL'")
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
     MAPCOUNTS
@@ -646,7 +646,7 @@ createAtomicAnnMapObjects <- function(seeds, seed0)
             if (is.null(seed[slot][[1]]))
                 seed[[slot]] <- seed0[[slot]]
         }
-        maps[[seed$mapName]] <- do.call("new", seed)
+        maps[[seed$objName]] <- do.call("new", seed)
     }
     maps
 }
@@ -795,7 +795,7 @@ setMethod("is.na", "AnnMap",
 ### For testing only (not exported).
 ###
 
-checkAnnDataObjects <- function(pkgname, prefix)
+checkAnnObjects <- function(pkgname, prefix)
 {
     require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
     getMap <- function(mapname)

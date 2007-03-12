@@ -12,97 +12,97 @@ HGU95AV2DB_default_leftCol <- "probe_id"
 HGU95AV2DB_default_join <- "INNER JOIN probes USING (id)"
 HGU95AV2DB_default_rightColType <- character(0)
 
-### Mandatory fields: mapName, rightTable and rightCol
+### Mandatory fields: objName, rightTable and rightCol
 HGU95AV2DB_AtomicAnnMap_seeds <- list(
         list(
-                mapName="ACCNUM",
+                objName="ACCNUM",
                 rightTable="accessions",
                 rightCol="accession",
                 join="INNER JOIN probes USING (probe_id)" # not the default join!
         ),
         list(
-                mapName="CHR",
+                objName="CHR",
                 rightTable="chromosomes",
                 rightCol="chromosome"
         ),
         list(
-                mapName="ENTREZID",
+                objName="ENTREZID",
                 rightTable="genes",
                 rightCol="gene_id",
                 rightColType="integer"
         ),
         list(
-                mapName="ENZYME",
+                objName="ENZYME",
                 rightTable="ec",
                 rightCol="ec_number"
         ),
         list(
-                mapName="GENENAME",
+                objName="GENENAME",
                 rightTable="gene_info",
                 rightCol="gene_name"
         ),
         list(
-                mapName="MAP",
+                objName="MAP",
                 rightTable="cytogenetic_locations",
                 rightCol="cytogenetic_location"
         ),
         list(
-                mapName="OMIM",
+                objName="OMIM",
                 rightTable="omim",
                 rightCol="omim_id"
         ),
         list(
-                mapName="PATH",
+                objName="PATH",
                 rightTable="kegg",
                 rightCol="kegg_id"
         ),
         list(
-                mapName="PMID",
+                objName="PMID",
                 rightTable="pubmed",
                 rightCol="pubmed_id"
         ),
         list(
-                mapName="REFSEQ",
+                objName="REFSEQ",
                 rightTable="refseq",
                 rightCol="accession"
         ),
         list(
-                mapName="SYMBOL",
+                objName="SYMBOL",
                 rightTable="gene_info",
                 rightCol="symbol"
         ),
         list(
-                mapName="UNIGENE",
+                objName="UNIGENE",
                 rightTable="unigene",
                 rightCol="unigene_id"
         ),
         list(
-                mapName="CHRLOC",
+                objName="CHRLOC",
                 rightTable="chromosome_locations",
                 rightCol="start_location",
                 rightColType="integer",
-                tagsCol="chromosome"
+                tagCol="chromosome"
         ),
         list(
-                mapName="PFAM",
+                objName="PFAM",
                 rightTable="pfam",
                 rightCol="pfam_id",
-                tagsCol="ipi_id"
+                tagCol="ipi_id"
         ),
         list(
-                mapName="PROSITE",
+                objName="PROSITE",
                 rightTable="prosite",
                 rightCol="prosite_id",
-                tagsCol="ipi_id"
+                tagCol="ipi_id"
         )
 )
 
-createAnnDataObjects.HGU95AV2DB <- function(prefix, mapTarget, con, datacache)
+createAnnObjects.HGU95AV2DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
-        mapTarget=mapTarget,
-        con=con,
+        objTarget=objTarget,
+        conn=conn,
         datacache=datacache,
         leftTable=HGU95AV2DB_default_leftTable,
         leftCol=HGU95AV2DB_default_leftCol,
@@ -112,24 +112,24 @@ createAnnDataObjects.HGU95AV2DB <- function(prefix, mapTarget, con, datacache)
     maps <- createAtomicAnnMapObjects(HGU95AV2DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
-    maps$ENZYME2PROBE <- revmap(maps$ENZYME, mapName="ENZYME2PROBE")
-    maps$PATH2PROBE <- revmap(maps$PATH, mapName="PATH2PROBE")
-    maps$PMID2PROBE <- revmap(maps$PMID, mapName="PMID2PROBE")
+    maps$ENZYME2PROBE <- revmap(maps$ENZYME, objName="ENZYME2PROBE")
+    maps$PATH2PROBE <- revmap(maps$PATH, objName="PATH2PROBE")
+    maps$PMID2PROBE <- revmap(maps$PMID, objName="PMID2PROBE")
 
     ## GOAnnMap object
     maps$GO <- new("GOAnnMap",
-            mapTarget=mapTarget,
-            con=con,
+            objTarget=objTarget,
+            conn=conn,
             datacache=datacache,
-            mapName="GO",
+            objName="GO",
             leftTable=HGU95AV2DB_default_leftTable,
             leftCol=HGU95AV2DB_default_leftCol,
             join=HGU95AV2DB_default_join,
             all=FALSE)
 
     ## ReverseGOAnnMap objects
-    maps$GO2PROBE <- revmap(maps$GO, mapName="GO2PROBE")
-    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", maps$GO, mapName="GO2ALLPROBES", all=TRUE)
+    maps$GO2PROBE <- revmap(maps$GO, objName="GO2PROBE")
+    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", maps$GO, objName="GO2ALLPROBES", all=TRUE)
 
     ## Some pre-caching
     left.names(maps$GO)
@@ -140,7 +140,7 @@ createAnnDataObjects.HGU95AV2DB <- function(prefix, mapTarget, con, datacache)
     #mapped.right.names(maps$GO2ALLPROBES)
 
     ## The MAPCOUNTS object (named integer vector)
-    maps$MAPCOUNTS <- createMAPCOUNTS(con, prefix)
+    maps$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     names(maps) <- paste(prefix, names(maps), sep="")
     maps
@@ -148,7 +148,7 @@ createAnnDataObjects.HGU95AV2DB <- function(prefix, mapTarget, con, datacache)
 
 compareAnnDataIn2Pkgs.HGU95AV2DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
 {
-    direct_maps <- sapply(HGU95AV2DB_AtomicAnnMap_seeds, function(x) x$mapName)
+    direct_maps <- sapply(HGU95AV2DB_AtomicAnnMap_seeds, function(x) x$objName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
         "ENZYME2PROBE",

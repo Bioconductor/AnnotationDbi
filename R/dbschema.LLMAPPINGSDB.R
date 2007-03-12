@@ -8,16 +8,16 @@
 LLMAPPINGSDB_default_leftCol <- "gene_id"
 LLMAPPINGSDB_default_rightColType <- character(0)
 
-### Mandatory fields: mapName, rightTable and rightCol
+### Mandatory fields: objName, rightTable and rightCol
 LLMAPPINGSDB_AtomicAnnMap_seeds <- list(
 )
 
-createAnnDataObjects.LLMAPPINGSDB <- function(prefix, mapTarget, con, datacache)
+createAnnObjects.LLMAPPINGSDB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
-        mapTarget=mapTarget,
-        con=con,
+        objTarget=objTarget,
+        conn=conn,
         datacache=datacache,
         rightColType=LLMAPPINGSDB_default_rightColType,
         leftCol=LLMAPPINGSDB_default_leftCol
@@ -31,7 +31,7 @@ createAnnDataObjects.LLMAPPINGSDB <- function(prefix, mapTarget, con, datacache)
     ## ReverseGOAnnMap objects
 
     ## The MAPCOUNTS object (named integer vector)
-    #maps$MAPCOUNTS <- createMAPCOUNTS(con, prefix)
+    #maps$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     names(maps) <- paste(prefix, names(maps), sep="")
     maps
@@ -39,7 +39,7 @@ createAnnDataObjects.LLMAPPINGSDB <- function(prefix, mapTarget, con, datacache)
 
 compareAnnDataIn2Pkgs.LLMAPPINGSDB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
 {
-    direct_maps <- sapply(LLMAPPINGSDB_AtomicAnnMap_seeds, function(x) x$mapName)
+    direct_maps <- sapply(LLMAPPINGSDB_AtomicAnnMap_seeds, function(x) x$objName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
     )

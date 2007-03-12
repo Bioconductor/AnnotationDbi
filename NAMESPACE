@@ -43,11 +43,11 @@ exportClasses(
     "ReverseGOAnnMap")
 
 export(
-    checkAnnDataObjects,
-    createAnnDataObjects.HGU95AV2DB,
-    createAnnDataObjects.YEAST2DB,
-    createAnnDataObjects.AGDB,
-    createAnnDataObjects.LLMAPPINGSDB,
-    createAnnDataObjects.YEASTDB
+    checkAnnObjects,
+    createAnnObjects.HGU95AV2DB,
+    createAnnObjects.YEAST2DB,
+    createAnnObjects.AGDB,
+    createAnnObjects.LLMAPPINGSDB,
+    createAnnObjects.YEASTDB
 )
 
