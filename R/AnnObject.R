@@ -134,6 +134,8 @@ dbUniqueVals <- function(conn, table, col, datacache=NULL)
     sql <- paste("SELECT DISTINCT", col, "FROM", table,
                  "WHERE", col, "IS NOT NULL")
     vals <- .dbGetQuery(conn, sql)[[col]]
+    if (!is.character(vals))
+        vals <- as.character(vals)
     if (!is.null(datacache)) {
         assign(objname, vals, envir=datacache, inherits=FALSE)
     }
