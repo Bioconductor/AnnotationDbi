@@ -81,6 +81,16 @@ dbRawAnnMapToDataFrame <- function(conn, left.table, left.col, left.names,
     .dbGetQuery(conn, sql)
 }
 
+dbCountRawAnnMapRows <- function(conn, left.table, left.col, 
+                                       right.table, right.col, from)
+{
+    sql <- paste("SELECT COUNT(*) FROM", from)
+    sql <- paste(sql, "WHERE", toSQLWhere(left.col, NULL))
+    if (!is.null(right.table))
+        sql <- paste(sql, "AND", toSQLWhere(right.col, NULL))
+    .dbGetQuery(conn, sql)[[1]]
+}
+
 ### We don't need this anymore. dbRawAnnMapToDataFrame() can always be used instead.
 dbAnnMapToDataFrame <- function(conn, table, join, left.col, left.names,
                                 right.col, right.names, extra.cols, verbose=FALSE)
@@ -97,7 +107,7 @@ dbAnnMapToDataFrame <- function(conn, table, join, left.col, left.names,
     .dbGetQuery(conn, sql)
 }
 
-dbCountDataFrameRows <- function(conn, table, join, left.col, right.col)
+dbCountAnnMapRows <- function(conn, table, join, left.col, right.col)
 {
     sql <- paste("SELECT COUNT(*) FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
@@ -380,10 +390,24 @@ setMethod("as.data.frame", "GOAnnMap",
 ### Since "as.data.frame" is unoriented, then "nrow" is unoriented too.
 
 
+setMethod("nrow", "AnnTable",
+    function(x)
+    {
+        dbCountRawAnnMapRows(db(x), x@leftTable, x@leftCol, NULL, NULL, x@from)
+    }
+)
+
+setMethod("nrow", "RawAnnMap",
+    function(x)
+    {
+        dbCountRawAnnMapRows(db(x), x@leftTable, x@leftCol, x@rightTable, x@rightCol, x@from)
+    }
+)
+
 setMethod("nrow", "AtomicAnnMap",
     function(x)
     {
-        dbCountDataFrameRows(db(x), x@rightTable, x@join, x@leftCol, x@rightCol)
+        dbCountAnnMapRows(db(x), x@rightTable, x@join, x@leftCol, x@rightCol)
     }
 )
 
@@ -393,7 +417,7 @@ setMethod("nrow", "GOAnnMap",
         countRows <- function(Ontology)
         {
             table <- GOtables(x@all)[Ontology]
-            dbCountDataFrameRows(db(x), table, x@join, x@leftCol, "go_id")
+            dbCountAnnMapRows(db(x), table, x@join, x@leftCol, "go_id")
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
