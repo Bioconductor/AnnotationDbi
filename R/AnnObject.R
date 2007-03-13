@@ -69,9 +69,9 @@ dbRawAnnMapToDataFrame <- function(conn, left.table, left.col, left.names,
                                          right.table, right.col, right.names,
                                          show.cols, from, verbose=FALSE)
 {
-    if (!is.null(right.table))
-        right.col <- paste(right.table, right.col, sep=".")
-    left.col <- paste(left.table, left.col, sep=".")
+#    if (!is.null(right.table))
+#        right.col <- paste(right.table, right.col, sep=".")
+#    left.col <- paste(left.table, left.col, sep=".")
     sql <- paste("SELECT", paste(show.cols, collapse=","), "FROM", from)
     sql <- paste(sql, "WHERE", toSQLWhere(left.col, left.names))
     if (!is.null(right.table))
