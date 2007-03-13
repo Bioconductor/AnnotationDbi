@@ -497,7 +497,7 @@ setMethod("right.length", "GOAnnMap",
     }
 )
 
-setMethod("length", "AnnMap", function(x) left.length(x))
+setMethod("length", "AnnObject", function(x) left.length(x))
 setMethod("length", "ReverseAnnMap", function(x) right.length(x))
 
 
