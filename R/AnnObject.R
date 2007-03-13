@@ -433,7 +433,7 @@ setMethod("right.names", "GOAnnMap",
     }
 )
 
-setMethos("names", "AnnObject", function(x) left.names(x))
+setMethod("names", "AnnObject", function(x) left.names(x))
 setMethod("names", "ReverseAnnMap", function(x) right.names(x))
 
 
