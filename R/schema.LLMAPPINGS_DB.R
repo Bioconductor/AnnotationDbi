@@ -22,7 +22,7 @@ createAnnObjects.LLMAPPINGS_DB <- function(prefix, objTarget, conn, datacache)
         rightColType=LLMAPPINGS_DB_default_rightColType,
         leftCol=LLMAPPINGS_DB_default_leftCol
     )
-    maps <- createAnnObjects("AtomicAnnMap", LLMAPPINGS_DB_AtomicAnnMap_seeds, seed0)
+    annobjs <- createAnnObjects("AtomicAnnMap", LLMAPPINGS_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
 
@@ -31,10 +31,10 @@ createAnnObjects.LLMAPPINGS_DB <- function(prefix, objTarget, conn, datacache)
     ## ReverseGOAnnMap objects
 
     ## The MAPCOUNTS object (named integer vector)
-    #maps$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    #annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
-    names(maps) <- paste(prefix, names(maps), sep="")
-    maps
+    names(annobjs) <- paste(prefix, names(annobjs), sep="")
+    annobjs
 }
 
 compareAnnDataIn2Pkgs.LLMAPPINGS_DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)

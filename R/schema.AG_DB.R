@@ -84,15 +84,15 @@ createAnnObjects.AG_DB <- function(prefix, objTarget, conn, datacache)
         join=AG_DB_default_join,
         rightColType=AG_DB_default_rightColType
     )
-    maps <- createAnnObjects("AtomicAnnMap", AG_DB_AtomicAnnMap_seeds, seed0)
+    annobjs <- createAnnObjects("AtomicAnnMap", AG_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
-    maps$ENZYME2PROBE <- revmap(maps$ENZYME, objName="ENZYME2PROBE")
-    maps$PATH2PROBE <- revmap(maps$PATH, objName="PATH2PROBE")
-    maps$PMID2PROBE <- revmap(maps$PMID, objName="PMID2PROBE")
+    annobjs$ENZYME2PROBE <- revmap(annobjs$ENZYME, objName="ENZYME2PROBE")
+    annobjs$PATH2PROBE <- revmap(annobjs$PATH, objName="PATH2PROBE")
+    annobjs$PMID2PROBE <- revmap(annobjs$PMID, objName="PMID2PROBE")
 
     ## GOAnnMap object
-    maps$GO <- new("GOAnnMap",
+    annobjs$GO <- new("GOAnnMap",
             objTarget=objTarget,
             conn=conn,
             datacache=datacache,
@@ -103,17 +103,17 @@ createAnnObjects.AG_DB <- function(prefix, objTarget, conn, datacache)
             all=FALSE)
 
     ## ReverseGOAnnMap objects
-    maps$GO2PROBE <- revmap(maps$GO, objName="GO2PROBE")
-    maps$GO2ALLPROBES <- new("ReverseGOAnnMap", maps$GO, objName="GO2ALLPROBES", all=TRUE)
+    annobjs$GO2PROBE <- revmap(annobjs$GO, objName="GO2PROBE")
+    annobjs$GO2ALLPROBES <- new("ReverseGOAnnMap", annobjs$GO, objName="GO2ALLPROBES", all=TRUE)
 
     ## Some pre-caching
-    left.names(maps$GO)
+    left.names(annobjs$GO)
 
     ## The MAPCOUNTS object (named integer vector)
-    #maps$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    #annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
-    names(maps) <- paste(prefix, names(maps), sep="")
-    maps
+    names(annobjs) <- paste(prefix, names(annobjs), sep="")
+    annobjs
 }
 
 compareAnnDataIn2Pkgs.AG_DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)

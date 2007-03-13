@@ -62,7 +62,7 @@ createAnnObjects.AFFYHUEX_DB <- function(prefix, objTarget, conn, datacache)
         conn=conn,
         datacache=datacache
     )
-    maps <- createAnnObjects("AnnTable", AFFYHUEX_DB_AnnTable_seeds, seed0)
+    annobjs <- createAnnObjects("AnnTable", AFFYHUEX_DB_AnnTable_seeds, seed0)
 
     ## RawAnnMap objects
     seed0 <- list(
@@ -70,13 +70,13 @@ createAnnObjects.AFFYHUEX_DB <- function(prefix, objTarget, conn, datacache)
         conn=conn,
         datacache=datacache
     )
-    maps <- createAnnObjects("RawAnnMap", AFFYHUEX_DB_RawAnnMap_seeds, seed0)
+    annobjs <- c(annobjs, createAnnObjects("RawAnnMap", AFFYHUEX_DB_RawAnnMap_seeds, seed0))
 
     ## Some pre-caching
-    left.names(maps$TRANSCRIPT)
-    left.names(maps$PROBSET)
+    left.names(annobjs$TRANSCRIPT)
+    left.names(annobjs$PROBSET)
 
-    names(maps) <- paste(prefix, names(maps), sep="")
-    maps
+    names(annobjs) <- paste(prefix, names(annobjs), sep="")
+    annobjs
 }
 
