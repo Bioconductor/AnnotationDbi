@@ -13,7 +13,7 @@ AFFYHUEX_DB_AnnTable_seeds <- list(
         showCols="*"
     ),
     list(
-        objName="PROBSET",
+        objName="PROBESET",
         leftTable="probeset",
         leftCol="probeset_ID",
         from="probeset",
@@ -74,7 +74,7 @@ createAnnObjects.AFFYHUEX_DB <- function(prefix, objTarget, conn, datacache)
 
     ## Some pre-caching
     left.names(annobjs$TRANSCRIPT)
-    left.names(annobjs$PROBSET)
+    left.names(annobjs$PROBESET)
 
     names(annobjs) <- paste(prefix, names(annobjs), sep="")
     annobjs

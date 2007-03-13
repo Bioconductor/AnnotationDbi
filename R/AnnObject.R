@@ -433,7 +433,7 @@ setMethod("right.names", "GOAnnMap",
     }
 )
 
-setMethod("names", "AnnMap", function(x) left.names(x))
+setMethos("names", "AnnObject", function(x) left.names(x))
 setMethod("names", "ReverseAnnMap", function(x) right.names(x))
 
 
@@ -578,6 +578,23 @@ setMethod("as.character", "ReverseAtomicAnnMap",
             stop("value for '", names[not_found[1]], "' not found")
     }
 }
+
+setMethod("as.list", "RawAnnMap",
+    function(x, names=NULL)
+    {
+        if (!is.null(names) && length(names) == 0)
+            return(list())
+        data <- as.data.frame(x, left.names=names)
+        if (nrow(data) == 0)
+            return(list())
+        lsubmap <- split(data, data[[x@leftCol]])
+        if (is.null(names))
+            names <- names(x)
+        lsubmap <- lsubmap[names]
+        names(lsubmap) <- names
+        lsubmap
+    }
+)
 
 setMethod("as.list", "AtomicAnnMap",
     function(x, names=NULL)
