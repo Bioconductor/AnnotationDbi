@@ -26,7 +26,7 @@ AFFYHUEX_DB_RawAnnMap_seeds <- list(
         objName="MRNA2GENE",
         leftTable="mrna",
         leftCol="accession",
-        from="mrna LEFT JOIN gene USING(entrez_gene_id)",
+        from="mrna INNER JOIN gene USING(entrez_gene_id)",
         showCols="accession,entrez_gene_id,gene_symbol,gene_title,cytoband",
         rightTable="gene",
         rightCol="entrez_gene_id"
