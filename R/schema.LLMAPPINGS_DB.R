@@ -22,7 +22,7 @@ createAnnObjects.LLMAPPINGS_DB <- function(prefix, objTarget, conn, datacache)
         rightColType=LLMAPPINGS_DB_default_rightColType,
         leftCol=LLMAPPINGS_DB_default_leftCol
     )
-    maps <- createAtomicAnnMapObjects(LLMAPPINGS_DB_AtomicAnnMap_seeds, seed0)
+    maps <- createAnnObjects("AtomicAnnMap", LLMAPPINGS_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
 

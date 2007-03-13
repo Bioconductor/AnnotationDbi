@@ -65,19 +65,28 @@ toSQLWhere <- function(col, names)
     paste(col, " IN (", toSQLStringSet(names), ")", sep="")
 }
 
-dbAnnTableToDataFrame <- function(conn, from, left.col, left.names, verbose=FALSE)
+dbRawAnnMapToDataFrame <- function(conn, left.table, left.col, left.names,
+                                         right.table, right.col, right.names,
+                                         show.cols, from, verbose=FALSE)
 {
-    sql <- paste("SELECT * FROM", from, "WHERE", toSQLWhere(left.col, left.names))
+    if (!is.null(right.table))
+        right.col <- paste(right.table, right.col, sep=".")
+    left.col <- paste(left.table, left.col, sep=".")
+    sql <- paste("SELECT", paste(show.cols, collapse=","), "FROM", from)
+    sql <- paste(sql, "WHERE", toSQLWhere(left.col, left.names))
+    if (!is.null(right.table))
+        sql <- paste(sql, "AND", toSQLWhere(right.col, right.names))
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
 }
 
+### We don't need this anymore. dbRawAnnMapToDataFrame() can always be used instead.
 dbAnnMapToDataFrame <- function(conn, table, join, left.col, left.names,
                                 right.col, right.names, extra.cols, verbose=FALSE)
 {
-    cols <- c(left.col, right.col, extra.cols)
-    sql <- paste("SELECT", paste(cols, collapse=","), "FROM", table)
+    show.cols <- c(left.col, right.col, extra.cols)
+    sql <- paste("SELECT", paste(show.cols, collapse=","), "FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
     where1 <- toSQLWhere(left.col, left.names)
@@ -298,7 +307,23 @@ setMethod("as.data.frame", "AnnTable",
     {
         if (missing(left.names))
             left.names <- row.names
-        dbAnnTableToDataFrame(db(x), x@from, x@leftCol, left.names, verbose)
+        dbRawAnnMapToDataFrame(db(x), x@leftTable, x@leftCol, left.names,
+                                      NULL, NULL, NULL,
+                                      x@showCols, x@from, verbose)
+    }
+)
+
+setMethod("as.data.frame", "RawAnnMap",
+    function(x, row.names=NULL, optional=FALSE,
+             left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
+    {
+        if (missing(left.names))
+            left.names <- row.names
+        if (missing(right.names) && !identical(optional, FALSE))
+            right.names <- optional
+        dbRawAnnMapToDataFrame(db(x), x@leftTable, x@leftCol, left.names,
+                                      x@rightTable, x@rightCol, right.names,
+                                      x@showCols, x@from, verbose)
     }
 )
 
@@ -663,25 +688,11 @@ createMAPCOUNTS <- function(conn, prefix)
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-createAnnTableObjects <- function(seeds, seed0)
+createAnnObjects <- function(class, seeds, seed0)
 {
     maps <- list()
     for (seed in seeds) {
-        seed$Class <- "AnnTable"
-        for (slot in names(seed0)) {
-            if (is.null(seed[slot][[1]]))
-                seed[[slot]] <- seed0[[slot]]
-        }
-        maps[[seed$objName]] <- do.call("new", seed)
-    }
-    maps
-}
-
-createAtomicAnnMapObjects <- function(seeds, seed0)
-{
-    maps <- list()
-    for (seed in seeds) {
-        seed$Class <- "AtomicAnnMap"
+        seed$Class <- class
         for (slot in names(seed0)) {
             if (is.null(seed[slot][[1]]))
                 seed[[slot]] <- seed0[[slot]]

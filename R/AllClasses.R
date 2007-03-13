@@ -5,8 +5,8 @@
 setClass("AnnObject",
     representation(
         "VIRTUAL",
-        leftCol="character",
         leftTable="character",
+        leftCol="character",
         conn="DBIConnection",
         datacache="environment",
         objTarget="character", # "chip hgu95av2" or "YEAST" or...
@@ -17,7 +17,8 @@ setClass("AnnObject",
 setClass("AnnTable",
     contains="AnnObject",
     representation(
-        from="character"
+        from="character",
+        showCols="character"    # cols to show in addition to the left col
     )
 )
 
@@ -34,15 +35,17 @@ setClass("AnnTable",
 ### with the "names" or "ls" methods. The type, format and location in the
 ### DB of the right values depends on the particular subclass of the "AnnMap"
 ### object. For reverse "AnnMap" objects, the mapping is "right-to-left".
-setClass("AnnMap",
-    contains="AnnObject",
+setClass("AnnMap", representation("VIRTUAL"))
+setClass("ReverseAnnMap", representation("VIRTUAL"))
+
+### The "RawAnnMap" class.
+setClass("RawAnnMap",
+    contains=c("AnnMap", "AnnTable"),
     representation(
-        "VIRTUAL",
-        join="character"
+        rightTable="character",
+        rightCol="character"
     )
 )
-
-setClass("ReverseAnnMap", representation("VIRTUAL"))
 
 ### For a "AtomicAnnMap" object, the right values are unnamed atomic vectors
 ### (character or integer).
@@ -57,8 +60,9 @@ setClass("ReverseAnnMap", representation("VIRTUAL"))
 ###                   don't set replace.multiple (default is character(0)),
 ###   - for any other map: don't set those fields (defaults will be just fine).
 setClass("AtomicAnnMap",
-    contains="AnnMap",
+    contains=c("AnnMap", "AnnObject"),
     representation(
+        join="character",
         rightTable="character",
         rightCol="character",
         ## set only if the right names are tagged
@@ -78,8 +82,11 @@ setClass("ReverseAtomicAnnMap", contains=c("ReverseAnnMap", "AtomicAnnMap"))
 ### each GO node being represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
 setClass("GOAnnMap",
-    contains="AnnMap",
-    representation(all="logical")
+    contains=c("AnnMap", "AnnObject"),
+    representation(
+        join="character",
+        all="logical"
+    )
 )
 
 ### Maps a GO term to a named character vector containing left values tagged

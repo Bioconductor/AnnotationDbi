@@ -11,12 +11,12 @@ Suggests: GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R AllGenerics.R
          db.R factories.R
          AnnObject.R AnnMap-envirAPI.R
-         dbschema.HGU95AV2_DB.R
-         dbschema.YEAST2_DB.R
-         dbschema.AG_DB.R
-         dbschema.LLMAPPINGS_DB.R
-         dbschema.YEAST_DB.R
-         dbschema.AFFYHUEX_DB.R
+         schema.HGU95AV2_DB.R
+         schema.YEAST2_DB.R
+         schema.AG_DB.R
+         schema.LLMAPPINGS_DB.R
+         schema.YEAST_DB.R
+         schema.AFFYHUEX_DB.R
          compareAnnDataIn2Pkgs.R
          makeDataPackage.R
          zzz.R
