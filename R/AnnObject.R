@@ -488,6 +488,14 @@ setMethod("show", "AnnTable",
     }
 )
 
+setMethod("show", "RawAnnMap",
+    function(object)
+    {
+        cat(object@objName, " map for ", object@objTarget,
+            " (object of class \"", class(object), "\")\n", sep="")
+    }
+)
+
 setMethod("show", "AnnMap",
     function(object)
     {
