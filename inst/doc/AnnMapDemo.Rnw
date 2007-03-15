@@ -28,8 +28,8 @@ The API provided by \Rpackage{AnnotationDbi} allows you to treat the
 \Rclass{AnnMap} objects like environments.  For example, the functions
 \verb+[[+, \Rfunction{get}, \Rfunction{mget}, and \Rfunction{ls} all
 behave the same as with the old-style packages.  In addition, we are
-experimenting with some extensions to \Rfunction{as.data.frame} and
-\Rfunction{as.list} that provide some additional flexibility in
+experimenting with new generic functions \Rfunction{toTable} and
+\Rfunction{toList} that provide some additional flexibility in
 accessing the annotation data.
 
 <<setup, results=hide>>=
@@ -40,44 +40,44 @@ library("hgu95av2db")
 ls(2)
 x <- hgu95av2PATH
 x
-as.data.frame(x)[1:6, ]
-as.data.frame(x, "40781_at")[1:10, ]
+toTable(x)[1:6, ]
+toTable(x, "40781_at")[1:10, ]
 
-as.list(x, "40781_at")   # equivalent to mget("40781_at", x)
+toList(x, "40781_at")   # equivalent to mget("40781_at", x)
 @ 
 
 Pick up some probeset ids:
 
-<<as.data.frame>>=
+<<toTable>>=
 pbids <- names(x)[1:4]   # names() is the same as ls()
-as.data.frame(x, pbids)[1:10, ]
-as.list(x, pbids)
+toTable(x, pbids)[1:10, ]
+toList(x, pbids)
 @ 
 
 Back to the data frame:
 
-<<as.data.frame2>>=
-as.data.frame(x)[1:6, ]
-as.data.frame(x, , "00230")[1:10, ]
+<<toTable2>>=
+toTable(x)[1:6, ]
+toTable(x, , "00230")[1:10, ]
 @ 
 
 too long... With another KEGG id:
 
-<<as.data.frame3>>= 
-as.data.frame(x, , "00300")
+<<toTable3>>= 
+toTable(x, , "00300")
 @ 
 
-This doesn't work (only 2 args to as.list, x and names):
+This doesn't work (only 2 args to \Rfunction{toList}, x and names):
 
 <<notworking, eval=FALSE>>=
-as.list(x, , "00300")
-as.list(x, "00300")
+toList(x, , "00300")
+toList(x, "00300")
 @ 
 
 You must do this instead:
 
 <<thisworks>>=
-as.list(revmap(x), "00300")
+toList(revmap(x), "00300")
 @ 
 
 The reverse map:
@@ -92,19 +92,19 @@ because hgu95av2db already provides the PATH2PROBE map:
 
 <<revmap2>>=
 revx <- hgu95av2PATH2PROBE   # except for the name, this is exactly revmap(x)
-revx2 <- revmap(x, mapName="PATH2PROBE")
+revx2 <- revmap(x, objName="PATH2PROBE")
 revx2
 identical(revx, revx2)
 
-as.list(revx, "00300")
+toList(revx, "00300")
 @ 
 
-Note that the order of the cols returned by as.data.frame() does
+Note that the order of the cols returned by \Rfunction{toTable} does
 not depend on the orientation of the map ("unoriented method"):
 
 <<unorientedMethod>>=
-as.data.frame(x)[1:6, ]
-as.data.frame(revx)[1:6, ]
+toTable(x)[1:6, ]
+toTable(revx)[1:6, ]
 @ 
 
 NB: the left names are always on the left (1st col), the right names
@@ -114,13 +114,13 @@ There can be more than 2 columns in the returned data frame:
 
   3 cols:
 <<threecols>>=
-as.data.frame(hgu95av2PFAM)[1:6, ]  # the right values are tagged
-as.list(hgu95av2PFAM, "1000_at")
+toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
+toList(hgu95av2PFAM, "1000_at")
 @ 
   4 cols:
 <<fourcols>>=
-as.data.frame(hgu95av2GO)[1:6, ]    
-as.list(hgu95av2GO, "1000_at")[[1]][1:2]
+toTable(hgu95av2GO)[1:6, ]    
+toList(hgu95av2GO, "1000_at")[[1]][1:2]
 @ 
 
 But the right names are ALWAYS in the 2nd col.
@@ -147,9 +147,9 @@ right.length(x)          # nb of right names
 
 NB: they give the same result for x and revmap(x)
 
-This helps to understand the naming of the as.data.frame args:
+This helps to understand the naming of Rfunction{toTable} args:
 <<naming, eval=FALSE>>=
-as.data.frame(x, left.names, right.names)
+toTable(x, left.names, right.names)
 @ 
 
 Using revmap can be very efficient in some use cases:
@@ -158,12 +158,12 @@ x <- hgu95av2CHR
 right.names(x)
 chroms <- right.names(x)[24:25]
 chroms
-as.data.frame(x, , chroms)[1:10, ]
+toTable(x, , chroms)[1:10, ]
 @ 
 
 To get this in the classic named-list format:
 <<easy>>=
-as.list(revmap(x), chroms)
+toList(revmap(x), chroms)
 @ 
 
 Compare to what you need to do this with the current envir-based package:
@@ -178,7 +178,7 @@ Compare to what you need to do this with the current envir-based package:
 A last example with cytogenetic locations:
 <<cytogenicLoc>>=
 x <- hgu95av2MAP
-as.data.frame(hgu95av2MAP)[1:6, ]
+toTable(hgu95av2MAP)[1:6, ]
 as.list(revmap(x), "8p22")
 @ 
 
@@ -187,7 +187,7 @@ Are the probes in 'pbids' mapped to cytogenetic location "6p21.3"?
 <<cytogenetic2>>=
 pbids <- c("38912_at", "41654_at", "907_at", "2053_at", "2054_g_at", 
            "40781_at")
-as.data.frame(x, pbids, "18q11.2")
+toTable(x, pbids, "18q11.2")
 @ 
 
 To coerce this map to a named vector:

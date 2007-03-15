@@ -10,8 +10,8 @@
 ### AnnMap objects defined in the AnnMap-objects.R file (refer to this file
 ### too for the definition of the "AnnMap" class and subclasses).
 ###
-### Note that the length and lapply methods are not redefined here since they
-### are considered to belong to the low-level API.
+### Note that the "length" method is not redefined here since it is
+### considered to belong to the low-level API.
 ###
 ### -------------------------------------------------------------------------
 
@@ -28,14 +28,14 @@ setMethod("ls", signature(name="AnnMap"),
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "mget" new generic.
 ###
-### 'mget(x, map)' vs 'as.list(map, names=x)':
+### 'mget(x, map)' vs 'toList(map, names=x)':
 ###   1. mget checks its 'x' arg. and gracefully fails if it's not of
 ###      the expected type (i.e. NULL or NA-free character vector),
 ###   2. mget will error on the first string in 'x' not in 'names(map)',
-###      as.list will accept those strings and map them to NAs.
+###      toList will accept those strings and map them to NAs.
 ###   3. if 'x' is a subset of 'names(map)', then 'mget(x, map)'
-###      is identical to 'as.list(map, names=x)'.
-###   4. 'mget(names(map), map)' is identical to 'as.list(map)'.
+###      is identical to 'toList(map, names=x)'.
+###   4. 'mget(names(map), map)' is identical to 'toList(map)'.
 ###      Note that for a real "environment", 'as.list(envir)' is not identical
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
@@ -47,7 +47,7 @@ setMethod("mget", signature(envir="AnnMap"),
     {
         .checkNamesAreStrings(x)
         .checkNamesExist(x, names(envir))
-        as.list(envir, names=x)
+        toList(envir, names=x)
     }
 )
 
@@ -55,7 +55,19 @@ setMethod("mget", signature(envir="ReverseAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         .checkNamesAreStrings(x)
-        as.list(envir, names=x)
+        toList(envir, names=x)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "as.list" generic.
+###
+
+setMethod("as.list", "AnnMap",
+    function(x, ...)
+    {
+        toList(x, ...)
     }
 )
 

@@ -4,34 +4,37 @@ export(toggleDebug,
        comparePerf)
 
 exportMethods(
-              "exists",
-              "makeDataPackage",
-              "revmap",
-              "db",
-              "as.data.frame",
-              "nrow",
-              "left.names",
-              "right.names",
-              "ls",
-              "names",
-              "left.length",
-              "right.length",
-              "length",
-              "show",
-              "as.character",
-              "as.list",
-              "mget",
-              "eapply",
-              "get",
-              "[[",
-              "$",
-              "mapped.left.names",
-              "count.mapped.left.names",
-              "mapped.right.names",
-              "count.mapped.right.names",
-              "mapped.names",
-              "count.mapped.names",
-              "is.na")
+    "exists",
+    "makeDataPackage",
+    "revmap",
+    "db",
+    "toTable",
+    "as.data.frame",
+    "nrow",
+    "left.names",
+    "right.names",
+    "ls",
+    "names",
+    "left.length",
+    "right.length",
+    "length",
+    "show",
+    "as.character",
+    "toList",
+    "as.list",
+    "mget",
+    "eapply",
+    "get",
+    "[[",
+    "$",
+    "mapped.left.names",
+    "count.mapped.left.names",
+    "mapped.right.names",
+    "count.mapped.right.names",
+    "mapped.names",
+    "count.mapped.names",
+    "is.na"
+)
 
 ### envir-based API:
 exportClasses(
@@ -40,7 +43,8 @@ exportClasses(
     "AtomicAnnMap",
     "ReverseAtomicAnnMap",
     "GOAnnMap",
-    "ReverseGOAnnMap")
+    "ReverseGOAnnMap"
+)
 
 export(
     checkAnnObjects,

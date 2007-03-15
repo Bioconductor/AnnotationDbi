@@ -9,11 +9,11 @@
 ###   a) A low-level API for the "AnnObject" objects:
 ###        reverse
 ###        db
-###        as.data.frame, nrow
+###        toTable, as.data.frame, nrow
 ###        left.names, right.names, names
 ###        left.length, right.length, length
 ###        show,
-###        as.character, as.list
+###        as.character, toList,
 ###        mapped.left.names, count.mapped.left.names
 ###        mapped.right.names, count.mapped.right.names
 ###        mapped.names, count.mapped.names
@@ -238,7 +238,6 @@ GOtables <- function(all=FALSE)
 }
 
 
-
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "revmap" new generic.
 ###
@@ -248,7 +247,6 @@ GOtables <- function(all=FALSE)
 ### defined in the first. Don't know how to deal with this situation :-/
 ### The "rev" generic defined in package:base doesn't work neither because
 ### we want to be able to use a different signature (2 args).
-
 
 setMethod("revmap", "AtomicAnnMap",
     function(x, objName=NULL)
@@ -287,19 +285,15 @@ setMethod("revmap", "ReverseGOAnnMap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "db" new generic.
 
-
 setMethod("db", "AnnObject", function(object) object@conn)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "as.data.frame" generic.
-###
-### WORK IN PROGRESS!!! Experimenting a new as.data.frame interface. Use at
-### your own risk!
+### The "toTable" new generic.
 ###
 ### Note that because we use the same JOIN for a map and its corresponding
 ### "reverse" map (this is made possible thanks to an INNER JOIN), then the
-### result returned by "as.data.frame" or "nrow" does not depend on the
+### result returned by "toTable" or "nrow" does not depend on the
 ### orientation (direct/reverse) of the map which is a nice property
 ### (e.g. 'nrow(map) == nrow(revmap(map))').
 ###
@@ -313,40 +307,27 @@ setMethod("db", "AnnObject", function(object) object@conn)
 ### Note that the 'left.names' and 'right.names' args are _not_ checked i.e.
 ### only NULL and NA-free character vectors are guaranted to work properly.
 
-setMethod("as.data.frame", "AnnTable",
-    function(x, row.names=NULL, optional=FALSE,
-             left.names=NULL, verbose=FALSE)
+setMethod("toTable", "AnnTable",
+    function(x, left.names=NULL, verbose=FALSE)
     {
-        if (missing(left.names))
-            left.names <- row.names
         dbRawAnnMapToDataFrame(db(x), x@leftTable, x@leftCol, left.names,
                                       NULL, NULL, NULL,
                                       x@showCols, x@from, verbose)
     }
 )
 
-setMethod("as.data.frame", "RawAnnMap",
-    function(x, row.names=NULL, optional=FALSE,
-             left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
+setMethod("toTable", "RawAnnMap",
+    function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
     {
-        if (missing(left.names))
-            left.names <- row.names
-        if (missing(right.names) && !identical(optional, FALSE))
-            right.names <- optional
         dbRawAnnMapToDataFrame(db(x), x@leftTable, x@leftCol, left.names,
                                       x@rightTable, x@rightCol, right.names,
                                       x@showCols, x@from, verbose)
     }
 )
 
-setMethod("as.data.frame", "AtomicAnnMap",
-    function(x, row.names=NULL, optional=FALSE,
-             left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
+setMethod("toTable", "AtomicAnnMap",
+    function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
     {
-        if (missing(left.names))
-            left.names <- row.names
-        if (missing(right.names) && !identical(optional, FALSE))
-            right.names <- optional
         if (length(x@tagCol) == 1)
             extra.cols <- c(x@tagCol, extra.cols)
         dbAnnMapToDataFrame(db(x), x@rightTable, x@join,
@@ -356,14 +337,9 @@ setMethod("as.data.frame", "AtomicAnnMap",
     }
 )
 
-setMethod("as.data.frame", "GOAnnMap",
-    function(x, row.names=NULL, optional=FALSE,
-             left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
+setMethod("toTable", "GOAnnMap",
+    function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
     {
-        if (missing(left.names))
-            left.names <- row.names
-        if (missing(right.names) && !identical(optional, FALSE))
-            right.names <- optional
         extra.cols <- c("evidence", extra.cols)
         getPartialSubmap <- function(Ontology)
         {
@@ -382,15 +358,31 @@ setMethod("as.data.frame", "GOAnnMap",
     }
 )
 
+### "as.data.frame" is equivalent to "toTable". Might be deprecated soon.
+setMethod("as.data.frame", "AnnObject",
+    function(x, row.names=NULL, optional=FALSE,
+             left.names=NULL, right.names=NULL, ...)
+    {
+        if (missing(left.names))
+            left.names <- row.names
+        if (missing(right.names)) {
+            if (missing(optional))
+                return(toTable(x, left.names, ...))
+            if (!identical(optional, FALSE))
+                right.names <- optional
+        }
+        toTable(x, left.names, right.names=right.names, ...)
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "nrow" new generic.
 ###
 ### Conceptual definition (for AnnMap object x):
-###     nrow(x) :== nrow(as.data.frame(x))
+###     nrow(x) :== nrow(toTable(x))
 ###
-### Since "as.data.frame" is unoriented, then "nrow" is unoriented too.
-
+### Since "toTable" is unoriented, then "nrow" is unoriented too.
 
 setMethod("nrow", "AnnTable",
     function(x)
@@ -430,7 +422,6 @@ setMethod("nrow", "GOAnnMap",
 ### The "left.names", "right.names" and "names" generics.
 ###
 
-
 setMethod("left.names", "AnnObject",
     function(x)
     {
@@ -469,7 +460,6 @@ setMethod("names", "ReverseAnnMap", function(x) right.names(x))
 ### Conceptual definitions (for AnnMap object x):
 ###     left.length(x) :== length(left.names(x))
 ###     right.length(x) :== length(right.names(x))
-
 
 ### Will catch "AtomicAnnMap" and "GOAnnMap" objects.
 setMethod("left.length", "AnnObject",
@@ -544,7 +534,7 @@ setMethod("as.character", "AtomicAnnMap",
     {
         if (length(x@tagCol) == 1)
             stop("cannot coerce to character an AtomicAnnMap object with tags")
-        data <- as.data.frame(x)
+        data <- toTable(x)
         ans <- data[[x@rightCol]]
         if (!is.character(ans))
             ans <- as.character(ans)
@@ -560,7 +550,7 @@ setMethod("as.character", "ReverseAtomicAnnMap",
     {
         if (length(x@tagCol) == 1)
             stop("cannot coerce to character an AtomicAnnMap object with tags")
-        data <- as.data.frame(x)
+        data <- toTable(x)
         ans <- data[[x@leftCol]]
         if (!is.character(ans))
             ans <- as.character(ans)
@@ -573,20 +563,20 @@ setMethod("as.character", "ReverseAtomicAnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "as.list" generic.
+### The "toList" new generic.
 ###
-### Note that all the "as.list" methods below have an extra 'names' arg.
+### The "toList" methods below have a 'names' arg.
 ### The 'names' arg. can be one of the following:
 ###   - NULL: all map elements are extracted (equivalent to passing
 ###           'names=names(x)' but more efficient).
 ###   - A NA-free character vector: the names of the returned list will
 ###     be those passed in 'names' in the same order. Names that are not
 ###     in the map are associated with NAs. Note that, unlike "mget",
-###     "as.list" doesn't treat differently names that are not in the map
+###     "toList" doesn't treat differently names that are not in the map
 ###     from names that are in the map but associated with NAs.
-###   - A NA-free numeric vector: for conveniency 'as.list(x, 1:3)' is a
-###     shortcut for 'as.list(x, names(x)[1:3])'. This is identical to
-###     'as.list(x)[1:3]' but of course much more efficent.
+###   - A NA-free numeric vector: for conveniency 'toList(x, 1:3)' is a
+###     shortcut for 'toList(x, names(x)[1:3])'. This is identical to
+###     'toList(x)[1:3]' but much faster.
 ### Note that the 'names' arg. is _not_ checked i.e. only NULL, NA-free
 ### character vectors and NA-free numeric vectors are guaranted to work.
 
@@ -605,12 +595,12 @@ setMethod("as.character", "ReverseAtomicAnnMap",
     }
 }
 
-setMethod("as.list", "RawAnnMap",
+setMethod("toList", "RawAnnMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data <- as.data.frame(x, left.names=names)
+        data <- toTable(x, left.names=names)
         if (nrow(data) == 0)
             return(list())
         lsubmap <- split(data, data[[x@leftCol]])
@@ -622,12 +612,12 @@ setMethod("as.list", "RawAnnMap",
     }
 )
 
-setMethod("as.list", "AtomicAnnMap",
+setMethod("toList", "AtomicAnnMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data <- as.data.frame(x, left.names=names)
+        data <- toTable(x, left.names=names)
         if (nrow(data) == 0)
             return(list())
         lsubmap <- data[[x@rightCol]]
@@ -640,12 +630,12 @@ setMethod("as.list", "AtomicAnnMap",
     }
 )
 
-setMethod("as.list", "ReverseAtomicAnnMap",
+setMethod("toList", "ReverseAtomicAnnMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data <- as.data.frame(x, right.names=names)
+        data <- toTable(x, right.names=names)
         if (!is.null(names) && !all(names %in% data[[x@rightCol]]))
             .checkNamesExist(names, names(x))
         if (nrow(data) == 0)
@@ -659,23 +649,23 @@ setMethod("as.list", "ReverseAtomicAnnMap",
 
 ### This new version (0.0.27) is 3 times faster than previous version (0.0.26):
 ### Old version:
-###   > system.time(aa<-as.list(hgu95av2GO))
+###   > system.time(aa <- toList(hgu95av2GO))
 ###      user  system elapsed
 ###    76.968   5.692  85.080
 ### New version:
-###   > system.time(aa<-as.list(hgu95av2GO))
+###   > system.time(aa <- toList(hgu95av2GO))
 ###      user  system elapsed
 ###    25.305   1.012  27.658
 ### Reference (envir-based):
-###   > system.time(aa<-as.list(hgu95av2GO))
+###   > system.time(aa <- toList(hgu95av2GO))
 ###      user  system elapsed
 ###     4.456   0.228   4.953
-setMethod("as.list", "GOAnnMap",
+setMethod("toList", "GOAnnMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data <- as.data.frame(x, left.names=names)
+        data <- toTable(x, left.names=names)
         if (nrow(data) == 0)
             return(list())
         if (is.null(names))
@@ -706,12 +696,12 @@ setMethod("as.list", "GOAnnMap",
     }
 )
 
-setMethod("as.list", "ReverseGOAnnMap",
+setMethod("toList", "ReverseGOAnnMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data <- as.data.frame(x, right.names=names)
+        data <- toTable(x, right.names=names)
         if (!is.null(names) && !all(names %in% data[["go_id"]]))
             .checkNamesExist(names, names(x))
         if (nrow(data) == 0)
@@ -763,11 +753,11 @@ createAnnObjects <- function(class, seeds, seed0)
 ### Conceptual definitions (for AnnMap object x):
 ###
 ###     mapped.left.names(x) :== unique values in left col (col 1) of
-###                              as.data.frame(x)
+###                              toTable(x)
 ###     count.mapped.left.names(x) :== length(mapped.left.names(x))
 ###
 ###     mapped.right.names(x) :== unique values in right col (col 2) of
-###                               as.data.frame(x)
+###                               toTable(x)
 ###     count.mapped.right.names(x) :== length(mapped.right.names(x))
 ###
 ### Note that all "right names" should be mapped to a "left name" hence
@@ -914,7 +904,7 @@ checkAnnObjects <- function(pkgname, prefix)
         cat("  - count0 = ", count0, "\n", sep="")
         t1 <- system.time(count1 <- count.mapped.names(map))
         cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
-        t2 <- system.time(count2 <- sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x))))
+        t2 <- system.time(count2 <- sum(sapply(toList(map), function(x) length(x)!=1 || !is.na(x))))
         cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
         if (count1 != count0 || count2 != count0)
             stop("count0, count1 and count2 not the same")

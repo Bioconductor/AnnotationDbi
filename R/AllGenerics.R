@@ -10,3 +10,5 @@ setGeneric("mapped.right.names", function(x) standardGeneric("mapped.right.names
 setGeneric("revmap", function(x, objName=NULL) standardGeneric("revmap"))
 setGeneric("right.length", function(x) standardGeneric("right.length"))
 setGeneric("right.names", function(x) standardGeneric("right.names"))
+setGeneric("toList", function(x, names=NULL) standardGeneric("toList"))
+setGeneric("toTable", function(x, left.names=NULL, ...) standardGeneric("toTable"))
