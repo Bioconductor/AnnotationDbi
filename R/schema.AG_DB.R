@@ -10,66 +10,66 @@ AG_DB_default_join <- "INNER JOIN probes USING (id)"
 
 ### Mandatory fields: objName, rightTable and rightCol
 AG_DB_AtomicAnnMap_seeds <- list(
-        #list(
-        #        objName="ACCNUM",
-        #        rightTable="accessions",
-        #        rightCol="accession",
-        #        join="INNER JOIN probes USING (probe_id)" # not the default join!
-        #),
-        list(
-                objName="ARACYC",
-                rightTable="aracyc",
-                rightCol="pathway_name"
-        ),
-        list(
-                objName="CHR",
-                rightTable="gene_info",
-                rightCol="chromosome"
-        ),
-        list(
-                objName="ENTREZID",
-                rightTable="genes",
-                rightCol="gene_id",
-                replace.multiple="multiple"
-        ),
-        list(
-                objName="ENZYME",
-                rightTable="ec",
-                rightCol="ec_number"
-        ),
-        list(
-                objName="GENENAME",
-                rightTable="gene_info",
-                rightCol="gene_name"
-        ),
-        list(
-                objName="MULTIHIT",
-                rightTable="genes",
-                rightCol="gene_id",
-                replace.single=as.character(NA)
-        ),
-        list(
-                objName="PATH",
-                rightTable="kegg",
-                rightCol="kegg_id"
-        ),
-        list(
-                objName="PMID",
-                rightTable="pubmed",
-                rightCol="pubmed_id"
-        ),
-        list(
-                objName="SYMBOL",
-                rightTable="gene_info",
-                rightCol="symbol"
-        ),
-        list(
-                objName="CHRLOC",
-                rightTable="chromosome_locations",
-                rightCol="start_location",
-                rightColType="integer",
-                tagCol="chromosome"
-        )
+    #list(
+    #    objName="ACCNUM",
+    #    rightTable="accessions",
+    #    rightCol="accession",
+    #    join="INNER JOIN probes USING (probe_id)" # not the default join!
+    #),
+    list(
+        objName="ARACYC",
+        rightTable="aracyc",
+        rightCol="pathway_name"
+    ),
+    list(
+        objName="CHR",
+        rightTable="gene_info",
+        rightCol="chromosome"
+    ),
+    list(
+        objName="ENTREZID",
+        rightTable="genes",
+        rightCol="gene_id",
+        replace.multiple="multiple"
+    ),
+    list(
+        objName="ENZYME",
+        rightTable="ec",
+        rightCol="ec_number"
+    ),
+    list(
+        objName="GENENAME",
+        rightTable="gene_info",
+        rightCol="gene_name"
+    ),
+    list(
+        objName="MULTIHIT",
+        rightTable="genes",
+        rightCol="gene_id",
+        replace.single=as.character(NA)
+    ),
+    list(
+        objName="PATH",
+        rightTable="kegg",
+        rightCol="kegg_id"
+    ),
+    list(
+        objName="PMID",
+        rightTable="pubmed",
+        rightCol="pubmed_id"
+    ),
+    list(
+        objName="SYMBOL",
+        rightTable="gene_info",
+        rightCol="symbol"
+    ),
+    list(
+        objName="CHRLOC",
+        rightTable="chromosome_locations",
+        rightCol="start_location",
+        rightColType="integer",
+        tagCol="chromosome"
+    )
 )
 
 createAnnObjs.AG_DB <- function(prefix, objTarget, conn, datacache)
@@ -93,14 +93,15 @@ createAnnObjs.AG_DB <- function(prefix, objTarget, conn, datacache)
 
     ## GOAnnMap object
     annobjs$GO <- new("GOAnnMap",
-            objTarget=objTarget,
-            conn=conn,
-            datacache=datacache,
-            objName="GO",
-            leftTable=AG_DB_default_leftTable,
-            leftCol=AG_DB_default_leftCol,
-            join=AG_DB_default_join,
-            all=FALSE)
+        objTarget=objTarget,
+        conn=conn,
+        datacache=datacache,
+        objName="GO",
+        leftTable=AG_DB_default_leftTable,
+        leftCol=AG_DB_default_leftCol,
+        join=AG_DB_default_join,
+        all=FALSE
+    )
 
     ## ReverseGOAnnMap objects
     annobjs$GO2PROBE <- revmap(annobjs$GO, objName="GO2PROBE")

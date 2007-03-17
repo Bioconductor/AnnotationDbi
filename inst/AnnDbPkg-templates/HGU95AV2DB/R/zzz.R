@@ -1,6 +1,6 @@
 datacache <- new.env(hash=TRUE, parent=emptyenv())
 
-@OBJPREFIX@ORGANISM <- "@ORGANISM@"
+@ANNOBJPREFIX@ORGANISM <- "@ORGANISM@"
 
 .onLoad <- function(libname, pkgname)
 {
@@ -11,7 +11,7 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     db_conn <- dbFileConnect(db_file)
     addToNamespaceAndExport("db_conn", db_conn, pkgname)
     ## Create the AnnObj instances
-    annobjs <- createAnnObjs.@DBSCHEMA@("@OBJPREFIX@", "@OBJTARGET@", db_conn, datacache)
+    annobjs <- createAnnObjs.@DBSCHEMA@("@ANNOBJPREFIX@", "@ANNOBJTARGET@", db_conn, datacache)
     for (objname in names(annobjs))
         addToNamespaceAndExport(objname, annobjs[[objname]], pkgname=pkgname)
 }

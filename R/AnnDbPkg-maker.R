@@ -2,10 +2,10 @@
 setClass(
     "AnnDbPkgSeed",
     representation(
-        pkg.template="character",    # e.g. "HGU95AV2DB"
+        pkgTemplate="character",     # e.g. "HGU95AV2DB"
         dbSchema="character",        # e.g. "HGU95AV2_DB"
-        objNamePrefix="character",   # e.g. "hgu95av2"
-        objTarget="character",       # e.g. "chip hgu95av2"
+        annObjPrefix="character",    # e.g. "hgu95av2"
+        annObjTarget="character",       # e.g. "chip hgu95av2"
         organism="character",
         species="character",
         manufacturer="character",
@@ -29,7 +29,7 @@ setMethod(Biobase::makeDataPackage,
          || length(email) != 1 || grep("@", email) != 1)
             stop("invalid email address")
         extdataDir <- file.path(filePath, packageName, "inst", "extdata")
-        dbFileName <- paste(object@objNamePrefix, ".sqlite", sep="")
+        dbFileName <- paste(object@annObjPrefix, ".sqlite", sep="")
         ## RSQLiteVersion is not used anymore
         #if (missing(RSQLiteVersion)) {
         #    cran.pkgs <- available.packages(contrib.url("http://cran.fhcrc.org"))
@@ -39,8 +39,8 @@ setMethod(Biobase::makeDataPackage,
         #}
         AnnDbiVersion <- installed.packages()['AnnotationDbi','Version']
         syms <- list(DBSCHEMA=object@dbSchema,
-                     OBJPREFIX=object@objNamePrefix,
-                     OBJTARGET=object@objTarget,
+                     ANNOBJPREFIX=object@annObjPrefix,
+                     ANNOBJTARGET=object@annObjTarget,
                      ORGANISM=object@organism,
                      SPECIES=object@species,
                      MANUF=object@manufacturer,
@@ -54,7 +54,7 @@ setMethod(Biobase::makeDataPackage,
                      DBFILE=dbFileName,
                      ANNDBIVERSION=AnnDbiVersion)
         template.path <- system.file("AnnDbPkg-templates",
-                                     object@pkg.template,
+                                     object@pkgTemplate,
                                      package="AnnotationDbi")
         createPackage(pkgname=packageName, destinationDir=filePath,
                       originDir=template.path,
@@ -110,10 +110,10 @@ makeAnnDbPkg <- function(pkgname, dest_dir=".")
         version <- pkginfo["Version"]
         db_file <- pkginfo["DBfile"]
         pkgseed <- new("AnnDbPkgSeed",
-            pkg.template=pkginfo["PkgTemplate"],
+            pkgTemplate=pkginfo["PkgTemplate"],
             dbSchema=pkginfo["DBschema"],
-            objNamePrefix=pkginfo["AnnObjPrefix"],
-            objTarget=pkginfo["AnnObjTarget"],
+            annObjPrefix=pkginfo["AnnObjPrefix"],
+            annObjTarget=pkginfo["AnnObjTarget"],
             organism=pkginfo["organism"],
             species=pkginfo["species"],
             manufacturer=pkginfo["manufacturer"],

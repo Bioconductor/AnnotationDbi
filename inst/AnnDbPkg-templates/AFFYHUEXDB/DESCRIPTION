@@ -1,6 +1,6 @@
 Package: @PKGNAME@
-Title: @MANUF@ @CHIPNAME@ Annotation Data (@OBJTARGET@)
-Description: @MANUF@ @CHIPNAME@ annotation data (@OBJTARGET@) assembled using data from manufacturer
+Title: @MANUF@ @CHIPNAME@ Annotation Data (@ANNOBJTARGET@)
+Description: @MANUF@ @CHIPNAME@ annotation data (@ANNOBJTARGET@) assembled using data from manufacturer
 Version: @VERSION@
 Author: @AUTHOR@
 Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>

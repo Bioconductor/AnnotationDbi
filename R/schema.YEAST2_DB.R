@@ -14,55 +14,55 @@ YEAST2_DB_default_rightColType <- character(0)
 
 ### Mandatory fields: objName, rightTable and rightCol
 YEAST2_DB_AtomicAnnMap_seeds <- list(
-        list(
-                objName="ALIAS",
-                rightTable="gene2alias",
-                rightCol="alias"
-        ),
-        list(
-                objName="CHR",
-                rightTable="chromosome_features",
-                rightCol="chromosome"
-        ),
-        list(
-                objName="DESCRIPTION",
-                rightTable="chromosome_features",
-                rightCol="feature_description"
-        ),
-        list(
-                objName="ENZYME",
-                rightTable="ec",
-                rightCol="ec_number"
-        ),
-        list(
-                objName="GENENAME",
-                rightTable="sgd",
-                rightCol="gene_name",
-                join=YEAST2_DB_short_join
-        ),
-        list(
-                objName="ORF",
-                rightTable="probes",
-                rightCol="systematic_name",
-                join=character(0)
-        ),
-        list(
-                objName="PATH",
-                rightTable="kegg",
-                rightCol="kegg_id"
-        ),
-        list(
-                objName="PMID",
-                rightTable="pubmed",
-                rightCol="pubmed_id"
-        ),
-        list(
-                objName="CHRLOC",
-                rightTable="chromosome_features",
-                rightCol="start",
-                rightColType="integer",
-                tagCol="chromosome"
-        )
+    list(
+        objName="ALIAS",
+        rightTable="gene2alias",
+        rightCol="alias"
+    ),
+    list(
+        objName="CHR",
+        rightTable="chromosome_features",
+        rightCol="chromosome"
+    ),
+    list(
+        objName="DESCRIPTION",
+        rightTable="chromosome_features",
+        rightCol="feature_description"
+    ),
+    list(
+        objName="ENZYME",
+        rightTable="ec",
+        rightCol="ec_number"
+    ),
+    list(
+        objName="GENENAME",
+        rightTable="sgd",
+        rightCol="gene_name",
+        join=YEAST2_DB_short_join
+    ),
+    list(
+        objName="ORF",
+        rightTable="probes",
+        rightCol="systematic_name",
+        join=character(0)
+    ),
+    list(
+        objName="PATH",
+        rightTable="kegg",
+        rightCol="kegg_id"
+    ),
+    list(
+        objName="PMID",
+        rightTable="pubmed",
+        rightCol="pubmed_id"
+    ),
+    list(
+        objName="CHRLOC",
+        rightTable="chromosome_features",
+        rightCol="start",
+        rightColType="integer",
+        tagCol="chromosome"
+    )
 )
 
 createAnnObjs.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
@@ -86,14 +86,15 @@ createAnnObjs.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
 
     ## GOAnnMap object
     annobjs$GO <- new("GOAnnMap",
-            objTarget=objTarget,
-            conn=conn,
-            datacache=datacache,
-            objName="GO",
-            leftTable=YEAST2_DB_default_leftTable,
-            leftCol=YEAST2_DB_default_leftCol,
-            join=YEAST2_DB_default_join,
-            all=FALSE)
+        objTarget=objTarget,
+        conn=conn,
+        datacache=datacache,
+        objName="GO",
+        leftTable=YEAST2_DB_default_leftTable,
+        leftCol=YEAST2_DB_default_leftCol,
+        join=YEAST2_DB_default_join,
+        all=FALSE
+    )
 
     ## ReverseGOAnnMap objects
     annobjs$GO2PROBE <- revmap(annobjs$GO, objName="GO2PROBE")
