@@ -89,25 +89,25 @@ makeSQLiteAnnDataPkg <- function(pkgname, dest_dir=".")
     file.remove(tmp_file)
     master <- master[grep(pkgname, master[ ,"Package"]), , drop=FALSE]
     for (i in seq_len(nrow(master))) {
-        master <- master[i, ]
-        pkgname <- master["Package"]
-        version <- master["Version"]
-        db_file <- master["DBfile"]
+        pkginfo <- master[i, ]
+        pkgname <- pkginfo["Package"]
+        version <- pkginfo["Version"]
+        db_file <- pkginfo["DBfile"]
         pkgseed <- new("AnnDataPkgSeed",
-            pkg.template=master["PkgTemplate"],
-            dbSchema=master["DBschema"],
-            objNamePrefix=master["AnnObjectPrefix"],
-            objTarget=master["AnnObjectTarget"],
-            organism=master["organism"],
-            species=master["species"],
-            manufacturer=master["manufacturer"],
-            chipName=master["chipName"],
-            manufacturerUrl=master["manufacturerUrl"]
+            pkg.template=pkginfo["PkgTemplate"],
+            dbSchema=pkginfo["DBschema"],
+            objNamePrefix=pkginfo["AnnObjectPrefix"],
+            objTarget=pkginfo["AnnObjectTarget"],
+            organism=pkginfo["organism"],
+            species=pkginfo["species"],
+            manufacturer=pkginfo["manufacturer"],
+            chipName=pkginfo["chipName"],
+            manufacturerUrl=pkginfo["manufacturerUrl"]
         )
         author <- "Nianhua Li, Seth Falcon, Herve Pages"
         email <- "biocannotation@lists.fhcrc.org"
         license <- "LGPL"
-        biocViews <- paste("AnnotationData", master["biocViews"], sep=", ")
+        biocViews <- paste("AnnotationData", pkginfo["biocViews"], sep=", ")
         makeDataPackage(pkgseed, author, email, pkgname, version,
             license, biocViews, dest_dir, db_file)
     }
