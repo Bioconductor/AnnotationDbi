@@ -1,3 +1,4 @@
+import(methods)
 
 export(toggleDebug,
        compareAnnotation,
@@ -53,6 +54,9 @@ export(
     createAnnObjects.AG_DB,
     createAnnObjects.LLMAPPINGS_DB,
     createAnnObjects.YEAST_DB,
-    createAnnObjects.AFFYHUEX_DB
+    createAnnObjects.AFFYHUEX_DB,
+    dbFileConnect,
+    dbFileDisconnect,
+    addToNamespaceAndExport
 )
 

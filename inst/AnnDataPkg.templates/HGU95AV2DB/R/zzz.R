@@ -1,20 +1,23 @@
-datacache <- new.env(hash=TRUE)
+datacache <- new.env(hash=TRUE, parent=emptyenv())
 
 @OBJPREFIX@ORGANISM <- "@ORGANISM@"
 
-.onLoad <- function(libname, pkgname) {
+.onLoad <- function(libname, pkgname)
+{
     require("methods", quietly=TRUE)
-    ## Establish a connection to the SQLite DB
-    initDbConnection()
-    ## ... and init the data
-    annobjs <- createAnnObjects.@DBSCHEMA@("@OBJPREFIX@", "@OBJTARGET@", getDb(), datacache)
-    ns <- asNamespace(pkgname)
-    for (objname in names(annobjs)) {
-        assign(objname, annobjs[[objname]], envir=ns)
-    }
-    namespaceExport(ns, names(annobjs))
+    ## Connect to the SQLite DB
+    db_file <- system.file("extdata", "@DBFILE@", package=pkgname)
+    addToNamespaceAndExport("db_file", db_file, pkgname)
+    db_conn <- dbFileConnect(db_file)
+    addToNamespaceAndExport("db_conn", db_conn, pkgname)
+    ## Create the AnnObjects instances
+    annobjs <- createAnnObjects.@DBSCHEMA@("@OBJPREFIX@", "@OBJTARGET@", db_conn, datacache)
+    for (objname in names(annobjs))
+        addToNamespaceAndExport(objname, annobjs[[objname]], pkgname=pkgname)
 }
 
-.onUnload <- function(libpath) {
-    closeDb()
+.onUnload <- function(libpath)
+{
+    dbFileDisconnect(db_conn)
 }
+

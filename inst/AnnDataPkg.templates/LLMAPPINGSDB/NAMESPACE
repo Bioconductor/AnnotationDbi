@@ -1,4 +1,8 @@
 import(methods)
 import(AnnotationDbi)
 
-export("getDb", "closeDb")
+### Only put what is statically exported here. All the AnnObject instances
+### created at load time are dynamically exported (refer to R/zzz.R for more
+### details).
+export()
+
