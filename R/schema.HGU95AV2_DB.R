@@ -16,9 +16,9 @@ HGU95AV2_DB_default_rightColType <- character(0)
 HGU95AV2_DB_AtomicAnnMap_seeds <- list(
         list(
                 objName="ACCNUM",
-                rightTable="accessions",
+                rightTable="probes",
                 rightCol="accession",
-                join="INNER JOIN probes USING (probe_id)" # not the default join!
+                join=character(0) # not the default join!
         ),
         list(
                 objName="CHR",
@@ -131,6 +131,10 @@ createAnnObjects.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
     annobjs$GO2PROBE <- revmap(annobjs$GO, objName="GO2PROBE")
     annobjs$GO2ALLPROBES <- new("ReverseGOAnnMap", annobjs$GO, objName="GO2ALLPROBES", all=TRUE)
 
+    ## 2 special maps that are not AnnMap objects (just named integer vectors)
+    annobjs$CHRLENGTHS <- createCHRLENGTHS(conn, prefix)
+    annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+
     ## Some pre-caching
     left.names(annobjs$GO)
     #mapped.left.names(annobjs$GO)
@@ -138,9 +142,6 @@ createAnnObjects.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
     #mapped.right.names(annobjs$GO2PROBE)
     #right.names(annobjs$GO2ALLPROBES)
     #mapped.right.names(annobjs$GO2ALLPROBES)
-
-    ## The MAPCOUNTS object (named integer vector)
-    annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     names(annobjs) <- paste(prefix, names(annobjs), sep="")
     annobjs
