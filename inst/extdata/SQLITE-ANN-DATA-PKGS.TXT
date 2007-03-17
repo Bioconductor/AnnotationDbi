@@ -1,0 +1,189 @@
+### =========================================================================
+### HGU95AV2DB template
+###   Possible DBschemas for this template: HGU95AV2_DB, YEAST2_DB, AG_DB
+###   Fields:
+###     Package
+###     Version
+###     PkgTemplate
+###     DBfile
+###     DBschema
+###     AnnObjectPrefix
+###     AnnObjectTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+
+Package: hgu95av2db
+Version: 1.13.93
+PkgTemplate: HGU95AV2DB
+DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu95av2.sqlite
+DBschema: HGU95AV2_DB
+AnnObjectPrefix: hgu95av2
+AnnObjectTarget: chip hgu95av2
+organism: Homo sapiens
+species: Human
+manufacturer: Affymetrix
+chipName: Human Genome U95 Set
+manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
+biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
+
+Package: yeast2db
+Version: 1.13.93
+PkgTemplate: HGU95AV2DB
+DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/yeast/yeast2.sqlite
+DBschema: YEAST2_DB
+AnnObjectPrefix: yeast2
+AnnObjectTarget: chip yeast2
+organism: Saccharomyces cerevisiae
+species: Yeast
+manufacturer: Affymetrix
+chipName: Yeast Genome 2.0 Array
+manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast-20
+biocViews: AffymetrixChip, Saccharomyces_cerevisiae, yeast2
+
+Package: ygs98db
+Version: 1.13.93
+PkgTemplate: HGU95AV2DB
+DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/yeast/ygs98.sqlite
+DBschema: YEAST2_DB
+AnnObjectPrefix: ygs98
+AnnObjectTarget: chip ygs98
+organism: Saccharomyces cerevisiae
+species: Yeast
+manufacturer: Affymetrix
+chipName: Yeast Genome S98 Array
+manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast
+biocViews: AffymetrixChip, Saccharomyces_cerevisiae, ygs98
+
+Package: agdb
+Version: 1.13.93
+PkgTemplate: HGU95AV2DB
+DBfile: 
+DBschema: AG_DB
+AnnObjectPrefix: ag
+AnnObjectTarget: chip ag
+organism: Arabidopsis thaliana
+species: Arabidopsis
+manufacturer: Affymetrix
+chipName: Arabidopsis Genome Array
+manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=atgenome1
+biocViews: AffymetrixChip, Arabidopsis_thaliana, ag
+
+Package: ath1121501db
+Version: 1.13.93
+PkgTemplate: HGU95AV2DB
+DBfile: 
+DBschema: AG_DB
+AnnObjectPrefix: ath1121501
+AnnObjectTarget: chip ath1121501
+organism: Arabidopsis thaliana
+species: Arabidopsis
+manufacturer: Affymetrix
+chipName: Arabidopsis ATH1 Genome Array
+manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=arab
+biocViews: AffymetrixChip, Arabidopsis_thaliana, ath1121501
+
+
+### =========================================================================
+### YEASTDB template
+###   Possible DBschemas for this template: YEAST_DB
+###   Fields:
+###     Package
+###     Version
+###     PkgTemplate
+###     DBfile
+###     DBschema
+###     AnnObjectPrefix
+###     AnnObjectTarget
+###     organism
+###     species
+###     biocViews
+
+Package: YEASTdb
+Version: 1.13.93
+PkgTemplate: YEASTDB
+DBfile: /home/nli/proj/ann/nli/annosrc/db/YEAST.sqlite
+DBschema: YEAST_DB
+AnnObjectPrefix: YEAST
+AnnObjectTarget: YEAST
+organism: Saccharomyces cerevisiae
+species: Yeast
+biocViews: Saccharomyces_cerevisiae
+
+
+### =========================================================================
+### LLMAPPINGSDB template
+###   Possible DBschemas for this template: LLMAPPINGS_DB
+###   Fields:
+###     Package
+###     Version
+###     PkgTemplate
+###     DBfile
+###     DBschema
+###     AnnObjectPrefix
+###     AnnObjectTarget
+###     biocViews
+
+Package: humanLLMappingsdb
+Version: 1.13.93
+PkgTemplate: LLMAPPINGSDB
+DBfile:
+DBschema: LLMAPPINGS_DB
+AnnObjectPrefix: humanLLMappings
+AnnObjectTarget: human LocusLink ids
+biocViews: Homo_sapiens, humanLLMappings
+
+Package: mouseLLMappingsdb
+Version: 1.13.93
+PkgTemplate: LLMAPPINGSDB
+DBfile:
+DBschema: LLMAPPINGS_DB
+AnnObjectPrefix: mouseLLMappings
+AnnObjectTarget: mouse LocusLink ids
+biocViews: Mus_musculus, mouseLLMappings
+
+Package: ratLLMappingsdb
+Version: 1.13.93
+PkgTemplate: LLMAPPINGSDB
+DBfile:
+DBschema: LLMAPPINGS_DB
+AnnObjectPrefix: ratLLMappings
+AnnObjectTarget: rat LocusLink ids
+biocViews: Rattus_norvegicus, ratLLMappings
+
+
+### =========================================================================
+### AFFYHUEXDB template
+###   Possible DBschemas for this template: AFFYHUEX_DB
+###   Fields:
+###     Package
+###     Version
+###     PkgTemplate
+###     DBfile
+###     DBschema
+###     AnnObjectPrefix
+###     AnnObjectTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+
+Package: huex10stv2db
+Version: 1.13.93
+PkgTemplate: AFFYHUEXDB
+DBfile: 
+DBschema: AFFYHUEX_DB
+AnnObjectPrefix: huex10stv2
+AnnObjectTarget: exon array HuEx-1_0-st-v2
+organism: Homo sapiens
+species: Human
+manufacturer: Affymetrix
+chipName: HuEx-1_0-st-v2
+manufacturerUrl: NA
+biocViews: AffymetrixChip, Homo_sapiens, huex10stv2
+

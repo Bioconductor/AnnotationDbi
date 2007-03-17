@@ -132,7 +132,7 @@ createAnnObjects.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
     annobjs$GO2ALLPROBES <- new("ReverseGOAnnMap", annobjs$GO, objName="GO2ALLPROBES", all=TRUE)
 
     ## 2 special maps that are not AnnMap objects (just named integer vectors)
-    annobjs$CHRLENGTHS <- createCHRLENGTHS(conn, prefix)
+    annobjs$CHRLENGTHS <- createCHRLENGTHS(conn)
     annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching

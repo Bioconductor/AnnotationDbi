@@ -720,11 +720,11 @@ setMethod("toList", "ReverseGOAnnMap",
 ### 2 special maps that are not AnnMap objects (just named integer vectors).
 ###
 
-createCHRLENGTHS <- function(conn, prefix)
+createCHRLENGTHS <- function(conn)
 {
     data <- getTable(conn, "chrlengths")
     CHRLENGTHS <- data[["length"]]
-    names(CHRLENGTHS) <- paste(prefix, data[["chr"]], sep="")
+    names(CHRLENGTHS) <- data[["chr"]]
     CHRLENGTHS
 }
 
