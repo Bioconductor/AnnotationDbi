@@ -2,7 +2,7 @@
 ### Classes representing SQLite-based annotation data.
 ###
 
-setClass("AnnObject",
+setClass("AnnObj",
     representation(
         "VIRTUAL",
         leftTable="character",
@@ -15,7 +15,7 @@ setClass("AnnObject",
 )
 
 setClass("AnnTable",
-    contains="AnnObject",
+    contains="AnnObj",
     representation(
         from="character",
         showCols="character"    # cols to show in addition to the left col
@@ -60,7 +60,7 @@ setClass("RawAnnMap",
 ###                   don't set replace.multiple (default is character(0)),
 ###   - for any other map: don't set those fields (defaults will be just fine).
 setClass("AtomicAnnMap",
-    contains=c("AnnMap", "AnnObject"),
+    contains=c("AnnMap", "AnnObj"),
     representation(
         join="character",
         rightTable="character",
@@ -82,7 +82,7 @@ setClass("ReverseAtomicAnnMap", contains=c("ReverseAnnMap", "AtomicAnnMap"))
 ### each GO node being represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
 setClass("GOAnnMap",
-    contains=c("AnnMap", "AnnObject"),
+    contains=c("AnnMap", "AnnObj"),
     representation(
         join="character",
         all="logical"
