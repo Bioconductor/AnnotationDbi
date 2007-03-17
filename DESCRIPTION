@@ -19,7 +19,7 @@ Collate: AllClasses.R AllGenerics.R
          schema.AFFYHUEX_DB.R
          AnnDataPkg-utils.R
          compareAnnDataIn2Pkgs.R
-         makeDataPackage.R
+         AnnDbPkgMaker.R
          zzz.R
 License: The Artistic License, Version 2.0
 

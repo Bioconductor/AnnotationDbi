@@ -94,19 +94,3 @@ setClass("GOAnnMap",
 ### DON'T ADD ANY SLOT HERE! (Why? See "ReverseAtomicAnnMap" def above.)
 setClass("ReverseGOAnnMap", contains=c("ReverseAnnMap", "GOAnnMap"))
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-setClass(
-    "AnnDataPkgSeed",
-    representation(
-        pkg.template="character",    # e.g. "HGU95AV2DB"
-        dbSchema="character",        # e.g. "HGU95AV2_DB"
-        objNamePrefix="character",   # e.g. "hgu95av2"
-        objTarget="character",       # e.g. "chip hgu95av2"
-        organism="character",
-        species="character",
-        manufacturer="character",
-        chipName="character",
-        manufacturerUrl="character"
-    )
-)
-
