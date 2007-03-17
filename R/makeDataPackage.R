@@ -14,13 +14,13 @@ setMethod(Biobase::makeDataPackage,
             stop("invalid email address")
         extdataDir <- file.path(filePath, packageName, "inst", "extdata")
         dbFileName <- paste(object@objNamePrefix, ".sqlite", sep="")
-        ## Kept this even if RSQLiteVersion is not used anymore
-        if (missing(RSQLiteVersion)) {
-            cran.pkgs <- available.packages(contrib.url("http://cran.fhcrc.org"))
-            if (nrow(cran.pkgs) == 0)
-                stop("unable to retrieve version of last available RSQLite package from CRAN, please provide a 'RSQLiteVersion' arg")
-            RSQLiteVersion <- cran.pkgs['RSQLite', 'Version']
-        }
+        ## RSQLiteVersion is not used anymore
+        #if (missing(RSQLiteVersion)) {
+        #    cran.pkgs <- available.packages(contrib.url("http://cran.fhcrc.org"))
+        #    if (nrow(cran.pkgs) == 0)
+        #        stop("unable to retrieve version of last available RSQLite package from CRAN, please provide a 'RSQLiteVersion' arg")
+        #    RSQLiteVersion <- cran.pkgs['RSQLite', 'Version']
+        #}
         AnnDbiVersion <- installed.packages()['AnnotationDbi','Version']
         syms <- list(DBSCHEMA=object@dbSchema,
                      OBJPREFIX=object@objNamePrefix,
