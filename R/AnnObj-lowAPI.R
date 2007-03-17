@@ -292,12 +292,11 @@ setMethod("db", "AnnObj", function(object) object@conn)
 ### The "toTable" new generic.
 ###
 ### Note that because we use the same JOIN for a map and its corresponding
-### "reverse" map (this is made possible thanks to an INNER JOIN), then the
-### result returned by "toTable" or "nrow" does not depend on the
+### "reverse" map (this is made possible thanks to the use of INNER joins),
+### then the result returned by "toTable" or "nrow" does not depend on the
 ### orientation (direct/reverse) of the map which is a nice property
 ### (e.g. 'nrow(map) == nrow(revmap(map))').
 ###
-### Arguments 'row.names' and 'optional' are ignored.
 ### The 'left.names' and 'right.names' args can be one of the following:
 ###   - NULL: the arg is ignored.
 ###   - A NA-free character vector: only the rows with a "left name" (1st
@@ -717,44 +716,6 @@ setMethod("toList", "ReverseGOAnnMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### 2 special maps that are not AnnMap objects (just named integer vectors).
-###
-
-createCHRLENGTHS <- function(conn)
-{
-    data <- getTable(conn, "chrlengths")
-    CHRLENGTHS <- data[["length"]]
-    names(CHRLENGTHS) <- data[["chr"]]
-    CHRLENGTHS
-}
-
-createMAPCOUNTS <- function(conn, prefix)
-{
-    data <- getTable(conn, "qcdata", "map_name != 'TOTAL'")
-    MAPCOUNTS <- data[["count"]]
-    names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
-    MAPCOUNTS
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-createAnnObjs <- function(class, seeds, seed0)
-{
-    maps <- list()
-    for (seed in seeds) {
-        seed$Class <- class
-        for (slot in names(seed0)) {
-            if (is.null(seed[slot][[1]]))
-                seed[[slot]] <- seed0[[slot]]
-        }
-        maps[[seed$objName]] <- do.call("new", seed)
-    }
-    maps
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "mapped names" family of generics:
 ###   - mapped.left.names, count.mapped.left.names
 ###   - mapped.right.names, count.mapped.right.names
@@ -773,9 +734,6 @@ createAnnObjs <- function(class, seeds, seed0)
 ### Note that all "right names" should be mapped to a "left name" hence
 ### mapped.right.names(x) should be the same as right.names(x) (something
 ### worth checking in a test unit).
-
-
-
 
 ### Ignore x@replace.single and x@replace.multiple, hence will give
 ### wrong results for maps that have one of those 2 fields with non-default

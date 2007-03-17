@@ -2,7 +2,7 @@
 ### AnnDbPkg checking functions
 ### ---------------------------
 ###
-### Some function to check SQLite-based ann packages.
+### Some functions for checking SQLite-based ann packages.
 ###
 ### -------------------------------------------------------------------------
 

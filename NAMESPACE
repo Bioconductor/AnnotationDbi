@@ -50,7 +50,7 @@ exportClasses(
 )
 
 export(
-    ## from R/AnnDbPkg-utils.R
+    ## from R/AnnDbPkg-template-common.R
     dbFileConnect,
     dbFileDisconnect,
     addToNamespaceAndExport,
