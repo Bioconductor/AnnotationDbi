@@ -10,8 +10,8 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     addToNamespaceAndExport("db_file", db_file, pkgname)
     db_conn <- dbFileConnect(db_file)
     addToNamespaceAndExport("db_conn", db_conn, pkgname)
-    ## Create the AnnObjects instances
-    annobjs <- createAnnObjects.@DBSCHEMA@("@OBJPREFIX@", "@OBJTARGET@", db_conn, datacache)
+    ## Create the AnnObj instances
+    annobjs <- createAnnObjs.@DBSCHEMA@("@OBJPREFIX@", "@OBJTARGET@", db_conn, datacache)
     for (objname in names(annobjs))
         addToNamespaceAndExport(objname, annobjs[[objname]], pkgname=pkgname)
 }

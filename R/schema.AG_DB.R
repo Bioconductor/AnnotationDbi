@@ -72,7 +72,7 @@ AG_DB_AtomicAnnMap_seeds <- list(
         )
 )
 
-createAnnObjects.AG_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.AG_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
@@ -84,7 +84,7 @@ createAnnObjects.AG_DB <- function(prefix, objTarget, conn, datacache)
         join=AG_DB_default_join,
         rightColType=AG_DB_default_rightColType
     )
-    annobjs <- createAnnObjects("AtomicAnnMap", AG_DB_AtomicAnnMap_seeds, seed0)
+    annobjs <- createAnnObjs("AtomicAnnMap", AG_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
     annobjs$ENZYME2PROBE <- revmap(annobjs$ENZYME, objName="ENZYME2PROBE")

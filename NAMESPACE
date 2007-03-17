@@ -37,10 +37,12 @@ exportMethods(
     "is.na"
 )
 
-### envir-based API:
 exportClasses(
+    "AnnObj",
+    "AnnTable",
     "AnnMap",
     "ReverseAnnMap",
+    "RawAnnMap",
     "AtomicAnnMap",
     "ReverseAtomicAnnMap",
     "GOAnnMap",
@@ -48,15 +50,16 @@ exportClasses(
 )
 
 export(
-    checkAnnObjects,
-    createAnnObjects.HGU95AV2_DB,
-    createAnnObjects.YEAST2_DB,
-    createAnnObjects.AG_DB,
-    createAnnObjects.LLMAPPINGS_DB,
-    createAnnObjects.YEAST_DB,
-    createAnnObjects.AFFYHUEX_DB,
+    checkAnnObjs,
+    createAnnObjs.HGU95AV2_DB,
+    createAnnObjs.YEAST2_DB,
+    createAnnObjs.AG_DB,
+    createAnnObjs.LLMAPPINGS_DB,
+    createAnnObjs.YEAST_DB,
+    createAnnObjs.AFFYHUEX_DB,
     dbFileConnect,
     dbFileDisconnect,
-    addToNamespaceAndExport
+    addToNamespaceAndExport,
+    makeAnnDbPkg
 )
 

@@ -73,7 +73,7 @@ YEAST_DB_AtomicAnnMap_seeds <- list(
         )
 )
 
-createAnnObjects.YEAST_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
@@ -85,7 +85,7 @@ createAnnObjects.YEAST_DB <- function(prefix, objTarget, conn, datacache)
         join=YEAST_DB_default_join,
         rightColType=YEAST_DB_default_rightColType
     )
-    annobjs <- createAnnObjects("AtomicAnnMap", YEAST_DB_AtomicAnnMap_seeds, seed0)
+    annobjs <- createAnnObjs("AtomicAnnMap", YEAST_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
     annobjs$COMMON2SYSTEMATIC <- revmap(annobjs$GENENAME, objName="COMMON2SYSTEMATIC")

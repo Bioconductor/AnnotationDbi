@@ -10,7 +10,8 @@ Imports: Biobase
 Suggests: GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R AllGenerics.R
          db.R factories.R
-         AnnObject-lowAPI.R AnnMap-envirAPI.R
+         AnnObj-lowAPI.R
+         AnnMap-envirAPI.R
          schema.HGU95AV2_DB.R
          schema.YEAST2_DB.R
          schema.AG_DB.R

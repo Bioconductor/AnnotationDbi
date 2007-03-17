@@ -65,7 +65,7 @@ YEAST2_DB_AtomicAnnMap_seeds <- list(
         )
 )
 
-createAnnObjects.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
@@ -77,7 +77,7 @@ createAnnObjects.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
         leftCol=YEAST2_DB_default_leftCol,
         join=YEAST2_DB_default_join
     )
-    annobjs <- createAnnObjects("AtomicAnnMap", YEAST2_DB_AtomicAnnMap_seeds, seed0)
+    annobjs <- createAnnObjs("AtomicAnnMap", YEAST2_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
     annobjs$ENZYME2PROBE <- revmap(annobjs$ENZYME, objName="ENZYME2PROBE")

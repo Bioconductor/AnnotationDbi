@@ -97,7 +97,7 @@ HGU95AV2_DB_AtomicAnnMap_seeds <- list(
         )
 )
 
-createAnnObjects.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AtomicAnnMap objects
     seed0 <- list(
@@ -109,7 +109,7 @@ createAnnObjects.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
         join=HGU95AV2_DB_default_join,
         rightColType=HGU95AV2_DB_default_rightColType
     )
-    annobjs <- createAnnObjects("AtomicAnnMap", HGU95AV2_DB_AtomicAnnMap_seeds, seed0)
+    annobjs <- createAnnObjs("AtomicAnnMap", HGU95AV2_DB_AtomicAnnMap_seeds, seed0)
 
     ## ReverseAtomicAnnMap objects
     annobjs$ENZYME2PROBE <- revmap(annobjs$ENZYME, objName="ENZYME2PROBE")

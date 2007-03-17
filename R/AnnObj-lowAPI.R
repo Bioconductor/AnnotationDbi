@@ -1,12 +1,12 @@
 ### =========================================================================
-### "AnnObject" objects
-### -------------------
+### "AnnObj" objects
+### ----------------
 ###
-### "AnnObject" objects are containers for SQLite-based annotation data.
+### "AnnObj" objects are containers for SQLite-based annotation data.
 ###
 ### This file defines:
 ###
-###   a) A low-level API for the "AnnObject" objects:
+###   a) A low-level API for the "AnnObj" objects:
 ###        reverse
 ###        db
 ###        toTable, as.data.frame, nrow
@@ -285,7 +285,7 @@ setMethod("revmap", "ReverseGOAnnMap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "db" new generic.
 
-setMethod("db", "AnnObject", function(object) object@conn)
+setMethod("db", "AnnObj", function(object) object@conn)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -359,7 +359,7 @@ setMethod("toTable", "GOAnnMap",
 )
 
 ### "as.data.frame" is equivalent to "toTable". Might be deprecated soon.
-setMethod("as.data.frame", "AnnObject",
+setMethod("as.data.frame", "AnnObj",
     function(x, row.names=NULL, optional=FALSE,
              left.names=NULL, right.names=NULL, ...)
     {
@@ -422,7 +422,7 @@ setMethod("nrow", "GOAnnMap",
 ### The "left.names", "right.names" and "names" generics.
 ###
 
-setMethod("left.names", "AnnObject",
+setMethod("left.names", "AnnObj",
     function(x)
     {
         dbUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
@@ -450,7 +450,7 @@ setMethod("right.names", "GOAnnMap",
     }
 )
 
-setMethod("names", "AnnObject", function(x) left.names(x))
+setMethod("names", "AnnObj", function(x) left.names(x))
 setMethod("names", "ReverseAnnMap", function(x) right.names(x))
 
 
@@ -462,7 +462,7 @@ setMethod("names", "ReverseAnnMap", function(x) right.names(x))
 ###     right.length(x) :== length(right.names(x))
 
 ### Will catch "AtomicAnnMap" and "GOAnnMap" objects.
-setMethod("left.length", "AnnObject",
+setMethod("left.length", "AnnObj",
     function(x)
     {
         dbCountUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
@@ -489,7 +489,7 @@ setMethod("right.length", "GOAnnMap",
     }
 )
 
-setMethod("length", "AnnObject", function(x) left.length(x))
+setMethod("length", "AnnObj", function(x) left.length(x))
 setMethod("length", "ReverseAnnMap", function(x) right.length(x))
 
 
@@ -739,7 +739,7 @@ createMAPCOUNTS <- function(conn, prefix)
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-createAnnObjects <- function(class, seeds, seed0)
+createAnnObjs <- function(class, seeds, seed0)
 {
     maps <- list()
     for (seed in seeds) {
@@ -897,7 +897,7 @@ setMethod("is.na", "AnnMap",
 ### For testing only (not exported).
 ###
 
-checkAnnObjects <- function(pkgname, prefix)
+checkAnnObjs <- function(pkgname, prefix)
 {
     require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
     getMap <- function(mapname)

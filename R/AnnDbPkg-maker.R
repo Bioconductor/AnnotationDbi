@@ -1,6 +1,6 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 setClass(
-    "AnnDataPkgSeed",
+    "AnnDbPkgSeed",
     representation(
         pkg.template="character",    # e.g. "HGU95AV2DB"
         dbSchema="character",        # e.g. "HGU95AV2_DB"
@@ -15,10 +15,10 @@ setClass(
 )
 
 ###
-### The makeDataPackage method for AnnDataPkgSeed objects
+### The makeDataPackage method for AnnDbPkgSeed objects
 ###
 setMethod(Biobase::makeDataPackage,
-    signature(object="AnnDataPkgSeed"),
+    signature(object="AnnDbPkgSeed"),
     function(object, author, email, packageName, packageVersion,
              license, biocViews, filePath,
              srcSQLiteFilePath, unlink=FALSE, quiet=FALSE)
@@ -53,7 +53,7 @@ setMethod(Biobase::makeDataPackage,
                      BIOCVIEWS=biocViews,
                      DBFILE=dbFileName,
                      ANNDBIVERSION=AnnDbiVersion)
-        template.path <- system.file("AnnDataPkg.templates",
+        template.path <- system.file("AnnDbPkg-templates",
                                      object@pkg.template,
                                      package="AnnotationDbi")
         createPackage(pkgname=packageName, destinationDir=filePath,
@@ -90,13 +90,13 @@ removeCommentsInFile <- function(infile, outfile)
 ### 'pkgname' can be a regular expression.
 ### Typical use:
 ###   > library(AnnotationDbi)
-###   > AnnotationDbi:::makeSQLiteAnnDataPkg("hgu95av2db")
+###   > makeAnnDbPkg("hgu95av2db")
 ### or to make all the packages:
-###   > AnnotationDbi:::makeSQLiteAnnDataPkg(".*")
+###   > makeAnnDbPkg(".*")
 ###
-makeSQLiteAnnDataPkg <- function(pkgname, dest_dir=".")
+makeAnnDbPkg <- function(pkgname, dest_dir=".")
 {
-    master_file <- "SQLITE-ANN-DATA-PKGS.TXT"
+    master_file <- "ANNDBPKG-INDEX.TXT"
     master_filepath <- system.file("extdata", master_file,
                                    package="AnnotationDbi")
     tmp_file <- paste(master_file, "tmp", sep=".")
@@ -109,11 +109,11 @@ makeSQLiteAnnDataPkg <- function(pkgname, dest_dir=".")
         pkgname <- pkginfo["Package"]
         version <- pkginfo["Version"]
         db_file <- pkginfo["DBfile"]
-        pkgseed <- new("AnnDataPkgSeed",
+        pkgseed <- new("AnnDbPkgSeed",
             pkg.template=pkginfo["PkgTemplate"],
             dbSchema=pkginfo["DBschema"],
-            objNamePrefix=pkginfo["AnnObjectPrefix"],
-            objTarget=pkginfo["AnnObjectTarget"],
+            objNamePrefix=pkginfo["AnnObjPrefix"],
+            objTarget=pkginfo["AnnObjTarget"],
             organism=pkginfo["organism"],
             species=pkginfo["species"],
             manufacturer=pkginfo["manufacturer"],
