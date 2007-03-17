@@ -5,7 +5,7 @@ setMethod(Biobase::makeDataPackage,
     signature(object="AnnDataPkgSeed"),
     function(object, author, email, packageName, packageVersion,
              license, biocViews, filePath,
-             srcSQLiteFilePath, RSQLiteVersion, unlink=FALSE, quiet=FALSE)
+             srcSQLiteFilePath, unlink=FALSE, quiet=FALSE)
     {
         if (!file.exists(srcSQLiteFilePath))
             stop("'", srcSQLiteFilePath, "': No such file or directory")
@@ -14,6 +14,7 @@ setMethod(Biobase::makeDataPackage,
             stop("invalid email address")
         extdataDir <- file.path(filePath, packageName, "inst", "extdata")
         dbFileName <- paste(object@objNamePrefix, ".sqlite", sep="")
+        ## Kept this even if RSQLiteVersion is not used anymore
         if (missing(RSQLiteVersion)) {
             cran.pkgs <- available.packages(contrib.url("http://cran.fhcrc.org"))
             if (nrow(cran.pkgs) == 0)
@@ -35,7 +36,6 @@ setMethod(Biobase::makeDataPackage,
                      LIC=license,
                      BIOCVIEWS=biocViews,
                      DBFILE=dbFileName,
-                     RSQLITEVERSION=RSQLiteVersion,
                      ANNDBIVERSION=AnnDbiVersion)
         template.path <- system.file("AnnDataPkg.templates",
                                      object@pkg.template,
@@ -51,12 +51,68 @@ setMethod(Biobase::makeDataPackage,
 )
 
 
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+removeCommentsInFile <- function(infile, outfile)
+{
+    if (file.exists(outfile))
+        stop("file '", outfile, "' already exists")
+    outfile <- file(outfile, "w")
+    #on.exit(close(outfile)) # doesn't seem to work
+    infile <- file(infile, "r")
+    #on.exit(close(infile))
+    while (TRUE) {
+        text <- readLines(infile, n=1)
+        if (length(text) == 0)
+            break
+        if (substr(text, 1, 1) != "#")
+            writeLines(text, outfile)
+    }
+    close(infile)
+    close(outfile)
+}
+
+### pkgname can be a regular expression
+makeSQLiteAnnDataPkg <- function(pkgname, dest_dir=".")
+{
+    master_file <- "SQLITE-ANN-DATA-PKGS.TXT"
+    master_filepath <- system.file("scripts", master_file,
+                                   package="AnnotationDbi")
+    tmp_file <- paste(master_file, "tmp", sep=".")
+    removeCommentsInFile(master_filepath, tmp_file)
+    master <- read.dcf(tmp_file)
+    file.remove(tmp_file)
+    master <- master[grep(pkgname, master[ ,"Package"]), , drop=FALSE]
+    for (i in seq_len(nrow(master))) {
+        master <- master[i, ]
+        pkgname <- master["Package"]
+        version <- master["Version"]
+        db_file <- master["DBfile"]
+        pkgseed <- new("AnnDataPkgSeed",
+            pkg.template=master["PkgTemplate"],
+            dbSchema=master["DBschema"],
+            objNamePrefix=master["AnnObjectPrefix"],
+            objTarget=master["AnnObjectTarget"],
+            organism=master["organism"],
+            species=master["species"],
+            manufacturer=master["manufacturer"],
+            chipName=master["chipName"],
+            manufacturerUrl=master["manufacturerUrl"]
+        )
+        author <- "Nianhua Li, Seth Falcon"
+        email <- "biocannotation@lists.fhcrc.org"
+        license <- "LGPL"
+        biocViews <- paste("AnnotationData", master["biocViews"], sep=", ")
+        makeDataPackage(pkgseed, author, email, pkgname, version,
+            license, biocViews, dest_dir, db_file)
+    }
+}
+
+
 ### =========================================================================
 ### Make and test SQLite-based annotation packages
 ### -------------------------------------------------------------------------
 ### Just for testing (not exported). See at the bottom of this file for
 ### typical use of the make_*db functions.
-
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### HGU95AV2_DB schema
