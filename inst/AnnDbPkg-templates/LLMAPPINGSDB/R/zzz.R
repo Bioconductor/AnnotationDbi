@@ -10,8 +10,7 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     addToNamespaceAndExport("db_conn", db_conn, pkgname)
     ## Create the AnnObjs instances
     annobjs <- createAnnObjs.@DBSCHEMA@("@ANNOBJPREFIX@", "@ANNOBJTARGET@", db_conn, datacache)
-    for (objname in names(annobjs))
-        addToNamespaceAndExport(objname, annobjs[[objname]], pkgname=pkgname)
+    mergeToNamespaceAndExport(annobjs, pkgname)
 }
 
 .onUnload <- function(libpath)

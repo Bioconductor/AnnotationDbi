@@ -54,6 +54,7 @@ export(
     dbFileConnect,
     dbFileDisconnect,
     addToNamespaceAndExport,
+    mergeToNamespaceAndExport,
 
     ## from the R/schema.*_DB.R files
     createAnnObjs.HGU95AV2_DB,

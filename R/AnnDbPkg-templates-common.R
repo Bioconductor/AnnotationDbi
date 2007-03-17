@@ -16,10 +16,18 @@ dbFileDisconnect <- function(db_conn)
 
 ### Used at load time (in .onLoad) by the SQLite-based ann data package to
 ### dynamically add exported symbols to its namespace environment.
+
 addToNamespaceAndExport <- function(x, value, pkgname)
 {
     ns <- asNamespace(pkgname)
     assign(x, value, envir=ns)
     namespaceExport(ns, x)
+}
+
+mergeToNamespaceAndExport <- function(envir, pkgname)
+{
+    keys <- ls(envir, all.names=TRUE)
+    for (key in keys)
+        addToNamespaceAndExport(key, envir[[key]], pkgname)
 }
 

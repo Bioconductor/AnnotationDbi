@@ -144,8 +144,7 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
     #right.names(annobjs$GO2ALLPROBES)
     #mapped.right.names(annobjs$GO2ALLPROBES)
 
-    names(annobjs) <- paste(prefix, names(annobjs), sep="")
-    annobjs
+    prefixAnnObjNames(annobjs, prefix)
 }
 
 compareAnnDataIn2Pkgs.HGU95AV2_DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)

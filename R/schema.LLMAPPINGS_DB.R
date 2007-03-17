@@ -33,8 +33,7 @@ createAnnObjs.LLMAPPINGS_DB <- function(prefix, objTarget, conn, datacache)
     ## The MAPCOUNTS object (named integer vector)
     #annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
-    names(annobjs) <- paste(prefix, names(annobjs), sep="")
-    annobjs
+    prefixAnnObjNames(annobjs, prefix)
 }
 
 compareAnnDataIn2Pkgs.LLMAPPINGS_DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)

@@ -70,13 +70,12 @@ createAnnObjs.AFFYHUEX_DB <- function(prefix, objTarget, conn, datacache)
         conn=conn,
         datacache=datacache
     )
-    annobjs <- c(annobjs, createAnnObjs("RawAnnMap", AFFYHUEX_DB_RawAnnMap_seeds, seed0))
+    createAnnObjs("RawAnnMap", AFFYHUEX_DB_RawAnnMap_seeds, seed0, annobjs)
 
     ## Some pre-caching
     left.names(annobjs$TRANSCRIPT)
     left.names(annobjs$PROBESET)
 
-    names(annobjs) <- paste(prefix, names(annobjs), sep="")
-    annobjs
+    prefixAnnObjNames(annobjs, prefix)
 }
 

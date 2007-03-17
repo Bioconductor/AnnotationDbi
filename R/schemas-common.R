@@ -2,18 +2,21 @@
 ###
 ###
 
-createAnnObjs <- function(class, seeds, seed0)
+### If 'envir' is not NULL then the created objects are assigned to it.
+### TODO: The function should check for name clashes
+createAnnObjs <- function(class, seeds, seed0, envir=NULL)
 {
-    maps <- list()
+    if (is.null(envir))
+        envir <- new.env(hash=TRUE, parent=emptyenv())
     for (seed in seeds) {
         seed$Class <- class
         for (slot in names(seed0)) {
             if (is.null(seed[slot][[1]]))
                 seed[[slot]] <- seed0[[slot]]
         }
-        maps[[seed$objName]] <- do.call("new", seed)
+        envir[[seed$objName]] <- do.call("new", seed)
     }
-    maps
+    envir
 }
 
 ### 2 special maps that are not AnnMap objects (just named integer vectors).
@@ -32,5 +35,21 @@ createMAPCOUNTS <- function(conn, prefix)
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
     MAPCOUNTS
+}
+
+### Rename all objects in the 'envir' environment by prefixing them
+### with 'prefix'. The function is dumb i.e. it doesn't check for (neither
+### doesn't try to avoid) possible name clashes. Note that those issues
+### could be easily avoided by assigning the renamed objects to a separate
+### environment but it's what "prefixAnnObjNames" does...
+prefixAnnObjNames <- function(envir, prefix)
+{
+    keys <- ls(envir, all.names=TRUE)
+    for (key in keys) {
+        new_key <- paste(prefix, key, sep="")
+        envir[[new_key]] <- envir[[key]]
+    }
+    remove(list=keys, envir=envir) # remove old keys
+    envir
 }
 
