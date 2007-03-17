@@ -892,32 +892,3 @@ setMethod("is.na", "AnnMap",
     }
 )
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### For testing only (not exported).
-###
-
-checkAnnObjs <- function(pkgname, prefix)
-{
-    require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
-    getMap <- function(mapname)
-    {
-        get(mapname, envir=asNamespace(pkgname))
-    }
-    MAPCOUNTS <- getMap(paste(prefix, "MAPCOUNTS", sep=""))
-    for (mapname in names(MAPCOUNTS)) {
-        cat("Checking ", mapname, " map:\n", sep="")
-        map <- getMap(mapname)
-        nnames <- length(map)
-        cat("  - nnames = ", nnames, "\n", sep="")
-        count0 <- MAPCOUNTS[mapname]
-        cat("  - count0 = ", count0, "\n", sep="")
-        t1 <- system.time(count1 <- count.mapped.names(map))
-        cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
-        t2 <- system.time(count2 <- sum(sapply(toList(map), function(x) length(x)!=1 || !is.na(x))))
-        cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
-        if (count1 != count0 || count2 != count0)
-            stop("count0, count1 and count2 not the same")
-    }
-}
-

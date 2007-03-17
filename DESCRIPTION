@@ -19,8 +19,8 @@ Collate: AllClasses.R AllGenerics.R
          schema.YEAST_DB.R
          schema.AFFYHUEX_DB.R
          AnnDbPkg-utils.R
-         compareAnnDataIn2Pkgs.R
          AnnDbPkg-maker.R
+         AnnDbPkg-checker.R
          zzz.R
 License: The Artistic License, Version 2.0
 

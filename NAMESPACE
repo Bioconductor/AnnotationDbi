@@ -50,16 +50,23 @@ exportClasses(
 )
 
 export(
-    checkAnnObjs,
+    ## from R/AnnDbPkg-utils.R
+    dbFileConnect,
+    dbFileDisconnect,
+    addToNamespaceAndExport,
+
+    ## from the R/schema.*_DB.R files
     createAnnObjs.HGU95AV2_DB,
     createAnnObjs.YEAST2_DB,
     createAnnObjs.AG_DB,
     createAnnObjs.LLMAPPINGS_DB,
     createAnnObjs.YEAST_DB,
     createAnnObjs.AFFYHUEX_DB,
-    dbFileConnect,
-    dbFileDisconnect,
-    addToNamespaceAndExport,
-    makeAnnDbPkg
+
+    ## from R/AnnDbPkg-maker.R
+    makeAnnDbPkg,
+
+    ## from R/AnnDbPkg-checker.R
+    checkMAPCOUNTS
 )
 
