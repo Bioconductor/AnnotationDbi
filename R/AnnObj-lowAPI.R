@@ -1,37 +1,45 @@
 ### =========================================================================
-### "AnnObj" objects
-### ----------------
+### Low-level API for AnnObj objects
+### --------------------------------
 ###
-### "AnnObj" objects are containers for SQLite-based annotation data.
+### The "AnnObj" class is a general purpose container for SQLite-based
+### annotation data (refer to AllClasses.R for the definition of the "AnnObj"
+### class and its derived classes).
 ###
-### This file defines:
+### This file defines and implements the low-level API for AnnObj objects.
+### It is divided in 2 sections:
 ###
-###   a) A low-level API for the "AnnObj" objects:
-###        reverse
-###        db
-###        toTable, as.data.frame, nrow
-###        left.names, right.names, names
-###        left.length, right.length, length
-###        show,
-###        as.character, toList,
-###        mapped.left.names, count.mapped.left.names
-###        mapped.right.names, count.mapped.right.names
-###        mapped.names, count.mapped.names
-###        is.na
+###   A. Helper functions used by the low-level API.
 ###
+###   B. The low-level API for AnnObj objects.
+###      This API consists of the following set of methods for AnnObj objects:
+###          reverse
+###          db
+###          toTable, as.data.frame, nrow
+###          left.names, right.names, names
+###          left.length, right.length, length
+###          show,
+###          as.character, toList,
+###          mapped.left.names, count.mapped.left.names
+###          mapped.right.names, count.mapped.right.names
+###          mapped.names, count.mapped.names
+###          is.na
 ###      NB: "names", "length", "mapped.names" and "count.mapped.names" are
-###      "oriented" methods, i.e. they give a different result on a map and
-###      its "reverse" map (it depend on the orientation of the map).
+###      "oriented" methods i.e. they give a different result on a map and its
+###      "reverse" map (this result depends on the orientation of the map).
 ###      For each of these methods, there are 2 "unoriented" methods: a left
 ###      method and a right method.
-###
-###   b) Some helper functions used by this low-level API.
 ###
 ### The environment-like API for AnnMap objects (ls, mget, etc...) is defined
 ### in the AnnMap-envirAPI.R file.
 ###
 ### -------------------------------------------------------------------------
 
+
+
+### =========================================================================
+### A. Helper functions used by the low-level API.
+### -------------------------------------------------------------------------
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SQL helper functions.
@@ -65,7 +73,7 @@ toSQLWhere <- function(col, names)
     paste(col, " IN (", toSQLStringSet(names), ")", sep="")
 }
 
-dbRawAnnMapToDataFrame <- function(conn, left.table, left.col, left.names,
+dbRawAnnMapToTable <- function(conn, left.table, left.col, left.names,
                                          right.table, right.col, right.names,
                                          show.cols, from, verbose=FALSE)
 {
@@ -91,10 +99,14 @@ dbCountRawAnnMapRows <- function(conn, left.table, left.col,
     .dbGetQuery(conn, sql)[[1]]
 }
 
-### We don't need this anymore. dbRawAnnMapToDataFrame() can always be used instead.
-dbAnnMapToDataFrame <- function(conn, table, join, left.col, left.names,
+### May be we don't need this anymore. Maybe dbRawAnnMapToTable() could
+### always be used instead?
+dbAnnMapToTable <- function(conn, table, join, left.col, left.names,
                                 right.col, right.names, extra.cols, verbose=FALSE)
 {
+    ## Full col name is needed because of ambiguous column name "accession"
+    ## in hgu95av2REFSEQ map.
+    right.col <- paste(table, right.col, sep=".")
     show.cols <- c(left.col, right.col, extra.cols)
     sql <- paste("SELECT", paste(show.cols, collapse=","), "FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
@@ -109,6 +121,9 @@ dbAnnMapToDataFrame <- function(conn, table, join, left.col, left.names,
 
 dbCountAnnMapRows <- function(conn, table, join, left.col, right.col)
 {
+    ## Full col name is needed because of ambiguous column name "accession"
+    ## in hgu95av2REFSEQ map.
+    right.col <- paste(table, right.col, sep=".")
     sql <- paste("SELECT COUNT(*) FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
@@ -142,7 +157,7 @@ dbUniqueVals <- function(conn, table, col, datacache=NULL)
     vals
 }
 
-### Read only caching!
+### Read-only caching!
 dbCountUniqueVals <- function(conn, table, col, datacache=NULL)
 {
     if (!is.null(datacache)) {
@@ -178,7 +193,7 @@ dbUniqueMappedVals <- function(conn, table, join,
     vals
 }
 
-### Read only caching!
+### Read-only caching!
 dbCountUniqueMappedVals <- function(conn, table, join,
                                     from.table, from.col,
                                     to.table, to.col, datacache=NULL)
@@ -236,6 +251,12 @@ GOtables <- function(all=FALSE)
     names(tables) <- c("BP", "CC", "MF")
     tables
 }
+
+
+
+### =========================================================================
+### B. The low-level API for AnnObj objects.
+### -------------------------------------------------------------------------
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -309,7 +330,7 @@ setMethod("db", "AnnObj", function(object) object@conn)
 setMethod("toTable", "AnnTable",
     function(x, left.names=NULL, verbose=FALSE)
     {
-        dbRawAnnMapToDataFrame(db(x), x@leftTable, x@leftCol, left.names,
+        dbRawAnnMapToTable(db(x), x@leftTable, x@leftCol, left.names,
                                       NULL, NULL, NULL,
                                       x@showCols, x@from, verbose)
     }
@@ -318,7 +339,7 @@ setMethod("toTable", "AnnTable",
 setMethod("toTable", "RawAnnMap",
     function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
     {
-        dbRawAnnMapToDataFrame(db(x), x@leftTable, x@leftCol, left.names,
+        dbRawAnnMapToTable(db(x), x@leftTable, x@leftCol, left.names,
                                       x@rightTable, x@rightCol, right.names,
                                       x@showCols, x@from, verbose)
     }
@@ -329,7 +350,7 @@ setMethod("toTable", "AtomicAnnMap",
     {
         if (length(x@tagCol) == 1)
             extra.cols <- c(x@tagCol, extra.cols)
-        dbAnnMapToDataFrame(db(x), x@rightTable, x@join,
+        dbAnnMapToTable(db(x), x@rightTable, x@join,
                                    x@leftCol, left.names,
                                    x@rightCol, right.names,
                                    extra.cols, verbose)
@@ -343,7 +364,7 @@ setMethod("toTable", "GOAnnMap",
         getPartialSubmap <- function(Ontology)
         {
             table <- GOtables(x@all)[Ontology]
-            data <- dbAnnMapToDataFrame(db(x), table, x@join,
+            data <- dbAnnMapToTable(db(x), table, x@join,
                                                x@leftCol, left.names,
                                                "go_id", right.names,
                                                extra.cols, verbose)

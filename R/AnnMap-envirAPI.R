@@ -5,10 +5,9 @@
 ### This file defines an environment-like API for the AnnMap objects (ls,
 ### mget, eapply, get, exists, [[ and $) for backward compatibility with the
 ### classic envir-based annotation maps.
-###
 ### This environment-like API is defined on top of the low-level API for
-### AnnMap objects defined in the AnnMap-objects.R file (refer to this file
-### too for the definition of the "AnnMap" class and subclasses).
+### AnnObj objects (refer to AnnObj-lowAPI.R for the definition of this
+### low-level API).
 ###
 ### Note that the "length" method is not redefined here since it is
 ### considered to belong to the low-level API.
@@ -40,7 +39,7 @@ setMethod("ls", signature(name="AnnMap"),
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
 ### NB: .checkNamesAreStrings() and .checkNamesExist() are defined in
-###     the AnnMap-objects.R file.
+###     the AnnObj-lowAPI.R file.
 
 setMethod("mget", signature(envir="AnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
