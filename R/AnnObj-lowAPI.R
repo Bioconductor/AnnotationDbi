@@ -363,6 +363,13 @@ setMethod("toTable", "AtomicAnnMap",
     }
 )
 
+### This method needs to retrieve and bind data from the 3 GO tables.
+### Binding the results of the 3 SELECTs can be done early in SQLite with
+### a UNION:
+###   dbGetQuery("query1 UNION query2 UNION query3")
+### or later in R with rbind():
+###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
+### Surprisingly the latter is almost twice faster than the former!
 setMethod("toTable", "GOAnnMap",
     function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
     {
