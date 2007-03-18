@@ -175,17 +175,21 @@ dbUniqueMappedVals <- function(conn, table, join,
                                from.table, from.col,
                                to.table, to.col, datacache=NULL)
 {
+    full.from.col <- paste(from.table, from.col, sep=".")
+    full.to.col <- paste(to.table, to.col, sep=".")
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueMappedVals", from.table, from.col, to.table, to.col, sep=".")
+        objname <- paste("dbUniqueMappedVals", full.from.col, full.to.col, sep="-")
         if (exists(objname, envir=datacache, inherits=FALSE)) {
             vals <- get(objname, envir=datacache, inherits=FALSE)
             return(vals)
         }
     }
-    sql <- paste("SELECT DISTINCT", from.col, "FROM", table)
+    sql <- paste("SELECT DISTINCT", full.from.col, "FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
-    sql <- paste(sql, "WHERE", from.col, "IS NOT NULL AND ", to.col, "IS NOT NULL")
+    where1 <- toSQLWhere(full.from.col, NULL)
+    where2 <- toSQLWhere(full.to.col, NULL)
+    sql <- paste(sql, "WHERE", where1, "AND", where2)
     vals <- .dbGetQuery(conn, sql)[[from.col]]
     if (!is.null(datacache)) {
         assign(objname, vals, envir=datacache, inherits=FALSE)
@@ -198,17 +202,19 @@ dbCountUniqueMappedVals <- function(conn, table, join,
                                     from.table, from.col,
                                     to.table, to.col, datacache=NULL)
 {
+    full.from.col <- paste(from.table, from.col, sep=".")
+    full.to.col <- paste(to.table, to.col, sep=".")
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueMappedVals", from.table, from.col, to.table, to.col, sep=".")
+        objname <- paste("dbUniqueMappedVals", full.from.col, full.to.col, sep="-")
         if (exists(objname, envir=datacache, inherits=FALSE)) {
             count <- length(get(objname, envir=datacache, inherits=FALSE))
             return(count)
         }
     }
-    sql <- paste("SELECT COUNT(DISTINCT ", from.col, ") FROM ", table, sep="")
+    sql <- paste("SELECT COUNT(DISTINCT ", full.from.col, ") FROM ", table, sep="")
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
-    sql <- paste(sql, "WHERE", to.col, "IS NOT NULL")
+    sql <- paste(sql, "WHERE", full.to.col, "IS NOT NULL")
     .dbGetQuery(conn, sql)[[1]]
 }
 
