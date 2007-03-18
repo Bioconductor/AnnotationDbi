@@ -157,7 +157,7 @@ checkMAPCOUNTS <- function(pkgname, prefix)
     }
     MAPCOUNTS <- getMap(paste(prefix, "MAPCOUNTS", sep=""))
     for (mapname in names(MAPCOUNTS)) {
-        cat("Checking ", mapname, " map:\n", sep="")
+        cat("Counting mapped names for map ", mapname, ":\n", sep="")
         map <- getMap(mapname)
         map_length <- length(map)
         cat("  - length(map) = ", map_length, "\n", sep="")
