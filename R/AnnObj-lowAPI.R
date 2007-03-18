@@ -106,13 +106,13 @@ dbAnnMapToTable <- function(conn, table, join, left.col, left.names,
 {
     ## Full col name is needed because of ambiguous column name "accession"
     ## in hgu95av2REFSEQ map.
-    right.col <- paste(table, right.col, sep=".")
-    show.cols <- c(left.col, right.col, extra.cols)
+    full.right.col <- paste(table, right.col, sep=".")
+    show.cols <- c(left.col, full.right.col, extra.cols)
     sql <- paste("SELECT", paste(show.cols, collapse=","), "FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
     where1 <- toSQLWhere(left.col, left.names)
-    where2 <- toSQLWhere(right.col, right.names)
+    where2 <- toSQLWhere(full.right.col, right.names)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     if (verbose)
         cat(sql, "\n", sep="")
@@ -123,12 +123,12 @@ dbCountAnnMapRows <- function(conn, table, join, left.col, right.col)
 {
     ## Full col name is needed because of ambiguous column name "accession"
     ## in hgu95av2REFSEQ map.
-    right.col <- paste(table, right.col, sep=".")
+    full.right.col <- paste(table, right.col, sep=".")
     sql <- paste("SELECT COUNT(*) FROM", table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
     where1 <- toSQLWhere(left.col, NULL)
-    where2 <- toSQLWhere(right.col, NULL)
+    where2 <- toSQLWhere(full.right.col, NULL)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     .dbGetQuery(conn, sql)[[1]]
 }
