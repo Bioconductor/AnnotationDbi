@@ -139,10 +139,11 @@ dbCountAnnMapRows <- function(conn, table, join, left.col, right.col)
 
 dbUniqueVals <- function(conn, table, col, datacache=NULL)
 {
+    full.col <- paste(table, col, sep=".")
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueVals", table, col, sep=".")
-        if (exists(objname, envir=datacache, inherits=FALSE)) {
-            vals <- get(objname, envir=datacache, inherits=FALSE)
+        objname <- paste("dbUniqueVals", full.col, sep="-")
+        if (exists(objname, envir=datacache)) {
+            vals <- get(objname, envir=datacache)
             return(vals)
         }
     }
@@ -152,7 +153,7 @@ dbUniqueVals <- function(conn, table, col, datacache=NULL)
     if (!is.character(vals))
         vals <- as.character(vals)
     if (!is.null(datacache)) {
-        assign(objname, vals, envir=datacache, inherits=FALSE)
+        assign(objname, vals, envir=datacache)
     }
     vals
 }
@@ -160,10 +161,11 @@ dbUniqueVals <- function(conn, table, col, datacache=NULL)
 ### Read-only caching!
 dbCountUniqueVals <- function(conn, table, col, datacache=NULL)
 {
+    full.col <- paste(table, col, sep=".")
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueVals", table, col, sep=".")
-        if (exists(objname, envir=datacache, inherits=FALSE)) {
-            count <- length(get(objname, envir=datacache, inherits=FALSE))
+        objname <- paste("dbUniqueVals", full.col, sep="-")
+        if (exists(objname, envir=datacache)) {
+            count <- length(get(objname, envir=datacache))
             return(count)
         }
     }
@@ -179,8 +181,8 @@ dbUniqueMappedVals <- function(conn, table, join,
     full.to.col <- paste(to.table, to.col, sep=".")
     if (!is.null(datacache)) {
         objname <- paste("dbUniqueMappedVals", full.from.col, full.to.col, sep="-")
-        if (exists(objname, envir=datacache, inherits=FALSE)) {
-            vals <- get(objname, envir=datacache, inherits=FALSE)
+        if (exists(objname, envir=datacache)) {
+            vals <- get(objname, envir=datacache)
             return(vals)
         }
     }
@@ -192,7 +194,7 @@ dbUniqueMappedVals <- function(conn, table, join,
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     vals <- .dbGetQuery(conn, sql)[[from.col]]
     if (!is.null(datacache)) {
-        assign(objname, vals, envir=datacache, inherits=FALSE)
+        assign(objname, vals, envir=datacache)
     }
     vals
 }
@@ -206,8 +208,8 @@ dbCountUniqueMappedVals <- function(conn, table, join,
     full.to.col <- paste(to.table, to.col, sep=".")
     if (!is.null(datacache)) {
         objname <- paste("dbUniqueMappedVals", full.from.col, full.to.col, sep="-")
-        if (exists(objname, envir=datacache, inherits=FALSE)) {
-            count <- length(get(objname, envir=datacache, inherits=FALSE))
+        if (exists(objname, envir=datacache)) {
+            count <- length(get(objname, envir=datacache))
             return(count)
         }
     }
