@@ -161,21 +161,29 @@ checkMAPCOUNTS <- function(pkgname, prefix)
         map <- getMap(mapname)
         map_length <- length(map)
         cat("  - length(map) = ", map_length, "\n", sep="")
+        ## count0
         count0 <- MAPCOUNTS[mapname]
         cat("  - MAPCOUNTS[\"", mapname, "\"] = ", count0, "\n", sep="")
+        ## count1
         if (is.numeric(map)) # to deal with the CHRLENGTHS case
             t1 <- system.time(count1 <- sum(!is.na(map)))
         else
             t1 <- system.time(count1 <- count.mapped.names(map))
         cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
         if (count1 != count0)
-            stop("count0 and count1 differ")
+            stop("count1 and count0 differ")
         if (is.numeric(map))
             next
-        t2 <- system.time(count2 <- sum(sapply(toList(map), function(x) length(x)!=1 || !is.na(x))))
+        ## count2
+        t2 <- system.time(count2 <- length(mapped.names(map)))
         cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
-        if (count2 != count1)
-            stop("count1 and count2 differ")
+        if (count2 != count0)
+            stop("count2 and count0 differ")
+        ## count3
+        t3 <- system.time(count3 <- sum(sapply(toList(map), function(x) length(x)!=1 || !is.na(x))))
+        cat("  - count3 = ", count3, " (", t3[3], " s)\n", sep="")
+        if (count3 != count0)
+            stop("count3 and count0 differ")
     }
 }
 
