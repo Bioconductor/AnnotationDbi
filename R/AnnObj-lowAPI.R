@@ -718,11 +718,15 @@ setMethod("toList", "GOAnnMap",
         GOIDs <- split(data[["go_id"]], data[[x@leftCol]])
         Evidences <- split(data[["evidence"]], data[[x@leftCol]])
         Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])
-        mapped_names <- unique(data[[x@leftCol]])
+        ## create membership hashtable
+        mapped_tmp <- unique(data[[x@leftCol]])
+        mapped_names <- as.list(rep(1L, length(mapped_tmp)))
+        names(mapped_names) <- mapped_tmp
+        mapped_names <- l2e(mapped_names)
         lsubmap <- lapply(names,
                          function(y)
                          {
-                             if (!(y %in% mapped_names))
+                             if (!exists(y, mapped_names))
                                  NA
                              else
                                  makeGONodeList(GOIDs[[y]], Evidences[[y]], Ontologies[[y]])
