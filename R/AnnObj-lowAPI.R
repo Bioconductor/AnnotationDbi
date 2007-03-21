@@ -706,31 +706,22 @@ setMethod("toList", "GOAnnMap",
             return(list())
         if (is.null(names))
             names <- names(x)
-        makeGONodeList <- function(GOIDs, Evidences, Ontologies)
-        {
-            ans <- lapply(1:length(GOIDs), function(y)
-                          list(GOID=GOIDs[y],
-                               Evidence=Evidences[y],
-                               Ontology=Ontologies[y]))
-            names(ans) <- GOIDs
-            ans
+        makeGONodeList <- function(GOIDs, Evidences, Ontologies) {
+            mapply(function(gid, evi, ont)
+                   list(GOID=gid, Evidence=evi, Ontology=ont),
+                   GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
         }
         GOIDs <- split(data[["go_id"]], data[[x@leftCol]])[names]
         Evidences <- split(data[["evidence"]], data[[x@leftCol]])[names]
         Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])[names]
-        ## create membership hashtable
-        mapped_tmp <- unique(data[[x@leftCol]])
-        mapped_names <- as.list(rep(1L, length(mapped_tmp)))
-        names(mapped_names) <- mapped_tmp
-        mapped_names <- l2e(mapped_names)
-        lsubmap <- vector(mode="list", length=length(names))
+        mapped_names <- unique(data[[x@leftCol]])
+        lsubmap <- as.list(rep(as.character(NA), length(names)))
         names(lsubmap) <- names
-        for (i in seq(along=names)) {
-            if (!exists(names[i], mapped_names))
-              lsubmap[[i]] <- NA
-            else
-              lsubmap[[i]] <- makeGONodeList(GOIDs[[i]], Evidences[[i]],
-                                             Ontologies[[i]])
+        nonNANames <- match(names, mapped_names, nomatch=0L)
+        for (i in nonNANames) {
+            if (i == 0) next
+            lsubmap[[i]] <- makeGONodeList(GOIDs[[i]], Evidences[[i]],
+                                           Ontologies[[i]])
         }
         lsubmap
     }
