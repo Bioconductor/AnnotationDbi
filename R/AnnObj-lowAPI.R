@@ -226,26 +226,27 @@ dbCountUniqueMappedVals <- function(conn, table, join,
 
 formatAsList <- function(lsubmap, names, replace.single=NULL, replace.multiple=NULL)
 {
-    lsubmap <- l2e(lsubmap)
+    if (length(lsubmap))
+      lsubmap <- l2e(lsubmap)
     doReplaceSingle <- length(replace.single) != 0L
     doReplaceMultiple <- length(replace.multiple) != 0L
     formatVal <- function(key)
     {
         val <- lsubmap[[key]]
         lval <- length(val)
-        if (lval == 1L)
-          if (doReplaceMultiple)
-            return(replace.multiple)
-        else if (lval > 1L)
-          if (doReplaceMultiple)
-            return(replace.multiple)
-        else                            # lval == 0
-          return(NA)
+        if (lval == 1L) {
+            if (doReplaceMultiple)
+              return(replace.multiple)
+        } else if (lval > 1L) {
+            if (doReplaceMultiple)
+              return(replace.multiple)
+        } else {                        # lval == 0
+            val <- NA
+        }
         val
     }
-    ans <- lapply(names, formatVal)
-    names(ans) <- names
-    ans
+    names(names) <- names
+    lapply(names, formatVal)
 }
 
 GOtables <- function(all=FALSE)
@@ -650,18 +651,20 @@ setMethod("toList", "AtomicAnnMap",
         if (!is.null(names) && length(names) == 0)
             return(list())
         data <- toTable(x, left.names=names)
-        if (nrow(data) == 0)
-            return(list())
-        if (length(x@rightColType) == 1 &&
-            typeof(data[[x@rightCol]]) != x@rightColType) {
-            converter <- get(paste("as.", x@rightColType, sep=""))
-            lsubmap <- converter(data[[x@rightCol]])
+        if (nrow(data) > 0) {
+            if (length(x@rightColType) == 1 &&
+                typeof(data[[x@rightCol]]) != x@rightColType) {
+                converter <- get(paste("as.", x@rightColType, sep=""))
+                lsubmap <- converter(data[[x@rightCol]])
+            } else {
+                lsubmap <- data[[x@rightCol]]
+            }
+            lsubmap <- split(lsubmap, data[[x@leftCol]])
         } else {
-            lsubmap <- data[[x@rightCol]]
+            lsubmap <- list()
         }
-        lsubmap <- split(lsubmap, data[[x@leftCol]])
         if (is.null(names))
-            names <- names(x)
+          names <- names(x)
         formatAsList(lsubmap, names, x@replace.single, x@replace.multiple)
     }
 )
