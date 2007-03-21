@@ -4,11 +4,11 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
 {
     require("methods", quietly=TRUE)
     ## Connect to the SQLite DB
-    db_file <- system.file("extdata", "@DBFILE@", package=pkgname)
+    db_file <- system.file("extdata", "@DBFILE@", package=pkgname, lib.loc=libname)
     addToNamespaceAndExport("db_file", db_file, pkgname)
     db_conn <- dbFileConnect(db_file)
     addToNamespaceAndExport("db_conn", db_conn, pkgname)
-    ## Create the AnnObjs instances
+    ## Create the AnnObj instances
     annobjs <- createAnnObjs.@DBSCHEMA@("@ANNOBJPREFIX@", "@ANNOBJTARGET@", db_conn, datacache)
     mergeToNamespaceAndExport(annobjs, pkgname)
 }
