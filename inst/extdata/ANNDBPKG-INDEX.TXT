@@ -17,7 +17,7 @@
 ###     biocViews
 
 Package: hgu95av2db
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu95av2.sqlite
 DBschema: HGU95AV2_DB
@@ -31,7 +31,7 @@ manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?prod
 biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: yeast2db
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/yeast/yeast2.sqlite
 DBschema: YEAST2_DB
@@ -45,7 +45,7 @@ manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?prod
 biocViews: AffymetrixChip, Saccharomyces_cerevisiae, yeast2
 
 Package: ygs98db
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/yeast/ygs98.sqlite
 DBschema: YEAST2_DB
@@ -59,7 +59,7 @@ manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?prod
 biocViews: AffymetrixChip, Saccharomyces_cerevisiae, ygs98
 
 Package: agdb
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: HGU95AV2DB
 DBfile: 
 DBschema: AG_DB
@@ -73,7 +73,7 @@ manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?prod
 biocViews: AffymetrixChip, Arabidopsis_thaliana, ag
 
 Package: ath1121501db
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: HGU95AV2DB
 DBfile: 
 DBschema: AG_DB
@@ -103,7 +103,7 @@ biocViews: AffymetrixChip, Arabidopsis_thaliana, ath1121501
 ###     biocViews
 
 Package: YEASTdb
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: YEASTDB
 DBfile: /home/nli/proj/ann/nli/annosrc/db/YEAST.sqlite
 DBschema: YEAST_DB
@@ -128,7 +128,7 @@ biocViews: Saccharomyces_cerevisiae
 ###     biocViews
 
 Package: humanLLMappingsdb
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: LLMAPPINGSDB
 DBfile:
 DBschema: LLMAPPINGS_DB
@@ -137,7 +137,7 @@ AnnObjTarget: human LocusLink ids
 biocViews: Homo_sapiens, humanLLMappings
 
 Package: mouseLLMappingsdb
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: LLMAPPINGSDB
 DBfile:
 DBschema: LLMAPPINGS_DB
@@ -146,7 +146,7 @@ AnnObjTarget: mouse LocusLink ids
 biocViews: Mus_musculus, mouseLLMappings
 
 Package: ratLLMappingsdb
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: LLMAPPINGSDB
 DBfile:
 DBschema: LLMAPPINGS_DB
@@ -174,7 +174,7 @@ biocViews: Rattus_norvegicus, ratLLMappings
 ###     biocViews
 
 Package: huex10stv2db
-Version: 1.13.94
+Version: 1.13.95
 PkgTemplate: AFFYHUEXDB
 DBfile: 
 DBschema: AFFYHUEX_DB
