@@ -116,7 +116,7 @@ createAnnObjs.AG_DB <- function(prefix, objTarget, conn, datacache)
     prefixAnnObjNames(annobjs, prefix)
 }
 
-compareAnnDataIn2Pkgs.AG_DB <- function(pkgname1, pkgname2, prefix, probes=NULL, verbose=FALSE)
+compareAnnDataIn2Pkgs.AG_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
     direct_maps <- sapply(AG_DB_AtomicAnnMap_seeds, function(x) x$objName)
     direct_maps <- c(direct_maps, "GO")
@@ -127,6 +127,6 @@ compareAnnDataIn2Pkgs.AG_DB <- function(pkgname1, pkgname2, prefix, probes=NULL,
         "GO2PROBE",
         "GO2ALLPROBES"
     )
-    compareAnnDataIn2Pkgs(pkgname1, pkgname2, direct_maps, reverse_maps, prefix, probes, verbose)
+    compareAnnDataIn2Pkgs(pkgname1, pkgname2, prefix, direct_maps, reverse_maps, quick, verbose)
 }
 

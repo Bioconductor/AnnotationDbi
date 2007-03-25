@@ -87,17 +87,45 @@ identical.collections <- function(x, y)
 ###
 ### "compareAnnDataIn2Pkgs" compares the annotation data between 2 packages.
 ### We use it to validate our SQLite-based ann packages by comparing each of
-### them to its envir-based sibling package.
+### them to its envir-based sibling package e.g.:
+###     > library(AnnotationDbi)
+###   HGU95AV2_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.HGU95AV2_DB("hgu95av2", "hgu95av2db", "hgu95av2")
+###   YEAST2_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST2_DB("yeast2", "yeast2db", "yeast2")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST2_DB("ygs98", "ygs98db", "ygs98")
+###   AG_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ag", "agdb", "ag")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ath1121501", "ath1121501db", "ath1121501")
+###   YEAST_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST_DB("YEAST", "YEASTdb", "YEAST")
+###   LLMAPPINGS_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("humanLLMappings",
+###                                                           "humanLLMappingsdb", "humanLLMappings")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("mouseLLMappings",
+###                                                           "mouseLLMappingsdb", "mouseLLMappings")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("ratLLMappings",
+###                                                           "ratLLMappingsdb", "ratLLMappings")
 ###
 
-compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
-                                  prefix="", probes=NULL, verbose=FALSE)
+compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps, reverse_maps,
+                                  quick=FALSE, verbose=FALSE)
 {
     require(pkgname1, character.only=TRUE) || stop(pkgname1, " package needed")
     require(pkgname2, character.only=TRUE) || stop(pkgname2, " package needed")
     getMap <- function(pkgname, mapname)
     {
         get(mapname, envir=as.environment(paste("package", pkgname, sep=":")), inherits=FALSE)
+    }
+    mappedNames <- function(map)
+    {
+        if (is.environment(map)) {
+            is_na <- eapply(map, function(x) length(x) == 1 && is.na(x))
+            mapped_names <- names(is_na)[!as.logical(is_na)]
+        } else {
+            mapped_names <- mapped.names(map)
+        }
+        mapped_names
     }
     mismatch_summary <- list()
     for (mapshortname in c(direct_maps, reverse_maps)) {
@@ -107,32 +135,46 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, direct_maps, reverse_maps,
         cat("***   map1 is ", mapname, " from package ", pkgname1, "\n", sep="")
         map2 <- getMap(pkgname2, mapname)
         cat("***   map2 is ", mapname, " from package ", pkgname2, "\n", sep="")
+
         ## Compare lengths
-        nnames1 <- length(map1)
-        cat("***   length(map1) = ", nnames1, "\n", sep="")
-        nnames2 <- length(map2)
-        cat("***   length(map2) = ", nnames2, "\n", sep="")
-        ## Compare submaps
-        if (mapshortname %in% direct_maps && !is.null(probes)) {
-            tested_names <- probes
+        length1 <- length(map1)
+        mapped_names1 <- mappedNames(map1)
+        count1 <- length(mapped_names1)
+        cat("***   length(map1) = ", length1,
+            " (", count1, " mapped names)\n", sep="")
+
+        length2 <- length(map2)
+        mapped_names2 <- mappedNames(map2)
+        count2 <- length(mapped_names2)
+        cat("***   length(map2) = ", length2,
+            " (", count2, " mapped names)\n", sep="")
+
+        common_names <- intersect(ls(map1), ls(map2))
+        common_mapped_names <- intersect(mapped_names1, mapped_names2)
+        count3 <- length(common_mapped_names)
+        cat("***   nb of common names = ", length(common_names),
+            " (", count3, " common mapped names)\n", sep="")
+
+        if (quick) {
+            ## Quick test (on a sample of 50 common mapped names)
+            random_names <- sample(common_mapped_names, 50)
+            submap1 <- mget(random_names, envir=map1)
+            if (!identical(names(submap1), random_names))
+                stop("mget() didn't return the expected names on map1")
+            submap2 <- mget(random_names, envir=map2)
+            if (!identical(names(submap2), random_names))
+                stop("mget() didn't return the expected names on map2")
+            OK <- sapply(random_names,
+                         function(name) identical.collections(map1[[name]], map2[[name]]))
+            nmis <- sum(!OK)
+            cat("***   nb of mismatches (on a sample of 50 names) = ", nmis, "\n", sep="")
         } else {
-            tested_names <- intersect(ls(map1), ls(map2))
+            ## Full test (on all common names)
+            OK <- sapply(common_names,
+                         function(name) identical.collections(map1[[name]], map2[[name]]))
+            nmis <- sum(!OK)
+            cat("***   nb of mismatches = ", nmis, "\n", sep="")
         }
-        cat("***   nb of tested names = ", length(tested_names), "\n", sep="")
-        submap1 <- mget(tested_names, envir=map1)
-        if (verbose) {
-            cat("***   mget(tested_names, envir=map1):\n", sep="")
-            show(submap1)
-        }
-        submap2 <- mget(tested_names, envir=map2)
-        if (verbose) {
-            cat("***   mget(tested_names, envir=map2):\n", sep="")
-            show(submap2)
-        }
-        OK <- sapply(tested_names,
-                     function(name) identical.collections(submap1[[name]], submap2[[name]]))
-        nmis <- sum(!OK)
-        cat("***   nb of mismatches = ", nmis, "\n", sep="")
         mismatch_summary[[mapname]] <- nmis
     }
     mismatch_summary <- unlist(mismatch_summary)
