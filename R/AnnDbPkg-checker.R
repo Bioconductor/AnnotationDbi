@@ -155,9 +155,17 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps, rever
         cat("***   nb of common names = ", length(common_names),
             " (", count3, " common mapped names)\n", sep="")
 
+        if (count3 == 0) {
+            cat("*** ==> NOTHING WORTH COMPARING!\n")
+            mismatch_summary[[mapname]] <- NA
+            next
+        }
         if (quick) {
             ## Quick test (on a sample of 50 common mapped names)
-            random_names <- sample(common_mapped_names, 50)
+            size <- 50L
+            if (size > count3)
+                size <- count3
+            random_names <- sample(common_mapped_names, size)
             submap1 <- mget(random_names, envir=map1)
             if (!identical(names(submap1), random_names))
                 stop("mget() didn't return the expected names on map1")
@@ -167,7 +175,7 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps, rever
             OK <- sapply(random_names,
                          function(name) identical.collections(map1[[name]], map2[[name]]))
             nmis <- sum(!OK)
-            cat("***   nb of mismatches (on a sample of 50 names) = ", nmis, "\n", sep="")
+            cat("***   nb of mismatches (on a sample of ", size, " names) = ", nmis, "\n", sep="")
         } else {
             ## Full test (on all common names)
             OK <- sapply(common_names,
@@ -177,12 +185,14 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps, rever
         }
         mismatch_summary[[mapname]] <- nmis
     }
-    mismatch_summary <- unlist(mismatch_summary)
+    mismatch_summary <- as.integer(mismatch_summary)
+    nb_PASSED <- sum(mismatch_summary == 0, na.rm=TRUE)
+    nb_FAILED <- length(mismatch_summary) - nb_PASSED
     cat("SUMMARY OF MISMATCHES:\n")
     show(mismatch_summary)
     cat("  - nb of map comparisons = ", length(mismatch_summary), "\n", sep="")
-    cat("  - nb of PASSED maps = ", sum(mismatch_summary == 0), "\n", sep="")
-    cat("  - nb of FAILED maps = ", sum(mismatch_summary != 0), "\n", sep="")
+    cat("  - nb of PASSED maps = ", nb_PASSED, "\n", sep="")
+    cat("  - nb of FAILED maps = ", nb_FAILED, "\n", sep="")
     mismatch_summary
 }
 
