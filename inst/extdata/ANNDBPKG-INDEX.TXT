@@ -61,7 +61,7 @@ biocViews: AffymetrixChip, Saccharomyces_cerevisiae, ygs98
 Package: agdb
 Version: 1.13.95
 PkgTemplate: HGU95AV2DB
-DBfile: 
+DBfile: /home/nli/proj/ann/nli/annosrc/db/ag.sqlite
 DBschema: AG_DB
 AnnObjPrefix: ag
 AnnObjTarget: chip ag
@@ -75,7 +75,7 @@ biocViews: AffymetrixChip, Arabidopsis_thaliana, ag
 Package: ath1121501db
 Version: 1.13.95
 PkgTemplate: HGU95AV2DB
-DBfile: 
+DBfile: /home/nli/proj/ann/nli/annosrc/db/ath1121501.sqlite
 DBschema: AG_DB
 AnnObjPrefix: ath1121501
 AnnObjTarget: chip ath1121501
