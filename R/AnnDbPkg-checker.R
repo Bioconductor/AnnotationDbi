@@ -185,7 +185,7 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps, rever
         }
         mismatch_summary[[mapname]] <- nmis
     }
-    mismatch_summary <- as.integer(mismatch_summary)
+    mismatch_summary <- unlist(mismatch_summary)
     nb_PASSED <- sum(mismatch_summary == 0, na.rm=TRUE)
     nb_FAILED <- length(mismatch_summary) - nb_PASSED
     cat("SUMMARY OF MISMATCHES:\n")
