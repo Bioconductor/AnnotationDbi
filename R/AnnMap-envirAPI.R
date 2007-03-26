@@ -16,6 +16,49 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Helper functions.
+###
+
+.checkNamesAreStrings <- function(names)
+{
+    if (is.null(names) || !is.character(names) || any(is.na(names)))
+        stop("invalid first argument")
+}
+
+### Re-order and format the list 'lsubmap' as follow:
+###   > lsubmap <- list(aa=1, b=2, c=3)
+###   > names <- c("a", "c", "d")
+###   > formatAsList(lsubmap, names)
+### ... must return 'list(a=NA, c=3, d=NA)'
+### Note that the returned list must have exactly the names in 'names' (in the
+### same order).
+formatAsList <- function(lsubmap, names, replace.single=NULL, replace.multiple=NULL)
+{
+    if (length(lsubmap))
+      lsubmap <- l2e(lsubmap)
+    doReplaceSingle <- length(replace.single) != 0L
+    doReplaceMultiple <- length(replace.multiple) != 0L
+    formatVal <- function(key)
+    {
+        val <- lsubmap[[key]]
+        lval <- length(val)
+        if (lval == 1L) {
+            if (doReplaceMultiple)
+              return(replace.multiple)
+        } else if (lval > 1L) {
+            if (doReplaceMultiple)
+              return(replace.multiple)
+        } else {                        # lval == 0
+            val <- NA
+        }
+        val
+    }
+    names(names) <- names
+    lapply(names, formatVal)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "ls" new generic.
 ###
 
@@ -25,28 +68,159 @@ setMethod("ls", signature(name="AnnMap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "as.list" generic.
+###
+
+setMethod("as.list", "AtomicAnnMap",
+    function(x, names=NULL)
+    {
+        if (!is.null(names) && length(names) == 0)
+            return(list())
+        data0 <- toTable(x, left.names=names)
+        if (nrow(data0) == 0) {
+            ann_list <- list()
+        } else {
+            right_col <- data0[[x@rightCol]]
+            if (length(x@rightColType) == 1
+             && typeof(right_col) != x@rightColType) {
+                converter <- get(paste("as.", x@rightColType, sep=""))
+                right_col <- converter(right_col)
+            }
+            if (length(x@tagCols) != 0)
+                names(right_col) <- data0[[x@tagCols[1]]]
+            ann_list <- split(right_col, data0[[x@leftCol]])
+        }
+        if (is.null(names))
+            names <- names(x)
+        formatAsList(ann_list, names, x@replace.single, x@replace.multiple)
+    }
+)
+
+setMethod("as.list", "ReverseAtomicAnnMap",
+    function(x, names=NULL)
+    {
+        if (!is.null(names) && length(names) == 0)
+            return(list())
+        data0 <- toTable(x, right.names=names)
+        if (nrow(data0) == 0) {
+            ann_list <- list()
+        } else {
+            left_col <- data0[[x@leftCol]]
+            if (length(x@tagCols) != 0)
+                names(left_col) <- data0[[x@tagCols[1]]]
+            ann_list <- split(left_col, data0[[x@rightCol]])
+        }
+        if (is.null(names))
+            names <- names(x)
+        formatAsList(ann_list, names, x@replace.single, x@replace.multiple)
+    }
+)
+
+setMethod("as.list", "IPIAnnMap",
+    function(x, names=NULL)
+    {
+        if (!is.null(names) && length(names) == 0)
+            return(list())
+        data0 <- toTable(x, left.names=names)
+        if (nrow(data0) == 0) {
+            ann_list <- list()
+        } else {
+            tag_col <- data0[[x@tagCols[1]]]
+            names(tag_col) <- data0[[x@rightCol]]
+            ann_list <- split(tag_col, data0[[x@leftCol]])
+        }
+        if (is.null(names))
+            names <- names(x)
+        formatAsList(ann_list, names)
+    }
+)
+
+### This new version (0.0.27) is 3 times faster than previous version (0.0.26):
+### Old version:
+###   > system.time(aa <- as.list(hgu95av2GO))
+###      user  system elapsed
+###    76.968   5.692  85.080
+### New version:
+###   > system.time(aa <- as.list(hgu95av2GO))
+###      user  system elapsed
+###    25.305   1.012  27.658
+### Reference (envir-based):
+###   > system.time(aa <- as.list(hgu95av2GO))
+###      user  system elapsed
+###     4.456   0.228   4.953
+setMethod("as.list", "GOAnnMap",
+    function(x, names=NULL)
+    {
+        if (!is.null(names) && length(names) == 0)
+            return(list())
+        data <- toTable(x, left.names=names)
+        if (nrow(data) == 0)
+            return(list())
+        if (is.null(names))
+            names <- names(x)
+        makeGONodeList <- function(GOIDs, Evidences, Ontologies) {
+            mapply(function(gid, evi, ont)
+                   list(GOID=gid, Evidence=evi, Ontology=ont),
+                   GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
+        }
+        GOIDs <- split(data[["go_id"]], data[[x@leftCol]])[names]
+        Evidences <- split(data[["evidence"]], data[[x@leftCol]])[names]
+        Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])[names]
+        mapped_names <- unique(data[[x@leftCol]])
+        lsubmap <- as.list(rep(as.character(NA), length(names)))
+        names(lsubmap) <- names
+        nonNANames <- match(names, mapped_names, nomatch=0L)
+        for (i in nonNANames) {
+            if (i == 0) next
+            lsubmap[[i]] <- makeGONodeList(GOIDs[[i]], Evidences[[i]],
+                                           Ontologies[[i]])
+        }
+        lsubmap
+    }
+)
+
+setMethod("as.list", "ReverseGOAnnMap",
+    function(x, names=NULL)
+    {
+        if (!is.null(names) && length(names) == 0)
+            return(list())
+        data <- toTable(x, right.names=names)
+        if (!is.null(names) && !all(names %in% data[["go_id"]]))
+            .checkNamesExist(names, names(x))
+        if (nrow(data) == 0)
+            return(list())
+        lsubmap <- data[[x@leftCol]]
+        names(lsubmap) <- data[["evidence"]]
+        lsubmap <- split(lsubmap, data[["go_id"]])
+        if (is.null(names))
+            names <- names(x)
+        formatAsList(lsubmap, names)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "mget" new generic.
 ###
-### 'mget(x, map)' vs 'toList(map, names=x)':
+### 'mget(x, map)' vs 'as.list(map, names=x)':
 ###   1. mget checks its 'x' arg. and gracefully fails if it's not of
 ###      the expected type (i.e. NULL or NA-free character vector),
 ###   2. mget will error on the first string in 'x' not in 'names(map)',
-###      toList will accept those strings and map them to NAs.
+###      as.list will accept those strings and map them to NAs.
 ###   3. if 'x' is a subset of 'names(map)', then 'mget(x, map)'
-###      is identical to 'toList(map, names=x)'.
-###   4. 'mget(names(map), map)' is identical to 'toList(map)'.
+###      is identical to 'as.list(map, names=x)'.
+###   4. 'mget(names(map), map)' is identical to 'as.list(map)'.
 ###      Note that for a real "environment", 'as.list(envir)' is not identical
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
-### NB: .checkNamesAreStrings() and .checkNamesExist() are defined in
-###     the AnnObj-lowAPI.R file.
+### NB: .checkNamesExist() is defined in the AnnObj-lowAPI.R file.
 
 setMethod("mget", signature(envir="AnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         .checkNamesAreStrings(x)
         .checkNamesExist(x, names(envir))
-        toList(envir, names=x)
+        as.list(envir, names=x)
     }
 )
 
@@ -54,19 +228,7 @@ setMethod("mget", signature(envir="ReverseAnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         .checkNamesAreStrings(x)
-        toList(envir, names=x)
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "as.list" generic.
-###
-
-setMethod("as.list", "AnnMap",
-    function(x, ...)
-    {
-        toList(x, ...)
+        as.list(envir, names=x)
     }
 )
 

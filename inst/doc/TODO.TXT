@@ -15,8 +15,8 @@ Conceptual definition (for AnnMap object x):
   colnames(x) :== colnames(toTable(x))
 Of course, it has to be implemented in a smartest way...
 
-Nolwenn also suggested that toList(x) return a list of named vectors
-when x is a ReverseAtomicMap with tags.
+Nolwenn also suggested that as.list(x) return a list of named vectors
+when x is a ReverseAtomicAnnMap with tags.
 
 
 Some cleaning
@@ -96,6 +96,6 @@ current DB schema where we have 3 right tables for those maps.
 Of course, only maps that belong to the same package would be pluggable
 this way (e.g. hgu95av2PATH2PROBE and hgu95av2ACCNUM, x1 is a reverse
 map and x2 a direct map). So not only to.table(x1) and from.table(x2)
-must be the same, but also the SQL connection ('con' slot).
+must be the same, but also the SQL connection ('conn' slot).
 
 

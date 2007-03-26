@@ -29,7 +29,7 @@ The API provided by \Rpackage{AnnotationDbi} allows you to treat the
 \verb+[[+, \Rfunction{get}, \Rfunction{mget}, and \Rfunction{ls} all
 behave the same as with the old-style packages.  In addition, we are
 experimenting with new generic functions \Rfunction{toTable} and
-\Rfunction{toList} that provide some additional flexibility in
+\Rfunction{as.list} that provide some additional flexibility in
 accessing the annotation data.
 
 <<setup, results=hide>>=
@@ -43,7 +43,7 @@ x
 toTable(x)[1:6, ]
 toTable(x, "40781_at")[1:10, ]
 
-toList(x, "40781_at")   # equivalent to mget("40781_at", x)
+as.list(x, "40781_at")   # equivalent to mget("40781_at", x)
 @ 
 
 Pick up some probeset ids:
@@ -51,7 +51,7 @@ Pick up some probeset ids:
 <<toTable>>=
 pbids <- names(x)[1:4]   # names() is the same as ls()
 toTable(x, pbids)[1:10, ]
-toList(x, pbids)
+as.list(x, pbids)
 @ 
 
 Back to the data frame:
@@ -67,17 +67,17 @@ too long... With another KEGG id:
 toTable(x, , "00300")
 @ 
 
-This doesn't work (only 2 args to \Rfunction{toList}, x and names):
+This doesn't work (only 2 args to \Rfunction{as.list}, x and names):
 
 <<notworking, eval=FALSE>>=
-toList(x, , "00300")
-toList(x, "00300")
+as.list(x, , "00300")
+as.list(x, "00300")
 @ 
 
 You must do this instead:
 
 <<thisworks>>=
-toList(revmap(x), "00300")
+as.list(revmap(x), "00300")
 @ 
 
 The reverse map:
@@ -96,7 +96,7 @@ revx2 <- revmap(x, objName="PATH2PROBE")
 revx2
 identical(revx, revx2)
 
-toList(revx, "00300")
+as.list(revx, "00300")
 @ 
 
 Note that the order of the cols returned by \Rfunction{toTable} does
@@ -115,12 +115,12 @@ There can be more than 2 columns in the returned data frame:
   3 cols:
 <<threecols>>=
 toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
-toList(hgu95av2PFAM, "1000_at")
+as.list(hgu95av2PFAM, "1000_at")
 @ 
   4 cols:
 <<fourcols>>=
 toTable(hgu95av2GO)[1:6, ]    
-toList(hgu95av2GO, "1000_at")[[1]][1:2]
+as.list(hgu95av2GO, "1000_at")[[1]][1:2]
 @ 
 
 But the right names are ALWAYS in the 2nd col.
@@ -163,7 +163,7 @@ toTable(x, , chroms)[1:10, ]
 
 To get this in the classic named-list format:
 <<easy>>=
-toList(revmap(x), chroms)
+as.list(revmap(x), chroms)
 @ 
 
 Compare to what you need to do this with the current envir-based package:

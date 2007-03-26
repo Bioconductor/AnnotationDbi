@@ -232,7 +232,7 @@ checkMAPCOUNTS <- function(pkgname, prefix)
         if (count2 != count0)
             stop("count2 and count0 differ")
         ## count3
-        t3 <- system.time(count3 <- sum(sapply(toList(map), function(x) length(x)!=1 || !is.na(x))))
+        t3 <- system.time(count3 <- sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x))))
         cat("  - count3 = ", count3, " (", t3[3], " s)\n", sep="")
         if (count3 != count0)
             stop("count3 and count0 differ")

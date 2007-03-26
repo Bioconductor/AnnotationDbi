@@ -42,9 +42,9 @@ exportClasses(
     "AnnTable",
     "AnnMap",
     "ReverseAnnMap",
-    "RawAnnMap",
     "AtomicAnnMap",
     "ReverseAtomicAnnMap",
+    "IPIAnnMap",
     "GOAnnMap",
     "ReverseGOAnnMap"
 )
