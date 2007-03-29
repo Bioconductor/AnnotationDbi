@@ -96,16 +96,17 @@ removeCommentsInFile <- function(infile, outfile)
 ###
 makeAnnDbPkg <- function(pkgname, dest_dir=".")
 {
-    master_file <- "ANNDBPKG-INDEX.TXT"
-    master_filepath <- system.file("extdata", master_file,
-                                   package="AnnotationDbi")
-    tmp_file <- paste(master_file, "tmp", sep=".")
-    removeCommentsInFile(master_filepath, tmp_file)
-    master <- read.dcf(tmp_file)
+    index_file <- "ANNDBPKG-INDEX.TXT"
+    index_path <- system.file("extdata", index_file,
+                              package="AnnotationDbi")
+    tmp_file <- paste(index_file, "tmp", sep=".")
+    removeCommentsInFile(index_path, tmp_file)
+    index <- read.dcf(tmp_file)
     file.remove(tmp_file)
-    master <- master[grep(pkgname, master[ ,"Package"]), , drop=FALSE]
-    for (i in seq_len(nrow(master))) {
-        pkginfo <- master[i, ]
+    pkgname <- paste("^", pkgname, "$", sep="")
+    subindex <- index[grep(pkgname, index[ , "Package"]), , drop=FALSE]
+    for (i in seq_len(nrow(subindex))) {
+        pkginfo <- subindex[i, ]
         pkgname <- pkginfo["Package"]
         version <- pkginfo["Version"]
         db_file <- pkginfo["DBfile"]
