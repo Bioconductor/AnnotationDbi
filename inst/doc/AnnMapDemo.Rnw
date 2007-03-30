@@ -20,7 +20,7 @@
 \section{Introduction}
 
 The \Rpackage{AnnotationDbi} package provides an interface to
-SQLite-based annotation data packages.  Each SQLite-based annotation
+SQLite-based annotation packages.  Each SQLite-based annotation
 package (identified by a ``db'' suffix in the package name) contains a
 number of \Rclass{AnnMap} objects in place of the \Rclass{environment}
 objects found in the old-style environment-based annotation packages.

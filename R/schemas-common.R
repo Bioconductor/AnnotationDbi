@@ -23,7 +23,7 @@ createAnnObjs <- function(class, seeds, seed0, envir=NULL)
 
 createCHRLENGTHS <- function(conn)
 {
-    data <- getTable(conn, "chrlengths")
+    data <- dbGetTable(conn, "chrlengths")
     CHRLENGTHS <- data[["length"]]
     names(CHRLENGTHS) <- data[["chr"]]
     CHRLENGTHS
@@ -31,7 +31,7 @@ createCHRLENGTHS <- function(conn)
 
 createMAPCOUNTS <- function(conn, prefix)
 {
-    data <- getTable(conn, "qcdata", "map_name != 'TOTAL'")
+    data <- dbGetTable(conn, "qcdata", "map_name != 'TOTAL'")
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
     MAPCOUNTS

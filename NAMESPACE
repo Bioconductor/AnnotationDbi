@@ -6,7 +6,6 @@ export(toggleDebug,
 
 exportMethods(
     "exists",
-    "makeDataPackage",
     "revmap",
     "db",
     "toTable",
@@ -34,7 +33,9 @@ exportMethods(
     "count.mapped.right.names",
     "mapped.names",
     "count.mapped.names",
-    "is.na"
+    "is.na",
+    "initialize",
+    "makeAnnDbPkg"
 )
 
 exportClasses(
@@ -46,7 +47,8 @@ exportClasses(
     "ReverseAtomicAnnMap",
     "IPIAnnMap",
     "GOAnnMap",
-    "ReverseGOAnnMap"
+    "ReverseGOAnnMap",
+    "AnnDbPkgSeed"
 )
 
 export(
@@ -63,9 +65,6 @@ export(
     createAnnObjs.LLMAPPINGS_DB,
     createAnnObjs.YEAST_DB,
     createAnnObjs.AFFYHUEX_DB,
-
-    ## from R/AnnDbPkg-maker.R
-    makeAnnDbPkg,
 
     ## from R/AnnDbPkg-checker.R
     checkMAPCOUNTS

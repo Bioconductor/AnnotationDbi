@@ -2,12 +2,12 @@
 ### HGU95AV2DB template
 ###   Possible DBschemas for this template: HGU95AV2_DB, YEAST2_DB, AG_DB
 ###   Fields:
-###     Package
-###     Version
-###     PkgTemplate
-###     DBfile
+###     Package (*)
+###     Version (*)
+###     PkgTemplate (*)
+###     DBfile (*)
 ###     DBschema
-###     AnnObjPrefix
+###     AnnObjPrefix (*)
 ###     AnnObjTarget
 ###     organism
 ###     species
@@ -15,7 +15,7 @@
 ###     chipName
 ###     manufacturerUrl
 ###     biocViews
-
+### Fields marked with an (*) are required.
 
 Package: hcg110db
 Version: 1.13.94
@@ -49,15 +49,7 @@ Package: hgu133a2db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu133a2.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu133a2
-AnnObjTarget: chip hgu133a2
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu133adb
 Version: 1.13.94
@@ -119,15 +111,7 @@ Package: hgu95av2db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu95av2.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu95av2
-AnnObjTarget: chip hgu95av2
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu95bdb
 Version: 1.13.94

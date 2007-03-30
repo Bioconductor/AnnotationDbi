@@ -50,7 +50,7 @@
     dbGetQuery(conn, sql)
 }
 
-getTable <- function(conn, table, where=NULL)
+dbGetTable <- function(conn, table, where=NULL)
 {
     sql <- paste("SELECT * FROM ", table, sep="")
     if (!is.null(where))
