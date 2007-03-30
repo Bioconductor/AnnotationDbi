@@ -22,14 +22,7 @@
       Package="hgu133a2db",
       Version="0.0.99",
       PkgTemplate="HGU95AV2DB",
-      DBschema="HGU95AV2_DB",
-      AnnObjPrefix="hgu133a2",
-      AnnObjTarget="chip hgu133a2",
-      organism="Homo sapiens",
-      species="Human",
-      manufacturer="Affymetrix",
-      chipName="Human Genome U133A 2.0 Array",
-      manufacturerUrl="http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu133-20"
+      AnnObjPrefix="hgu133a2"
   )
 
   ## Then use this "seed" together with the SQLite file containing the
