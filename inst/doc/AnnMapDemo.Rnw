@@ -115,9 +115,9 @@ data are stored as tables, no extra disk space is needed to provide
 reverse mappings.
 
 <<show.revmap>>=
-system.time(sym2p <- revmap(hgu95av2db::hgu95av2SYMBOL))
+system.time(sym2p <- revmap(hgu95av2SYMBOL))
 
-unlist(mget(syms, revmap(hgu95av2db::hgu95av2SYMBOL)))
+unlist(mget(syms, revmap(hgu95av2SYMBOL)))
 @ 
 
 Another area where the SQLite-based packages provide some advantages
@@ -131,6 +131,9 @@ to extract this using the environment-based packages:
 ## Obtain SYMBOLS with at least one GO BP
 ## annotation with evidence IMP, IGI, IPI, or IDA.
 probes <- sample(all_probes, 500)
+
+library("hgu95av2", warn.conflicts=FALSE)
+system.time({
 bpids <- eapply(hgu95av2GO, function(x) {
     if (length(x) == 1 && is.na(x))
       NA
@@ -152,6 +155,8 @@ wantedp <- lapply(g2p, function(x) {
 wantedp <- wantedp[sapply(wantedp, length) > 0]
 wantedp <- unique(unlist(wantedp))
 ans <- unlist(mget(wantedp, hgu95av2SYMBOL))
+})
+detach("package:hgu95av2")
 length(ans)
 ans[1:10]
 
@@ -161,9 +166,11 @@ All of the above code reduces to a single SQL query with the
 SQLite-based packages:
 
 <<complexDb>>=
+system.time({
 sql <- "select symbol from go_bp inner join gene_info using(id)
         where go_bp.evidence in ('IPI', 'IDA', 'IMP', 'IGI')"
 zz <- dbGetQuery(hgu95av2db::db_conn, sql)
+})
 
 @ 
 
@@ -171,22 +178,22 @@ A low-level interface is available to access the data in table
 (\Rclass{data.frame}) format using \Rfunction{toTable}.
 
 <<toTable>>=
-toTable(hgu95av2db::hgu95av2GO, probes[1:3])
+toTable(hgu95av2GO, probes[1:3])
 
 @ 
 
 
 <<thisworks>>=
-as.list(revmap(hgu95av2db::hgu95av2PATH), "00300")
+as.list(revmap(hgu95av2PATH), "00300")
 @ 
 
 In the case of the PATH map, we don't need to use revmap(x)
 because hgu95av2db already provides the PATH2PROBE map:
 
 <<revmap2>>=
-x <- hgu95av2db::hgu95av2PATH
+x <- hgu95av2PATH
 ## except for the name, this is exactly revmap(x)
-revx <- hgu95av2db::hgu95av2PATH2PROBE
+revx <- hgu95av2PATH2PROBE
 revx2 <- revmap(x, objName="PATH2PROBE")
 revx2
 identical(revx, revx2)
@@ -209,8 +216,8 @@ There can be more than 2 columns in the returned data frame:
 
   3 cols:
 <<threecols>>=
-toTable(hgu95av2db::hgu95av2PFAM)[1:6, ]  # the right values are tagged
-as.list(hgu95av2db::hgu95av2PFAM, "1000_at")
+toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
+as.list(hgu95av2PFAM, "1000_at")
 @ 
 
 But the right names are ALWAYS in the 2nd col.
