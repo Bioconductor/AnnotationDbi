@@ -13,6 +13,8 @@
 \title{AnnMap API Demo}
 \author{Herve Pages, Nianhua Li, and Seth Falcon}
 
+\SweaveOpts{keep.source=TRUE}
+
 \begin{document}
 
 \maketitle
@@ -25,73 +27,166 @@ package (identified by a ``db'' suffix in the package name) contains a
 number of \Rclass{AnnMap} objects in place of the \Rclass{environment}
 objects found in the old-style environment-based annotation packages.
 The API provided by \Rpackage{AnnotationDbi} allows you to treat the
-\Rclass{AnnMap} objects like environments.  For example, the functions
-\verb+[[+, \Rfunction{get}, \Rfunction{mget}, and \Rfunction{ls} all
-behave the same as with the old-style packages.  In addition, we are
-experimenting with new generic functions \Rfunction{toTable} and
-\Rfunction{as.list} that provide some additional flexibility in
-accessing the annotation data.
+\Rclass{AnnMap} objects like \Rclass{environment} instances.  For
+example, the functions \verb+[[+, \Rfunction{get}, \Rfunction{mget},
+and \Rfunction{ls} all behave the same as with the old-style packages.
+In addition, we are experimenting with new generic functions
+\Rfunction{toTable} and \Rfunction{toList} that provide some
+additional flexibility in accessing the annotation data.
+
+<<setup0, results=hide, echo=FALSE>>=
+options(continue=" ", prompt="R> ", width=72L)
+@ 
 
 <<setup, results=hide>>=
 library("hgu95av2db")
 @ 
 
-<<basic>>=
-ls(2)
-x <- hgu95av2PATH
-x
-toTable(x)[1:6, ]
-toTable(x, "40781_at")[1:10, ]
+The same basic set of objects is provided with the db packages:
 
-as.list(x, "40781_at")   # equivalent to mget("40781_at", x)
+<<objects>>=
+ls(2)
 @ 
 
-Pick up some probeset ids:
+To demonstrate the \Rclass{environment} API, we'll start with a random
+sample of probe set IDs.
+
+<<envApiDemo1>>=
+all_probes <- ls(hgu95av2ENTREZID)
+length(all_probes)
+
+set.seed(0xa1beef)
+probes <- sample(all_probes, 5)
+probes
+@ 
+
+The usual ways of accessing annotation data are available.
+
+<<envApiDemo2>>=
+hgu95av2ENTREZID[[probes[1]]]
+hgu95av2ENTREZID$"31882_at"
+
+syms <- unlist(mget(probes, hgu95av2SYMBOL))
+syms
+
+@ 
+
+Many filtering operations on the annotation \Rclass{environment}
+objects require conversion of the \Rclass{environment} into a
+\Rclass{list}.  There is an \Rfunction{as.list} method for
+\Rclass{AnnMap} objects.  In general, converting to lists will not be
+the most efficient way to filter the annotation data when using a
+SQLite-based package.
+
+<<as.list, eval=FALSE>>=
+zz <- as.list(hgu95av2SYMBOL)
+@ 
+
+In an environment-based package, each mapping is its own object.  To
+save disk and memory resources, not all reverse mappings are included
+in the environment-based packages.  Here is the common idiom for
+creating a list that serves as the reverse map of a given environment.
+
+<<oldRevMap>>=
+library("hgu95av2", warn.conflicts=FALSE)
+## we load the environment so as not
+## to include the load time in the timing
+class(hgu95av2SYMBOL)
+system.time({
+    p2sym <- as.list(hgu95av2SYMBOL)
+    lens <- sapply(p2sym, length)
+    nms <- rep(names(p2sym), lens)
+    sym2p <- split(unlist(p2sym), nms)
+    })
+
+## in fact, there is a convenience function
+## for this operation in Biobase
+system.time({
+    p2sym <- as.list(hgu95av2SYMBOL)
+    sym2p <- reverseSplit(p2sym)
+    })
+detach("package:hgu95av2")
+@ 
+
+The SQLite-based package provide the same reverse maps as objects in
+the package name space for backwards compatibility, but the reverse
+mappings of any map is available using \Rfunction{revmap}.  Since the
+data are stored as tables, no extra disk space is needed to provide
+reverse mappings.
+
+<<show.revmap>>=
+system.time(sym2p <- revmap(hgu95av2db::hgu95av2SYMBOL))
+
+unlist(mget(syms, revmap(hgu95av2db::hgu95av2SYMBOL)))
+@ 
+
+Another area where the SQLite-based packages provide some advantages
+is when one wishes to filter the available annotation data in a
+complex fashion.  For example, consider the task of obtaining all gene
+symbols on which are probed on a chip that have at least one GO BP ID
+annotation with evidence code IMP, IGI, IPI, or IDA.  Here is one way
+to extract this using the environment-based packages:
+
+<<complexEnv>>=
+## Obtain SYMBOLS with at least one GO BP
+## annotation with evidence IMP, IGI, IPI, or IDA.
+probes <- sample(all_probes, 500)
+bpids <- eapply(hgu95av2GO, function(x) {
+    if (length(x) == 1 && is.na(x))
+      NA
+    else {
+        sapply(x, function(z) {
+            if (z$Ontology == "BP")
+              z$GOID
+            else
+              NA
+            })
+    }
+})
+bpids <- unlist(bpids)
+bpids <- unique(bpids[!is.na(bpids)])
+g2p <- mget(bpids, hgu95av2GO2PROBE)
+wantedp <- lapply(g2p, function(x) {
+    x[names(x) %in% c("IMP", "IGI", "IPI", "IDA")]
+})
+wantedp <- wantedp[sapply(wantedp, length) > 0]
+wantedp <- unique(unlist(wantedp))
+ans <- unlist(mget(wantedp, hgu95av2SYMBOL))
+length(ans)
+ans[1:10]
+
+@ 
+
+All of the above code reduces to a single SQL query with the
+SQLite-based packages:
+
+<<complexDb>>=
+sql <- "select symbol from go_bp inner join gene_info using(id)
+        where go_bp.evidence in ('IPI', 'IDA', 'IMP', 'IGI')"
+zz <- dbGetQuery(hgu95av2db::db_conn, sql)
+
+@ 
+
+A low-level interface is available to access the data in table
+(\Rclass{data.frame}) format using \Rfunction{toTable}.
 
 <<toTable>>=
-pbids <- names(x)[1:4]   # names() is the same as ls()
-toTable(x, pbids)[1:10, ]
-as.list(x, pbids)
+toTable(hgu95av2db::hgu95av2GO, probes[1:3])
+
 @ 
 
-Back to the data frame:
-
-<<toTable2>>=
-toTable(x)[1:6, ]
-toTable(x, , "00230")[1:10, ]
-@ 
-
-too long... With another KEGG id:
-
-<<toTable3>>= 
-toTable(x, , "00300")
-@ 
-
-This doesn't work (only 2 args to \Rfunction{as.list}, x and names):
-
-<<notworking, eval=FALSE>>=
-as.list(x, , "00300")
-as.list(x, "00300")
-@ 
-
-You must do this instead:
 
 <<thisworks>>=
-as.list(revmap(x), "00300")
-@ 
-
-The reverse map:
-
-<<revmap1>>=
-revmap(x)
-x
+as.list(revmap(hgu95av2db::hgu95av2PATH), "00300")
 @ 
 
 In the case of the PATH map, we don't need to use revmap(x)
 because hgu95av2db already provides the PATH2PROBE map:
 
 <<revmap2>>=
-revx <- hgu95av2PATH2PROBE   # except for the name, this is exactly revmap(x)
+x <- hgu95av2db::hgu95av2PATH
+## except for the name, this is exactly revmap(x)
+revx <- hgu95av2db::hgu95av2PATH2PROBE
 revx2 <- revmap(x, objName="PATH2PROBE")
 revx2
 identical(revx, revx2)
@@ -114,13 +209,8 @@ There can be more than 2 columns in the returned data frame:
 
   3 cols:
 <<threecols>>=
-toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
-as.list(hgu95av2PFAM, "1000_at")
-@ 
-  4 cols:
-<<fourcols>>=
-toTable(hgu95av2GO)[1:6, ]    
-as.list(hgu95av2GO, "1000_at")[[1]][1:2]
+toTable(hgu95av2db::hgu95av2PFAM)[1:6, ]  # the right values are tagged
+as.list(hgu95av2db::hgu95av2PFAM, "1000_at")
 @ 
 
 But the right names are ALWAYS in the 2nd col.
