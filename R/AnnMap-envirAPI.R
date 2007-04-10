@@ -253,18 +253,19 @@ setMethod("eapply", signature(env="AnnMap"),
 ### and this
 ###   get("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'pos' arg too.
+do_get <- function(what, map) mget(what[1], map)[[1]]
 
 setMethod("get", signature(envir="AnnMap"),
     function(x, pos, envir, mode, inherits)
     {
-        mget(x[1], envir)[[1]]
+        do_get(x, envir)
     }
 )
 
 setMethod("get", signature(pos="AnnMap", envir="missing"),
     function(x, pos, envir, mode, inherits)
     {
-        get(x, envir=pos)
+        do_get(x, pos)
     }
 )
 
@@ -277,18 +278,19 @@ setMethod("get", signature(pos="AnnMap", envir="missing"),
 ### and this
 ###   exists("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'where' arg too.
+do_exists <- function(x, map) x %in% names(map)
 
 setMethod("exists", signature(envir="AnnMap"),
     function(x, where, envir, frame, mode, inherits)
     {
-        x %in% names(envir)
+        do_exists(x, envir)
     }
 )
 
 setMethod("exists", signature(where="AnnMap", envir="missing"),
     function(x, where, envir, frame, mode, inherits)
     {
-        exists(x, envir=where)
+        do_exists(x, where)
     }
 )
 
