@@ -153,29 +153,33 @@ setMethod("as.list", "GOAnnMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data <- toTable(x, left.names=names)
-        if (nrow(data) == 0)
-            return(list())
         if (is.null(names))
-            names <- names(x)
+          names <- names(x)
+
+        ann_list <- as.list(rep(as.character(NA), length(names)))
+        names(ann_list) <- names
+        
         makeGONodeList <- function(GOIDs, Evidences, Ontologies) {
             mapply(function(gid, evi, ont)
                    list(GOID=gid, Evidence=evi, Ontology=ont),
                    GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
         }
-        GOIDs <- split(data[["go_id"]], data[[x@leftCol]])[names]
-        Evidences <- split(data[["evidence"]], data[[x@leftCol]])[names]
-        Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])[names]
-        mapped_names <- unique(data[[x@leftCol]])
-        lsubmap <- as.list(rep(as.character(NA), length(names)))
-        names(lsubmap) <- names
-        nonNANames <- match(names, mapped_names, nomatch=0L)
-        for (i in nonNANames) {
-            if (i == 0) next
-            lsubmap[[i]] <- makeGONodeList(GOIDs[[i]], Evidences[[i]],
-                                           Ontologies[[i]])
+
+        data <- toTable(x, left.names=names)
+        if (nrow(data) > 0) {
+            GOIDs <- split(data[["go_id"]], data[[x@leftCol]])[names]
+            Evidences <- split(data[["evidence"]], data[[x@leftCol]])[names]
+            Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])[names]
+            mapped_names <- unique(data[[x@leftCol]])
+            
+            nonNANames <- match(mapped_names, names, nomatch=0L)
+            for (i in nonNANames) {
+                if (i == 0) next
+                ann_list[[i]] <- makeGONodeList(GOIDs[[i]], Evidences[[i]],
+                                                Ontologies[[i]])
+            }
         }
-        lsubmap
+        ann_list
     }
 )
 
