@@ -28,11 +28,11 @@
 ### Re-order and format the list 'lsubmap' as follow:
 ###   > lsubmap <- list(aa=1, b=2, c=3)
 ###   > names <- c("a", "c", "d")
-###   > formatAsList(lsubmap, names)
+###   > formatAnnList(lsubmap, names)
 ### ... must return 'list(a=NA, c=3, d=NA)'
 ### Note that the returned list must have exactly the names in 'names' (in the
 ### same order).
-formatAsList <- function(lsubmap, names, replace.single=NULL, replace.multiple=NULL)
+formatAnnList <- function(lsubmap, names, replace.single=NULL, replace.multiple=NULL)
 {
     if (length(lsubmap))
       lsubmap <- l2e(lsubmap)
@@ -92,7 +92,7 @@ setMethod("as.list", "AtomicAnnMap",
         }
         if (is.null(names))
             names <- names(x)
-        formatAsList(ann_list, names, x@replace.single, x@replace.multiple)
+        formatAnnList(ann_list, names, x@replace.single, x@replace.multiple)
     }
 )
 
@@ -112,7 +112,7 @@ setMethod("as.list", "ReverseAtomicAnnMap",
         }
         if (is.null(names))
             names <- names(x)
-        formatAsList(ann_list, names, x@replace.single, x@replace.multiple)
+        formatAnnList(ann_list, names, x@replace.single, x@replace.multiple)
     }
 )
 
@@ -131,7 +131,7 @@ setMethod("as.list", "IPIAnnMap",
         }
         if (is.null(names))
             names <- names(x)
-        formatAsList(ann_list, names)
+        formatAnnList(ann_list, names)
     }
 )
 
@@ -153,30 +153,34 @@ setMethod("as.list", "GOAnnMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
+        data0 <- toTable(x, left.names=names)
         if (is.null(names))
-          names <- names(x)
-
+            names <- names(x)
         ann_list <- as.list(rep(as.character(NA), length(names)))
         names(ann_list) <- names
-        
-        makeGONodeList <- function(GOIDs, Evidences, Ontologies) {
-            mapply(function(gid, evi, ont)
-                   list(GOID=gid, Evidence=evi, Ontology=ont),
-                   GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
-        }
-
-        data <- toTable(x, left.names=names)
-        if (nrow(data) > 0) {
-            GOIDs <- split(data[["go_id"]], data[[x@leftCol]])[names]
-            Evidences <- split(data[["evidence"]], data[[x@leftCol]])[names]
-            Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])[names]
-            mapped_names <- unique(data[[x@leftCol]])
-            
-            nonNANames <- match(mapped_names, names, nomatch=0L)
-            for (i in nonNANames) {
-                if (i == 0) next
-                ann_list[[i]] <- makeGONodeList(GOIDs[[i]], Evidences[[i]],
-                                                Ontologies[[i]])
+        if (nrow(data0) != 0) {
+            makeGONodeList <- function(GOIDs, Evidences, Ontologies)
+            {
+                mapply(function(gid, evi, ont)
+                       list(GOID=gid, Evidence=evi, Ontology=ont),
+                       GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
+            }
+            GOIDs <- split(data0[["go_id"]], data0[[x@leftCol]])
+            Evidences <- split(data0[["evidence"]], data0[[x@leftCol]])
+            Ontologies <- split(data0[["Ontology"]], data0[[x@leftCol]])
+            ## The 'GOIDs', 'Evidences' and 'Ontologies' lists have the same
+            ## names in the same order.
+            mapped_names <- names(GOIDs)
+            ii <- match(mapped_names, names, nomatch=0L)
+            for (i1 in seq_len(length(ii))) {
+                i2 <- ii[i1]
+                ## 'mapped_names' should always be a subset of 'names'
+                ## hence 'i2 == 0L' should never happen. So maybe we should
+                ## raise something like "AnnotationDbi internal error" instead
+                ## of just ignoring this...
+                if (i2 == 0L) next 
+                ann_list[[i2]] <- makeGONodeList(GOIDs[[i1]], Evidences[[i1]],
+                                                 Ontologies[[i1]])
             }
         }
         ann_list
@@ -188,17 +192,17 @@ setMethod("as.list", "ReverseGOAnnMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data <- toTable(x, right.names=names)
-        if (!is.null(names) && !all(names %in% data[["go_id"]]))
+        data0 <- toTable(x, right.names=names)
+        if (!is.null(names) && !all(names %in% data0[["go_id"]]))
             .checkNamesExist(names, names(x))
-        if (nrow(data) == 0)
+        if (nrow(data0) == 0)
             return(list())
-        lsubmap <- data[[x@leftCol]]
-        names(lsubmap) <- data[["evidence"]]
-        lsubmap <- split(lsubmap, data[["go_id"]])
+        lsubmap <- data0[[x@leftCol]]
+        names(lsubmap) <- data0[["evidence"]]
+        lsubmap <- split(lsubmap, data0[["go_id"]])
         if (is.null(names))
             names <- names(x)
-        formatAsList(lsubmap, names)
+        formatAnnList(lsubmap, names)
     }
 )
 
