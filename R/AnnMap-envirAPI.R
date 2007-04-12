@@ -3,8 +3,8 @@
 ### ---------------------------------------
 ###
 ### This file defines an environment-like API for the AnnMap objects (ls,
-### as.list, mget, eapply, get, exists, [[ and $) for backward compatibility
-### with the classic envir-based annotation maps.
+### mget, eapply, get, exists, [[ and $) for backward compatibility with the
+### classic envir-based annotation maps.
 ### This environment-like API is defined on top of the low-level API for
 ### AnnObj objects (refer to AnnObj-lowAPI.R for the definition of this
 ### low-level API).
@@ -153,29 +153,33 @@ setMethod("as.list", "GOAnnMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data <- toTable(x, left.names=names)
-        if (nrow(data) == 0)
-            return(list())
         if (is.null(names))
-            names <- names(x)
+          names <- names(x)
+
+        ann_list <- as.list(rep(as.character(NA), length(names)))
+        names(ann_list) <- names
+        
         makeGONodeList <- function(GOIDs, Evidences, Ontologies) {
             mapply(function(gid, evi, ont)
                    list(GOID=gid, Evidence=evi, Ontology=ont),
                    GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
         }
-        GOIDs <- split(data[["go_id"]], data[[x@leftCol]])[names]
-        Evidences <- split(data[["evidence"]], data[[x@leftCol]])[names]
-        Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])[names]
-        mapped_names <- unique(data[[x@leftCol]])
-        lsubmap <- as.list(rep(as.character(NA), length(names)))
-        names(lsubmap) <- names
-        nonNANames <- match(names, mapped_names, nomatch=0L)
-        for (i in nonNANames) {
-            if (i == 0) next
-            lsubmap[[i]] <- makeGONodeList(GOIDs[[i]], Evidences[[i]],
-                                           Ontologies[[i]])
+
+        data <- toTable(x, left.names=names)
+        if (nrow(data) > 0) {
+            GOIDs <- split(data[["go_id"]], data[[x@leftCol]])[names]
+            Evidences <- split(data[["evidence"]], data[[x@leftCol]])[names]
+            Ontologies <- split(data[["Ontology"]], data[[x@leftCol]])[names]
+            mapped_names <- unique(data[[x@leftCol]])
+            
+            nonNANames <- match(mapped_names, names, nomatch=0L)
+            for (i in nonNANames) {
+                if (i == 0) next
+                ann_list[[i]] <- makeGONodeList(GOIDs[[i]], Evidences[[i]],
+                                                Ontologies[[i]])
+            }
         }
-        lsubmap
+        ann_list
     }
 )
 
@@ -214,7 +218,6 @@ setMethod("as.list", "ReverseGOAnnMap",
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
 ### NB: .checkNamesExist() is defined in the AnnObj-lowAPI.R file.
-###
 
 setMethod("mget", signature(envir="AnnMap"),
     function(x, envir, mode, ifnotfound, inherits)
@@ -254,19 +257,19 @@ setMethod("eapply", signature(env="AnnMap"),
 ### and this
 ###   get("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'pos' arg too.
-###
+do_get <- function(what, map) mget(what[1], map)[[1]]
 
 setMethod("get", signature(envir="AnnMap"),
     function(x, pos, envir, mode, inherits)
     {
-        mget(x[1], envir)[[1]]
+        do_get(x, envir)
     }
 )
 
 setMethod("get", signature(pos="AnnMap", envir="missing"),
     function(x, pos, envir, mode, inherits)
     {
-        get(x, envir=pos)
+        do_get(x, pos)
     }
 )
 
@@ -279,19 +282,19 @@ setMethod("get", signature(pos="AnnMap", envir="missing"),
 ### and this
 ###   exists("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'where' arg too.
-###
+do_exists <- function(x, map) x %in% names(map)
 
 setMethod("exists", signature(envir="AnnMap"),
     function(x, where, envir, frame, mode, inherits)
     {
-        x %in% names(envir)
+        do_exists(x, envir)
     }
 )
 
 setMethod("exists", signature(where="AnnMap", envir="missing"),
     function(x, where, envir, frame, mode, inherits)
     {
-        exists(x, envir=where)
+        do_exists(x, where)
     }
 )
 
