@@ -286,6 +286,11 @@ setMethod("revmap", "ReverseGOAnnMap",
     }
 )
 
+setMethod("revmap", "environment",
+          function(x, objName=NULL) {
+              l2e(reverseSplit(as.list(x)))
+          })
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "db" new generic.
