@@ -31,7 +31,7 @@
 ###      method and a right method.
 ###
 ### The environment-like API for AnnMap objects (ls, mget, etc...) is defined
-### in the AnnMap-envirAPI.R file.
+### in the AnnMap-envAPI.R file.
 ###
 ### -------------------------------------------------------------------------
 

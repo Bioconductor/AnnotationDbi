@@ -11,7 +11,7 @@ Suggests: GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R AllGenerics.R
          db.R factories.R
          AnnObj-lowAPI.R
-         AnnMap-envirAPI.R
+         AnnMap-envAPI.R
          schemas-common.R
          schema.HGU95AV2_DB.R
          schema.YEAST2_DB.R
