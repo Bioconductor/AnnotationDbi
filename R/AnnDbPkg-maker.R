@@ -173,6 +173,8 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
 	doc_path <- system.file("AnnDbPkg-templates", x@PkgTemplate, "man",
 				package="AnnotationDbi")
 	doc_template_names <- list.files(doc_path, ".*Rd$") 
+	is_static <- doc_template_names %in% c("db_coon", "db_file")
+	doc_template_names <- doc_template_names[!is_static]
 	## create man pages
 	if (length(doc_template_names)>0) {
 	  map_names <- sub("\\.Rd$", "", doc_template_names)
