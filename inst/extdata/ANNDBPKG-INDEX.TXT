@@ -21,29 +21,13 @@ Package: hcg110db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hcg110.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hcg110
-AnnObjTarget: chip hcg110
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgfocusdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgfocus.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgfocus
-AnnObjTarget: chip hgfocus
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu133a2db
 Version: 1.13.94
@@ -55,57 +39,25 @@ Package: hgu133adb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu133a.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu133a
-AnnObjTarget: chip hgu133a
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu133bdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu133b.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu133b
-AnnObjTarget: chip hgu133b
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu133plus2db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu133plus2.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu133plus2
-AnnObjTarget: chip hgu133plus2
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu95adb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu95a.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu95a
-AnnObjTarget: chip hgu95a
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu95av2db
 Version: 1.13.94
@@ -117,519 +69,223 @@ Package: hgu95bdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu95b.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu95b
-AnnObjTarget: chip hgu95b
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu95cdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu95c.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu95c
-AnnObjTarget: chip hgu95c
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu95ddb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu95d.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu95d
-AnnObjTarget: chip hgu95d
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hgu95edb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hgu95e.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hgu95e
-AnnObjTarget: chip hgu95e
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hu35ksubadb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hu35ksuba.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hu35ksuba
-AnnObjTarget: chip hu35ksuba
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hu35ksubbdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hu35ksubb.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hu35ksubb
-AnnObjTarget: chip hu35ksubb
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hu35ksubcdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hu35ksubc.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hu35ksubc
-AnnObjTarget: chip hu35ksubc
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hu35ksubddb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hu35ksubd.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hu35ksubd
-AnnObjTarget: chip hu35ksubd
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: hu6800db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/hu6800.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: hu6800
-AnnObjTarget: chip hu6800
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: u133x3pdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/human/u133x3p.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: u133x3p
-AnnObjTarget: chip u133x3p
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mgu74adb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mgu74a.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mgu74a
-AnnObjTarget: chip mgu74a
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mgu74av2db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mgu74av2.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mgu74av2
-AnnObjTarget: chip mgu74av2
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mgu74bdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mgu74b.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mgu74b
-AnnObjTarget: chip mgu74b
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mgu74bv2db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mgu74bv2.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mgu74bv2
-AnnObjTarget: chip mgu74bv2
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mgu74cdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mgu74c.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mgu74c
-AnnObjTarget: chip mgu74c
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mgu74cv2db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mgu74cv2.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mgu74cv2
-AnnObjTarget: chip mgu74cv2
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: moe430adb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/moe430a.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: moe430a
-AnnObjTarget: chip moe430a
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: moe430bdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/moe430b.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: moe430b
-AnnObjTarget: chip moe430b
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mouse4302db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mouse4302.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mouse4302
-AnnObjTarget: chip mouse4302
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mouse430a2db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mouse430a2.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mouse430a2
-AnnObjTarget: chip mouse430a2
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mu11ksubadb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mu11ksuba.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mu11ksuba
-AnnObjTarget: chip mu11ksuba
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mu11ksubbdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mu11ksubb.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mu11ksubb
-AnnObjTarget: chip mu11ksubb
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mu19ksubadb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mu19ksuba.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mu19ksuba
-AnnObjTarget: chip mu19ksuba
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mu19ksubbdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mu19ksubb.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mu19ksubb
-AnnObjTarget: chip mu19ksubb
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: mu19ksubcdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/mouse/mu19ksubc.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: mu19ksubc
-AnnObjTarget: chip mu19ksubc
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: rae230adb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/rat/rae230a.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: rae230a
-AnnObjTarget: chip rae230a
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: rae230bdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/rat/rae230b.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: rae230b
-AnnObjTarget: chip rae230b
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: rat2302db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/rat/rat2302.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: rat2302
-AnnObjTarget: chip rat2302
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: rgu34adb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/rat/rgu34a.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: rgu34a
-AnnObjTarget: chip rgu34a
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: rgu34bdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/rat/rgu34b.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: rgu34b
-AnnObjTarget: chip rgu34b
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: rgu34cdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/rat/rgu34c.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: rgu34c
-AnnObjTarget: chip rgu34c
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: rnu34db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/rat/rnu34.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: rnu34
-AnnObjTarget: chip rnu34
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: rtu34db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/rat/rtu34.sqlite
-DBschema: HGU95AV2_DB
 AnnObjPrefix: rtu34
-AnnObjTarget: chip rtu34
-organism: Homo sapiens
-species: Human
-manufacturer: Affymetrix
-chipName: Human Genome U95 Set
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu95
-biocViews: AffymetrixChip, Homo_sapiens, hgu95av2
 
 Package: yeast2db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/yeast/yeast2.sqlite
-DBschema: YEAST2_DB
 AnnObjPrefix: yeast2
-AnnObjTarget: chip yeast2
-organism: Saccharomyces cerevisiae
-species: Yeast
-manufacturer: Affymetrix
-chipName: Yeast Genome 2.0 Array
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast-20
-biocViews: AffymetrixChip, Saccharomyces_cerevisiae, yeast2
 
 Package: ygs98db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc/affychip/2007-Mar5/yeast/ygs98.sqlite
-DBschema: YEAST2_DB
 AnnObjPrefix: ygs98
-AnnObjTarget: chip ygs98
-organism: Saccharomyces cerevisiae
-species: Yeast
-manufacturer: Affymetrix
-chipName: Yeast Genome S98 Array
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast
-biocViews: AffymetrixChip, Saccharomyces_cerevisiae, ygs98
 
 Package: agdb
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB  
 DBfile:                                                                            
-DBschema: AG_DB
 AnnObjPrefix: ag
-AnnObjTarget: chip ag
-organism: Arabidopsis thaliana
-species: Arabidopsis
-manufacturer: Affymetrix
-chipName: Arabidopsis Genome Array
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=atgenome1
-biocViews: AffymetrixChip, Arabidopsis_thaliana, ag
 
 Package: ath1121501db
 Version: 1.13.94
 PkgTemplate: HGU95AV2DB
 DBfile:
-DBschema: AG_DB
 AnnObjPrefix: ath1121501
-AnnObjTarget: chip ath1121501
-organism: Arabidopsis thaliana
-species: Arabidopsis
-manufacturer: Affymetrix
-chipName: Arabidopsis ATH1 Genome Array
-manufacturerUrl: http://www.affymetrix.com/support/technical/byproduct.affx?product=arab
-biocViews: AffymetrixChip, Arabidopsis_thaliana, ath1121501
 
 ### =========================================================================
 ### YEASTDB template
@@ -652,10 +308,6 @@ PkgTemplate: YEASTDB
 DBfile: /home/nli/proj/ann/nli/annosrc/db/YEAST.sqlite
 DBschema: YEAST_DB
 AnnObjPrefix: YEAST
-AnnObjTarget: YEAST
-organism: Saccharomyces cerevisiae
-species: Yeast
-biocViews: Saccharomyces_cerevisiae
 
 ### =========================================================================
 ### LLMAPPINGSDB template
