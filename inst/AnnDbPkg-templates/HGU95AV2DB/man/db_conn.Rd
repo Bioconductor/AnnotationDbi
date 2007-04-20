@@ -10,7 +10,7 @@
 }
 
 \details{
-  Don't call \code{\link{dbDisconnect}} on \code{db_conn} or you will
+  Don't call \code{\link[DBI]{dbDisconnect}} on \code{db_conn} or you will
   break all the \code{AnnObj} instances defined in this package!
 }
 
