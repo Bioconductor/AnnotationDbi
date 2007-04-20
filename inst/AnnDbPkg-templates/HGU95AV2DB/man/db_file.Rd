@@ -3,10 +3,10 @@
 \alias{db_file}
 
 
-\title{SQLite file containing the package annotation data}
+\title{Path to the SQLite file containing the package annotation data}
 
 \description{
-  SQLite file containing the package annotation data.
+  Path to the SQLite file containing the package annotation data.
 }
 
 \details{
