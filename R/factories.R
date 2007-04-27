@@ -28,11 +28,11 @@ generateQC <- function(pkgName, objPrefix=pkgName) {
 compareAnnotation <- function(pkg1, pkg2, objs, nona1=FALSE, nona2=FALSE, maxCompare=50, printSize=5) {
 	if( ! paste("package", pkg1, sep=":") %in% search()) {
 		cat("library(", pkg1, ")\n")
-		library(pkg1, character.only=T, warn.conflicts=F)
+		library(pkg1, character.only=TRUE, warn.conflicts=FALSE)
 	}
 	if( ! paste("package", pkg2, sep=":") %in% search()) {
 		cat("library(", pkg2, ")\n")
-		library(pkg2, character.only=T, warn.conflicts=F)
+		library(pkg2, character.only=TRUE, warn.conflicts=FALSE)
 	}
 	pkgName1 <- paste(pkg1, packageDescription(pkg1, field="Version"), sep="_", collapse="")
 	pkgName2 <- paste(pkg2, packageDescription(pkg2, field="Version"), sep="_", collapse="")
@@ -107,11 +107,11 @@ compareAnnotation <- function(pkg1, pkg2, objs, nona1=FALSE, nona2=FALSE, maxCom
 comparePerf <- function(pkg1, pkg2, objs) {
 	if( ! paste("package", pkg1, sep=":") %in% search()) {
 		cat("library(", pkg1, ")\n")
-		library(pkg1, character.only=T, warn.conflicts=F)
+		library(pkg1, character.only=TRUE, warn.conflicts=FALSE)
 	}
 	if( ! paste("package", pkg2, sep=":") %in% search()) {
 		cat("library(", pkg2, ")\n")
-		library(pkg2, character.only=T, warn.conflicts=F)
+		library(pkg2, character.only=TRUE, warn.conflicts=FALSE)
 	}
 	pkgName1 <- paste(pkg1, packageDescription(pkg1, field="Version"), sep="_", collapse="")
 	pkgName2 <- paste(pkg2, packageDescription(pkg2, field="Version"), sep="_", collapse="")
@@ -146,7 +146,7 @@ comparePerf <- function(pkg1, pkg2, objs) {
 		    if (kLength>0)
 		    	k <- sample(k, kLength)
 		}
-		tt <- matrix(data=tt, ncol=3, byrow=T)
+		tt <- matrix(data=tt, ncol=3, byrow=TRUE)
 		colnames(tt) <- resColNames
 		print(tt) 
 	})
