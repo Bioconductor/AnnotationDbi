@@ -1,5 +1,7 @@
 import(methods)
+import(Biobase)
 import(DBI)
+import(RSQLite)
 
 export(toggleDebug,
        compareAnnotation,

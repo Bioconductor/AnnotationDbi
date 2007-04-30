@@ -19,7 +19,7 @@
 
 \examples{
   ## Object 'db_conn' was created with:
-  db_conn <- dbConnect(dbDriver("SQLite"), dbname=db_file, cache_size=64000, synchronous=0)
+  db_conn <- dbConnect(SQLite(), dbname=db_file, cache_size=64000, synchronous=0)
 }
 
 \keyword{utilities}

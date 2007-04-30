@@ -5,7 +5,10 @@
 ### Used at load time (in .onLoad).
 dbFileConnect <- function(db_file)
 {
-    dbConnect(dbDriver("SQLite"), dbname=db_file, cache_size=64000, synchronous=0)
+    ## We should not need to explicitly library(RSQLite) because it's in
+    ## Depends and Imports but this seems to make 'R CMD hgu95av2db' happy.
+    library(RSQLite)
+    dbConnect(SQLite(), dbname=db_file, cache_size=64000, synchronous=0)
 }
 
 ### Used at unload time (in .onUnload).

@@ -6,7 +6,7 @@ Author: @AUTHOR@
 Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
 LazyLoad: yes 
 Depends: R (>= 2.5.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
-Imports: AnnotationDbi
+Imports: methods, AnnotationDbi
 License: @LIC@
 organism: @ORGANISM@
 species: @SPECIES@
