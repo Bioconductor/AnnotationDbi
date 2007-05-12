@@ -11,7 +11,7 @@
 
 \details{
   Don't call \code{\link[DBI]{dbDisconnect}} on \code{db_conn} or you will
-  break all the \code{AnnObj} instances defined in this package!
+  break all the \code{AnnDbObj} instances defined in this package!
 }
 
 \seealso{

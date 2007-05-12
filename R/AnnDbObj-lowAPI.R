@@ -1,18 +1,18 @@
 ### =========================================================================
-### Low-level API for AnnObj objects
-### --------------------------------
+### Low-level API for AnnDbObj objects
+### ----------------------------------
 ###
-### The "AnnObj" class is a general purpose container for SQLite-based
-### annotation data (refer to AllClasses.R for the definition of the "AnnObj"
+### The "AnnDbObj" class is a general purpose container for SQLite-based
+### annotation data (refer to AllClasses.R for the definition of the "AnnDbObj"
 ### class and its derived classes).
 ###
-### This file defines and implements the low-level API for AnnObj objects.
+### This file defines and implements the low-level API for AnnDbObj objects.
 ### It is divided in 2 sections:
 ###
 ###   A. Helper functions used by the low-level API.
 ###
-###   B. The low-level API for AnnObj objects.
-###      This API consists of the following set of methods for AnnObj objects:
+###   B. The low-level API for AnnDbObj objects.
+###      This API consists of the following set of methods for AnnDbObj objects:
 ###          reverse
 ###          db
 ###          toTable, as.data.frame, nrow
@@ -30,8 +30,8 @@
 ###      For each of these methods, there are 2 "unoriented" methods: a left
 ###      method and a right method.
 ###
-### The environment-like API for AnnMap objects (ls, mget, etc...) is defined
-### in the AnnMap-envirAPI.R file.
+### The environment-like API for AnnDbMap objects (ls, mget, etc...) is defined
+### in the AnnDbMap-envirAPI.R file.
 ###
 ### -------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ toSQLWhere <- function(col, names)
     paste(col, " IN (", toSQLStringSet(names), ")", sep="")
 }
 
-dbRawAnnMapToTable <- function(conn, left.table, left.col, left.names,
+dbRawAnnDbMapToTable <- function(conn, left.table, left.col, left.names,
                                          right.table, right.col, right.names,
                                          show.cols, from, verbose=FALSE)
 {
@@ -89,7 +89,7 @@ dbRawAnnMapToTable <- function(conn, left.table, left.col, left.names,
     .dbGetQuery(conn, sql)
 }
 
-dbCountRawAnnMapRows <- function(conn, left.table, left.col, 
+dbCountRawAnnDbMapRows <- function(conn, left.table, left.col, 
                                        right.table, right.col, from)
 {
     sql <- paste("SELECT COUNT(*) FROM", from)
@@ -99,9 +99,9 @@ dbCountRawAnnMapRows <- function(conn, left.table, left.col,
     .dbGetQuery(conn, sql)[[1]]
 }
 
-### May be we don't need this anymore. Maybe dbRawAnnMapToTable() could
+### May be we don't need this anymore. Maybe dbRawAnnDbMapToTable() could
 ### always be used instead?
-dbAnnMapToTable <- function(conn, table, join, left.col, left.names,
+dbAnnDbMapToTable <- function(conn, table, join, left.col, left.names,
                                 right.col, right.names, extra.cols, verbose=FALSE)
 {
     ## Full col name is needed because of ambiguous column name "accession"
@@ -119,7 +119,7 @@ dbAnnMapToTable <- function(conn, table, join, left.col, left.names,
     .dbGetQuery(conn, sql)
 }
 
-dbCountAnnMapRows <- function(conn, table, join, left.col, right.col)
+dbCountAnnDbMapRows <- function(conn, table, join, left.col, right.col)
 {
     ## Full col name is needed because of ambiguous column name "accession"
     ## in hgu95av2REFSEQ map.
@@ -238,7 +238,7 @@ GOtables <- function(all=FALSE)
 
 
 ### =========================================================================
-### B. The low-level API for AnnObj objects.
+### B. The low-level API for AnnDbObj objects.
 ### -------------------------------------------------------------------------
 
 
@@ -253,33 +253,33 @@ GOtables <- function(all=FALSE)
 ### we want to be able to use a different signature (2 args).
 ###
 
-setMethod("revmap", "AtomicAnnMap",
+setMethod("revmap", "AtomicAnnDbMap",
     function(x, objName=NULL)
     {
         if (is.null(objName))
             objName <- paste("revmap(", x@objName, ")", sep="")
         else
             objName <- as.character(objName)
-        new("ReverseAtomicAnnMap", x, objName=objName)
+        new("RevAtomicAnnDbMap", x, objName=objName)
     }
 )
-setMethod("revmap", "ReverseAtomicAnnMap",
+setMethod("revmap", "RevAtomicAnnDbMap",
     function(x, objName=NULL)
     {
         stop("already a reverse map")
     }
 )
-setMethod("revmap", "GOAnnMap",
+setMethod("revmap", "GoAnnDbMap",
     function(x, objName=NULL)
     {
         if (is.null(objName))
             objName <- paste("revmap(", x@objName, ")", sep="")
         else
             objName <- as.character(objName)
-        new("ReverseGOAnnMap", x, objName=objName)
+        new("RevGoAnnDbMap", x, objName=objName)
     }
 )
-setMethod("revmap", "ReverseGOAnnMap",
+setMethod("revmap", "RevGoAnnDbMap",
     function(x, objName=NULL)
     {
         stop("already a reverse map")
@@ -296,7 +296,7 @@ setMethod("revmap", "environment",
 ### The "db" new generic.
 ###
 
-setMethod("db", "AnnObj", function(object) object@conn)
+setMethod("db", "AnnDbObj", function(object) object@conn)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -318,21 +318,21 @@ setMethod("db", "AnnObj", function(object) object@conn)
 ### only NULL and NA-free character vectors are guaranted to work properly.
 ###
 
-setMethod("toTable", "AnnTable",
+setMethod("toTable", "AnnDbTable",
     function(x, left.names=NULL, verbose=FALSE)
     {
-        dbRawAnnMapToTable(db(x), x@leftTable, x@leftCol, left.names,
+        dbRawAnnDbMapToTable(db(x), x@leftTable, x@leftCol, left.names,
                                       NULL, NULL, NULL,
                                       x@showCols, x@from, verbose)
     }
 )
 
-setMethod("toTable", "AnnMap",
+setMethod("toTable", "AnnDbMap",
     function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
     {
         if (length(x@tagCols) != 0)
             extra.cols <- c(x@tagCols, extra.cols)
-        dbAnnMapToTable(db(x), x@rightTable, x@join,
+        dbAnnDbMapToTable(db(x), x@rightTable, x@join,
                                    x@leftCol, left.names,
                                    x@rightCol, right.names,
                                    extra.cols, verbose)
@@ -346,14 +346,14 @@ setMethod("toTable", "AnnMap",
 ### or later in R with rbind():
 ###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
 ### Surprisingly the latter is almost twice faster than the former!
-setMethod("toTable", "GOAnnMap",
+setMethod("toTable", "GoAnnDbMap",
     function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
     {
         extra.cols <- c("evidence", extra.cols)
         getPartialSubmap <- function(Ontology)
         {
             table <- x@rightTable[Ontology]
-            data <- dbAnnMapToTable(db(x), table, x@join,
+            data <- dbAnnDbMapToTable(db(x), table, x@join,
                                                x@leftCol, left.names,
                                                "go_id", right.names,
                                                extra.cols, verbose)
@@ -368,7 +368,7 @@ setMethod("toTable", "GOAnnMap",
 )
 
 ### "as.data.frame" is equivalent to "toTable". Might be deprecated soon.
-setMethod("as.data.frame", "AnnObj",
+setMethod("as.data.frame", "AnnDbObj",
     function(x, row.names=NULL, optional=FALSE,
              left.names=NULL, right.names=NULL, ...)
     {
@@ -388,33 +388,33 @@ setMethod("as.data.frame", "AnnObj",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "nrow" new generic.
 ###
-### Conceptual definition (for AnnMap object x):
+### Conceptual definition (for AnnDbMap object x):
 ###     nrow(x) :== nrow(toTable(x))
 ###
 ### Since "toTable" is unoriented, then "nrow" is unoriented too.
 ###
 
-setMethod("nrow", "AnnTable",
+setMethod("nrow", "AnnDbTable",
     function(x)
     {
-        dbCountRawAnnMapRows(db(x), x@leftTable, x@leftCol, NULL, NULL, x@from)
+        dbCountRawAnnDbMapRows(db(x), x@leftTable, x@leftCol, NULL, NULL, x@from)
     }
 )
 
-setMethod("nrow", "AnnMap",
+setMethod("nrow", "AnnDbMap",
     function(x)
     {
-        dbCountAnnMapRows(db(x), x@rightTable, x@join, x@leftCol, x@rightCol)
+        dbCountAnnDbMapRows(db(x), x@rightTable, x@join, x@leftCol, x@rightCol)
     }
 )
 
-setMethod("nrow", "GOAnnMap",
+setMethod("nrow", "GoAnnDbMap",
     function(x)
     {
         countRows <- function(Ontology)
         {
             table <- x@rightTable[Ontology]
-            dbCountAnnMapRows(db(x), table, x@join, x@leftCol, "go_id")
+            dbCountAnnDbMapRows(db(x), table, x@join, x@leftCol, "go_id")
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
@@ -425,21 +425,21 @@ setMethod("nrow", "GOAnnMap",
 ### The "left.names", "right.names" and "names" generics.
 ###
 
-setMethod("left.names", "AnnObj",
+setMethod("left.names", "AnnDbObj",
     function(x)
     {
         dbUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
     }
 )
 
-setMethod("right.names", "AnnMap",
+setMethod("right.names", "AnnDbMap",
     function(x)
     {
         dbUniqueVals(db(x), x@rightTable, x@rightCol, x@datacache)
     }
 )
 
-setMethod("right.names", "GOAnnMap",
+setMethod("right.names", "GoAnnDbMap",
     function(x)
     {
         getNames <- function(Ontology)
@@ -453,33 +453,33 @@ setMethod("right.names", "GOAnnMap",
     }
 )
 
-setMethod("names", "AnnObj", function(x) left.names(x))
-setMethod("names", "ReverseAnnMap", function(x) right.names(x))
+setMethod("names", "AnnDbObj", function(x) left.names(x))
+setMethod("names", "RevAnnDbMap", function(x) right.names(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "left.length", "right.length" and "length" generic.
 ###
-### Conceptual definitions (for AnnMap object x):
+### Conceptual definitions (for AnnDbMap object x):
 ###     left.length(x) :== length(left.names(x))
 ###     right.length(x) :== length(right.names(x))
 ###
 
-setMethod("left.length", "AnnObj",
+setMethod("left.length", "AnnDbObj",
     function(x)
     {
         dbCountUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
     }
 )
 
-setMethod("right.length", "AnnMap",
+setMethod("right.length", "AnnDbMap",
     function(x)
     {
         dbCountUniqueVals(db(x), x@rightTable, x@rightCol, x@datacache)
     }
 )
 
-setMethod("right.length", "GOAnnMap",
+setMethod("right.length", "GoAnnDbMap",
     function(x)
     {
         countNames <- function(Ontology)
@@ -492,15 +492,15 @@ setMethod("right.length", "GOAnnMap",
     }
 )
 
-setMethod("length", "AnnObj", function(x) left.length(x))
-setMethod("length", "ReverseAnnMap", function(x) right.length(x))
+setMethod("length", "AnnDbObj", function(x) left.length(x))
+setMethod("length", "RevAnnDbMap", function(x) right.length(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "show" generic.
 ###
 
-setMethod("show", "AnnTable",
+setMethod("show", "AnnDbTable",
     function(object)
     {
         cat(object@objName, " table for ", object@objTarget,
@@ -508,7 +508,7 @@ setMethod("show", "AnnTable",
     }
 )
 
-setMethod("show", "AnnMap",
+setMethod("show", "AnnDbMap",
     function(object)
     {
         cat(object@objName, " map for ", object@objTarget,
@@ -520,17 +520,17 @@ setMethod("show", "AnnMap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "as.character" generic.
 ###
-### For untagged Reverse/AtomicAnnMap obects only!
+### For untagged Reverse/AtomicAnnDbMap obects only!
 ###
 
 ### R doesn't let me add a 'names' arg here:
 ###  Error in rematchDefinition(definition, fdef, mnames, fnames, signature) :
 ###          methods can add arguments to the generic only if '...' is an argument to the generic
-setMethod("as.character", "AtomicAnnMap",
+setMethod("as.character", "AtomicAnnDbMap",
     function(x)
     {
         if (length(x@tagCols) != 0)
-            stop("cannot coerce to character an AtomicAnnMap object with tags")
+            stop("cannot coerce to character an AtomicAnnDbMap object with tags")
         data <- toTable(x)
         ans <- data[[x@rightCol]]
         if (!is.character(ans))
@@ -542,11 +542,11 @@ setMethod("as.character", "AtomicAnnMap",
     }
 )
 
-setMethod("as.character", "ReverseAtomicAnnMap",
+setMethod("as.character", "RevAtomicAnnDbMap",
     function(x)
     {
         if (length(x@tagCols) != 0)
-            stop("cannot coerce to character an AtomicAnnMap object with tags")
+            stop("cannot coerce to character an AtomicAnnDbMap object with tags")
         data <- toTable(x)
         ans <- data[[x@leftCol]]
         if (!is.character(ans))
@@ -604,7 +604,7 @@ alignAnnList <- function(x, names)
     lapply(names, name2val)
 }
 
-setMethod("toList", "AnnMap",
+setMethod("toList", "AnnDbMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
@@ -630,7 +630,7 @@ setMethod("toList", "AnnMap",
     }
 )
 
-setMethod("toList", "ReverseAnnMap",
+setMethod("toList", "RevAnnDbMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
@@ -660,7 +660,7 @@ setMethod("toList", "ReverseAnnMap",
 ###   - mapped.right.names, count.mapped.right.names
 ###   - mapped.names, count.mapped.names
 ###
-### Conceptual definitions (for AnnMap object x):
+### Conceptual definitions (for AnnDbMap object x):
 ###
 ###     mapped.left.names(x) :== unique values in left col (col 1) of
 ###                              toTable(x)
@@ -675,11 +675,11 @@ setMethod("toList", "ReverseAnnMap",
 ### worth checking in a test unit).
 ###
 
-### For an AtomicAnnMap, x@replace.single and x@replace.multiple will be
+### For an AtomicAnnDbMap, x@replace.single and x@replace.multiple will be
 ### ignored, hence will give wrong results if one of those 2 fields has a
 ### non-default value like silly maps ENTREZID and MULTIHIT in AG_DB schema.
 ### But who cares, those maps are silly anyway...
-setMethod("mapped.left.names", "AnnMap",
+setMethod("mapped.left.names", "AnnDbMap",
     function(x)
     {
         dbUniqueMappedVals(db(x), x@rightTable, x@join,
@@ -687,7 +687,7 @@ setMethod("mapped.left.names", "AnnMap",
                            x@rightTable, x@rightCol, x@datacache)
     }
 )
-setMethod("count.mapped.left.names", "AnnMap",
+setMethod("count.mapped.left.names", "AnnDbMap",
     function(x)
     {
         dbCountUniqueMappedVals(db(x), x@rightTable, x@join,
@@ -696,7 +696,7 @@ setMethod("count.mapped.left.names", "AnnMap",
     }
 )
 
-setMethod("mapped.right.names", "AnnMap",
+setMethod("mapped.right.names", "AnnDbMap",
     function(x)
     {
         dbUniqueMappedVals(db(x), x@rightTable, x@join,
@@ -704,7 +704,7 @@ setMethod("mapped.right.names", "AnnMap",
                            x@leftTable, x@leftCol, x@datacache)
     }
 )
-setMethod("count.mapped.right.names", "AnnMap",
+setMethod("count.mapped.right.names", "AnnDbMap",
     function(x)
     {
         dbCountUniqueMappedVals(db(x), x@rightTable, x@join,
@@ -713,7 +713,7 @@ setMethod("count.mapped.right.names", "AnnMap",
     }
 )
 
-setMethod("mapped.left.names", "GOAnnMap",
+setMethod("mapped.left.names", "GoAnnDbMap",
     function(x)
     {
         getMappedNames <- function(Ontology)
@@ -729,11 +729,11 @@ setMethod("mapped.left.names", "GOAnnMap",
         unique(c(names1, names2, names3))
     }
 )
-setMethod("count.mapped.left.names", "GOAnnMap",
+setMethod("count.mapped.left.names", "GoAnnDbMap",
     function(x) length(mapped.left.names(x))
 )
 
-setMethod("mapped.right.names", "GOAnnMap",
+setMethod("mapped.right.names", "GoAnnDbMap",
     function(x)
     {
         getMappedNames <- function(Ontology)
@@ -751,7 +751,7 @@ setMethod("mapped.right.names", "GOAnnMap",
         c(names1, names2, names3)
     }
 )
-setMethod("count.mapped.right.names", "GOAnnMap",
+setMethod("count.mapped.right.names", "GoAnnDbMap",
     function(x)
     {
         countMappedNames <- function(Ontology)
@@ -766,10 +766,10 @@ setMethod("count.mapped.right.names", "GOAnnMap",
     }
 )
 
-setMethod("mapped.names", "AnnMap", function(x) mapped.left.names(x))
-setMethod("mapped.names", "ReverseAnnMap", function(x) mapped.right.names(x))
-setMethod("count.mapped.names", "AnnMap", function(x) count.mapped.left.names(x))
-setMethod("count.mapped.names", "ReverseAnnMap", function(x) count.mapped.right.names(x))
+setMethod("mapped.names", "AnnDbMap", function(x) mapped.left.names(x))
+setMethod("mapped.names", "RevAnnDbMap", function(x) mapped.right.names(x))
+setMethod("count.mapped.names", "AnnDbMap", function(x) count.mapped.left.names(x))
+setMethod("count.mapped.names", "RevAnnDbMap", function(x) count.mapped.right.names(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -780,7 +780,7 @@ setMethod("count.mapped.names", "ReverseAnnMap", function(x) count.mapped.right.
 ### (other than an NA).
 ###
 
-setMethod("is.na", "AnnMap",
+setMethod("is.na", "AnnDbMap",
     function(x)
     {
         mapped_names <- mapped.names(x)

@@ -1,12 +1,20 @@
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Containers for SQLite-based annotation data.
-###
-
 setClass("AnnObj",
     representation(
         "VIRTUAL",
         objName="character",
-        objTarget="character",  # "chip hgu95av2" or "YEAST" or...
+        objTarget="character"   # "chip hgu95av2" or "YEAST" or...
+    )
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Containers for SQLite-based annotation data.
+###
+
+setClass("AnnDbObj",
+    contains="AnnObj",
+    representation(
+        "VIRTUAL",
         datacache="environment",
         conn="DBIConnection",
         leftTable="character",
@@ -14,8 +22,8 @@ setClass("AnnObj",
     )
 )
 
-setClass("AnnTable",
-    contains="AnnObj",
+setClass("AnnDbTable",
+    contains="AnnDbObj",
     representation(
         from="character",
         showCols="character"    # cols to show in addition to the left col
@@ -27,16 +35,16 @@ setClass("AnnTable",
 ### Containers for SQLite-based annotation maps.
 ###
 
-### An "AnnMap" object is a mapping between left values and right values.
+### An "AnnDbMap" object is a mapping between left values and right values.
 ### The left values are the strings stored in the SQL col 'leftCol' of
 ### table 'leftTable'.
-### For direct "AnnMap" objects, the mapping is "left-to-right". The left
+### For direct "AnnDbMap" objects, the mapping is "left-to-right". The left
 ### values are the names (or symbols, or keys) of the map and are retrieved
 ### with the "names" or "ls" methods. The type, format and location in the
-### DB of the right values depend on the particular subclass of the "AnnMap"
-### object. For reverse "AnnMap" objects, the mapping is "right-to-left".
-setClass("AnnMap",
-    contains="AnnObj",
+### DB of the right values depend on the particular subclass of the "AnnDbMap"
+### object. For reverse "AnnDbMap" objects, the mapping is "right-to-left".
+setClass("AnnDbMap",
+    contains="AnnDbObj",
     representation(
         rightTable="character",
         rightCol="character",
@@ -46,9 +54,9 @@ setClass("AnnMap",
     )
 )
 
-setClass("ReverseAnnMap", representation("VIRTUAL"))
+setClass("RevAnnDbMap", representation("VIRTUAL"))
 
-### For a "AtomicAnnMap" object, the right values are unnamed atomic vectors
+### For a "AtomicAnnDbMap" object, the right values are unnamed atomic vectors
 ### (character or integer).
 ### The 2 additional slots ('replace.single' and 'replace.multiple') allow dealing
 ### with silly maps ENTREZID and MULTIHIT in AG_DB schema: they are complementary
@@ -60,29 +68,29 @@ setClass("ReverseAnnMap", representation("VIRTUAL"))
 ###   - for MULTIHIT: use replace.single=NA,
 ###                   don't set replace.multiple (default is character(0)),
 ###   - for any other map: don't set those fields (defaults will be just fine).
-setClass("AtomicAnnMap",
-    contains="AnnMap",
+setClass("AtomicAnnDbMap",
+    contains="AnnDbMap",
     representation(
         replace.single="character",
         replace.multiple="character"
     )
 )
 
-### DON'T ADD ANY SLOT HERE! A given AnnMap subclass and its corresponding
+### DON'T ADD ANY SLOT HERE! A given AnnDbMap subclass and its corresponding
 ### "reverse" class should always have exactly the same slots.
-setClass("ReverseAtomicAnnMap", contains=c("ReverseAnnMap", "AtomicAnnMap"))
+setClass("RevAtomicAnnDbMap", contains=c("RevAnnDbMap", "AtomicAnnDbMap"))
 
-### No "reverse" class for the IPIAnnMap class.
-setClass("IPIAnnMap", contains="AnnMap")
+### No "reverse" class for the IpiAnnDbMap class.
+setClass("IpiAnnDbMap", contains="AnnDbMap")
 
 
-### For a "GOAnnMap" object, the right values are named lists of GO nodes,
+### For a "GoAnnDbMap" object, the right values are named lists of GO nodes,
 ### each GO node being represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
-setClass("GOAnnMap", contains="AnnMap")
+setClass("GoAnnDbMap", contains="AnnDbMap")
 
 ### Maps a GO term to a named character vector containing left values tagged
 ### with the Evidence code.
-### DON'T ADD ANY SLOT HERE! (Why? See "ReverseAtomicAnnMap" def above.)
-setClass("ReverseGOAnnMap", contains=c("ReverseAnnMap", "GOAnnMap"))
+### DON'T ADD ANY SLOT HERE! (Why? See "RevAtomicAnnDbMap" def above.)
+setClass("RevGoAnnDbMap", contains=c("RevAnnDbMap", "GoAnnDbMap"))
 

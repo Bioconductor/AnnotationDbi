@@ -47,6 +47,7 @@ setClass(
     )
 )
 
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Some helper functions.
 ###
@@ -101,6 +102,31 @@ initWithDbDoc <- function(db_file)
     on.exit(dbFileDisconnect(db_conn))
     map_metadata <- dbGetTable(db_conn, "map_metadata")
     map_metadata
+}
+
+getSymbolValuesForManPages <- function(map_names, db_file)
+{
+    map_metadata <- initWithDbDoc(db_file)
+    map_source <- lapply(map_names,
+                         function(this_map)
+                         {
+                             map_index <- which(map_metadata$map_name == this_map)
+                             if (length(map_index) > 0) {
+                                 this_source <- paste(
+                                     map_metadata[map_index, "source_name"],
+                                     "(",
+                                     map_metadata[map_index, "source_url"],
+                                     ") on",
+                                     map_metadata[map_index, "source_date"],
+                                     sep=" ", collapse=" and ")
+                             } else {
+                                 this_source <- ""
+                             }
+                             this_source
+                         })
+    map_source <- sub("_", "\\\\_", map_source)
+    names(map_source) <- paste(map_names, "SOURCE", sep="")
+    map_source
 }
 
 removeCommentsFromFile <- function(infile, outfile)
@@ -170,48 +196,30 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
             DBFILE=db_file_basename,
             ANNDBIVERSION=ann_dbi_version
         )
-	doc_path <- system.file("AnnDbPkg-templates", x@PkgTemplate, "man",
-				package="AnnotationDbi")
-	doc_template_names <- list.files(doc_path, ".*Rd$") 
-	is_static <- doc_template_names %in% c("db_coon", "db_file")
-	doc_template_names <- doc_template_names[!is_static]
-	## create man pages
-	if (length(doc_template_names)>0) {
-	  map_names <- sub("\\.Rd$", "", doc_template_names)
-	  map_metadata <- initWithDbDoc(db_file)
-	  map_source <- lapply(map_names, function(this_map) {
-			map_index <- which(map_metadata$map_name==this_map)
-			if (length(map_index)>0) {
-		 	  this_source <- paste(
-				map_metadata[map_index, "source_name"],
-				"(",
-				map_metadata[map_index, "source_url"],
-				") on",
-				map_metadata[map_index, "source_date"],
-				sep=" ", collapse=" and ")
-			} else {
-			  this_source <- ""
-			}
-			this_source
-	  })
-	  map_source <- sub("_", "\\\\_", map_source)
-	  names(map_source) <- paste(map_names, "SOURCE", sep="")
-	  symvals <- c(symvals, map_source)
-	}
+        man_dir <- file.path(template_path, "man")
+        if (file.exists(man_dir)) {
+            doc_template_names <- list.files(man_dir, "\\.Rd$")
+            is_static <- doc_template_names %in% c("db_conn.Rd", "db_file.Rd")
+            doc_template_names <- doc_template_names[!is_static]
+            map_names <- sub("\\.Rd$", "", doc_template_names)
+            if (length(map_names) != 0)
+                symvals <- c(symvals, getSymbolValuesForManPages(map_names, db_file))
+        }
+        if (any(duplicated(names(symvals)))) {
+            str(symvals)
+            stop("'symvals' contains duplicated symbols (see above)")
+        }
         createPackage(x@Package,
                       destinationDir=dest_dir,
                       originDir=template_path,
                       symbolValues=symvals)
-	## rename Rd files
-	if (length(doc_template_names)>0) {
-		doc_path <- file.path(dest_dir, x@Package, "man")
-		from_doc_names <- paste(doc_path, doc_template_names, 
-				sep=.Platform$file.sep)
-		
-		to_doc_names <- paste(x@AnnObjPrefix, doc_template_names, sep="")
-		to_doc_names <- paste(doc_path, to_doc_names, 
-				sep=.Platform$file.sep)
-		mapply(file.rename, from_doc_names, to_doc_names)
+        ## rename Rd files
+        if (file.exists(man_dir) && length(doc_template_names) != 0) {
+            doc_path <- file.path(dest_dir, x@Package, "man")
+            from_doc_names <- paste(doc_path, doc_template_names, sep=.Platform$file.sep)
+            to_doc_names <- paste(x@AnnObjPrefix, doc_template_names, sep="")
+            to_doc_names <- paste(doc_path, to_doc_names, sep=.Platform$file.sep)
+            mapply(file.rename, from_doc_names, to_doc_names)
 	}
 
 	dest_db_file <- file.path(dest_dir, x@Package, "inst", "extdata", db_file_basename)

@@ -4,7 +4,7 @@
 ### -------------------------------------------------------------------------
 
 ### Mandatory fields: objName, from
-AFFYHUEX_DB_AnnTable_seeds <- list(
+AFFYHUEX_DB_AnnDbTable_seeds <- list(
     list(
         objName="TRANSCRIPT",
         leftTable="transcript_cluster",
@@ -21,7 +21,7 @@ AFFYHUEX_DB_AnnTable_seeds <- list(
     )
 )
 
-AFFYHUEX_DB_RawAnnMap_seeds <- list(
+AFFYHUEX_DB_RawAnnDbMap_seeds <- list(
     list(
         objName="MRNA2GENE",
         leftTable="mrna",
@@ -56,19 +56,19 @@ AFFYHUEX_DB_RawAnnMap_seeds <- list(
 
 createAnnObjs.AFFYHUEX_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AnnTable and RawAnnMap objects
+    ## AnnDbTable and RawAnnDbMap objects
     seed0 <- list(
         objTarget=objTarget,
         conn=conn,
         datacache=datacache
     )
-    annobjs <- createAnnObjs("AnnTable", AFFYHUEX_DB_AnnTable_seeds, seed0)
-    createAnnObjs("RawAnnMap", AFFYHUEX_DB_RawAnnMap_seeds, seed0, annobjs)
+    ann_objs <- createAnnObjs("AnnDbTable", AFFYHUEX_DB_AnnDbTable_seeds, seed0)
+    createAnnObjs("RawAnnDbMap", AFFYHUEX_DB_RawAnnDbMap_seeds, seed0, ann_objs)
 
     ## Some pre-caching
-    left.names(annobjs$TRANSCRIPT)
-    left.names(annobjs$PROBESET)
+    left.names(ann_objs$TRANSCRIPT)
+    left.names(ann_objs$PROBESET)
 
-    prefixAnnObjNames(annobjs, prefix)
+    prefixAnnObjNames(ann_objs, prefix)
 }
 

@@ -234,7 +234,7 @@ checkMAPCOUNTS <- function(pkgname, prefix)
         cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
         if (count2 != count0)
             stop("count2 and count0 differ")
-        if (is(map, "IPIAnnMap"))
+        if (is(map, "IpiAnnDbMap"))
             next
 
         ## count3

@@ -1,4 +1,4 @@
-Short AnnMap API demo
+Short AnnDbMap API demo
 =====================
 
   library(hgu95av2db)

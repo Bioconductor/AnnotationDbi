@@ -1,12 +1,12 @@
 ### =========================================================================
-### Environment-like API for AnnMap objects
-### ---------------------------------------
+### Environment-like API for AnnDbMap objects
+### -----------------------------------------
 ###
-### This file defines an environment-like API for the AnnMap objects (ls,
+### This file defines an environment-like API for the AnnDbMap objects (ls,
 ### mget, eapply, get, exists, [[ and $) for backward compatibility with the
 ### classic envir-based annotation maps.
 ### This environment-like API is defined on top of the low-level API for
-### AnnObj objects (refer to AnnObj-lowAPI.R for the definition of this
+### AnnDbObj objects (refer to AnnDbObj-lowAPI.R for the definition of this
 ### low-level API).
 ###
 ### Note that the "length" method is not redefined here since it is
@@ -62,7 +62,7 @@ formatAnnList <- function(lsubmap, names, replace.single=NULL, replace.multiple=
 ### The "ls" new generic.
 ###
 
-setMethod("ls", signature(name="AnnMap"),
+setMethod("ls", signature(name="AnnDbMap"),
     function(name, pos, envir, all.names, pattern) names(name)
 )
 
@@ -71,7 +71,7 @@ setMethod("ls", signature(name="AnnMap"),
 ### The "as.list" generic.
 ###
 
-setMethod("as.list", "AtomicAnnMap",
+setMethod("as.list", "AtomicAnnDbMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
@@ -96,7 +96,7 @@ setMethod("as.list", "AtomicAnnMap",
     }
 )
 
-setMethod("as.list", "ReverseAtomicAnnMap",
+setMethod("as.list", "RevAtomicAnnDbMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
@@ -116,7 +116,7 @@ setMethod("as.list", "ReverseAtomicAnnMap",
     }
 )
 
-setMethod("as.list", "IPIAnnMap",
+setMethod("as.list", "IpiAnnDbMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
@@ -148,7 +148,7 @@ setMethod("as.list", "IPIAnnMap",
 ###   > system.time(aa <- as.list(hgu95av2GO))
 ###      user  system elapsed
 ###     4.456   0.228   4.953
-setMethod("as.list", "GOAnnMap",
+setMethod("as.list", "GoAnnDbMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
@@ -187,7 +187,7 @@ setMethod("as.list", "GOAnnMap",
     }
 )
 
-setMethod("as.list", "ReverseGOAnnMap",
+setMethod("as.list", "RevGoAnnDbMap",
     function(x, names=NULL)
     {
         if (!is.null(names) && length(names) == 0)
@@ -221,9 +221,9 @@ setMethod("as.list", "ReverseGOAnnMap",
 ###      Note that for a real "environment", 'as.list(envir)' is not identical
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
-### NB: .checkNamesExist() is defined in the AnnObj-lowAPI.R file.
+### NB: .checkNamesExist() is defined in the AnnDbObj-lowAPI.R file.
 
-setMethod("mget", signature(envir="AnnMap"),
+setMethod("mget", signature(envir="AnnDbMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         .checkNamesAreStrings(x)
@@ -232,7 +232,7 @@ setMethod("mget", signature(envir="AnnMap"),
     }
 )
 
-setMethod("mget", signature(envir="ReverseAnnMap"),
+setMethod("mget", signature(envir="RevAnnDbMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         .checkNamesAreStrings(x)
@@ -245,7 +245,7 @@ setMethod("mget", signature(envir="ReverseAnnMap"),
 ### The "eapply" new generic.
 ###
 
-setMethod("eapply", signature(env="AnnMap"),
+setMethod("eapply", signature(env="AnnDbMap"),
     function(env, FUN, ..., all.names)
     {
         lapply(as.list(env), FUN)
@@ -263,14 +263,14 @@ setMethod("eapply", signature(env="AnnMap"),
 ### to work so we need to dispatch on the 'pos' arg too.
 do_get <- function(what, map) mget(what[1], map)[[1]]
 
-setMethod("get", signature(envir="AnnMap"),
+setMethod("get", signature(envir="AnnDbMap"),
     function(x, pos, envir, mode, inherits)
     {
         do_get(x, envir)
     }
 )
 
-setMethod("get", signature(pos="AnnMap", envir="missing"),
+setMethod("get", signature(pos="AnnDbMap", envir="missing"),
     function(x, pos, envir, mode, inherits)
     {
         do_get(x, pos)
@@ -288,14 +288,14 @@ setMethod("get", signature(pos="AnnMap", envir="missing"),
 ### to work so we need to dispatch on the 'where' arg too.
 do_exists <- function(x, map) x %in% names(map)
 
-setMethod("exists", signature(envir="AnnMap"),
+setMethod("exists", signature(envir="AnnDbMap"),
     function(x, where, envir, frame, mode, inherits)
     {
         do_exists(x, envir)
     }
 )
 
-setMethod("exists", signature(where="AnnMap", envir="missing"),
+setMethod("exists", signature(where="AnnDbMap", envir="missing"),
     function(x, where, envir, frame, mode, inherits)
     {
         do_exists(x, where)
@@ -307,10 +307,10 @@ setMethod("exists", signature(where="AnnMap", envir="missing"),
 ### The "[[" and "$" generics.
 ###
 
-setMethod("[[", "AnnMap",
+setMethod("[[", "AnnDbMap",
     function(x, i, j, ...)
     {
-        # 'x' is guaranteed to be a "AnnMap" object (if it's not, then the
+        # 'x' is guaranteed to be a "AnnDbMap" object (if it's not, then the
         # method dispatch algo will not call this method in the first place),
         # so nargs() is guaranteed to be >= 1
         if (nargs() >= 3)
@@ -335,5 +335,5 @@ setMethod("[[", "AnnMap",
     }
 )
 
-setMethod("$", "AnnMap", function(x, name) x[[name]])
+setMethod("$", "AnnDbMap", function(x, name) x[[name]])
 

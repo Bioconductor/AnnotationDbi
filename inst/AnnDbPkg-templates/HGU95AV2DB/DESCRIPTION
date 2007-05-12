@@ -4,7 +4,6 @@ Description: @MANUF@ @CHIPNAME@ annotation data (@ANNOBJTARGET@) assembled using
 Version: @PKGVERSION@
 Author: @AUTHOR@
 Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
-LazyLoad: yes 
 Depends: R (>= 2.5.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
 Imports: methods, AnnotationDbi
 License: @LIC@

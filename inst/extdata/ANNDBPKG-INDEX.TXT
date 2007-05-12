@@ -351,6 +351,28 @@ biocViews: Rattus_norvegicus, ratLLMappings
 
 
 ### =========================================================================
+### GODB template
+###   Possible DBschemas for this template: GO_DB
+###   Fields:
+###     Package (*)
+###     Version (*)
+###     PkgTemplate (*)
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     biocViews (*)
+### Fields marked with an (*) are required.
+
+Package: GOdb
+Version: 1.17.0
+PkgTemplate: GODB
+DBfile: /home/nli/proj/ann/nli/annosrc/db/GO.sqlite
+AnnObjPrefix: GO
+biocViews: FunctionalAnnotation
+
+
+### =========================================================================
 ### AFFYHUEXDB template
 ###   Possible DBschemas for this template: AFFYHUEX_DB
 ###   Fields:

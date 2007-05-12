@@ -1,3 +1,11 @@
+GO schema
+---------
+
+The sqlite file is /home/nli/proj/ann/nli/annosrc/db/GO.sqlite
+The script used by Nianhua to generate the env-based pkg from this sqlite
+file is /home/nli/proj/ann/nli/envfake/GO-fake/goFake.R
+
+
 as.list
 -------
   - add a 'ifnotmapped' arg which indicates which value to attach
@@ -11,12 +19,12 @@ mget
     returns an error when 'x' is not found).
 
 Add a 'colnames' method (requested by various people) to the low-level API.
-Conceptual definition (for AnnMap object x):
+Conceptual definition (for AnnDbMap object x):
   colnames(x) :== colnames(toTable(x))
 Of course, it has to be implemented in a smartest way...
 
 Nolwenn also suggested that as.list(x) return a list of named vectors
-when x is a ReverseAtomicAnnMap with tags.
+when x is a RevAtomicAnnDbMap with tags.
 
 
 Some cleaning
@@ -27,7 +35,7 @@ Some cleaning
 
 The 'join' slot
 ---------------
-The slot 'join' for AnnMap objects is not flexible enough. Its names
+The slot 'join' for AnnDbMap objects is not flexible enough. Its names
 is not good neither because it doesn't clearly indicates that it
 must always go in the "reverse" order. Example:
   if the path to go from 'x@leftTable' to 'x@rightTable' is to go thru
@@ -82,15 +90,15 @@ Note that this formula for combining the 2 fromtoJoin slots is really
 simple thanks to the new format of this slot (see "The 'join' slot" section).
 
 The class representing "unoriented" maps would not be part of the current
-AnnMap hierarchy. It could be called GenericMap or SimpleMap or something
-like that, would behave close to current AtomicAnnMap (hence could be called
+AnnDbMap hierarchy. It could be called GenericMap or SimpleMap or something
+like that, would behave close to current AtomicAnnDbMap (hence could be called
 AtomicMap too) except that it's unoriented (of course), doesn't
 have left/right methods but from/to methods instead, and... (?)
-Then we also need to be able to convert an AtomicAnnMap (or
-ReverseAtomicAnnMap) object to a GenericMap object (no conversion
-from GenericMap to AtomicAnnMap or ReverseAtomicAnnMap, once a map has lost
-its orientation, it's lost forever). Conversion from GOAnnMap (or
-ReverseGOAnnMap) to GenericMap seems hard to achieve because of the
+Then we also need to be able to convert an AtomicAnnDbMap (or
+RevAtomicAnnDbMap) object to a GenericMap object (no conversion
+from GenericMap to AtomicAnnDbMap or RevAtomicAnnDbMap, once a map has lost
+its orientation, it's lost forever). Conversion from GoAnnDbMap (or
+RevGoAnnDbMap) to GenericMap seems hard to achieve because of the
 current DB schema where we have 3 right tables for those maps.
 
 Of course, only maps that belong to the same package would be pluggable

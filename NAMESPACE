@@ -42,15 +42,15 @@ exportMethods(
 )
 
 exportClasses(
-    "AnnObj",
-    "AnnTable",
-    "AnnMap",
-    "ReverseAnnMap",
-    "AtomicAnnMap",
-    "ReverseAtomicAnnMap",
-    "IPIAnnMap",
-    "GOAnnMap",
-    "ReverseGOAnnMap",
+    "AnnDbObj",
+    "AnnDbTable",
+    "AnnDbMap",
+    "RevAnnDbMap",
+    "AtomicAnnDbMap",
+    "RevAtomicAnnDbMap",
+    "IpiAnnDbMap",
+    "GoAnnDbMap",
+    "RevGoAnnDbMap",
     "AnnDbPkgSeed"
 )
 
@@ -67,6 +67,7 @@ export(
     createAnnObjs.AG_DB,
     createAnnObjs.LLMAPPINGS_DB,
     createAnnObjs.YEAST_DB,
+    createAnnObjs.GO_DB,
     createAnnObjs.AFFYHUEX_DB,
 
     ## from R/AnnDbPkg-checker.R

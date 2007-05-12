@@ -12,7 +12,7 @@ YEAST_DB_default_join <- "INNER JOIN sgd using (id)"
 YEAST_DB_default_rightColType <- character(0)
 
 ### Mandatory fields: objName, rightTable and rightCol
-YEAST_DB_AtomicAnnMap_seeds <- list(
+YEAST_DB_AtomicAnnDbMap_seeds <- list(
     list(
         objName="ALIAS",
         rightTable="gene2alias",
@@ -75,7 +75,7 @@ YEAST_DB_AtomicAnnMap_seeds <- list(
 
 createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AtomicAnnMap objects
+    ## AtomicAnnDbMap objects
     seed0 <- list(
         objTarget=objTarget,
         conn=conn,
@@ -85,16 +85,16 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
         join=YEAST_DB_default_join,
         rightColType=YEAST_DB_default_rightColType
     )
-    annobjs <- createAnnObjs("AtomicAnnMap", YEAST_DB_AtomicAnnMap_seeds, seed0)
+    ann_objs <- createAnnObjs("AtomicAnnDbMap", YEAST_DB_AtomicAnnDbMap_seeds, seed0)
 
-    ## ReverseAtomicAnnMap objects
-    annobjs$COMMON2SYSTEMATIC <- revmap(annobjs$GENENAME, objName="COMMON2SYSTEMATIC")
-    annobjs$ENZYME2PROBE <- revmap(annobjs$ENZYME, objName="ENZYME2PROBE")
-    annobjs$PATH2PROBE <- revmap(annobjs$PATH, objName="PATH2PROBE")
-    annobjs$PMID2PROBE <- revmap(annobjs$PMID, objName="PMID2PROBE")
+    ## RevAtomicAnnDbMap objects
+    ann_objs$COMMON2SYSTEMATIC <- revmap(ann_objs$GENENAME, objName="COMMON2SYSTEMATIC")
+    ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
+    ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
+    ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
 
-    ## GOAnnMap object
-    annobjs$GO <- new("GOAnnMap",
+    ## GoAnnDbMap object
+    ann_objs$GO <- new("GoAnnDbMap",
         objTarget=objTarget,
         conn=conn,
         datacache=datacache,
@@ -105,22 +105,22 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
         all=FALSE
     )
 
-    ## ReverseGOAnnMap objects
-    annobjs$GO2PROBE <- revmap(annobjs$GO, objName="GO2PROBE")
-    annobjs$GO2ALLPROBES <- new("ReverseGOAnnMap", annobjs$GO, objName="GO2ALLPROBES", all=TRUE)
+    ## RevGoAnnDbMap objects
+    ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
+    ann_objs$GO2ALLPROBES <- new("RevGoAnnDbMap", ann_objs$GO, objName="GO2ALLPROBES", all=TRUE)
 
     ## Some pre-caching
-    left.names(annobjs$GO)
+    left.names(ann_objs$GO)
 
     ## The MAPCOUNTS object (named integer vector)
-    #annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    #ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
-    prefixAnnObjNames(annobjs, prefix)
+    prefixAnnObjNames(ann_objs, prefix)
 }
 
 compareAnnDataIn2Pkgs.YEAST_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(YEAST_DB_AtomicAnnMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(YEAST_DB_AtomicAnnDbMap_seeds, function(x) x$objName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
         "COMMON2SYSTEMATIC",

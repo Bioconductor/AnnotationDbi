@@ -19,7 +19,7 @@ createAnnObjs <- function(class, seeds, seed0, envir=NULL)
     envir
 }
 
-### 2 special maps that are not AnnMap objects (just named integer vectors).
+### 2 special maps that are not AnnDbMap objects (just named integer vectors).
 
 createCHRLENGTHS <- function(conn)
 {
@@ -41,7 +41,7 @@ createMAPCOUNTS <- function(conn, prefix)
 ### with 'prefix'. The function is dumb i.e. it doesn't check for (neither
 ### doesn't try to avoid) possible name clashes. Note that those issues
 ### could be easily avoided by assigning the renamed objects to a separate
-### environment but it's what "prefixAnnObjNames" does...
+### environment but...
 prefixAnnObjNames <- function(envir, prefix)
 {
     keys <- ls(envir, all.names=TRUE)

@@ -1,7 +1,17 @@
 ### =========================================================================
-### Create all data objects for an annotation data package
-### with db schema HGU95AV2_DB
+### An SQLite-based ann data package (AnnDbPkg) provides a set of pre-defined
+### AnnObj objects that are created at load-time. This set depends only on
+### the underlying db schema i.e. all the SQLite-based ann data packages that
+### share the same underlying db schema will provide the same set of AnnObj
+### objects.
+###
+### This file describes the set of AnnObj objects provided by any
+### HGU95AV2_DB-based package i.e. any SQLite-based ann data package based
+### on the HGU95AV2_DB schema.
+### The createAnnObjs.HGU95AV2_DB() function is the main entry point for
+### this file: it is called by any HGU95AV2_DB-based package at load-time.
 ### -------------------------------------------------------------------------
+
 
 HGU95AV2_DB_default_leftTable <- "probes"
 HGU95AV2_DB_default_leftCol <- "probe_id"
@@ -9,7 +19,7 @@ HGU95AV2_DB_default_join <- "INNER JOIN probes USING (id)"
 HGU95AV2_DB_default_rightColType <- character(0)
 
 ### Mandatory fields: objName, rightTable and rightCol
-HGU95AV2_DB_AtomicAnnMap_seeds <- list(
+HGU95AV2_DB_AtomicAnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
         rightTable="probes",
@@ -81,7 +91,7 @@ HGU95AV2_DB_AtomicAnnMap_seeds <- list(
     )
 )
 
-HGU95AV2_DB_IPIAnnMap_seeds <- list(
+HGU95AV2_DB_IpiAnnDbMap_seeds <- list(
     list(
         objName="PFAM",
         rightTable="pfam",
@@ -98,7 +108,7 @@ HGU95AV2_DB_IPIAnnMap_seeds <- list(
 
 createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AtomicAnnMap and IPIAnnMap objects
+    ## AtomicAnnDbMap and IpiAnnDbMap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
@@ -108,16 +118,16 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
         rightColType=HGU95AV2_DB_default_rightColType,
         join=HGU95AV2_DB_default_join
     )
-    annobjs <- createAnnObjs("AtomicAnnMap", HGU95AV2_DB_AtomicAnnMap_seeds, seed0)
-    createAnnObjs("IPIAnnMap", HGU95AV2_DB_IPIAnnMap_seeds, seed0, annobjs)
+    ann_objs <- createAnnObjs("AtomicAnnDbMap", HGU95AV2_DB_AtomicAnnDbMap_seeds, seed0)
+    createAnnObjs("IpiAnnDbMap", HGU95AV2_DB_IpiAnnDbMap_seeds, seed0, ann_objs)
 
-    ## ReverseAtomicAnnMap objects
-    annobjs$ENZYME2PROBE <- revmap(annobjs$ENZYME, objName="ENZYME2PROBE")
-    annobjs$PATH2PROBE <- revmap(annobjs$PATH, objName="PATH2PROBE")
-    annobjs$PMID2PROBE <- revmap(annobjs$PMID, objName="PMID2PROBE")
+    ## RevAtomicAnnDbMap objects
+    ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
+    ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
+    ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
 
-    ## GOAnnMap object
-    annobjs$GO <- new("GOAnnMap",
+    ## GoAnnDbMap object
+    ann_objs$GO <- new("GoAnnDbMap",
         objName="GO",
         objTarget=objTarget,
         datacache=datacache,
@@ -130,30 +140,30 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
         join=HGU95AV2_DB_default_join
     )
 
-    ## ReverseGOAnnMap objects
-    annobjs$GO2PROBE <- revmap(annobjs$GO, objName="GO2PROBE")
-    annobjs$GO2ALLPROBES <- new("ReverseGOAnnMap", annobjs$GO,
+    ## RevGoAnnDbMap objects
+    ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
+    ann_objs$GO2ALLPROBES <- new("RevGoAnnDbMap", ann_objs$GO,
                                 objName="GO2ALLPROBES", rightTable=GOtables(all=TRUE))
 
-    ## 2 special maps that are not AnnMap objects (just named integer vectors)
-    annobjs$CHRLENGTHS <- createCHRLENGTHS(conn)
-    annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
+    ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
-    left.names(annobjs$GO)
-    #mapped.left.names(annobjs$GO)
-    #right.names(annobjs$GO2PROBE)
-    #mapped.right.names(annobjs$GO2PROBE)
-    #right.names(annobjs$GO2ALLPROBES)
-    #mapped.right.names(annobjs$GO2ALLPROBES)
+    left.names(ann_objs$GO)
+    #mapped.left.names(ann_objs$GO)
+    #right.names(ann_objs$GO2PROBE)
+    #mapped.right.names(ann_objs$GO2PROBE)
+    #right.names(ann_objs$GO2ALLPROBES)
+    #mapped.right.names(ann_objs$GO2ALLPROBES)
 
-    prefixAnnObjNames(annobjs, prefix)
+    prefixAnnObjNames(ann_objs, prefix)
 }
 
 compareAnnDataIn2Pkgs.HGU95AV2_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(HGU95AV2_DB_AtomicAnnMap_seeds, function(x) x$objName)
-    direct_maps <- c(direct_maps, sapply(HGU95AV2_DB_IPIAnnMap_seeds, function(x) x$objName))
+    direct_maps <- sapply(HGU95AV2_DB_AtomicAnnDbMap_seeds, function(x) x$objName)
+    direct_maps <- c(direct_maps, sapply(HGU95AV2_DB_IpiAnnDbMap_seeds, function(x) x$objName))
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
         "ENZYME2PROBE",

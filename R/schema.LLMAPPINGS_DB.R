@@ -9,12 +9,12 @@ LLMAPPINGS_DB_default_leftCol <- "gene_id"
 LLMAPPINGS_DB_default_rightColType <- character(0)
 
 ### Mandatory fields: objName, rightTable and rightCol
-LLMAPPINGS_DB_AtomicAnnMap_seeds <- list(
+LLMAPPINGS_DB_AtomicAnnDbMap_seeds <- list(
 )
 
 createAnnObjs.LLMAPPINGS_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AtomicAnnMap objects
+    ## AtomicAnnDbMap objects
     seed0 <- list(
         objTarget=objTarget,
         conn=conn,
@@ -22,23 +22,23 @@ createAnnObjs.LLMAPPINGS_DB <- function(prefix, objTarget, conn, datacache)
         rightColType=LLMAPPINGS_DB_default_rightColType,
         leftCol=LLMAPPINGS_DB_default_leftCol
     )
-    annobjs <- createAnnObjs("AtomicAnnMap", LLMAPPINGS_DB_AtomicAnnMap_seeds, seed0)
+    ann_objs <- createAnnObjs("AtomicAnnDbMap", LLMAPPINGS_DB_AtomicAnnDbMap_seeds, seed0)
 
-    ## ReverseAtomicAnnMap objects
+    ## RevAtomicAnnDbMap objects
 
-    ## GOAnnMap object
+    ## GoAnnDbMap object
 
-    ## ReverseGOAnnMap objects
+    ## RevGoAnnDbMap objects
 
     ## The MAPCOUNTS object (named integer vector)
-    #annobjs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    #ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
-    prefixAnnObjNames(annobjs, prefix)
+    prefixAnnObjNames(ann_objs, prefix)
 }
 
 compareAnnDataIn2Pkgs.LLMAPPINGS_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(LLMAPPINGS_DB_AtomicAnnMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(LLMAPPINGS_DB_AtomicAnnDbMap_seeds, function(x) x$objName)
     direct_maps <- c(direct_maps, "GO")
     reverse_maps <- c(
     )
