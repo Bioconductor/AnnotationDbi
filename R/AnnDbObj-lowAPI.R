@@ -14,7 +14,7 @@
 ###   B. The low-level API for AnnDbObj objects.
 ###      This API consists of the following set of methods for AnnDbObj objects:
 ###          reverse
-###          db
+###          db, left.db_table, left.colname, right.db_table, right.colname,
 ###          toTable, as.data.frame, nrow
 ###          left.names, right.names, names
 ###          left.length, right.length, length
@@ -73,64 +73,136 @@ toSQLWhere <- function(col, names)
     paste(col, " IN (", toSQLStringSet(names), ")", sep="")
 }
 
-dbRawAnnDbMapToTable <- function(conn, left.table, left.col, left.names,
-                                         right.table, right.col, right.names,
-                                         show.cols, from, verbose=FALSE)
+dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.names,
+                                       right.db_table, right.colname, right.names,
+                                       show.colnames, from, verbose=FALSE)
 {
-#    if (!is.null(right.table))
-#        right.col <- paste(right.table, right.col, sep=".")
-#    left.col <- paste(left.table, left.col, sep=".")
-    sql <- paste("SELECT", paste(show.cols, collapse=","), "FROM", from)
-    sql <- paste(sql, "WHERE", toSQLWhere(left.col, left.names))
-    if (!is.null(right.table))
-        sql <- paste(sql, "AND", toSQLWhere(right.col, right.names))
+#    if (!is.null(right.db_table))
+#        right.colname <- paste(right.db_table, right.colname, sep=".")
+#    left.colname <- paste(left.db_table, left.colname, sep=".")
+    sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", from)
+    sql <- paste(sql, "WHERE", toSQLWhere(left.colname, left.names))
+    if (!is.null(right.db_table))
+        sql <- paste(sql, "AND", toSQLWhere(right.colname, right.names))
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
 }
 
-dbCountRawAnnDbMapRows <- function(conn, left.table, left.col, 
-                                       right.table, right.col, from)
+dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname, 
+                                         right.db_table, right.colname, from)
 {
     sql <- paste("SELECT COUNT(*) FROM", from)
-    sql <- paste(sql, "WHERE", toSQLWhere(left.col, NULL))
-    if (!is.null(right.table))
-        sql <- paste(sql, "AND", toSQLWhere(right.col, NULL))
+    sql <- paste(sql, "WHERE", toSQLWhere(left.colname, NULL))
+    if (!is.null(right.db_table))
+        sql <- paste(sql, "AND", toSQLWhere(right.colname, NULL))
     .dbGetQuery(conn, sql)[[1]]
 }
 
 ### May be we don't need this anymore. Maybe dbRawAnnDbMapToTable() could
 ### always be used instead?
-dbAnnDbMapToTable <- function(conn, table, join, left.col, left.names,
-                                right.col, right.names, extra.cols, verbose=FALSE)
+dbAnnDbMapToTable <- function(conn, db_table, join,
+                                    left.colname, left.names,
+                                    right.colname, right.names,
+                                    extra.colnames, verbose=FALSE)
 {
     ## Full col name is needed because of ambiguous column name "accession"
     ## in hgu95av2REFSEQ map.
-    full.right.col <- paste(table, right.col, sep=".")
-    show.cols <- c(left.col, full.right.col, extra.cols)
-    sql <- paste("SELECT", paste(show.cols, collapse=","), "FROM", table)
+    full.right.colname <- paste(db_table, right.colname, sep=".")
+    show.colnames <- c(left.colname, full.right.colname, extra.colnames)
+    sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", db_table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
-    where1 <- toSQLWhere(left.col, left.names)
-    where2 <- toSQLWhere(full.right.col, right.names)
+    where1 <- toSQLWhere(left.colname, left.names)
+    where2 <- toSQLWhere(full.right.colname, right.names)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
 }
 
-dbCountAnnDbMapRows <- function(conn, table, join, left.col, right.col)
+dbCountAnnDbMapRows <- function(conn, db_table, join, left.colname, right.colname)
 {
     ## Full col name is needed because of ambiguous column name "accession"
     ## in hgu95av2REFSEQ map.
-    full.right.col <- paste(table, right.col, sep=".")
-    sql <- paste("SELECT COUNT(*) FROM", table)
+    full.right.colname <- paste(db_table, right.colname, sep=".")
+    sql <- paste("SELECT COUNT(*) FROM", db_table)
     if (length(join) == 1) # will be FALSE for NULL or character(0)
         sql <- paste(sql, join)
-    where1 <- toSQLWhere(left.col, NULL)
-    where2 <- toSQLWhere(full.right.col, NULL)
+    where1 <- toSQLWhere(left.colname, NULL)
+    where2 <- toSQLWhere(full.right.colname, NULL)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     .dbGetQuery(conn, sql)[[1]]
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### L2Rpath manipulation
+###
+
+.left.db_table <- function(L2Rpath) names(L2Rpath)[1]
+
+.left.colname <- function(L2Rpath) L2Rpath[[1]][1]
+
+.right.db_table <- function(L2Rpath) names(L2Rpath)[length(L2Rpath)]
+
+.right.colname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]][2]
+
+.toSQLJoin <- function(L2Rpath, type="INNER JOIN")
+{
+    join <- .left.db_table(L2Rpath)
+    pathlen <- length(L2Rpath)
+    for (i in seq_len(pathlen - 1)) {
+        table1 <- names(L2Rpath)[i]
+        if (i == 1) {
+            as1 <- "_left"
+            join <- paste(join, "AS", as1)
+        } else {
+            as1 <- paste("_t", i, sep="")
+        }
+        colname1 <- L2Rpath[[i]][2]
+        j <- i + 1
+        table2 <- names(L2Rpath)[j]
+        if (j == pathlen)
+            as2 <- "_right"
+        else
+            as2 <- paste("_t", j, sep="")
+        colname2 <- L2Rpath[[j]][1]
+        on <- paste("(", as1, ".", colname1, "=", as2, ".", colname2, ")", sep="")
+        join <- paste(join, type, table2, "AS", as2, "ON", on)
+    }
+    join
+}
+
+.injoin.left.colname <- function(L2Rpath)
+{
+    colname <- .left.colname(L2Rpath)
+    if (length(L2Rpath) >= 2)
+        colname <- paste("_left", colname, sep=".")
+    return(colname)
+}
+
+.injoin.right.colname <- function(L2Rpath)
+{
+    colname <- .right.colname(L2Rpath)
+    if (length(L2Rpath) >= 2)
+        colname <- paste("_right", colname, sep=".")
+    return(colname)
+}
+
+.toTable <- function(conn, L2Rpath, left.names, right.names,
+                           extra.colnames, verbose=FALSE)
+{
+    left.colname <- .injoin.left.colname(L2Rpath)
+    right.colname <- .injoin.right.colname(L2Rpath)
+    show.colnames <- c(left.colname, right.colname, extra.colnames)
+    sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", .toSQLJoin(L2Rpath))
+    where1 <- toSQLWhere(left.colname, left.names)
+    where2 <- toSQLWhere(right.colname, right.names)
+    sql <- paste(sql, "WHERE", where1, "AND", where2)
+    if (verbose)
+        cat(sql, "\n", sep="")
+    .dbGetQuery(conn, sql)
 }
 
 
@@ -293,10 +365,53 @@ setMethod("revmap", "environment",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "db" new generic.
+### The "db", "left.db_table", "left.colname", "right.db_table"
+### and "right.colname" new generics.
 ###
 
 setMethod("db", "AnnDbObj", function(object) object@conn)
+
+setMethod("left.db_table", "AnnDbObj", function(x) x@leftTable)
+setMethod("left.db_table", "AnnDbMap",
+    function(x)
+    {
+        pathlen <- length(x@L2Rpath)
+        if (pathlen == 0)
+            return(x@leftTable)
+        return(.left.db_table(x@L2Rpath))
+    }
+)
+
+setMethod("left.colname", "AnnDbObj", function(x) x@leftCol)
+setMethod("left.colname", "AnnDbMap",
+    function(x)
+    {
+        pathlen <- length(x@L2Rpath)
+        if (pathlen == 0)
+            return(x@leftCol)
+        return(.left.colname(x@L2Rpath))
+    }
+)
+
+setMethod("right.db_table", "AnnDbMap",
+    function(x)
+    {
+        pathlen <- length(x@L2Rpath)
+        if (pathlen == 0)
+            return(x@rightTable)
+        return(.right.db_table(x@L2Rpath))
+    }
+)
+
+setMethod("right.colname", "AnnDbMap",
+    function(x)
+    {
+        pathlen <- length(x@L2Rpath)
+        if (pathlen == 0)
+            return(x@rightCol)
+        return(.right.colname(x@L2Rpath))
+    }
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -321,21 +436,27 @@ setMethod("db", "AnnDbObj", function(object) object@conn)
 setMethod("toTable", "AnnDbTable",
     function(x, left.names=NULL, verbose=FALSE)
     {
-        dbRawAnnDbMapToTable(db(x), x@leftTable, x@leftCol, left.names,
-                                      NULL, NULL, NULL,
-                                      x@showCols, x@from, verbose)
+        dbRawAnnDbMapToTable(db(x), left.db_table(x), left.colname(x), left.names,
+                                    NULL, NULL, NULL,
+                                    x@showCols, x@from, verbose)
     }
 )
 
 setMethod("toTable", "AnnDbMap",
-    function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
+    function(x, left.names=NULL, right.names=NULL, extra.colnames=NULL, verbose=FALSE)
     {
         if (length(x@tagCols) != 0)
-            extra.cols <- c(x@tagCols, extra.cols)
-        dbAnnDbMapToTable(db(x), x@rightTable, x@join,
-                                   x@leftCol, left.names,
-                                   x@rightCol, right.names,
-                                   extra.cols, verbose)
+            extra.colnames <- c(x@tagCols, extra.colnames)
+        pathlen <- length(x@L2Rpath)
+        if (pathlen == 0)
+            data0 <- dbAnnDbMapToTable(db(x), right.db_table(x), x@join,
+                                       left.colname(x), left.names,
+                                       right.colname(x), right.names,
+                                       extra.colnames, verbose)
+        else
+            data0 <- .toTable(db(x), x@L2Rpath, left.names, right.names,
+                                     extra.colnames, verbose)
+        return(data0)
     }
 )
 
@@ -347,16 +468,16 @@ setMethod("toTable", "AnnDbMap",
 ###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
 ### Surprisingly the latter is almost twice faster than the former!
 setMethod("toTable", "GoAnnDbMap",
-    function(x, left.names=NULL, right.names=NULL, extra.cols=NULL, verbose=FALSE)
+    function(x, left.names=NULL, right.names=NULL, extra.colnames=NULL, verbose=FALSE)
     {
-        extra.cols <- c("evidence", extra.cols)
+        extra.colnames <- c("evidence", extra.colnames)
         getPartialSubmap <- function(Ontology)
         {
-            table <- x@rightTable[Ontology]
+            table <- right.db_table(x)[Ontology]
             data <- dbAnnDbMapToTable(db(x), table, x@join,
-                                               x@leftCol, left.names,
-                                               "go_id", right.names,
-                                               extra.cols, verbose)
+                                             left.colname(x), left.names,
+                                             "go_id", right.names,
+                                             extra.colnames, verbose)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- Ontology
             data
@@ -397,14 +518,14 @@ setMethod("as.data.frame", "AnnDbObj",
 setMethod("nrow", "AnnDbTable",
     function(x)
     {
-        dbCountRawAnnDbMapRows(db(x), x@leftTable, x@leftCol, NULL, NULL, x@from)
+        dbCountRawAnnDbMapRows(db(x), left.db_table(x), left.colname(x), NULL, NULL, x@from)
     }
 )
 
 setMethod("nrow", "AnnDbMap",
     function(x)
     {
-        dbCountAnnDbMapRows(db(x), x@rightTable, x@join, x@leftCol, x@rightCol)
+        dbCountAnnDbMapRows(db(x), right.db_table(x), x@join, left.colname(x), right.colname(x))
     }
 )
 
@@ -413,8 +534,8 @@ setMethod("nrow", "GoAnnDbMap",
     {
         countRows <- function(Ontology)
         {
-            table <- x@rightTable[Ontology]
-            dbCountAnnDbMapRows(db(x), table, x@join, x@leftCol, "go_id")
+            table <- right.db_table(x)[Ontology]
+            dbCountAnnDbMapRows(db(x), table, x@join, left.colname(x), "go_id")
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
@@ -428,14 +549,14 @@ setMethod("nrow", "GoAnnDbMap",
 setMethod("left.names", "AnnDbObj",
     function(x)
     {
-        dbUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
+        dbUniqueVals(db(x), left.db_table(x), left.colname(x), x@datacache)
     }
 )
 
 setMethod("right.names", "AnnDbMap",
     function(x)
     {
-        dbUniqueVals(db(x), x@rightTable, x@rightCol, x@datacache)
+        dbUniqueVals(db(x), right.db_table(x), right.colname(x), x@datacache)
     }
 )
 
@@ -444,7 +565,7 @@ setMethod("right.names", "GoAnnDbMap",
     {
         getNames <- function(Ontology)
         {
-            table <- x@rightTable[Ontology]
+            table <- right.db_table(x)[Ontology]
             dbUniqueVals(db(x), table, "go_id", x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -468,14 +589,14 @@ setMethod("names", "RevAnnDbMap", function(x) right.names(x))
 setMethod("left.length", "AnnDbObj",
     function(x)
     {
-        dbCountUniqueVals(db(x), x@leftTable, x@leftCol, x@datacache)
+        dbCountUniqueVals(db(x), left.db_table(x), left.colname(x), x@datacache)
     }
 )
 
 setMethod("right.length", "AnnDbMap",
     function(x)
     {
-        dbCountUniqueVals(db(x), x@rightTable, x@rightCol, x@datacache)
+        dbCountUniqueVals(db(x), right.db_table(x), right.colname(x), x@datacache)
     }
 )
 
@@ -484,7 +605,7 @@ setMethod("right.length", "GoAnnDbMap",
     {
         countNames <- function(Ontology)
         {
-            table <- x@rightTable[Ontology]
+            table <- right.db_table(x)[Ontology]
             dbCountUniqueVals(db(x), table, "go_id", x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -532,10 +653,10 @@ setMethod("as.character", "AtomicAnnDbMap",
         if (length(x@tagCols) != 0)
             stop("cannot coerce to character an AtomicAnnDbMap object with tags")
         data <- toTable(x)
-        ans <- data[[x@rightCol]]
+        ans <- data[[right.colname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
-        names(ans) <- data[[x@leftCol]]
+        names(ans) <- data[[left.colname(x)]]
         if (any(duplicated(names(ans))))
             warning("returned vector has duplicated names")
         ans
@@ -548,10 +669,10 @@ setMethod("as.character", "RevAtomicAnnDbMap",
         if (length(x@tagCols) != 0)
             stop("cannot coerce to character an AtomicAnnDbMap object with tags")
         data <- toTable(x)
-        ans <- data[[x@leftCol]]
+        ans <- data[[left.colname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
-        names(ans) <- data[[x@rightCol]]
+        names(ans) <- data[[right.colname(x)]]
         if (any(duplicated(names(ans))))
             warning("returned vector has duplicated names")
         ans
@@ -614,7 +735,7 @@ setMethod("toList", "AnnDbMap",
             ann_list <- list()
         } else {
             ## Just to make sure that toTable() is not broken
-            if (!identical(names(data0)[1:2], c(x@leftCol, x@rightCol)))
+            if (!identical(names(data0)[1:2], c(left.colname(x), right.colname(x))))
                 stop("annotationDbi internal problem, please report to the maintainer")
             data1 <- data0[ , -1]
             if (length(x@rightColType) == 1
@@ -636,13 +757,13 @@ setMethod("toList", "RevAnnDbMap",
         if (!is.null(names) && length(names) == 0)
             return(list())
         data0 <- toTable(x, right.names=names)
-        if (!is.null(names) && !all(names %in% data0[[x@rightCol]]))
+        if (!is.null(names) && !all(names %in% data0[[right.colname(x)]]))
             .checkNamesExist(names, names(x))
         if (nrow(data0) == 0) {
             ann_list <- list()
         } else {
             ## Just to make sure that toTable() is not broken
-            if (!identical(names(data0)[1:2], c(x@leftCol, x@rightCol)))
+            if (!identical(names(data0)[1:2], c(left.colname(x), right.colname(x))))
                 stop("annotationDbi internal problem, please report to the maintainer")
             data2 <- data0[ , -2]
             ann_list <- split(data2, data0[[2]])
@@ -682,34 +803,34 @@ setMethod("toList", "RevAnnDbMap",
 setMethod("mapped.left.names", "AnnDbMap",
     function(x)
     {
-        dbUniqueMappedVals(db(x), x@rightTable, x@join,
-                           x@leftTable, x@leftCol,
-                           x@rightTable, x@rightCol, x@datacache)
+        dbUniqueMappedVals(db(x), right.db_table(x), x@join,
+                           left.db_table(x), left.colname(x),
+                           right.db_table(x), right.colname(x), x@datacache)
     }
 )
 setMethod("count.mapped.left.names", "AnnDbMap",
     function(x)
     {
-        dbCountUniqueMappedVals(db(x), x@rightTable, x@join,
-                                x@leftTable, x@leftCol,
-                                x@rightTable, x@rightCol, x@datacache)
+        dbCountUniqueMappedVals(db(x), right.db_table(x), x@join,
+                                left.db_table(x), left.colname(x),
+                                right.db_table(x), right.colname(x), x@datacache)
     }
 )
 
 setMethod("mapped.right.names", "AnnDbMap",
     function(x)
     {
-        dbUniqueMappedVals(db(x), x@rightTable, x@join,
-                           x@rightTable, x@rightCol,
-                           x@leftTable, x@leftCol, x@datacache)
+        dbUniqueMappedVals(db(x), right.db_table(x), x@join,
+                           right.db_table(x), right.colname(x),
+                           left.db_table(x), left.colname(x), x@datacache)
     }
 )
 setMethod("count.mapped.right.names", "AnnDbMap",
     function(x)
     {
-        dbCountUniqueMappedVals(db(x), x@rightTable, x@join,
-                                x@rightTable, x@rightCol,
-                                x@leftTable, x@leftCol, x@datacache)
+        dbCountUniqueMappedVals(db(x), right.db_table(x), x@join,
+                                right.db_table(x), right.colname(x),
+                                left.db_table(x), left.colname(x), x@datacache)
     }
 )
 
@@ -718,9 +839,9 @@ setMethod("mapped.left.names", "GoAnnDbMap",
     {
         getMappedNames <- function(Ontology)
         {
-            table <- x@rightTable[Ontology]
+            table <- right.db_table(x)[Ontology]
             dbUniqueMappedVals(db(x), table, x@join,
-                               x@leftTable, x@leftCol,
+                               left.db_table(x), left.colname(x),
                                table, "go_id", x@datacache)
         }
         names1 <- getMappedNames("BP")
@@ -738,10 +859,10 @@ setMethod("mapped.right.names", "GoAnnDbMap",
     {
         getMappedNames <- function(Ontology)
         {
-            table <- x@rightTable[Ontology]
+            table <- right.db_table(x)[Ontology]
             dbUniqueMappedVals(db(x), table, x@join,
                                table, "go_id",
-                               x@leftTable, x@leftCol, x@datacache)
+                               left.db_table(x), left.colname(x), x@datacache)
         }
         names1 <- getMappedNames("BP")
         names2 <- getMappedNames("CC")
@@ -756,10 +877,10 @@ setMethod("count.mapped.right.names", "GoAnnDbMap",
     {
         countMappedNames <- function(Ontology)
         {
-            table <- x@rightTable[Ontology]
+            table <- right.db_table(x)[Ontology]
             dbCountUniqueMappedVals(db(x), table, x@join,
                                     table, "go_id",
-                                    x@leftTable, x@leftCol, x@datacache)
+                                    left.db_table(x), left.colname(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")

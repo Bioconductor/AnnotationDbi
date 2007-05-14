@@ -46,6 +46,10 @@ setClass("AnnDbTable",
 setClass("AnnDbMap",
     contains="AnnDbObj",
     representation(
+        ## the 'L2Rpath' slot is EXPERIMENTAL,: when specified, then
+        ## 'leftTable', 'leftCol', 'rightTable', 'rightCol' and 'join' are
+        ## ignored
+        L2Rpath="list", 
         rightTable="character",
         rightCol="character",
         rightColType="character",

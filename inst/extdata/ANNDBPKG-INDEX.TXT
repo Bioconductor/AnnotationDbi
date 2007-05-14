@@ -360,7 +360,7 @@ biocViews: Rattus_norvegicus, ratLLMappings
 ###     DBfile (*)
 ###     DBschema
 ###     AnnObjPrefix (*)
-###     AnnObjTarget
+###     AnnObjTarget (*)
 ###     biocViews (*)
 ### Fields marked with an (*) are required.
 
@@ -369,6 +369,7 @@ Version: 1.17.0
 PkgTemplate: GODB
 DBfile: /home/nli/proj/ann/nli/annosrc/db/GO.sqlite
 AnnObjPrefix: GO
+AnnObjTarget: GO
 biocViews: FunctionalAnnotation
 
 

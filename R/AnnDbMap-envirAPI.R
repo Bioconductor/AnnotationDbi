@@ -80,7 +80,7 @@ setMethod("as.list", "AtomicAnnDbMap",
         if (nrow(data0) == 0) {
             ann_list <- list()
         } else {
-            right_col <- data0[[x@rightCol]]
+            right_col <- data0[[right.colname(x)]]
             if (length(x@rightColType) == 1
              && typeof(right_col) != x@rightColType) {
                 converter <- get(paste("as.", x@rightColType, sep=""))
@@ -88,7 +88,7 @@ setMethod("as.list", "AtomicAnnDbMap",
             }
             if (length(x@tagCols) != 0)
                 names(right_col) <- data0[[x@tagCols[1]]]
-            ann_list <- split(right_col, data0[[x@leftCol]])
+            ann_list <- split(right_col, data0[[left.colname(x)]])
         }
         if (is.null(names))
             names <- names(x)
@@ -105,10 +105,10 @@ setMethod("as.list", "RevAtomicAnnDbMap",
         if (nrow(data0) == 0) {
             ann_list <- list()
         } else {
-            left_col <- data0[[x@leftCol]]
+            left_col <- data0[[left.colname(x)]]
             if (length(x@tagCols) != 0)
                 names(left_col) <- data0[[x@tagCols[1]]]
-            ann_list <- split(left_col, data0[[x@rightCol]])
+            ann_list <- split(left_col, data0[[right.colname(x)]])
         }
         if (is.null(names))
             names <- names(x)
@@ -126,8 +126,8 @@ setMethod("as.list", "IpiAnnDbMap",
             ann_list <- list()
         } else {
             tag_col <- data0[[x@tagCols[1]]]
-            names(tag_col) <- data0[[x@rightCol]]
-            ann_list <- split(tag_col, data0[[x@leftCol]])
+            names(tag_col) <- data0[[right.colname(x)]]
+            ann_list <- split(tag_col, data0[[left.colname(x)]])
         }
         if (is.null(names))
             names <- names(x)
@@ -165,9 +165,9 @@ setMethod("as.list", "GoAnnDbMap",
                        list(GOID=gid, Evidence=evi, Ontology=ont),
                        GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
             }
-            GOIDs <- split(data0[["go_id"]], data0[[x@leftCol]])
-            Evidences <- split(data0[["evidence"]], data0[[x@leftCol]])
-            Ontologies <- split(data0[["Ontology"]], data0[[x@leftCol]])
+            GOIDs <- split(data0[["go_id"]], data0[[left.colname(x)]])
+            Evidences <- split(data0[["evidence"]], data0[[left.colname(x)]])
+            Ontologies <- split(data0[["Ontology"]], data0[[left.colname(x)]])
             ## The 'GOIDs', 'Evidences' and 'Ontologies' lists have the same
             ## names in the same order.
             mapped_names <- names(GOIDs)
@@ -197,7 +197,7 @@ setMethod("as.list", "RevGoAnnDbMap",
             .checkNamesExist(names, names(x))
         if (nrow(data0) == 0)
             return(list())
-        lsubmap <- data0[[x@leftCol]]
+        lsubmap <- data0[[left.colname(x)]]
         names(lsubmap) <- data0[["evidence"]]
         lsubmap <- split(lsubmap, data0[["go_id"]])
         if (is.null(names))
