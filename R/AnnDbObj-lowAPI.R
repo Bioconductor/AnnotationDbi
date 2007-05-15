@@ -590,10 +590,10 @@ setMethod("as.character", "AtomicAnnDbMap",
         if (length(x@tagCols) != 0)
             stop("cannot coerce to character an AtomicAnnDbMap object with tags")
         data <- toTable(x)
-        ans <- data[[right.colname(x)]]
+        ans <- data[[2]] # could also use [[right.colname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
-        names(ans) <- data[[left.colname(x)]]
+        names(ans) <- data[[1]] # could also use [[left.colname(x)]]
         if (any(duplicated(names(ans))))
             warning("returned vector has duplicated names")
         ans
@@ -606,10 +606,10 @@ setMethod("as.character", "RevAtomicAnnDbMap",
         if (length(x@tagCols) != 0)
             stop("cannot coerce to character an AtomicAnnDbMap object with tags")
         data <- toTable(x)
-        ans <- data[[left.colname(x)]]
+        ans <- data[[1]] # could also use [[left.colname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
-        names(ans) <- data[[right.colname(x)]]
+        names(ans) <- data[[2]] # could also use [[right.colname(x)]]
         if (any(duplicated(names(ans))))
             warning("returned vector has duplicated names")
         ans
@@ -694,7 +694,7 @@ setMethod("toList", "RevAnnDbMap",
         if (!is.null(names) && length(names) == 0)
             return(list())
         data0 <- toTable(x, right.names=names)
-        if (!is.null(names) && !all(names %in% data0[[right.colname(x)]]))
+        if (!is.null(names) && !all(names %in% data0[[2]])) # could also use [[right.colname(x)]]
             .checkNamesExist(names, names(x))
         if (nrow(data0) == 0) {
             ann_list <- list()
