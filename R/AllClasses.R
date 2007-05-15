@@ -16,15 +16,15 @@ setClass("AnnDbObj",
     representation(
         "VIRTUAL",
         datacache="environment",
-        conn="DBIConnection",
-        leftTable="character",
-        leftCol="character"
+        conn="DBIConnection"
     )
 )
 
 setClass("AnnDbTable",
     contains="AnnDbObj",
     representation(
+        leftTable="character",
+        leftCol="character",
         from="character",
         showCols="character"    # cols to show in addition to the left col
     )
@@ -36,8 +36,6 @@ setClass("AnnDbTable",
 ###
 
 ### An "AnnDbMap" object is a mapping between left values and right values.
-### The left values are the strings stored in the SQL col 'leftCol' of
-### table 'leftTable'.
 ### For direct "AnnDbMap" objects, the mapping is "left-to-right". The left
 ### values are the names (or symbols, or keys) of the map and are retrieved
 ### with the "names" or "ls" methods. The type, format and location in the
@@ -46,15 +44,9 @@ setClass("AnnDbTable",
 setClass("AnnDbMap",
     contains="AnnDbObj",
     representation(
-        ## the 'L2Rpath' slot is EXPERIMENTAL,: when specified, then
-        ## 'leftTable', 'leftCol', 'rightTable', 'rightCol' and 'join' are
-        ## ignored
         L2Rpath="list", 
-        rightTable="character",
-        rightCol="character",
         rightColType="character",
-        tagCols="character",
-        join="character"
+        tagCols="character"
     )
 )
 
@@ -91,7 +83,12 @@ setClass("IpiAnnDbMap", contains="AnnDbMap")
 ### For a "GoAnnDbMap" object, the right values are named lists of GO nodes,
 ### each GO node being represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
-setClass("GoAnnDbMap", contains="AnnDbMap")
+setClass("GoAnnDbMap",
+    contains="AnnDbMap",
+    representation(
+        rightTables="character"
+    )
+)
 
 ### Maps a GO term to a named character vector containing left values tagged
 ### with the Evidence code.

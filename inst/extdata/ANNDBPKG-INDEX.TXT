@@ -367,7 +367,7 @@ biocViews: Rattus_norvegicus, ratLLMappings
 Package: GOdb
 Version: 1.17.0
 PkgTemplate: GODB
-DBfile: /home/nli/proj/ann/nli/annosrc/db/GO.sqlite
+DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/GO.sqlite
 AnnObjPrefix: GO
 AnnObjTarget: GO
 biocViews: FunctionalAnnotation

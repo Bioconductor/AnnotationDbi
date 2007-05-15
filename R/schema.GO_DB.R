@@ -40,16 +40,13 @@
 #   - good SQL practice would be to make map_name a primary key (unless there
 #     is a good reason to use UNIQUE, the standard practice is to use PRIMARY)
 
-### Mandatory fields: objName, rightTable and rightCol
+### Mandatory fields: objName and L2Rpath
 GO_DB_AtomicAnnDbMap_seeds <- list(
     list(
         objName="ALLENTREZID",
-        leftTable="go_term",
-        leftCol="go_id",
-        rightTable="go_all_gene",
-        rightCol="gene_id",
-        tagCols="evidence",
-        join="INNER JOIN go_term USING (term_id)"
+        L2Rpath=list(go_term=c("go_id","term_id"),
+                     go_all_gene=c("term_id","gene_id")),
+        tagCols="evidence"
     ),
     list(
         objName="BPPARENTS",

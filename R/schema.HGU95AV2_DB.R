@@ -13,79 +13,72 @@
 ### -------------------------------------------------------------------------
 
 
-HGU95AV2_DB_default_leftTable <- "probes"
-HGU95AV2_DB_default_leftCol <- "probe_id"
-HGU95AV2_DB_default_join <- "INNER JOIN probes USING (id)"
-HGU95AV2_DB_default_rightColType <- character(0)
-
-### Mandatory fields: objName, rightTable and rightCol
+### Mandatory fields: objName and L2Rpath
 HGU95AV2_DB_AtomicAnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
-        rightTable="probes",
-        rightCol="accession",
-        join=character(0) # not the default join!
+        L2Rpath=list(probes=c("probe_id","accession"))
     ),
     list(
         objName="CHR",
-        rightTable="chromosomes",
-        rightCol="chromosome"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     chromosomes=c("id","chromosome"))
     ),
     list(
         objName="ENTREZID",
-        rightTable="genes",
-        rightCol="gene_id",
+        L2Rpath=list(probes=c("probe_id","id"),
+                     genes=c("id","gene_id")),
         rightColType="integer"
     ),
     list(
         objName="ENZYME",
-        rightTable="ec",
-        rightCol="ec_number"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     ec=c("id","ec_number"))
     ),
     list(
         objName="GENENAME",
-        rightTable="gene_info",
-        rightCol="gene_name"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     gene_info=c("id","gene_name"))
     ),
     list(
         objName="MAP",
-        rightTable="cytogenetic_locations",
-        rightCol="cytogenetic_location"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     cytogenetic_locations=c("id","cytogenetic_location"))
     ),
     list(
         objName="OMIM",
-        rightTable="omim",
-        rightCol="omim_id"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     omim=c("id","omim_id"))
     ),
     list(
         objName="PATH",
-        rightTable="kegg",
-        rightCol="kegg_id"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     kegg=c("id","kegg_id"))
     ),
     list(
         objName="PMID",
-        rightTable="pubmed",
-        rightCol="pubmed_id"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     pubmed=c("id","pubmed_id"))
     ),
     list(
         objName="REFSEQ",
-        rightTable="refseq",
-        rightCol="accession"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     refseq=c("id","accession"))
     ),
     list(
         objName="SYMBOL",
-        rightTable="gene_info",
-        rightCol="symbol"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     gene_info=c("id","symbol"))
     ),
     list(
         objName="UNIGENE",
-        rightTable="unigene",
-        rightCol="unigene_id"
+        L2Rpath=list(probes=c("probe_id","id"),
+                     unigene=c("id","unigene_id"))
     ),
     list(
         objName="CHRLOC",
-        rightTable="chromosome_locations",
-        rightCol="start_location",
+        L2Rpath=list(probes=c("probe_id","id"),
+                     chromosome_locations=c("id","start_location")),
         rightColType="integer",
         tagCols="chromosome"
     )
@@ -94,14 +87,14 @@ HGU95AV2_DB_AtomicAnnDbMap_seeds <- list(
 HGU95AV2_DB_IpiAnnDbMap_seeds <- list(
     list(
         objName="PFAM",
-        rightTable="pfam",
-        rightCol="ipi_id",
+        L2Rpath=list(probes=c("probe_id","id"),
+                     pfam=c("id","ipi_id")),
         tagCols="pfam_id"
     ),
     list(
         objName="PROSITE",
-        rightTable="prosite",
-        rightCol="ipi_id",
+        L2Rpath=list(probes=c("probe_id","id"),
+                     prosite=c("id","ipi_id")),
         tagCols="prosite_id"
     )
 )
@@ -112,11 +105,7 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
-        conn=conn,
-        leftTable=HGU95AV2_DB_default_leftTable,
-        leftCol=HGU95AV2_DB_default_leftCol,
-        rightColType=HGU95AV2_DB_default_rightColType,
-        join=HGU95AV2_DB_default_join
+        conn=conn
     )
     ann_objs <- createAnnObjs("AtomicAnnDbMap", HGU95AV2_DB_AtomicAnnDbMap_seeds, seed0)
     createAnnObjs("IpiAnnDbMap", HGU95AV2_DB_IpiAnnDbMap_seeds, seed0, ann_objs)
@@ -132,18 +121,16 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
         objTarget=objTarget,
         datacache=datacache,
         conn=conn,
-        leftTable=HGU95AV2_DB_default_leftTable,
-        leftCol=HGU95AV2_DB_default_leftCol,
-        rightTable=GOtables(),
-        rightCol="go_id",
-        tagCols=c("evidence", "Ontology"),
-        join=HGU95AV2_DB_default_join
+        L2Rpath=list(probes=c("probe_id","id"),
+                     c("id", "go_id")), # unnamed element
+        rightTables=GOtables(),
+        tagCols=c("evidence", "Ontology")
     )
 
     ## RevGoAnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
     ann_objs$GO2ALLPROBES <- new("RevGoAnnDbMap", ann_objs$GO,
-                                objName="GO2ALLPROBES", rightTable=GOtables(all=TRUE))
+                                 objName="GO2ALLPROBES", rightTables=GOtables(all=TRUE))
 
     ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)

@@ -199,6 +199,10 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps, rever
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "checkMAPCOUNTS" function.
+###
+### Typical use:
+###   > checkMAPCOUNTS("hgu95av2db", "hgu95av2")
+###
 
 checkMAPCOUNTS <- function(pkgname, prefix)
 {

@@ -41,8 +41,105 @@
 ### A. Helper functions used by the low-level API.
 ### -------------------------------------------------------------------------
 
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### SQL helper functions.
+### Generate SQL code.
+###
+
+.toSQLStringSet <- function(names)
+{
+    names <- gsub("'", "''", names, fixed=TRUE)
+    paste("'", paste(names, collapse="','"), "'", sep="")
+}
+
+.toSQLWhere <- function(col, names)
+{
+    if (is.null(names))
+        return(paste(col, "IS NOT NULL"))
+    #if (length(names) == 1)
+    #    return(paste(col, " LIKE ", .toSQLStringSet(names), sep=""))
+    paste(col, " IN (", .toSQLStringSet(names), ")", sep="")
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Manipulate L2Rpath.
+###
+
+.left.db_table <- function(L2Rpath) names(L2Rpath)[1]
+
+.left.colname <- function(L2Rpath) L2Rpath[[1]][1]
+
+.right.db_table <- function(L2Rpath) names(L2Rpath)[length(L2Rpath)]
+
+.right.colname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]][2]
+
+.toSQLJoin <- function(L2Rpath, type="INNER JOIN")
+{
+    pathlen <- length(L2Rpath)
+    if (pathlen == 0) # should never happen
+        stop("invalid 'L2Rpath' value (empty list)")
+    if (pathlen == 1)
+        return(names(L2Rpath))
+    table1 <- names(L2Rpath)[1]
+    as1 <- "_left"
+    join <- paste(table1, "AS", as1)
+    for (i1 in seq_len(pathlen - 1)) {
+        colname1 <- L2Rpath[[i1]][2]
+        i2 <- i1 + 1
+        table2 <- names(L2Rpath)[i2]
+        if (i2 == pathlen)
+            as2 <- "_right"
+        else
+            as2 <- paste("_t", i2, sep="")
+        colname2 <- L2Rpath[[i2]][1]
+        on <- paste("(", as1, ".", colname1, " = ", as2, ".", colname2, ")", sep="")
+        join <- paste(join, type, table2, "AS", as2, "ON", on)
+        table1 <- table2
+        as1 <- as2
+    }
+    join
+}
+
+.injoin.left.colname <- function(L2Rpath)
+{
+    colname <- .left.colname(L2Rpath)
+    if (length(L2Rpath) >= 2)
+        colname <- paste("_left", colname, sep=".")
+    colname
+}
+
+.injoin.right.colname <- function(L2Rpath)
+{
+    colname <- .right.colname(L2Rpath)
+    if (length(L2Rpath) >= 2)
+        colname <- paste("_right", colname, sep=".")
+    colname
+}
+
+.revL2Rpath <- function(L2Rpath)
+{
+    rev(lapply(L2Rpath, rev))
+}
+
+.L2RpathToString <- function(L2Rpath)
+{
+    pathlen <- length(L2Rpath)
+    if (pathlen == 0)
+        stop("invalid 'L2Rpath' value (empty list)")
+    strings <- c()
+    for (i in seq_len(pathlen)) {
+        table <- names(L2Rpath)[i]
+        left.colname <- L2Rpath[[i]][1]
+        right.colname <- L2Rpath[[i]][2]
+        strings <- c(strings, paste(left.colname, "<", table, ">", right.colname, sep=""))
+    }
+    paste(strings, collapse="-")
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### DB functions.
 ###
 
 .dbGetQuery <- function(conn, sql)
@@ -58,21 +155,6 @@ dbGetTable <- function(conn, table, where=NULL)
     .dbGetQuery(conn, sql)
 }
 
-toSQLStringSet <- function(names)
-{
-    names <- gsub("'", "''", names, fixed=TRUE)
-    paste("'", paste(names, collapse="','"), "'", sep="")
-}
-
-toSQLWhere <- function(col, names)
-{
-    if (is.null(names))
-        return(paste(col, "IS NOT NULL"))
-    #if (length(names) == 1)
-    #    return(paste(col, " LIKE ", toSQLStringSet(names), sep=""))
-    paste(col, " IN (", toSQLStringSet(names), ")", sep="")
-}
-
 dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.names,
                                        right.db_table, right.colname, right.names,
                                        show.colnames, from, verbose=FALSE)
@@ -81,9 +163,9 @@ dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.names,
 #        right.colname <- paste(right.db_table, right.colname, sep=".")
 #    left.colname <- paste(left.db_table, left.colname, sep=".")
     sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", from)
-    sql <- paste(sql, "WHERE", toSQLWhere(left.colname, left.names))
+    sql <- paste(sql, "WHERE", .toSQLWhere(left.colname, left.names))
     if (!is.null(right.db_table))
-        sql <- paste(sql, "AND", toSQLWhere(right.colname, right.names))
+        sql <- paste(sql, "AND", .toSQLWhere(right.colname, right.names))
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
@@ -93,116 +175,36 @@ dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname,
                                          right.db_table, right.colname, from)
 {
     sql <- paste("SELECT COUNT(*) FROM", from)
-    sql <- paste(sql, "WHERE", toSQLWhere(left.colname, NULL))
+    sql <- paste(sql, "WHERE", .toSQLWhere(left.colname, NULL))
     if (!is.null(right.db_table))
-        sql <- paste(sql, "AND", toSQLWhere(right.colname, NULL))
+        sql <- paste(sql, "AND", .toSQLWhere(right.colname, NULL))
     .dbGetQuery(conn, sql)[[1]]
 }
 
-### May be we don't need this anymore. Maybe dbRawAnnDbMapToTable() could
-### always be used instead?
-dbAnnDbMapToTable <- function(conn, db_table, join,
-                                    left.colname, left.names,
-                                    right.colname, right.names,
-                                    extra.colnames, verbose=FALSE)
-{
-    ## Full col name is needed because of ambiguous column name "accession"
-    ## in hgu95av2REFSEQ map.
-    full.right.colname <- paste(db_table, right.colname, sep=".")
-    show.colnames <- c(left.colname, full.right.colname, extra.colnames)
-    sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", db_table)
-    if (length(join) == 1) # will be FALSE for NULL or character(0)
-        sql <- paste(sql, join)
-    where1 <- toSQLWhere(left.colname, left.names)
-    where2 <- toSQLWhere(full.right.colname, right.names)
-    sql <- paste(sql, "WHERE", where1, "AND", where2)
-    if (verbose)
-        cat(sql, "\n", sep="")
-    .dbGetQuery(conn, sql)
-}
-
-dbCountAnnDbMapRows <- function(conn, db_table, join, left.colname, right.colname)
-{
-    ## Full col name is needed because of ambiguous column name "accession"
-    ## in hgu95av2REFSEQ map.
-    full.right.colname <- paste(db_table, right.colname, sep=".")
-    sql <- paste("SELECT COUNT(*) FROM", db_table)
-    if (length(join) == 1) # will be FALSE for NULL or character(0)
-        sql <- paste(sql, join)
-    where1 <- toSQLWhere(left.colname, NULL)
-    where2 <- toSQLWhere(full.right.colname, NULL)
-    sql <- paste(sql, "WHERE", where1, "AND", where2)
-    .dbGetQuery(conn, sql)[[1]]
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### L2Rpath manipulation
-###
-
-.left.db_table <- function(L2Rpath) names(L2Rpath)[1]
-
-.left.colname <- function(L2Rpath) L2Rpath[[1]][1]
-
-.right.db_table <- function(L2Rpath) names(L2Rpath)[length(L2Rpath)]
-
-.right.colname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]][2]
-
-.toSQLJoin <- function(L2Rpath, type="INNER JOIN")
-{
-    join <- .left.db_table(L2Rpath)
-    pathlen <- length(L2Rpath)
-    for (i in seq_len(pathlen - 1)) {
-        table1 <- names(L2Rpath)[i]
-        if (i == 1) {
-            as1 <- "_left"
-            join <- paste(join, "AS", as1)
-        } else {
-            as1 <- paste("_t", i, sep="")
-        }
-        colname1 <- L2Rpath[[i]][2]
-        j <- i + 1
-        table2 <- names(L2Rpath)[j]
-        if (j == pathlen)
-            as2 <- "_right"
-        else
-            as2 <- paste("_t", j, sep="")
-        colname2 <- L2Rpath[[j]][1]
-        on <- paste("(", as1, ".", colname1, "=", as2, ".", colname2, ")", sep="")
-        join <- paste(join, type, table2, "AS", as2, "ON", on)
-    }
-    join
-}
-
-.injoin.left.colname <- function(L2Rpath)
-{
-    colname <- .left.colname(L2Rpath)
-    if (length(L2Rpath) >= 2)
-        colname <- paste("_left", colname, sep=".")
-    return(colname)
-}
-
-.injoin.right.colname <- function(L2Rpath)
-{
-    colname <- .right.colname(L2Rpath)
-    if (length(L2Rpath) >= 2)
-        colname <- paste("_right", colname, sep=".")
-    return(colname)
-}
-
-.toTable <- function(conn, L2Rpath, left.names, right.names,
-                           extra.colnames, verbose=FALSE)
+dbSelectFromL2Rpath <- function(conn, L2Rpath, left.names, right.names,
+                                      extra.colnames, verbose=FALSE)
 {
     left.colname <- .injoin.left.colname(L2Rpath)
     right.colname <- .injoin.right.colname(L2Rpath)
     show.colnames <- c(left.colname, right.colname, extra.colnames)
     sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", .toSQLJoin(L2Rpath))
-    where1 <- toSQLWhere(left.colname, left.names)
-    where2 <- toSQLWhere(right.colname, right.names)
+    where1 <- .toSQLWhere(left.colname, left.names)
+    where2 <- .toSQLWhere(right.colname, right.names)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
+}
+
+dbCountRowsFromL2Rpath <- function(conn, L2Rpath)
+{
+    left.colname <- .injoin.left.colname(L2Rpath)
+    right.colname <- .injoin.right.colname(L2Rpath)
+    sql <- paste("SELECT COUNT(*) FROM", .toSQLJoin(L2Rpath))
+    where1 <- .toSQLWhere(left.colname, NULL)
+    where2 <- .toSQLWhere(right.colname, NULL)
+    sql <- paste(sql, "WHERE", where1, "AND", where2)
+    .dbGetQuery(conn, sql)[[1]]
 }
 
 
@@ -210,19 +212,19 @@ dbCountAnnDbMapRows <- function(conn, db_table, join, left.colname, right.colnam
 ### SQL helper functions with caching mechanism.
 ###
 
-dbUniqueVals <- function(conn, table, col, datacache=NULL)
+dbUniqueVals <- function(conn, table, colname, datacache=NULL)
 {
-    full.col <- paste(table, col, sep=".")
+    full.colname <- paste(table, colname, sep=".")
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueVals", full.col, sep="-")
+        objname <- paste("dbUniqueVals", full.colname, sep="-")
         if (exists(objname, envir=datacache)) {
             vals <- get(objname, envir=datacache)
             return(vals)
         }
     }
-    sql <- paste("SELECT DISTINCT", col, "FROM", table,
-                 "WHERE", col, "IS NOT NULL")
-    vals <- .dbGetQuery(conn, sql)[[col]]
+    sql <- paste("SELECT DISTINCT", colname, "FROM", table,
+                 "WHERE", colname, "IS NOT NULL")
+    vals <- .dbGetQuery(conn, sql)[[1]] # could also use [[colname]]
     if (!is.character(vals))
         vals <- as.character(vals)
     if (!is.null(datacache)) {
@@ -232,40 +234,36 @@ dbUniqueVals <- function(conn, table, col, datacache=NULL)
 }
 
 ### Read-only caching!
-dbCountUniqueVals <- function(conn, table, col, datacache=NULL)
+dbCountUniqueVals <- function(conn, table, colname, datacache=NULL)
 {
-    full.col <- paste(table, col, sep=".")
+    full.colname <- paste(table, colname, sep=".")
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueVals", full.col, sep="-")
+        objname <- paste("dbUniqueVals", full.colname, sep="-")
         if (exists(objname, envir=datacache)) {
             count <- length(get(objname, envir=datacache))
             return(count)
         }
     }
-    sql <- paste("SELECT COUNT(DISTINCT ", col, ") FROM ", table, sep="")
+    sql <- paste("SELECT COUNT(DISTINCT ", colname, ") FROM ", table, sep="")
     .dbGetQuery(conn, sql)[[1]]
 }
 
-dbUniqueMappedVals <- function(conn, table, join,
-                               from.table, from.col,
-                               to.table, to.col, datacache=NULL)
+dbUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
 {
-    full.from.col <- paste(from.table, from.col, sep=".")
-    full.to.col <- paste(to.table, to.col, sep=".")
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueMappedVals", full.from.col, full.to.col, sep="-")
+        objname <- paste("dbUniqueMappedVals", .L2RpathToString(L2Rpath), sep="-")
         if (exists(objname, envir=datacache)) {
             vals <- get(objname, envir=datacache)
             return(vals)
         }
     }
-    sql <- paste("SELECT DISTINCT", full.from.col, "FROM", table)
-    if (length(join) == 1) # will be FALSE for NULL or character(0)
-        sql <- paste(sql, join)
-    where1 <- toSQLWhere(full.from.col, NULL)
-    where2 <- toSQLWhere(full.to.col, NULL)
+    left.colname <- .injoin.left.colname(L2Rpath)
+    right.colname <- .injoin.right.colname(L2Rpath)
+    sql <- paste("SELECT DISTINCT", left.colname, "FROM", .toSQLJoin(L2Rpath))
+    where1 <- .toSQLWhere(left.colname, NULL)
+    where2 <- .toSQLWhere(right.colname, NULL)
     sql <- paste(sql, "WHERE", where1, "AND", where2)
-    vals <- .dbGetQuery(conn, sql)[[from.col]]
+    vals <- .dbGetQuery(conn, sql)[[1]] # could also use [[.left.colname(L2Rpath)]]
     if (!is.null(datacache)) {
         assign(objname, vals, envir=datacache)
     }
@@ -273,38 +271,21 @@ dbUniqueMappedVals <- function(conn, table, join,
 }
 
 ### Read-only caching!
-dbCountUniqueMappedVals <- function(conn, table, join,
-                                    from.table, from.col,
-                                    to.table, to.col, datacache=NULL)
+dbCountUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
 {
-    full.from.col <- paste(from.table, from.col, sep=".")
-    full.to.col <- paste(to.table, to.col, sep=".")
     if (!is.null(datacache)) {
-        objname <- paste("dbUniqueMappedVals", full.from.col, full.to.col, sep="-")
+        objname <- paste("dbUniqueMappedVals", .L2RpathToString(L2Rpath), sep="-")
         if (exists(objname, envir=datacache)) {
             count <- length(get(objname, envir=datacache))
             return(count)
         }
     }
-    sql <- paste("SELECT COUNT(DISTINCT ", full.from.col, ") FROM ", table, sep="")
-    if (length(join) == 1) # will be FALSE for NULL or character(0)
-        sql <- paste(sql, join)
-    sql <- paste(sql, "WHERE", full.to.col, "IS NOT NULL")
+    left.colname <- .injoin.left.colname(L2Rpath)
+    right.colname <- .injoin.right.colname(L2Rpath)
+    sql <- paste("SELECT COUNT(DISTINCT ", left.colname, ") FROM ", .toSQLJoin(L2Rpath), sep="")
+    where2 <- .toSQLWhere(right.colname, NULL)
+    sql <- paste(sql, "WHERE", where2)
     .dbGetQuery(conn, sql)[[1]]
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Other helper functions.
-###
-
-GOtables <- function(all=FALSE)
-{
-    tables <- c("go_bp", "go_cc", "go_mf")
-    if (all)
-        tables <- paste(tables, "_all", sep="")
-    names(tables) <- c("BP", "CC", "MF")
-    tables
 }
 
 
@@ -371,47 +352,12 @@ setMethod("revmap", "environment",
 
 setMethod("db", "AnnDbObj", function(object) object@conn)
 
-setMethod("left.db_table", "AnnDbObj", function(x) x@leftTable)
-setMethod("left.db_table", "AnnDbMap",
-    function(x)
-    {
-        pathlen <- length(x@L2Rpath)
-        if (pathlen == 0)
-            return(x@leftTable)
-        return(.left.db_table(x@L2Rpath))
-    }
-)
+setMethod("left.db_table", "AnnDbMap", function(x) .left.db_table(x@L2Rpath))
+setMethod("left.colname", "AnnDbMap", function(x) .left.colname(x@L2Rpath))
+setMethod("right.db_table", "AnnDbMap", function(x) .right.db_table(x@L2Rpath))
+setMethod("right.colname", "AnnDbMap", function(x) .right.colname(x@L2Rpath))
 
-setMethod("left.colname", "AnnDbObj", function(x) x@leftCol)
-setMethod("left.colname", "AnnDbMap",
-    function(x)
-    {
-        pathlen <- length(x@L2Rpath)
-        if (pathlen == 0)
-            return(x@leftCol)
-        return(.left.colname(x@L2Rpath))
-    }
-)
-
-setMethod("right.db_table", "AnnDbMap",
-    function(x)
-    {
-        pathlen <- length(x@L2Rpath)
-        if (pathlen == 0)
-            return(x@rightTable)
-        return(.right.db_table(x@L2Rpath))
-    }
-)
-
-setMethod("right.colname", "AnnDbMap",
-    function(x)
-    {
-        pathlen <- length(x@L2Rpath)
-        if (pathlen == 0)
-            return(x@rightCol)
-        return(.right.colname(x@L2Rpath))
-    }
-)
+setMethod("right.db_table", "GoAnnDbMap", function(x) x@rightTables)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -447,16 +393,8 @@ setMethod("toTable", "AnnDbMap",
     {
         if (length(x@tagCols) != 0)
             extra.colnames <- c(x@tagCols, extra.colnames)
-        pathlen <- length(x@L2Rpath)
-        if (pathlen == 0)
-            data0 <- dbAnnDbMapToTable(db(x), right.db_table(x), x@join,
-                                       left.colname(x), left.names,
-                                       right.colname(x), right.names,
-                                       extra.colnames, verbose)
-        else
-            data0 <- .toTable(db(x), x@L2Rpath, left.names, right.names,
-                                     extra.colnames, verbose)
-        return(data0)
+        dbSelectFromL2Rpath(db(x), x@L2Rpath, left.names, right.names,
+                                   extra.colnames, verbose)
     }
 )
 
@@ -474,10 +412,10 @@ setMethod("toTable", "GoAnnDbMap",
         getPartialSubmap <- function(Ontology)
         {
             table <- right.db_table(x)[Ontology]
-            data <- dbAnnDbMapToTable(db(x), table, x@join,
-                                             left.colname(x), left.names,
-                                             "go_id", right.names,
-                                             extra.colnames, verbose)
+            L2Rpath <- x@L2Rpath
+            names(L2Rpath)[length(L2Rpath)] <- table
+            data <- dbSelectFromL2Rpath(db(x), L2Rpath, left.names, right.names,
+                                               extra.colnames, verbose)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- Ontology
             data
@@ -523,10 +461,7 @@ setMethod("nrow", "AnnDbTable",
 )
 
 setMethod("nrow", "AnnDbMap",
-    function(x)
-    {
-        dbCountAnnDbMapRows(db(x), right.db_table(x), x@join, left.colname(x), right.colname(x))
-    }
+    function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
 )
 
 setMethod("nrow", "GoAnnDbMap",
@@ -535,7 +470,9 @@ setMethod("nrow", "GoAnnDbMap",
         countRows <- function(Ontology)
         {
             table <- right.db_table(x)[Ontology]
-            dbCountAnnDbMapRows(db(x), table, x@join, left.colname(x), "go_id")
+            L2Rpath <- x@L2Rpath
+            names(L2Rpath)[length(L2Rpath)] <- table
+            dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
@@ -801,37 +738,17 @@ setMethod("toList", "RevAnnDbMap",
 ### non-default value like silly maps ENTREZID and MULTIHIT in AG_DB schema.
 ### But who cares, those maps are silly anyway...
 setMethod("mapped.left.names", "AnnDbMap",
-    function(x)
-    {
-        dbUniqueMappedVals(db(x), right.db_table(x), x@join,
-                           left.db_table(x), left.colname(x),
-                           right.db_table(x), right.colname(x), x@datacache)
-    }
+    function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 setMethod("count.mapped.left.names", "AnnDbMap",
-    function(x)
-    {
-        dbCountUniqueMappedVals(db(x), right.db_table(x), x@join,
-                                left.db_table(x), left.colname(x),
-                                right.db_table(x), right.colname(x), x@datacache)
-    }
+    function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 
 setMethod("mapped.right.names", "AnnDbMap",
-    function(x)
-    {
-        dbUniqueMappedVals(db(x), right.db_table(x), x@join,
-                           right.db_table(x), right.colname(x),
-                           left.db_table(x), left.colname(x), x@datacache)
-    }
+    function(x) dbUniqueMappedVals(db(x), .revL2Rpath(x@L2Rpath), x@datacache)
 )
 setMethod("count.mapped.right.names", "AnnDbMap",
-    function(x)
-    {
-        dbCountUniqueMappedVals(db(x), right.db_table(x), x@join,
-                                right.db_table(x), right.colname(x),
-                                left.db_table(x), left.colname(x), x@datacache)
-    }
+    function(x) dbCountUniqueMappedVals(db(x), .revL2Rpath(x@L2Rpath), x@datacache)
 )
 
 setMethod("mapped.left.names", "GoAnnDbMap",
@@ -840,9 +757,9 @@ setMethod("mapped.left.names", "GoAnnDbMap",
         getMappedNames <- function(Ontology)
         {
             table <- right.db_table(x)[Ontology]
-            dbUniqueMappedVals(db(x), table, x@join,
-                               left.db_table(x), left.colname(x),
-                               table, "go_id", x@datacache)
+            L2Rpath <- x@L2Rpath
+            names(L2Rpath)[length(L2Rpath)] <- table
+            dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
         }
         names1 <- getMappedNames("BP")
         names2 <- getMappedNames("CC")
@@ -860,9 +777,9 @@ setMethod("mapped.right.names", "GoAnnDbMap",
         getMappedNames <- function(Ontology)
         {
             table <- right.db_table(x)[Ontology]
-            dbUniqueMappedVals(db(x), table, x@join,
-                               table, "go_id",
-                               left.db_table(x), left.colname(x), x@datacache)
+            L2Rpath <- x@L2Rpath
+            names(L2Rpath)[length(L2Rpath)] <- table
+            dbUniqueMappedVals(db(x), .revL2Rpath(L2Rpath), x@datacache)
         }
         names1 <- getMappedNames("BP")
         names2 <- getMappedNames("CC")
@@ -878,9 +795,9 @@ setMethod("count.mapped.right.names", "GoAnnDbMap",
         countMappedNames <- function(Ontology)
         {
             table <- right.db_table(x)[Ontology]
-            dbCountUniqueMappedVals(db(x), table, x@join,
-                                    table, "go_id",
-                                    left.db_table(x), left.colname(x), x@datacache)
+            L2Rpath <- x@L2Rpath
+            names(L2Rpath)[length(L2Rpath)] <- table
+            dbCountUniqueMappedVals(db(x), .revL2Rpath(L2Rpath), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")
