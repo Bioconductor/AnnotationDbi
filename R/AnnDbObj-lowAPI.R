@@ -306,43 +306,39 @@ dbCountUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
 ### we want to be able to use a different signature (2 args).
 ###
 
+.revmap <- function(class, x, objName)
+{
+    if (is.null(objName))
+        objName <- paste("revmap(", x@objName, ")", sep="")
+    else
+        objName <- as.character(objName)
+    new(class, x, objName=objName)
+}
+
 setMethod("revmap", "AtomicAnnDbMap",
-    function(x, objName=NULL)
-    {
-        if (is.null(objName))
-            objName <- paste("revmap(", x@objName, ")", sep="")
-        else
-            objName <- as.character(objName)
-        new("RevAtomicAnnDbMap", x, objName=objName)
-    }
+    function(x, objName=NULL) .revmap("RevAtomicAnnDbMap", x, objName)
 )
 setMethod("revmap", "RevAtomicAnnDbMap",
-    function(x, objName=NULL)
-    {
-        stop("already a reverse map")
-    }
+    function(x, objName=NULL) stop("already a reverse map")
 )
+
 setMethod("revmap", "GoAnnDbMap",
-    function(x, objName=NULL)
-    {
-        if (is.null(objName))
-            objName <- paste("revmap(", x@objName, ")", sep="")
-        else
-            objName <- as.character(objName)
-        new("RevGoAnnDbMap", x, objName=objName)
-    }
+    function(x, objName=NULL) .revmap("RevGoAnnDbMap", x, objName)
 )
 setMethod("revmap", "RevGoAnnDbMap",
-    function(x, objName=NULL)
-    {
-        stop("already a reverse map")
-    }
+    function(x, objName=NULL) stop("already a reverse map")
+)
+
+setMethod("revmap", "Go3AnnDbMap",
+    function(x, objName=NULL) .revmap("RevGo3AnnDbMap", x, objName)
+)
+setMethod("revmap", "RevGo3AnnDbMap",
+    function(x, objName=NULL) stop("already a reverse map")
 )
 
 setMethod("revmap", "environment",
-          function(x, objName=NULL) {
-              l2e(reverseSplit(as.list(x)))
-          })
+    function(x, objName=NULL) l2e(reverseSplit(as.list(x)))
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -357,7 +353,7 @@ setMethod("left.colname", "AnnDbMap", function(x) .left.colname(x@L2Rpath))
 setMethod("right.db_table", "AnnDbMap", function(x) .right.db_table(x@L2Rpath))
 setMethod("right.colname", "AnnDbMap", function(x) .right.colname(x@L2Rpath))
 
-setMethod("right.db_table", "GoAnnDbMap", function(x) x@rightTables)
+setMethod("right.db_table", "Go3AnnDbMap", function(x) x@rightTables)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -405,19 +401,19 @@ setMethod("toTable", "AnnDbMap",
 ### or later in R with rbind():
 ###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
 ### Surprisingly the latter is almost twice faster than the former!
-setMethod("toTable", "GoAnnDbMap",
+setMethod("toTable", "Go3AnnDbMap",
     function(x, left.names=NULL, right.names=NULL, extra.colnames=NULL, verbose=FALSE)
     {
         extra.colnames <- c("evidence", extra.colnames)
-        getPartialSubmap <- function(Ontology)
+        getPartialSubmap <- function(ontology)
         {
-            table <- right.db_table(x)[Ontology]
+            table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
             names(L2Rpath)[length(L2Rpath)] <- table
             data <- dbSelectFromL2Rpath(db(x), L2Rpath, left.names, right.names,
                                                extra.colnames, verbose)
             if (nrow(data) != 0)
-                data[["Ontology"]] <- Ontology
+                data[["ontology"]] <- ontology
             data
         }
         rbind(getPartialSubmap("BP"),
@@ -464,12 +460,12 @@ setMethod("nrow", "AnnDbMap",
     function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
 )
 
-setMethod("nrow", "GoAnnDbMap",
+setMethod("nrow", "Go3AnnDbMap",
     function(x)
     {
-        countRows <- function(Ontology)
+        countRows <- function(ontology)
         {
-            table <- right.db_table(x)[Ontology]
+            table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
             names(L2Rpath)[length(L2Rpath)] <- table
             dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
@@ -497,12 +493,12 @@ setMethod("right.names", "AnnDbMap",
     }
 )
 
-setMethod("right.names", "GoAnnDbMap",
+setMethod("right.names", "Go3AnnDbMap",
     function(x)
     {
-        getNames <- function(Ontology)
+        getNames <- function(ontology)
         {
-            table <- right.db_table(x)[Ontology]
+            table <- right.db_table(x)[ontology]
             dbUniqueVals(db(x), table, "go_id", x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -537,12 +533,12 @@ setMethod("right.length", "AnnDbMap",
     }
 )
 
-setMethod("right.length", "GoAnnDbMap",
+setMethod("right.length", "Go3AnnDbMap",
     function(x)
     {
-        countNames <- function(Ontology)
+        countNames <- function(ontology)
         {
-            table <- right.db_table(x)[Ontology]
+            table <- right.db_table(x)[ontology]
             dbCountUniqueVals(db(x), table, "go_id", x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -751,12 +747,12 @@ setMethod("count.mapped.right.names", "AnnDbMap",
     function(x) dbCountUniqueMappedVals(db(x), .revL2Rpath(x@L2Rpath), x@datacache)
 )
 
-setMethod("mapped.left.names", "GoAnnDbMap",
+setMethod("mapped.left.names", "Go3AnnDbMap",
     function(x)
     {
-        getMappedNames <- function(Ontology)
+        getMappedNames <- function(ontology)
         {
-            table <- right.db_table(x)[Ontology]
+            table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
             names(L2Rpath)[length(L2Rpath)] <- table
             dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
@@ -767,16 +763,16 @@ setMethod("mapped.left.names", "GoAnnDbMap",
         unique(c(names1, names2, names3))
     }
 )
-setMethod("count.mapped.left.names", "GoAnnDbMap",
+setMethod("count.mapped.left.names", "Go3AnnDbMap",
     function(x) length(mapped.left.names(x))
 )
 
-setMethod("mapped.right.names", "GoAnnDbMap",
+setMethod("mapped.right.names", "Go3AnnDbMap",
     function(x)
     {
-        getMappedNames <- function(Ontology)
+        getMappedNames <- function(ontology)
         {
-            table <- right.db_table(x)[Ontology]
+            table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
             names(L2Rpath)[length(L2Rpath)] <- table
             dbUniqueMappedVals(db(x), .revL2Rpath(L2Rpath), x@datacache)
@@ -789,12 +785,12 @@ setMethod("mapped.right.names", "GoAnnDbMap",
         c(names1, names2, names3)
     }
 )
-setMethod("count.mapped.right.names", "GoAnnDbMap",
+setMethod("count.mapped.right.names", "Go3AnnDbMap",
     function(x)
     {
-        countMappedNames <- function(Ontology)
+        countMappedNames <- function(ontology)
         {
-            table <- right.db_table(x)[Ontology]
+            table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
             names(L2Rpath)[length(L2Rpath)] <- table
             dbCountUniqueMappedVals(db(x), .revL2Rpath(L2Rpath), x@datacache)

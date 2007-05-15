@@ -97,8 +97,8 @@ have left/right methods but from/to methods instead, and... (?)
 Then we also need to be able to convert an AtomicAnnDbMap (or
 RevAtomicAnnDbMap) object to a GenericMap object (no conversion
 from GenericMap to AtomicAnnDbMap or RevAtomicAnnDbMap, once a map has lost
-its orientation, it's lost forever). Conversion from GoAnnDbMap (or
-RevGoAnnDbMap) to GenericMap seems hard to achieve because of the
+its orientation, it's lost forever). Conversion from Go3AnnDbMap (or
+RevGo3AnnDbMap) to GenericMap seems hard to achieve because of the
 current DB schema where we have 3 right tables for those maps.
 
 Of course, only maps that belong to the same package would be pluggable

@@ -12,36 +12,19 @@
 ### this file: it is called by any GO_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
-### A GO_DB-based package provides the following AnnObj objects:
-###   objName      class
-###   -----------  ----------------
-###   ALLENTREZID  AtomicAnnDbMap
-###   BPANCESTOR 
-###   BPCHILDREN 
-###   BPOFFSPRING
-###   BPPARENTS
-###   CCANCESTOR
-###   CCCHILDREN
-###   CCOFFSPRING
-###   CCPARENTS
-###   ENTREZID2GO
-###   ENTREZID 
-###   MFANCESTOR
-###   MFCHILDREN
-###   MFOFFSPRING
-###   MFPARENTS
-###   OBSOLETE
-###   SYNONYM
-###   TERM
 
-# Pbs found in /home/nli/proj/ann/nli/annosrc/db/GO.sqlite (report to Nianhua):
-#   - qcdata table: remove GO prefix from map names (map_name col) like for the
-#     other qcdata in other schemas (consistency)
-#   - good SQL practice would be to make map_name a primary key (unless there
-#     is a good reason to use UNIQUE, the standard practice is to use PRIMARY)
+### Still missing:
+###   TERM, OBSOLETE, SYNONYM: right values are GOTerms objects (class
+###                            defined in the annotate package)
 
 ### Mandatory fields: objName and L2Rpath
 GO_DB_AtomicAnnDbMap_seeds <- list(
+    list(
+        objName="ENTREZID",
+        L2Rpath=list(go_term=c("go_id","term_id"),
+                     go_gene=c("term_id","gene_id")),
+        tagCols="evidence"
+    ),
     list(
         objName="ALLENTREZID",
         L2Rpath=list(go_term=c("go_id","term_id"),
@@ -54,25 +37,86 @@ GO_DB_AtomicAnnDbMap_seeds <- list(
                      go_bp_parents=c("term_id","parent_id"),
                      go_term=c("term_id","go_id")),
         tagCols="evidence"
+    ),
+    list(
+        objName="CCPARENTS",
+        L2Rpath=list(go_term=c("go_id","term_id"),
+                     go_cc_parents=c("term_id","parent_id"),
+                     go_term=c("term_id","go_id")),
+        tagCols="evidence"
+    ),
+    list(
+        objName="MFPARENTS",
+        L2Rpath=list(go_term=c("go_id","term_id"),
+                     go_mf_parents=c("term_id","parent_id"),
+                     go_term=c("term_id","go_id")),
+        tagCols="evidence"
+    ),
+    list(
+        objName="BPANCESTOR",
+        L2Rpath=list(go_term=c("go_id","term_id"),
+                     go_bp_offspring=c("offspring_id","term_id"),
+                     go_term=c("term_id","go_id"))
+    ),
+    list(
+        objName="CCANCESTOR",
+        L2Rpath=list(go_term=c("go_id","term_id"),
+                     go_cc_offspring=c("offspring_id","term_id"),
+                     go_term=c("term_id","go_id"))
+    ),
+    list(
+        objName="MFANCESTOR",
+        L2Rpath=list(go_term=c("go_id","term_id"),
+                     go_mf_offspring=c("offspring_id","term_id"),
+                     go_term=c("term_id","go_id"))
     )
 )
 
-# myGOBPANCESTOR <- makeVector(db,
-# "SELECT DISTINCT t2.go_id, t1.go_id FROM go_term AS t1, go_bp_offspring as r, go_term AS t2 WHERE t1.term_id=r.term_id AND t2.term_id=r.offspring_id")
-# myGOBPCHILDREN <- makeNamedVector(db,
-# "SELECT DISTINCT t1.parent_go, t1.evidence, t2.go_id FROM (SELECT t.go_id AS parent_go, r.term_id AS child_id, r.evidence AS evidence FROM go_term AS t LEFT OUTER JOIN go_bp_parents AS r ON r.parent_id=t.term_id WHERE t.ontology='BP') AS t1 LEFT OUTER JOIN go_term AS t2 ON t1.child_id=t2.term_id ORDER BY t1.parent_go;")
-# myGOBPOFFSPRING <- makeVector(db,
-# "SELECT DISTINCT t1.ancestor_go, t2.go_id FROM (SELECT t.go_id AS ancestor_go, r.offspring_id AS offspring_id FROM go_term AS t LEFT OUTER JOIN go_bp_offspring AS r ON r.term_id=t.term_id WHERE t.ontology='BP') AS t1 LEFT OUTER JOIN go_term AS t2 ON t1.offspring_id=t2.term_id ORDER BY t1.ancestor_go;")
-
 createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AtomicAnnDbMap and IpiAnnDbMap objects
+    ## AtomicAnnDbMap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
     ann_objs <- createAnnObjs("AtomicAnnDbMap", GO_DB_AtomicAnnDbMap_seeds, seed0)
+
+    ## RevAtomicAnnDbMap objects
+    ## Nianhua uses the following query for the GOBPCHILDREN map:
+    ##   SELECT DISTINCT t1.parent_go, t1.evidence, t2.go_id
+    ##     FROM (SELECT t.go_id AS parent_go, r.term_id AS child_id, r.evidence AS evidence
+    ##             FROM go_term AS t LEFT OUTER JOIN go_bp_parents AS r ON r.parent_id=t.term_id
+    ##               WHERE t.ontology='BP') AS t1
+    ##          LEFT OUTER JOIN go_term AS t2 ON t1.child_id=t2.term_id
+    ##     ORDER BY t1.parent_go
+    ## and the following query for the GOBPOFFSPRING map:
+    ##   SELECT DISTINCT t1.ancestor_go, t2.go_id
+    ##     FROM (SELECT t.go_id AS ancestor_go, r.offspring_id AS offspring_id
+    ##             FROM go_term AS t LEFT OUTER JOIN go_bp_offspring AS r ON r.term_id=t.term_id
+    ##               WHERE t.ontology='BP') AS t1
+    ##          LEFT OUTER JOIN go_term AS t2 ON t1.offspring_id=t2.term_id
+    ##     ORDER BY t1.ancestor_go
+    ## What we do below (reverse the GOBPPARENTS and GOBPANCESTOR maps) results
+    ## in much simpler queries (not nested SELECTs).
+    ## TODO: Make sure that our simplification below is equivalent.
+    ann_objs$BPCHILDREN <- revmap(ann_objs$BPPARENTS, objName="BPCHILDREN")
+    ann_objs$CCCHILDREN <- revmap(ann_objs$CCPARENTS, objName="CCCHILDREN")
+    ann_objs$MFCHILDREN <- revmap(ann_objs$MFPARENTS, objName="MFCHILDREN")
+    ann_objs$BPOFFSPRING <- revmap(ann_objs$BPANCESTOR, objName="BPOFFSPRING")
+    ann_objs$CCOFFSPRING <- revmap(ann_objs$CCANCESTOR, objName="CCOFFSPRING")
+    ann_objs$MFOFFSPRING <- revmap(ann_objs$MFANCESTOR, objName="MFOFFSPRING")
+
+    ## GoAnnDbMap object
+    ann_objs$ENTREZID2GO <- new("GoAnnDbMap",
+        objName="ENTREZID2GO",
+        objTarget=objTarget,
+        datacache=datacache,
+        conn=conn,
+        L2Rpath=list(go_gene=c("gene_id","term_id"),
+                     go_term=c("term_id", "go_id")),
+        tagCols=c("evidence", "ontology")
+    )
 
     ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)

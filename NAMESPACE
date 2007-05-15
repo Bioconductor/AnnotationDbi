@@ -55,6 +55,8 @@ exportClasses(
     "IpiAnnDbMap",
     "GoAnnDbMap",
     "RevGoAnnDbMap",
+    "Go3AnnDbMap",
+    "RevGo3AnnDbMap",
     "AnnDbPkgSeed"
 )
 

@@ -45,7 +45,7 @@ setClass("AnnDbMap",
     contains="AnnDbObj",
     representation(
         L2Rpath="list", 
-        rightColType="character",
+        rightColType="character", # should probably move to AtomicAnnDbMap
         tagCols="character"
     )
 )
@@ -83,15 +83,21 @@ setClass("IpiAnnDbMap", contains="AnnDbMap")
 ### For a "GoAnnDbMap" object, the right values are named lists of GO nodes,
 ### each GO node being represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
-setClass("GoAnnDbMap",
-    contains="AnnDbMap",
-    representation(
-        rightTables="character"
-    )
-)
+setClass("GoAnnDbMap", contains="AnnDbMap")
 
 ### Maps a GO term to a named character vector containing left values tagged
 ### with the Evidence code.
 ### DON'T ADD ANY SLOT HERE! (Why? See "RevAtomicAnnDbMap" def above.)
 setClass("RevGoAnnDbMap", contains=c("RevAnnDbMap", "GoAnnDbMap"))
+
+### Like "GoAnnDbMap" but the right table is splitted in 3 parts.
+setClass("Go3AnnDbMap",
+    contains="GoAnnDbMap",
+    representation(
+        rightTables="character"
+    )
+)
+
+### DON'T ADD ANY SLOT HERE! (Why? See "RevAtomicAnnDbMap" def above.)
+setClass("RevGo3AnnDbMap", contains=c("RevAnnDbMap", "Go3AnnDbMap"))
 

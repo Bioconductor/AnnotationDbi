@@ -115,8 +115,8 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
 
-    ## GoAnnDbMap object
-    ann_objs$GO <- new("GoAnnDbMap",
+    ## Go3AnnDbMap object
+    ann_objs$GO <- new("Go3AnnDbMap",
         objName="GO",
         objTarget=objTarget,
         datacache=datacache,
@@ -127,9 +127,9 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
         tagCols=c("evidence", "Ontology")
     )
 
-    ## RevGoAnnDbMap objects
+    ## RevGo3AnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    ann_objs$GO2ALLPROBES <- new("RevGoAnnDbMap", ann_objs$GO,
+    ann_objs$GO2ALLPROBES <- new("RevGo3AnnDbMap", ann_objs$GO,
                                  objName="GO2ALLPROBES", rightTables=GOtables(all=TRUE))
 
     ## 2 special maps that are not AnnDbMap objects (just named integer vectors)

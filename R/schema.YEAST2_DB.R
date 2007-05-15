@@ -84,8 +84,8 @@ createAnnObjs.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
 
-    ## GoAnnDbMap object
-    ann_objs$GO <- new("GoAnnDbMap",
+    ## Go3AnnDbMap object
+    ann_objs$GO <- new("Go3AnnDbMap",
         objTarget=objTarget,
         conn=conn,
         datacache=datacache,
@@ -96,9 +96,9 @@ createAnnObjs.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
         all=FALSE
     )
 
-    ## RevGoAnnDbMap objects
+    ## RevGo3AnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    ann_objs$GO2ALLPROBES <- new("RevGoAnnDbMap", ann_objs$GO, objName="GO2ALLPROBES", all=TRUE)
+    ann_objs$GO2ALLPROBES <- new("RevGo3AnnDbMap", ann_objs$GO, objName="GO2ALLPROBES", all=TRUE)
 
     ## Some pre-caching
     left.names(ann_objs$GO)

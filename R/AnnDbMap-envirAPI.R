@@ -25,22 +25,22 @@
         stop("invalid first argument")
 }
 
-### Re-order and format the list 'lsubmap' as follow:
-###   > lsubmap <- list(aa=1, b=2, c=3)
+### Re-order and format the list 'ann_list' as follow:
+###   > ann_list <- list(aa=1, b=2, c=3)
 ###   > names <- c("a", "c", "d")
-###   > formatAnnList(lsubmap, names)
+###   > formatAnnList(ann_list, names)
 ### ... must return 'list(a=NA, c=3, d=NA)'
 ### Note that the returned list must have exactly the names in 'names' (in the
 ### same order).
-formatAnnList <- function(lsubmap, names, replace.single=NULL, replace.multiple=NULL)
+formatAnnList <- function(ann_list, names, replace.single=NULL, replace.multiple=NULL)
 {
-    if (length(lsubmap))
-      lsubmap <- l2e(lsubmap)
+    if (length(ann_list))
+        ann_list <- l2e(ann_list)
     doReplaceSingle <- length(replace.single) != 0L
     doReplaceMultiple <- length(replace.multiple) != 0L
     formatVal <- function(key)
     {
-        val <- lsubmap[[key]]
+        val <- ann_list[[key]]
         lval <- length(val)
         if (lval == 1L) {
             if (doReplaceMultiple)
@@ -173,7 +173,7 @@ setMethod("as.list", "GoAnnDbMap",
             }
             GOIDs <- split(data0[["go_id"]], data0[[1]])
             Evidences <- split(data0[["evidence"]], data0[[1]])
-            Ontologies <- split(data0[["Ontology"]], data0[[1]])
+            Ontologies <- split(data0[["ontology"]], data0[[1]])
             ## The 'GOIDs', 'Evidences' and 'Ontologies' lists have the same
             ## names in the same order.
             mapped_names <- names(GOIDs)
@@ -193,23 +193,28 @@ setMethod("as.list", "GoAnnDbMap",
     }
 )
 
+.RevGoAsList <- function(x, names=NULL)
+{
+    if (!is.null(names) && length(names) == 0)
+        return(list())
+    data0 <- toTable(x, right.names=names)
+    if (!is.null(names) && !all(names %in% data0[[2]]))
+        .checkNamesExist(names, names(x))
+    if (nrow(data0) == 0)
+        return(list())
+    left_col <- data0[[1]]
+    names(left_col) <- data0[["evidence"]]
+    ann_list <- split(left_col, data0[["go_id"]])
+    if (is.null(names))
+        names <- names(x)
+    formatAnnList(ann_list, names)
+}
+    
 setMethod("as.list", "RevGoAnnDbMap",
-    function(x, names=NULL)
-    {
-        if (!is.null(names) && length(names) == 0)
-            return(list())
-        data0 <- toTable(x, right.names=names)
-        if (!is.null(names) && !all(names %in% data0[[2]]))
-            .checkNamesExist(names, names(x))
-        if (nrow(data0) == 0)
-            return(list())
-        lsubmap <- data0[[1]]
-        names(lsubmap) <- data0[["evidence"]]
-        lsubmap <- split(lsubmap, data0[["go_id"]])
-        if (is.null(names))
-            names <- names(x)
-        formatAnnList(lsubmap, names)
-    }
+    function(x, names=NULL) .RevGoAsList(x, names)
+)
+setMethod("as.list", "RevGo3AnnDbMap",
+    function(x, names=NULL) .RevGoAsList(x, names)
 )
 
 

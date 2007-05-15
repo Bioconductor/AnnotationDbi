@@ -26,9 +26,9 @@ createAnnObjs.LLMAPPINGS_DB <- function(prefix, objTarget, conn, datacache)
 
     ## RevAtomicAnnDbMap objects
 
-    ## GoAnnDbMap object
+    ## Go3AnnDbMap object
 
-    ## RevGoAnnDbMap objects
+    ## RevGo3AnnDbMap objects
 
     ## The MAPCOUNTS object (named integer vector)
     #ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
