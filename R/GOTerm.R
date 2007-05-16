@@ -76,9 +76,6 @@ setMethod("GOID", "GOTerm", function(object) object@GOID)
 setMethod("Term", "GOTerm", function(object) object@Term)
 
 setMethod("Ontology", "GOTerm", function(object) object@Ontology)
-setMethod("Ontology", signature="ANY", 
-    function(object) if (is.na(object)) NA else callNextMethod()
-)
 
 setMethod("Synonym", "GOTerm", function(object) object@Synonym)
 

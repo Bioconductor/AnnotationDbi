@@ -16,10 +16,10 @@
 \alias{GOID,GOTerm-method}
 \alias{Term,GOTerm-method}
 \alias{Ontology,GOTerm-method}
-\alias{Ontology,ANY-method}
 \alias{Synonym,GOTerm-method}
 \alias{Secondary,GOTerm-method}
 \alias{Definition,GOTerm-method}
+
 \alias{show,GOTerm-method}
 
 \title{Class "GOTerm"}
@@ -67,8 +67,6 @@
       The get method for slot Term}
     \item{Ontology}{\code{signature(object = "GOTerm")}:
       The get method for slot Ontology}
-    \item{Ontology}{\code{signature(object = "ANY")}:
-      The get method for slot Ontology handles missing values.}
     \item{Synonym}{\code{signature(object = "GOTerm")}:
       The get method for slot Synonym}
     \item{Secondary}{\code{signature(object = "GOTerm")}:
