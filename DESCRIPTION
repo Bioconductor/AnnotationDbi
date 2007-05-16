@@ -13,14 +13,14 @@ Collate: AllClasses.R AllGenerics.R
          db.R factories.R
          AnnDbObj-lowAPI.R
          AnnDbMap-envirAPI.R
-         schemas-common.R
-         schema.HGU95AV2_DB.R
-         schema.YEAST2_DB.R
-         schema.AG_DB.R
-         schema.LLMAPPINGS_DB.R
-         schema.YEAST_DB.R
-         schema.GO_DB.R
-         schema.AFFYHUEX_DB.R
+         createAnnObjs-utils.R
+         createAnnObjs.HGU95AV2_DB.R
+         createAnnObjs.YEAST2_DB.R
+         createAnnObjs.AG_DB.R
+         createAnnObjs.LLMAPPINGS_DB.R
+         createAnnObjs.YEAST_DB.R
+         createAnnObjs.GO_DB.R
+         createAnnObjs.AFFYHUEX_DB.R
          AnnDbPkg-templates-common.R
          AnnDbPkg-maker.R
          AnnDbPkg-checker.R

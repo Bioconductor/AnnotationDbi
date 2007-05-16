@@ -63,8 +63,8 @@ Advantages:
     allow control over exactly what kind of join we want: direct or reverse,
     INNER or LEFT, etc... The SQL code is controlled in one single place
     (this helper function) and there is no need to change all the slots
-    (and consequently all the schema.*DB.R files) when we decide to change
-    the exact SQL code of the joins.
+    (and consequently all the createAnnObjs.*_DB.R files) when we decide to
+    change the exact SQL code of the joins.
 
 
 "pluggable" maps

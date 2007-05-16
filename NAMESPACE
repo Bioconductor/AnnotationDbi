@@ -83,7 +83,7 @@ export(
     addToNamespaceAndExport,
     mergeToNamespaceAndExport,
 
-    ## from the R/schema.*_DB.R files
+    ## from the R/createAnnObjs.*_DB.R files
     createAnnObjs.HGU95AV2_DB,
     createAnnObjs.YEAST2_DB,
     createAnnObjs.AG_DB,
