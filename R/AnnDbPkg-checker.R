@@ -108,8 +108,8 @@ identical.collections <- function(x, y)
 ###                                                           "ratLLMappingsdb", "ratLLMappings")
 ###
 
-compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps, reverse_maps,
-                                  quick=FALSE, verbose=FALSE)
+compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
+                                  reverse_maps=c(), quick=FALSE, verbose=FALSE)
 {
     require(pkgname1, character.only=TRUE) || stop(pkgname1, " package needed")
     require(pkgname2, character.only=TRUE) || stop(pkgname2, " package needed")

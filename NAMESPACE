@@ -3,11 +3,35 @@ import(Biobase)
 import(DBI)
 import(RSQLite)
 
-export(toggleDebug,
-       compareAnnotation,
-       comparePerf)
+exportClasses(
+    ## from R/GOTerm.R
+    "GOTerm",
+
+    ## from R/AllClasses.R
+    "AnnDbObj",
+    "AnnDbTable",
+    "AnnDbMap",
+    "RevAnnDbMap",
+    "AtomicAnnDbMap",
+    "RevAtomicAnnDbMap",
+    "IpiAnnDbMap",
+    "GoAnnDbMap",
+    "RevGoAnnDbMap",
+    "Go3AnnDbMap",
+    "RevGo3AnnDbMap",
+
+    ## from R/AnnDbPkg-maker.R
+    "AnnDbPkgSeed"
+)
 
 exportMethods(
+    "GOID",
+    "Term",
+    "Ontology",
+    "Synonym",
+    "Secondary",
+    "Definition",
+    
     "exists",
     "revmap",
     "db",
@@ -45,22 +69,14 @@ exportMethods(
     "makeAnnDbPkg"
 )
 
-exportClasses(
-    "AnnDbObj",
-    "AnnDbTable",
-    "AnnDbMap",
-    "RevAnnDbMap",
-    "AtomicAnnDbMap",
-    "RevAtomicAnnDbMap",
-    "IpiAnnDbMap",
-    "GoAnnDbMap",
-    "RevGoAnnDbMap",
-    "Go3AnnDbMap",
-    "RevGo3AnnDbMap",
-    "AnnDbPkgSeed"
-)
-
 export(
+    toggleDebug,
+    compareAnnotation,
+    comparePerf,
+
+    ## from R/GOTerm.R
+    GOTerm,
+
     ## from R/AnnDbPkg-templates-common.R
     dbFileConnect,
     dbFileDisconnect,

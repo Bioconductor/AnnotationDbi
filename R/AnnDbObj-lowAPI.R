@@ -551,7 +551,7 @@ setMethod("length", "RevAnnDbMap", function(x) right.length(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "show" generic.
+### The "show" methods.
 ###
 
 setMethod("show", "AnnDbTable",
