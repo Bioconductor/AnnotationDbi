@@ -9,6 +9,7 @@ Depends: R (>= 2.5.0), methods, Biobase (>= 1.14.0), DBI (>= 0.2-3), RSQLite (>=
 Imports: methods, Biobase, DBI, RSQLite
 Suggests: GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R AllGenerics.R
+         GOTerm.R
          db.R factories.R
          AnnDbObj-lowAPI.R
          AnnDbMap-envirAPI.R
