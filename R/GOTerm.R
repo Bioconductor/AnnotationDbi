@@ -32,6 +32,11 @@ setClass("GOTerm",
         Synonym="character",
         Secondary="character",
         Definition="character"
+    ),
+    prototype(
+        Synonym=as.character(NA),
+        Secondary=as.character(NA),
+        Definition=as.character(NA)
     )
 )
 
@@ -40,11 +45,17 @@ setClass("GOTerm",
 ### Constructor-like function.
 ###
 
-GOTerm <- function(GOId, term, ontology,
-                   synonym="", secondary="", definition="")
+GOTerm <- function(GOID, Term, Ontology,
+                   Synonym=NA, Secondary=NA, Definition=NA)
 {
-    new("GOTerm", GOID=GOId, Term=term, Ontology=ontology,
-                  Synonym=synonym, Secondary=secondary, Definition=definition)
+    if (!is.character(Synonym))
+        Synonym <- as.character(Synonym)
+    if (!is.character(Secondary))
+        Secondary <- as.character(Secondary)
+    if (!is.character(Definition))
+        Definition <- as.character(Definition)
+    new("GOTerm", GOID=GOID, Term=Term, Ontology=Ontology,
+                  Synonym=Synonym, Secondary=Secondary, Definition=Definition)
 }
 
 
@@ -84,17 +95,17 @@ setMethod("show", "GOTerm",
     function(object)
     {
         s <- character(0)
-        if (!is.na(GOID(object)))
+        if (!is.na(GOID(object)[1]))
             s <- c(s, paste("GOID =", GOID(object)), "")
-        if (!is.na(Term(object)))
+        if (!is.na(Term(object)[1]))
             s <- c(s, paste("Term =", Term(object)), "")
-        if (!is.na(Ontology(object)))
+        if (!is.na(Ontology(object)[1]))
             s <- c(s, paste("\nOntology =", Ontology(object)), "")
         if (!is.na(Synonym(object)[1]))
             s <- c(s, paste("\nSynonym =", Synonym(object)), "")
         if (!is.na(Secondary(object)[1]))
             s <- c(s, paste("\nSecondary =", Secondary(object)), "")
-        if (!is.na(Definition(object)))
+        if (!is.na(Definition(object)[1]))
             s <- c(s, paste("\nDefinition =", Definition(object)), "")
         cat(strwrap(s, exdent=5), sep="\n")
     }
