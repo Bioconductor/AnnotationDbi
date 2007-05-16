@@ -36,6 +36,8 @@ GO_DB_AtomicAnnDbMap_seeds <- list(
         L2Rpath=list(go_term=c("go_id","term_id"),
                      go_bp_parents=c("term_id","parent_id"),
                      go_term=c("term_id","go_id")),
+        Lfilter="{{ontology}}='BP'",
+        Rfilter="{{ontology}}='BP'",
         tagCols="evidence"
     ),
     list(
@@ -43,6 +45,8 @@ GO_DB_AtomicAnnDbMap_seeds <- list(
         L2Rpath=list(go_term=c("go_id","term_id"),
                      go_cc_parents=c("term_id","parent_id"),
                      go_term=c("term_id","go_id")),
+        Lfilter="{{ontology}}='CC'",
+        Rfilter="{{ontology}}='CC'",
         tagCols="evidence"
     ),
     list(
@@ -50,25 +54,33 @@ GO_DB_AtomicAnnDbMap_seeds <- list(
         L2Rpath=list(go_term=c("go_id","term_id"),
                      go_mf_parents=c("term_id","parent_id"),
                      go_term=c("term_id","go_id")),
+        Lfilter="{{ontology}}='MF'",
+        Rfilter="{{ontology}}='MF'",
         tagCols="evidence"
     ),
     list(
         objName="BPANCESTOR",
         L2Rpath=list(go_term=c("go_id","term_id"),
                      go_bp_offspring=c("offspring_id","term_id"),
-                     go_term=c("term_id","go_id"))
+                     go_term=c("term_id","go_id")),
+        Lfilter="{{ontology}}='BP'",
+        Rfilter="{{ontology}}='BP'"
     ),
     list(
         objName="CCANCESTOR",
         L2Rpath=list(go_term=c("go_id","term_id"),
                      go_cc_offspring=c("offspring_id","term_id"),
-                     go_term=c("term_id","go_id"))
+                     go_term=c("term_id","go_id")),
+        Lfilter="{{ontology}}='CC'",
+        Rfilter="{{ontology}}='CC'"
     ),
     list(
         objName="MFANCESTOR",
         L2Rpath=list(go_term=c("go_id","term_id"),
                      go_mf_offspring=c("offspring_id","term_id"),
-                     go_term=c("term_id","go_id"))
+                     go_term=c("term_id","go_id")),
+        Lfilter="{{ontology}}='MF'",
+        Rfilter="{{ontology}}='MF'"
     )
 )
 

@@ -51,7 +51,9 @@ setClass("AnnDbMap",
     contains="AnnDbObj",
     representation(
         L2Rpath="list", 
-        rightColType="character", # should probably move to AtomicAnnDbMap
+        Lfilter="character",    # e.g. "{{ontology}}='BP'"
+        Rfilter="character",    # e.g. "{{ontology}}='BP'"
+        rightColType="character", 
         tagCols="character"
     )
 )
