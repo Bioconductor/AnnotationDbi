@@ -14,8 +14,7 @@
 
 
 ### Still missing:
-###   TERM, OBSOLETE, SYNONYM: right values are GOTerms objects (class
-###                            defined in the annotate package)
+###   TERM, OBSOLETE, SYNONYM: right values are GONode objects
 
 ### Mandatory fields: objName and L2Rpath
 GO_DB_AtomicAnnDbMap_seeds <- list(

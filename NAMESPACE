@@ -4,8 +4,8 @@ import(DBI)
 import(RSQLite)
 
 exportClasses(
-    ## from R/GOTerm.R
-    "GOTerm",
+    ## from R/GONode.R
+    "GONode",
 
     ## from R/AllClasses.R
     "AnnDbObj",
@@ -74,8 +74,8 @@ export(
     compareAnnotation,
     comparePerf,
 
-    ## from R/GOTerm.R
-    GOTerm,
+    ## from R/GONode.R
+    GONode,
 
     ## from R/AnnDbPkg-templates-common.R
     dbFileConnect,

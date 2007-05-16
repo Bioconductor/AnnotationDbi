@@ -1,12 +1,12 @@
 ### =========================================================================
-### The GOTerm class
+### The GONode class
 ### ----------------
 ###
-### The "GOTerm" class is the AnnotationDbi version of the "GOTerms" class
+### The "GONode" class is the AnnotationDbi version of the "GOTerms" class
 ### defined in the annotate package. The reasons we define our own
 ### GOTerms-like class are (1) to get rid of the trailing "s" in "GOTerms"
 ### (using a plural form to name a class that can only represent 1 single
-### GO term is confusing) and (2) because we can't import the GOTerms class
+### GO node is confusing) and (2) because we can't import the GOTerms class
 ### from annotate (that's because annotate itself already imports
 ### AnnotationDbi).
 ### The global picture is the following:
@@ -15,16 +15,16 @@
 ###     "Secondary" and "Definition" generics have been moved from annotate
 ###     to this file.
 ###   - The corresponding methods for GOTerms objects were kept in annotate.
-###   - The new corresponding methods for GOTerm objects are defined in
+###   - The new corresponding methods for GONode objects are defined in
 ###     in this file.
-###   - GOTerm and GOTerms objects should remain semantically equivalent and
+###   - GONode and GOTerms objects should remain semantically equivalent and
 ###     provide the same interface.
 ###   - Maybe at some point in the future, the "GOTerms" class should be
-###     deprecated in favor of the "GOTerm" class...
+###     deprecated in favor of the "GONode" class...
 ###
 ### -------------------------------------------------------------------------
 
-setClass("GOTerm",
+setClass("GONode",
     representation(
         GOID="character",
         Term="character",
@@ -45,7 +45,7 @@ setClass("GOTerm",
 ### Constructor-like function.
 ###
 
-GOTerm <- function(GOID, Term, Ontology,
+GONode <- function(GOID, Term, Ontology,
                    Synonym=NA, Secondary=NA, Definition=NA)
 {
     if (!is.character(Synonym))
@@ -54,7 +54,7 @@ GOTerm <- function(GOID, Term, Ontology,
         Secondary <- as.character(Secondary)
     if (!is.character(Definition))
         Definition <- as.character(Definition)
-    new("GOTerm", GOID=GOID, Term=Term, Ontology=Ontology,
+    new("GONode", GOID=GOID, Term=Term, Ontology=Ontology,
                   Synonym=Synonym, Secondary=Secondary, Definition=Definition)
 }
 
@@ -71,24 +71,24 @@ setGeneric("Synonym", function(object) standardGeneric("Synonym"))
 setGeneric("Secondary", function(object) standardGeneric("Secondary"))
 setGeneric("Definition", function(object) standardGeneric("Definition"))
 
-setMethod("GOID", "GOTerm", function(object) object@GOID)
+setMethod("GOID", "GONode", function(object) object@GOID)
 
-setMethod("Term", "GOTerm", function(object) object@Term)
+setMethod("Term", "GONode", function(object) object@Term)
 
-setMethod("Ontology", "GOTerm", function(object) object@Ontology)
+setMethod("Ontology", "GONode", function(object) object@Ontology)
 
-setMethod("Synonym", "GOTerm", function(object) object@Synonym)
+setMethod("Synonym", "GONode", function(object) object@Synonym)
 
-setMethod("Secondary", "GOTerm", function(object) object@Secondary)
+setMethod("Secondary", "GONode", function(object) object@Secondary)
 
-setMethod("Definition", "GOTerm", function(object) object@Definition)
+setMethod("Definition", "GONode", function(object) object@Definition)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "show" methods.
 ###
 
-setMethod("show", "GOTerm",
+setMethod("show", "GONode",
     function(object)
     {
         s <- character(0)
