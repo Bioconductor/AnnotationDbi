@@ -48,13 +48,23 @@
 
 ### Inject colname prefix into filter string.
 ### Example:
-###  > .filterToSQLWhere("{{aa}} < {{bb}}", "PREFIX.")
+###  > .filterToSQLWhere("{aa} < {bb}", "PREFIX.")
 ###  [1] "PREFIX.aa < PREFIX.bb"
 .filterToSQLWhere <- function(filter, prefix)
 {
     if (length(filter) == 0)
         return("1")
-    gsub("\\{\\{([^}{']*)\\}\\}", paste(prefix, "\\1", sep=""), filter)
+    gsub("\\{([^}{']*)\\}", paste(prefix, "\\1", sep=""), filter)
+}
+
+### 'template': a character vector where each element is an SQL template
+### 'alias': a table alias
+.injectTableAlias <- function(template, alias)
+{
+    replacement <- "\\1"
+    if (!is.na(alias) && alias != "")
+        replacement <- paste(alias, replacement, sep=".")
+    gsub("\\{([^}{']*)\\}", replacement, template)
 }
 
 .toSQLStringSet <- function(names)
@@ -63,13 +73,9 @@
     paste("'", paste(names, collapse="','"), "'", sep="")
 }
 
-.toSQLWhere <- function(where0, colname, names)
+.toSQLWhere <- function(colname, names)
 {
-    if (is.na(where0) || where0 == "1")
-        where <- ""
-    else
-        where <- paste("(", where0, ") AND ", sep="")
-    where <- paste(where, colname, sep="")
+    where <- colname
     if (is.null(names))
         where <- paste(where, "IS NOT NULL")
     else
@@ -79,17 +85,156 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Manipulate L2Rpath.
+### Manipulate the L2Rpath slot (list of L2Rbrick objects).
 ###
 
-.left.db_table <- function(L2Rpath) names(L2Rpath)[1]
+### Unlike the default "initialize" method, ours allows partial matching.
+setMethod("initialize", "L2Rbrick",
+    function(.Object, ...)
+    {
+        args <- list(...)
+        if (length(args) != 0) {
+            argnames <- names(args)
+            if (is.null(argnames) || any(argnames == ""))
+                stop("all arguments must be named")
+            argnames <- match.arg(argnames, slotNames(.Object), several.ok=TRUE)
+            for (i in seq_len(length(args)))
+                slot(.Object, argnames[i]) <- args[[i]]
+        }
+        .Object
+    }
+)
 
-.left.colname <- function(L2Rpath) L2Rpath[[1]][1]
+L2Rbrick <- function(...) new("L2Rbrick", ...)
 
-.right.db_table <- function(L2Rpath) names(L2Rpath)[length(L2Rpath)]
+setMethod("toString", "L2Rbrick",
+    function(x)
+    {
+        paste("{", x@Lcolname, "}", x@table, "{", x@Rcolname, "}", sep="")
+    }
+)
 
-.right.colname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]][2]
+setMethod("show", "L2Rbrick",
+    function(object)
+    {
+        s <- paste("{Lcolname}table{Rcolname}:", toString(object))
+        if (!is.na(object@attribJoin[1]))
+            s <- c(s, paste("attribJoin:", object@attribJoin))
+        if (!is.na(object@attribCols[1])) {
+            attribCols <- object@attribCols
+            if (!is.null(names(attribCols)))
+                attribCols <- paste(attribCols, "AS", names(attribCols))
+            attribCols <- paste(attribCols, collapse=", ")
+            s <- c(s, paste("attribCols:", attribCols))
+        }
+        if (!is.na(object@filter[1]))
+            s <- c(s, paste("filter:", object@filter))
+        cat(strwrap(s, exdent=4), sep="\n")
+    }
+)
 
+setMethod("rev", "L2Rbrick",
+    function(x)
+    {
+        tmp <- x@Lcolname
+        x@Lcolname <- x@Rcolname
+        x@Rcolname <- tmp
+        x
+    }
+)
+
+.left.db_table <- function(L2Rpath) L2Rpath[[1]]@table
+
+.left.colname <- function(L2Rpath) L2Rpath[[1]]@Lcolname
+
+.right.db_table <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@table
+
+.right.colname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@Rcolname
+
+.Lprefix <- function(L2Rpath) { if (length(L2Rpath) >= 2) "_left." else "" }
+.Rprefix <- function(L2Rpath) { if (length(L2Rpath) >= 2) "_right." else "" }
+
+.Lcolname <- function(L2Rpath)
+{
+    paste(.Lprefix(L2Rpath), .left.colname(L2Rpath), sep="")
+}
+
+.Rcolname <- function(L2Rpath)
+{
+    paste(.Rprefix(L2Rpath), .right.colname(L2Rpath), sep="")
+}
+
+.LfilterToSQLWhere <- function(L2Rpath, filter)
+{
+    .filterToSQLWhere(filter, .Lprefix(L2Rpath))
+}
+
+.RfilterToSQLWhere <- function(L2Rpath, filter)
+{
+    .filterToSQLWhere(filter, .Rprefix(L2Rpath))
+}
+
+### Returns a list with 4 components:
+###   what
+###   attribs
+###   from
+###   where
+.getSelectComponents <- function(L2Rpath, with.attribs=TRUE)
+{
+    attribs <- where <- character(0)
+    pathlen <- length(L2Rpath)
+    if (pathlen == 0) # should never happen
+        stop("invalid 'L2Rpath' value (empty list)")
+    for (i in seq_len(pathlen)) {
+        L2Rbrick <- L2Rpath[[i]]
+        table <- L2Rbrick@table
+        Lcolname <- L2Rbrick@Lcolname
+        Rcolname <- L2Rbrick@Rcolname
+        filter <- L2Rbrick@filter
+        if (pathlen == 1) {
+            tablealias <- NA
+            from <- table
+            what <- c(Lcolname, Rcolname)
+        } else {
+            if (i == 1) {
+                tablealias <- "_left"
+                what <- paste(tablealias, Lcolname, sep=".")
+                from <- paste(table, "AS", tablealias)
+            } else if (i == pathlen) {
+                tablealias <- "_right"
+                what <- c(what, paste(tablealias, Rcolname, sep="."))
+            } else {
+                tablealias <- paste("_t", i, sep="")
+            }
+            if (i >= 2) {
+                on <- paste(prev_tablealias, ".", prev_Rcolname, "=",
+                            tablealias, ".", Lcolname, sep="")
+                from <- paste(from, "INNER JOIN", table, "AS", tablealias, "ON", on)
+            }
+            prev_tablealias <- tablealias
+            prev_Rcolname <- Rcolname
+        }
+        if (is.na(tablealias))
+            tablealias <- table
+        if (with.attribs) {
+            attribJoin <- L2Rbrick@attribJoin
+            attribCols <- L2Rbrick@attribCols
+            if (!is.na(attribJoin))
+                from <- paste(from, .injectTableAlias(attribJoin, tablealias))
+            if (!is.na(attribCols)[1]) {
+                tmp <- .injectTableAlias(attribCols, tablealias)
+                if (!is.null(names(attribCols)))
+                    tmp <- paste(tmp, "AS", names(attribCols))
+                attribs <- c(attribs, tmp)
+            }
+        }
+        if (!is.na(filter))
+            where <- c(where, .injectTableAlias(filter, tablealias))
+    }
+    list(what=what, attribs=attribs, from=from, where=where)
+}
+
+### TO BE REMOVED SOON!
 .toSQLJoin <- function(L2Rpath, type="INNER JOIN")
 {
     pathlen <- length(L2Rpath)
@@ -117,48 +262,9 @@
     join
 }
 
-.Lprefix <- function(L2Rpath) { if (length(L2Rpath) >= 2) "_left." else "" }
-.Rprefix <- function(L2Rpath) { if (length(L2Rpath) >= 2) "_right." else "" }
+.revL2Rpath <- function(L2Rpath) rev(lapply(L2Rpath, rev))
 
-.Lcolname <- function(L2Rpath)
-{
-    paste(.Lprefix(L2Rpath), .left.colname(L2Rpath), sep="")
-}
-
-.Rcolname <- function(L2Rpath)
-{
-    paste(.Rprefix(L2Rpath), .right.colname(L2Rpath), sep="")
-}
-
-.LfilterToSQLWhere <- function(L2Rpath, filter)
-{
-    .filterToSQLWhere(filter, .Lprefix(L2Rpath))
-}
-
-.RfilterToSQLWhere <- function(L2Rpath, filter)
-{
-    .filterToSQLWhere(filter, .Rprefix(L2Rpath))
-}
-
-.revL2Rpath <- function(L2Rpath)
-{
-    rev(lapply(L2Rpath, rev))
-}
-
-.L2RpathToString <- function(L2Rpath)
-{
-    pathlen <- length(L2Rpath)
-    if (pathlen == 0)
-        stop("invalid 'L2Rpath' value (empty list)")
-    strings <- c()
-    for (i in seq_len(pathlen)) {
-        table <- names(L2Rpath)[i]
-        left.colname <- L2Rpath[[i]][1]
-        right.colname <- L2Rpath[[i]][2]
-        strings <- c(strings, paste(left.colname, "[", table, "]", right.colname, sep=""))
-    }
-    paste(strings, collapse="-")
-}
+.L2RpathToString <- function(L2Rpath) paste(sapply(L2Rpath, toString), collapse="-")
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -186,9 +292,9 @@ dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.names,
 #        right.colname <- paste(right.db_table, right.colname, sep=".")
 #    left.colname <- paste(left.db_table, left.colname, sep=".")
     sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", from)
-    sql <- paste(sql, "WHERE", .toSQLWhere(NA, left.colname, left.names))
+    sql <- paste(sql, "WHERE", .toSQLWhere(left.colname, left.names))
     if (!is.null(right.db_table))
-        sql <- paste(sql, "AND", .toSQLWhere(NA, right.colname, right.names))
+        sql <- paste(sql, "AND", .toSQLWhere(right.colname, right.names))
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
@@ -198,23 +304,23 @@ dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname,
                                          right.db_table, right.colname, from)
 {
     sql <- paste("SELECT COUNT(*) FROM", from)
-    sql <- paste(sql, "WHERE", .toSQLWhere(NA, left.colname, NULL))
+    sql <- paste(sql, "WHERE", .toSQLWhere(left.colname, NULL))
     if (!is.null(right.db_table))
-        sql <- paste(sql, "AND", .toSQLWhere(NA, right.colname, NULL))
+        sql <- paste(sql, "AND", .toSQLWhere(right.colname, NULL))
     .dbGetQuery(conn, sql)[[1]]
 }
 
-dbSelectFromL2Rpath <- function(conn, L2Rpath, Lfilter, Rfilter,
-                                      left.names, right.names,
+dbSelectFromL2Rpath <- function(conn, L2Rpath, left.names, right.names,
                                       extra.colnames, verbose=FALSE)
 {
-    Lcolname <- .Lcolname(L2Rpath)
-    Rcolname <- .Rcolname(L2Rpath)
-    what <- paste(c(Lcolname, Rcolname, extra.colnames), collapse=",")
-    Lwhere <- .toSQLWhere(.LfilterToSQLWhere(L2Rpath, Lfilter), Lcolname, left.names)
-    Rwhere <- .toSQLWhere(.RfilterToSQLWhere(L2Rpath, Rfilter), Rcolname, right.names)
-    sql <- paste("SELECT", what, "FROM", .toSQLJoin(L2Rpath),
-                 "WHERE", Lwhere, "AND", Rwhere)
+    selcomp <- .getSelectComponents(L2Rpath)
+    what <- selcomp$what
+    Lwhere <- .toSQLWhere(what[1], left.names)
+    Rwhere <- .toSQLWhere(what[2], right.names)
+    where <- paste("(", c(Lwhere, selcomp$where, Rwhere), ")", sep="")
+    where <- paste(where, collapse=" AND ")
+    what <- paste(c(what, selcomp$attribs, extra.colnames), collapse=",")
+    sql <- paste("SELECT", what, "FROM", selcomp$from, "WHERE", where)
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
@@ -423,10 +529,7 @@ setMethod("toTable", "AnnDbTable",
 setMethod("toTable", "AnnDbMap",
     function(x, left.names=NULL, right.names=NULL, extra.colnames=NULL, verbose=FALSE)
     {
-        if (length(x@tagCols) != 0)
-            extra.colnames <- c(x@tagCols, extra.colnames)
-        dbSelectFromL2Rpath(db(x), x@L2Rpath, x@Lfilter, x@Rfilter,
-                                   left.names, right.names,
+        dbSelectFromL2Rpath(db(x), x@L2Rpath, left.names, right.names,
                                    extra.colnames, verbose)
     }
 )

@@ -1,8 +1,27 @@
+
+setClass("L2Rbrick",
+    representation(
+        table="character",
+        Lcolname="character",
+        Rcolname="character",
+        attribJoin="character",
+        attribCols="character",
+        filter="character"
+    ),
+    prototype(
+        attribJoin=as.character(NA),
+        attribCols=as.character(NA),
+        filter=as.character(NA)
+    )
+)
+
 ### =========================================================================
 ### AnnObj objects
 ### --------------
 ###
 ### -------------------------------------------------------------------------
+
+
 
 setClass("AnnObj",
     representation(
@@ -13,8 +32,14 @@ setClass("AnnObj",
 )
 
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+### =========================================================================
 ### Containers for SQLite-based annotation data.
+### -------------------------------------------------------------------------
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "AnnDbObj" class.
 ###
 
 setClass("AnnDbObj",
@@ -25,6 +50,13 @@ setClass("AnnDbObj",
         conn="DBIConnection"
     )
 )
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "AnnDbTable" class.
+###
+### WARNING: THIS CLASS IS CURRENTLY BROKEN!
+###
 
 setClass("AnnDbTable",
     contains="AnnDbObj",
@@ -37,29 +69,37 @@ setClass("AnnDbTable",
 )
 
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Containers for SQLite-based annotation maps.
-###
 
+### =========================================================================
+### Containers for SQLite-based annotation maps.
+### -------------------------------------------------------------------------
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "AnnDbMap" class.
+###
 ### An "AnnDbMap" object is a mapping between left values and right values.
 ### For direct "AnnDbMap" objects, the mapping is "left-to-right". The left
 ### values are the names (or symbols, or keys) of the map and are retrieved
 ### with the "names" or "ls" methods. The type, format and location in the
 ### DB of the right values depend on the particular subclass of the "AnnDbMap"
 ### object. For reverse "AnnDbMap" objects, the mapping is "right-to-left".
+###
+
 setClass("AnnDbMap",
     contains="AnnDbObj",
     representation(
-        L2Rpath="list", 
-        Lfilter="character",    # e.g. "{{ontology}}='BP'"
-        Rfilter="character",    # e.g. "{{ontology}}='BP'"
-        rightColType="character", 
-        tagCols="character"
+        L2Rpath="list",             # list of L2Rbrick objects
+        rightColType="character"
     )
 )
 
 setClass("RevAnnDbMap", representation("VIRTUAL"))
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "AtomicAnnDbMap" class.
+###
 ### For a "AtomicAnnDbMap" object, the right values are unnamed atomic vectors
 ### (character or integer).
 ### The 2 additional slots ('replace.single' and 'replace.multiple') allow dealing
@@ -72,6 +112,8 @@ setClass("RevAnnDbMap", representation("VIRTUAL"))
 ###   - for MULTIHIT: use replace.single=NA,
 ###                   don't set replace.multiple (default is character(0)),
 ###   - for any other map: don't set those fields (defaults will be just fine).
+###
+
 setClass("AtomicAnnDbMap",
     contains="AnnDbMap",
     representation(
@@ -84,13 +126,24 @@ setClass("AtomicAnnDbMap",
 ### "reverse" class should always have exactly the same slots.
 setClass("RevAtomicAnnDbMap", contains=c("RevAnnDbMap", "AtomicAnnDbMap"))
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "IpiAnnDbMap" class.
+###
 ### No "reverse" class for the IpiAnnDbMap class.
+###
+
 setClass("IpiAnnDbMap", contains="AnnDbMap")
 
 
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "GoAnnDbMap" class.
+###
 ### For a "GoAnnDbMap" object, the right values are named lists of GO nodes,
 ### each GO node being represented as a 3-element list of the form
 ###   list(GOID="GO:0006470" , Evidence="IEA" , Ontology="BP")
+###
+
 setClass("GoAnnDbMap", contains="AnnDbMap")
 
 ### Maps a GO term to a named character vector containing left values tagged
@@ -98,7 +151,13 @@ setClass("GoAnnDbMap", contains="AnnDbMap")
 ### DON'T ADD ANY SLOT HERE! (Why? See "RevAtomicAnnDbMap" def above.)
 setClass("RevGoAnnDbMap", contains=c("RevAnnDbMap", "GoAnnDbMap"))
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "Go3AnnDbMap" class.
+###
 ### Like "GoAnnDbMap" but the right table is splitted in 3 parts.
+###
+
 setClass("Go3AnnDbMap",
     contains="GoAnnDbMap",
     representation(
@@ -108,4 +167,16 @@ setClass("Go3AnnDbMap",
 
 ### DON'T ADD ANY SLOT HERE! (Why? See "RevAtomicAnnDbMap" def above.)
 setClass("RevGo3AnnDbMap", contains=c("RevAnnDbMap", "Go3AnnDbMap"))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "GONodeAnnDbMap" class.
+###
+### For a "GONodeAnnDbMap" object, the right values are GONode objects.
+###
+
+setClass("GONodeAnnDbMap", contains="AnnDbMap")
+
+### DON'T ADD ANY SLOT HERE! (Why? See "RevAtomicAnnDbMap" def above.)
+setClass("RevGONodeAnnDbMap", contains=c("RevAnnDbMap", "GONodeAnnDbMap"))
 

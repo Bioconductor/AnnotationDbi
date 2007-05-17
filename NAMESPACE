@@ -8,6 +8,7 @@ exportClasses(
     "GONode",
 
     ## from R/AllClasses.R
+    "L2Rbrick",
     "AnnDbObj",
     "AnnDbTable",
     "AnnDbMap",
@@ -19,6 +20,8 @@ exportClasses(
     "RevGoAnnDbMap",
     "Go3AnnDbMap",
     "RevGo3AnnDbMap",
+    "GONodeAnnDbMap",
+    "RevGONodeAnnDbMap",
 
     ## from R/AnnDbPkg-maker.R
     "AnnDbPkgSeed"

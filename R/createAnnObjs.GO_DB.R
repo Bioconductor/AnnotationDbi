@@ -13,104 +13,277 @@
 ### -------------------------------------------------------------------------
 
 
-### Still missing:
-###   TERM, OBSOLETE, SYNONYM: right values are GONode objects
-
-### Mandatory fields: objName and L2Rpath
-GO_DB_AtomicAnnDbMap_seeds <- list(
+### Mandatory fields: objName, Class and L2Rpath
+GO_DB_AnnDbMap_seeds <- list(
+    list(
+        objName="ENTREZID2GO",
+        Class="GoAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_gene",
+                Lcolname="gene_id",
+                Rcolname="term_id",
+                attribCols=c(Evidence="{evidence}")
+            ),
+            list(
+                table="go_term",
+                Lcolname="term_id",
+                Rcolname="go_id",
+                attribCols=c(Ontology="{ontology}")
+            )
+        )
+    ),
+    ## TODO: Try to define the ENTREZID map as the reverse of ENTREZID2GO
     list(
         objName="ENTREZID",
-        L2Rpath=list(go_term=c("go_id","term_id"),
-                     go_gene=c("term_id","gene_id")),
-        tagCols="evidence"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="term_id"
+            ),
+            list(
+                table="go_gene",
+                Lcolname="term_id",
+                Rcolname="gene_id",
+                attribCols=c(Evidence="{evidence}")
+            )
+        )
     ),
     list(
         objName="ALLENTREZID",
-        L2Rpath=list(go_term=c("go_id","term_id"),
-                     go_all_gene=c("term_id","gene_id")),
-        tagCols="evidence"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="term_id"
+            ),
+            list(
+                table="go_all_gene",
+                Lcolname="term_id",
+                Rcolname="gene_id",
+                attribCols=c(Evidence="{evidence}")
+            )
+        )
     ),
     list(
         objName="BPPARENTS",
-        L2Rpath=list(go_term=c("go_id","term_id"),
-                     go_bp_parents=c("term_id","parent_id"),
-                     go_term=c("term_id","go_id")),
-        Lfilter="{{ontology}}='BP'",
-        Rfilter="{{ontology}}='BP'",
-        tagCols="evidence"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="term_id",
+                filter="{ontology}='BP'"
+            ),
+            list(
+                table="go_bp_parents",
+                Lcolname="term_id",
+                Rcolname="parent_id",
+                attribCols=c(Evidence="{evidence}")
+            ),
+            list(
+                table="go_term",
+                Lcolname="term_id",
+                Rcolname="go_id",
+                filter="{ontology}='BP'"
+            )
+        )
     ),
     list(
         objName="CCPARENTS",
-        L2Rpath=list(go_term=c("go_id","term_id"),
-                     go_cc_parents=c("term_id","parent_id"),
-                     go_term=c("term_id","go_id")),
-        Lfilter="{{ontology}}='CC'",
-        Rfilter="{{ontology}}='CC'",
-        tagCols="evidence"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="term_id",
+                filter="{ontology}='CC'"
+            ),
+            list(
+                table="go_cc_parents",
+                Lcolname="term_id",
+                Rcolname="parent_id",
+                attribCols=c(Evidence="{evidence}")
+            ),
+            list(
+                table="go_term",
+                Lcolname="term_id",
+                Rcolname="go_id",
+                filter="{ontology}='CC'"
+            )
+        )
     ),
     list(
         objName="MFPARENTS",
-        L2Rpath=list(go_term=c("go_id","term_id"),
-                     go_mf_parents=c("term_id","parent_id"),
-                     go_term=c("term_id","go_id")),
-        Lfilter="{{ontology}}='MF'",
-        Rfilter="{{ontology}}='MF'",
-        tagCols="evidence"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="term_id",
+                filter="{ontology}='MF'"
+            ),
+            list(
+                table="go_mf_parents",
+                Lcolname="term_id",
+                Rcolname="parent_id",
+                attribCols=c(Evidence="{evidence}")
+            ),
+            list(
+                table="go_term",
+                Lcolname="term_id",
+                Rcolname="go_id",
+                filter="{ontology}='MF'"
+            )
+        )
     ),
     list(
         objName="BPANCESTOR",
-        L2Rpath=list(go_term=c("go_id","term_id"),
-                     go_bp_offspring=c("offspring_id","term_id"),
-                     go_term=c("term_id","go_id")),
-        Lfilter="{{ontology}}='BP'",
-        Rfilter="{{ontology}}='BP'"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="term_id",
+                filter="{ontology}='BP'"
+            ),
+            list(
+                table="go_bp_offspring",
+                Lcolname="offspring_id",
+                Rcolname="term_id"
+            ),
+            list(
+                table="go_term",
+                Lcolname="term_id",
+                Rcolname="go_id",
+                filter="{ontology}='BP'"
+            )
+        )
     ),
     list(
         objName="CCANCESTOR",
-        L2Rpath=list(go_term=c("go_id","term_id"),
-                     go_cc_offspring=c("offspring_id","term_id"),
-                     go_term=c("term_id","go_id")),
-        Lfilter="{{ontology}}='CC'",
-        Rfilter="{{ontology}}='CC'"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="term_id",
+                filter="{ontology}='CC'"
+            ),
+            list(
+                table="go_cc_offspring",
+                Lcolname="offspring_id",
+                Rcolname="term_id"
+            ),
+            list(
+                table="go_term",
+                Lcolname="term_id",
+                Rcolname="go_id",
+                filter="{ontology}='CC'"
+            )
+        )
     ),
     list(
         objName="MFANCESTOR",
-        L2Rpath=list(go_term=c("go_id","term_id"),
-                     go_mf_offspring=c("offspring_id","term_id"),
-                     go_term=c("term_id","go_id")),
-        Lfilter="{{ontology}}='MF'",
-        Rfilter="{{ontology}}='MF'"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="term_id",
+                filter="{ontology}='MF'"
+            ),
+            list(
+                table="go_mf_offspring",
+                Lcolname="offspring_id",
+                Rcolname="term_id"
+            ),
+            list(
+                table="go_term",
+                Lcolname="term_id",
+                Rcolname="go_id",
+                filter="{ontology}='MF'"
+            )
+        )
+    ),
+    list(
+        objName="TERM",
+        Class="GONodeAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_term",
+                Lcolname="go_id",
+                Rcolname="go_id",
+                attribJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
+                attribCols=c(
+                    Term="{term}",
+                    Ontology="{ontology}",
+                    Definition="{definition}",
+                    Synonym="go_synonym.synonym",
+                    Secondary="go_synonym.secondary"
+                )
+            )
+        )
+    ),
+    list(
+        objName="OBSOLETE",
+        Class="GONodeAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_obsolete",
+                Lcolname="go_id",
+                Rcolname="go_id",
+                attribCols=c(
+                    Term="{term}",
+                    Ontology="{ontology}",
+                    Definition="{definition}",
+                    Synonym="NULL",
+                    Secondary="NULL"
+                )
+            )
+        )
+    ),
+    list(
+        objName="SYNONYM",
+        Class="GONodeAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="go_synonym",
+                Lcolname="synonym",
+                Rcolname="term_id",
+                filter="{like_go_id}=1"
+            ),
+            list(
+                table="go_term",
+                Lcolname="term_id",
+                Rcolname="go_id",
+                attribJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
+                attribCols=c(
+                    Term="{term}",
+                    Ontology="{ontology}",
+                    Definition="{definition}",
+                    Synonym="go_synonym.synonym",
+                    Secondary="go_synonym.secondary"
+                )
+            )
+        )
     )
 )
 
 createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AtomicAnnDbMap objects
+    ## AnnDbMap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnObjs("AtomicAnnDbMap", GO_DB_AtomicAnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbMaps(GO_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAtomicAnnDbMap objects
-    ## Nianhua uses the following query for the GOBPCHILDREN map:
-    ##   SELECT DISTINCT t1.parent_go, t1.evidence, t2.go_id
-    ##     FROM (SELECT t.go_id AS parent_go, r.term_id AS child_id, r.evidence AS evidence
-    ##             FROM go_term AS t LEFT OUTER JOIN go_bp_parents AS r ON r.parent_id=t.term_id
-    ##               WHERE t.ontology='BP') AS t1
-    ##          LEFT OUTER JOIN go_term AS t2 ON t1.child_id=t2.term_id
-    ##     ORDER BY t1.parent_go
-    ## and the following query for the GOBPOFFSPRING map:
-    ##   SELECT DISTINCT t1.ancestor_go, t2.go_id
-    ##     FROM (SELECT t.go_id AS ancestor_go, r.offspring_id AS offspring_id
-    ##             FROM go_term AS t LEFT OUTER JOIN go_bp_offspring AS r ON r.term_id=t.term_id
-    ##               WHERE t.ontology='BP') AS t1
-    ##          LEFT OUTER JOIN go_term AS t2 ON t1.offspring_id=t2.term_id
-    ##     ORDER BY t1.ancestor_go
-    ## What we do below (reverse the GOBPPARENTS and GOBPANCESTOR maps) results
-    ## in much simpler queries (not nested SELECTs).
-    ## TODO: Make sure that our simplification below is equivalent.
+    ## RevAnnDbMap objects
     ann_objs$BPCHILDREN <- revmap(ann_objs$BPPARENTS, objName="BPCHILDREN")
     ann_objs$CCCHILDREN <- revmap(ann_objs$CCPARENTS, objName="CCCHILDREN")
     ann_objs$MFCHILDREN <- revmap(ann_objs$MFPARENTS, objName="MFCHILDREN")
@@ -118,18 +291,7 @@ createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$CCOFFSPRING <- revmap(ann_objs$CCANCESTOR, objName="CCOFFSPRING")
     ann_objs$MFOFFSPRING <- revmap(ann_objs$MFANCESTOR, objName="MFOFFSPRING")
 
-    ## GoAnnDbMap object
-    ann_objs$ENTREZID2GO <- new("GoAnnDbMap",
-        objName="ENTREZID2GO",
-        objTarget=objTarget,
-        datacache=datacache,
-        conn=conn,
-        L2Rpath=list(go_gene=c("gene_id","term_id"),
-                     go_term=c("term_id", "go_id")),
-        tagCols=c("evidence", "ontology")
-    )
-
-    ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
+    ## 1 special map that is not an AnnDbMap object (just a named integer vector)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     prefixAnnObjNames(ann_objs, prefix)
