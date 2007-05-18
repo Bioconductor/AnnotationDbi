@@ -10,7 +10,7 @@ Imports: methods, Biobase, DBI, RSQLite
 Suggests: GO, hgu95av2db, hgu95av2
 Collate: AllClasses.R AllGenerics.R
          GONode.R
-         db.R factories.R
+         db.R
          AnnDbObj-lowAPI.R
          AnnDbMap-envirAPI.R
          createAnnObjs-utils.R

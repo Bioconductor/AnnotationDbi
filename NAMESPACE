@@ -28,59 +28,48 @@ exportClasses(
 )
 
 exportMethods(
+    ## from R/GONode.R
     "GOID",
     "Term",
     "Ontology",
     "Synonym",
     "Secondary",
     "Definition",
-    
-    "exists",
+
+    ## from R/AnnDbObj-lowAPI.R
     "revmap",
     "db",
-    "left.db_table",
-    "right.db_table",
-    "left.colname",
-    "right.colname",
-    "tagnames",
-    "colnames",
-    "left.filter",
-    "right.filter",
-    "toTable",
-    "as.data.frame",
-    "nrow",
-    "left.names",
-    "right.names",
-    "ls",
-    "names",
-    "left.length",
-    "right.length",
-    "length",
+    "left.db_table", "right.db_table",
+    "left.colname", "right.colname",
+    "tagnames", "colnames",
+    "left.filter", "right.filter",
     "show",
+    "toTable", "as.data.frame", "nrow",
+    "left.names", "right.names", "names",
+    "left.length", "right.length", "length",
     "as.character",
     "toList",
+    "mapped.left.names", "count.mapped.left.names",
+    "mapped.right.names", "count.mapped.right.names",
+    "mapped.names", "count.mapped.names",
+    "is.na",
+
+    ## from R/AnnDbMap-envirAPI.R
+    "ls",
     "as.list",
     "mget",
     "eapply",
     "get",
+    "exists",
     "[[",
     "$",
-    "mapped.left.names",
-    "count.mapped.left.names",
-    "mapped.right.names",
-    "count.mapped.right.names",
-    "mapped.names",
-    "count.mapped.names",
-    "is.na",
+
+    ## more...
     "initialize",
     "makeAnnDbPkg"
 )
 
 export(
-    toggleDebug,
-    compareAnnotation,
-    comparePerf,
-
     ## from R/GONode.R
     GONode,
 
