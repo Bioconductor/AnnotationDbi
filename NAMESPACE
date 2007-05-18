@@ -62,6 +62,7 @@ exportMethods(
     "exists",
     "[[",
     "$",
+    "sample",
 
     ## more...
     "initialize",

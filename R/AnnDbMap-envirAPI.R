@@ -9,8 +9,10 @@
 ### AnnDbObj objects (refer to AnnDbObj-lowAPI.R for the definition of this
 ### low-level API).
 ###
-### Note that the "length" method is not redefined here since it is
-### considered to belong to the low-level API.
+### Notes:
+###   - The "length" method is not redefined here since it is considered to
+###     belong to the low-level API.
+###   - The "sample" method is not part of the "real" environment API.
 ###
 ### -------------------------------------------------------------------------
 
@@ -347,4 +349,17 @@ setMethod("[[", "AnnDbMap",
 )
 
 setMethod("$", "AnnDbMap", function(x, name) x[[name]])
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "sample" new generic.
+###
+
+setMethod("sample", "AnnDbMap",
+    function(x, size, replace=FALSE, prob=NULL)
+    {
+        names <- ls(x)
+        as.list(x, names=names[sample(length(names), size, replace, prob)])
+    }
+)
 
