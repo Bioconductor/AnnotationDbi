@@ -4,13 +4,13 @@ setClass("L2Rbrick",
         table="character",
         Lcolname="character",
         Rcolname="character",
-        attribJoin="character",
-        attribCols="character",
+        tagJoin="character",
+        tagCols="character",
         filter="character"
     ),
     prototype(
-        attribJoin=as.character(NA),
-        attribCols=as.character(NA),
+        tagJoin=as.character(NA),
+        tagCols=as.character(NA),
         filter="1"
     )
 )

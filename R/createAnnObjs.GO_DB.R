@@ -23,13 +23,13 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_gene",
                 Lcolname="gene_id",
                 Rcolname="term_id",
-                attribCols=c(Evidence="{evidence}")
+                tagCols=c(Evidence="{evidence}")
             ),
             list(
                 table="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id",
-                attribCols=c(Ontology="{ontology}")
+                tagCols=c(Ontology="{ontology}")
             )
         )
     ),
@@ -47,7 +47,7 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_gene",
                 Lcolname="term_id",
                 Rcolname="gene_id",
-                attribCols=c(Evidence="{evidence}")
+                tagCols=c(Evidence="{evidence}")
             )
         )
     ),
@@ -64,7 +64,7 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_all_gene",
                 Lcolname="term_id",
                 Rcolname="gene_id",
-                attribCols=c(Evidence="{evidence}")
+                tagCols=c(Evidence="{evidence}")
             )
         )
     ),
@@ -82,7 +82,7 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_bp_parents",
                 Lcolname="term_id",
                 Rcolname="parent_id",
-                attribCols=c(Evidence="{evidence}")
+                tagCols=c(Evidence="{evidence}")
             ),
             list(
                 table="go_term",
@@ -105,7 +105,7 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_cc_parents",
                 Lcolname="term_id",
                 Rcolname="parent_id",
-                attribCols=c(Evidence="{evidence}")
+                tagCols=c(Evidence="{evidence}")
             ),
             list(
                 table="go_term",
@@ -128,7 +128,7 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_mf_parents",
                 Lcolname="term_id",
                 Rcolname="parent_id",
-                attribCols=c(Evidence="{evidence}")
+                tagCols=c(Evidence="{evidence}")
             ),
             list(
                 table="go_term",
@@ -211,8 +211,8 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_term",
                 Lcolname="go_id",
                 Rcolname="go_id",
-                attribJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
-                attribCols=c(
+                tagJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
+                tagCols=c(
                     Term="{term}",
                     Ontology="{ontology}",
                     Definition="{definition}",
@@ -230,7 +230,7 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_obsolete",
                 Lcolname="go_id",
                 Rcolname="go_id",
-                attribCols=c(
+                tagCols=c(
                     Term="{term}",
                     Ontology="{ontology}",
                     Definition="{definition}",
@@ -254,8 +254,8 @@ GO_DB_AnnDbMap_seeds <- list(
                 table="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id",
-                attribJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
-                attribCols=c(
+                tagJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
+                tagCols=c(
                     Term="{term}",
                     Ontology="{ontology}",
                     Definition="{definition}",

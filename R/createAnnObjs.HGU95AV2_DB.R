@@ -170,7 +170,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
                 table="chromosome_locations",
                 Lcolname="id",
                 Rcolname="start_location",
-                attribCols=c(Chromosome="{chromosome}")
+                tagCols=c(Chromosome="{chromosome}")
             )
         ),
         rightColType="integer"
@@ -184,7 +184,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
                 table="pfam",
                 Lcolname="id",
                 Rcolname="ipi_id",
-                attribCols=c(PfamId="{pfam_id}")
+                tagCols=c(PfamId="{pfam_id}")
             )
         )
     ),
@@ -197,7 +197,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
                 table="prosite",
                 Lcolname="id",
                 Rcolname="ipi_id",
-                attribCols=c(PrositeId="{prosite_id}")
+                tagCols=c(PrositeId="{prosite_id}")
             )
         )
     ),
@@ -210,7 +210,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
                 #table="go_term", # no rightmost table for a Go3AnnDbMap
                 Lcolname="id",
                 Rcolname="go_id",
-                attribCols=c(Evidence="{evidence}")
+                tagCols=c(Evidence="{evidence}")
             )
         ),
         rightTables=GOtables()

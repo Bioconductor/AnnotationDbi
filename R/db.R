@@ -97,14 +97,14 @@ setMethod("show", "L2Rbrick",
     function(object)
     {
         s <- paste("{Lcolname}table{Rcolname}:", toString(object))
-        if (!is.na(object@attribJoin[1]))
-            s <- c(s, paste("attribJoin:", object@attribJoin))
-        if (!is.na(object@attribCols[1])) {
-            attribCols <- object@attribCols
-            if (!is.null(names(attribCols)))
-                attribCols <- paste(attribCols, "AS", names(attribCols))
-            attribCols <- paste(attribCols, collapse=", ")
-            s <- c(s, paste("attribCols:", attribCols))
+        if (!is.na(object@tagJoin[1]))
+            s <- c(s, paste("tagJoin:", object@tagJoin))
+        if (!is.na(object@tagCols[1])) {
+            tagCols <- object@tagCols
+            if (!is.null(names(tagCols)))
+                tagCols <- paste(tagCols, "AS", names(tagCols))
+            tagCols <- paste(tagCols, collapse=", ")
+            s <- c(s, paste("tagCols:", tagCols))
         }
         s <- c(s, paste("filter:", object@filter))
         cat(strwrap(s, exdent=4), sep="\n")
@@ -145,18 +145,18 @@ L2Rpath.rightmostFilter <- function(L2Rpath)
 
 L2Rpath.tagnames <- function(L2Rpath)
 {
-    attrib_cols <- NULL
+    tag_names <- NULL
     pathlen <- length(L2Rpath)
     for (i in seq_len(pathlen)) {
-        attribCols <- L2Rpath[[i]]@attribCols
-        if (is.na(attribCols[1]))
+        tagCols <- L2Rpath[[i]]@tagCols
+        if (is.na(tagCols[1]))
             next
-        cols <- names(attribCols)
+        cols <- names(tagCols)
         if (is.null(cols))
-            cols <- .contextualizeColnames(attribCols)
-        attrib_cols <- c(attrib_cols, cols)
+            cols <- .contextualizeColnames(tagCols)
+        tag_names <- c(tag_names, cols)
     }
-    attrib_cols
+    tag_names
 }
 
 L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
@@ -164,20 +164,21 @@ L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
 .L2Rpath.toString <- function(L2Rpath) paste(sapply(L2Rpath, toString), collapse="-")
 
 
-### Return a named list of 5 elements. Those elements are pieces of SQL
-### code that can be put together to build all the possible SELECT statements
-### used by this low-level API.
-### Currently, this API only needs to build SELECT queries of the form
+### Return a named list of 5 elements. Those elements are pieces of an SQL
+### SELECT statement used by some of the DB functions in this file to build
+### appropriate ( and hopefully valid ;-) ) full SELECT statements.
+### Those code chunks correspond to the following parts of the SELECT
+### statement:
 ###   SELECT what FROM from WHERE where
-### hence the 5 elements returned by .getSelectPieces() are divided in
+### hence the 5 elements returned by .getSelectChunks() are divided in
 ### 3 groups:
 ###   1) The "what" group:
-###      - Lrescol: single string containing the "contextualized" name of
+###      - what_leftCol: single string containing the "contextualized" name of
 ###        the leftmost col of 'L2Rpath'.
-###      - Rrescol: same but for the rightmost col.
-###      - attrib_rescols: character vector of length the total number of
-###        attribute cols contained in 'L2Rpath' (could be 0). Each element
-###        has been "contextualized" and right-pasted with " AS attrib-name".
+###      - what_rightCol: same but for the rightmost col.
+###      - what_tagCols: character vector of length the total number of
+###        tag cols contained in 'L2Rpath' (could be 0). Each element
+###        has been "contextualized" and right-pasted with " AS tag-name".
 ###   2) The "from" group:
 ###      - from: single string containing the "from" part of the SELECT.
 ###   3) The "where" group:
@@ -185,9 +186,9 @@ L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
 ###        contained in 'L2Rpath', putting them in parenthezis and pasting
 ###        them together with the " AND " separator.
 ###        If 'L2Rpath' contains no filters then 'where' is the string "1".
-.getSelectPieces <- function(L2Rpath, with.attribs=TRUE)
+.getSelectChunks <- function(L2Rpath, with.tags=TRUE)
 {
-    attrib_rescols <- where <- character(0)
+    what_tagCols <- where <- character(0)
     pathlen <- length(L2Rpath)
     for (i in seq_len(pathlen)) {
         L2Rbrick <- L2Rpath[[i]]
@@ -196,17 +197,17 @@ L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
         Rcolname <- L2Rbrick@Rcolname
         if (pathlen == 1) {
             context <- from <- table
-            Lrescol <- paste(context, Lcolname, sep=".")
-            Rrescol <- paste(context, Rcolname, sep=".")
+            what_leftCol <- paste(context, Lcolname, sep=".")
+            what_rightCol <- paste(context, Rcolname, sep=".")
         } else {
             if (i == 1) {
                 context <- "_left"
-                Lrescol <- paste(context, Lcolname, sep=".")
+                what_leftCol <- paste(context, Lcolname, sep=".")
                 from <- paste(table, "AS", context)
             } else {
                 if (i == pathlen) {
                     context <- "_right"
-                    Rrescol <- paste(context, Rcolname, sep=".")
+                    what_rightCol <- paste(context, Rcolname, sep=".")
                 } else {
                     context <- paste("_", i, sep="")
                 }
@@ -217,16 +218,16 @@ L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
             prev_context <- context
             prev_Rcolname <- Rcolname
         }
-        if (with.attribs) {
-            attribJoin <- L2Rbrick@attribJoin
-            attribCols <- L2Rbrick@attribCols
-            if (!is.na(attribJoin))
-                from <- paste(from, .contextualizeColnames(attribJoin, context))
-            if (!is.na(attribCols[1])) {
-                tmp <- .contextualizeColnames(attribCols, context)
-                if (!is.null(names(attribCols)))
-                    tmp <- paste(tmp, "AS", names(attribCols))
-                attrib_rescols <- c(attrib_rescols, tmp)
+        if (with.tags) {
+            tagJoin <- L2Rbrick@tagJoin
+            tagCols <- L2Rbrick@tagCols
+            if (!is.na(tagJoin))
+                from <- paste(from, .contextualizeColnames(tagJoin, context))
+            if (!is.na(tagCols[1])) {
+                tmp <- .contextualizeColnames(tagCols, context)
+                if (!is.null(names(tagCols)))
+                    tmp <- paste(tmp, "AS", names(tagCols))
+                what_tagCols <- c(what_tagCols, tmp)
             }
         }
         filter <- L2Rbrick@filter
@@ -238,9 +239,9 @@ L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
     else
         where <- paste(paste("(", where, ")", sep=""), collapse=" AND ")
     list(
-        Lrescol=Lrescol,
-        Rrescol=Rrescol,
-        attrib_rescols=attrib_rescols,
+        what_leftCol=what_leftCol,
+        what_rightCol=what_rightCol,
+        what_tagCols=what_tagCols,
         from=from,
         where=where
     )
@@ -293,18 +294,18 @@ dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname,
 dbSelectFromL2Rpath <- function(conn, L2Rpath, left.names, right.names,
                                       extra.colnames, verbose=FALSE)
 {
-    pieces <- .getSelectPieces(L2Rpath)
-    Lrescol <- pieces$Lrescol
-    Rrescol <- pieces$Rrescol
-    attrib_rescols <- pieces$attrib_rescols
-    what <- paste(c(Lrescol, Rrescol, attrib_rescols, extra.colnames), collapse=",")
+    chunks <- .getSelectChunks(L2Rpath)
+    what_leftCol <- chunks$what_leftCol
+    what_rightCol <- chunks$what_rightCol
+    what_tagCols <- chunks$what_tagCols
+    what <- paste(c(what_leftCol, what_rightCol, what_tagCols, extra.colnames), collapse=",")
     where <- c(
-        .toSQLWhere(Lrescol, left.names),
-        pieces$where,
-        .toSQLWhere(Rrescol, right.names)
+        .toSQLWhere(what_leftCol, left.names),
+        chunks$where,
+        .toSQLWhere(what_rightCol, right.names)
     )
     where <- paste(where, collapse=" AND ")
-    sql <- paste("SELECT", what, "FROM", pieces$from, "WHERE", where)
+    sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
@@ -312,17 +313,17 @@ dbSelectFromL2Rpath <- function(conn, L2Rpath, left.names, right.names,
 
 dbCountRowsFromL2Rpath <- function(conn, L2Rpath, verbose=FALSE)
 {
-    pieces <- .getSelectPieces(L2Rpath, with.attribs=FALSE)
-    Lrescol <- pieces$Lrescol
-    Rrescol <- pieces$Rrescol
+    chunks <- .getSelectChunks(L2Rpath, with.tags=FALSE)
+    what_leftCol <- chunks$what_leftCol
+    what_rightCol <- chunks$what_rightCol
     what <- "COUNT(*)"
     where <- c(
-        .toSQLWhere(Lrescol, NULL),
-        pieces$where,
-        .toSQLWhere(Rrescol, NULL)
+        .toSQLWhere(what_leftCol, NULL),
+        chunks$where,
+        .toSQLWhere(what_rightCol, NULL)
     )
     where <- paste(where, collapse=" AND ")
-    sql <- paste("SELECT", what, "FROM", pieces$from, "WHERE", where)
+    sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)[[1]]
@@ -330,7 +331,7 @@ dbCountRowsFromL2Rpath <- function(conn, L2Rpath, verbose=FALSE)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### SQL helper functions with caching mechanism.
+### DB functions with caching mechanism.
 ###
 
 dbUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
@@ -379,8 +380,8 @@ dbCountUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
 
 dbUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
 {
-    pieces <- .getSelectPieces(L2Rpath, with.attribs=FALSE)
-    use_cache <- !is.null(datacache) && pieces$where == "1"
+    chunks <- .getSelectChunks(L2Rpath, with.tags=FALSE)
+    use_cache <- !is.null(datacache) && chunks$where == "1"
     if (use_cache) {
         objname <- paste("dbUniqueMappedVals", .L2Rpath.toString(L2Rpath), sep="-")
         if (exists(objname, envir=datacache)) {
@@ -388,16 +389,16 @@ dbUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
             return(vals)
         }
     }
-    Lrescol <- pieces$Lrescol
-    Rrescol <- pieces$Rrescol
-    what <- paste("DISTINCT", Lrescol)
+    what_leftCol <- chunks$what_leftCol
+    what_rightCol <- chunks$what_rightCol
+    what <- paste("DISTINCT", what_leftCol)
     where <- c(
-        .toSQLWhere(Lrescol, NULL),
-        pieces$where,
-        .toSQLWhere(Rrescol, NULL)
+        .toSQLWhere(what_leftCol, NULL),
+        chunks$where,
+        .toSQLWhere(what_rightCol, NULL)
     )
     where <- paste(where, collapse=" AND ")
-    sql <- paste("SELECT", what, "FROM", pieces$from, "WHERE", where)
+    sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
     vals <- .dbGetQuery(conn, sql)[[1]]
     if (use_cache) {
         assign(objname, vals, envir=datacache)
@@ -408,8 +409,8 @@ dbUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
 ### Read-only caching!
 dbCountUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
 {
-    pieces <- .getSelectPieces(L2Rpath, with.attribs=FALSE)
-    use_cache <- !is.null(datacache) && pieces$where == "1"
+    chunks <- .getSelectChunks(L2Rpath, with.tags=FALSE)
+    use_cache <- !is.null(datacache) && chunks$where == "1"
     if (use_cache) {
         objname <- paste("dbUniqueMappedVals", .L2Rpath.toString(L2Rpath), sep="-")
         if (exists(objname, envir=datacache)) {
@@ -417,15 +418,15 @@ dbCountUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
             return(count)
         }
     }
-    Lrescol <- pieces$Lrescol
-    Rrescol <- pieces$Rrescol
-    what <- paste("COUNT(DISTINCT ", Lrescol, ")", sep="")
+    what_leftCol <- chunks$what_leftCol
+    what_rightCol <- chunks$what_rightCol
+    what <- paste("COUNT(DISTINCT ", what_leftCol, ")", sep="")
     where <- c(
-        #.toSQLWhere(Lrescol, NULL), # not needed, COUNT(DISTINCT ...) ignores NULLs
-        pieces$where,
-        .toSQLWhere(Rrescol, NULL)
+        #.toSQLWhere(what_leftCol, NULL), # not needed, COUNT(DISTINCT ...) ignores NULLs
+        chunks$where,
+        .toSQLWhere(what_rightCol, NULL)
     )
-    sql <- paste("SELECT", what, "FROM", pieces$from, "WHERE", where)
+    sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
     .dbGetQuery(conn, sql)[[1]]
 }
 
