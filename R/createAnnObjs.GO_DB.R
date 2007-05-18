@@ -87,8 +87,7 @@ GO_DB_AnnDbMap_seeds <- list(
             list(
                 table="go_term",
                 Lcolname="term_id",
-                Rcolname="go_id",
-                filter="{ontology}='BP'"
+                Rcolname="go_id"
             )
         )
     ),
@@ -111,8 +110,7 @@ GO_DB_AnnDbMap_seeds <- list(
             list(
                 table="go_term",
                 Lcolname="term_id",
-                Rcolname="go_id",
-                filter="{ontology}='CC'"
+                Rcolname="go_id"
             )
         )
     ),
@@ -135,8 +133,7 @@ GO_DB_AnnDbMap_seeds <- list(
             list(
                 table="go_term",
                 Lcolname="term_id",
-                Rcolname="go_id",
-                filter="{ontology}='MF'"
+                Rcolname="go_id"
             )
         )
     ),
@@ -158,8 +155,7 @@ GO_DB_AnnDbMap_seeds <- list(
             list(
                 table="go_term",
                 Lcolname="term_id",
-                Rcolname="go_id",
-                filter="{ontology}='BP'"
+                Rcolname="go_id"
             )
         )
     ),
@@ -181,8 +177,7 @@ GO_DB_AnnDbMap_seeds <- list(
             list(
                 table="go_term",
                 Lcolname="term_id",
-                Rcolname="go_id",
-                filter="{ontology}='CC'"
+                Rcolname="go_id"
             )
         )
     ),
@@ -204,8 +199,7 @@ GO_DB_AnnDbMap_seeds <- list(
             list(
                 table="go_term",
                 Lcolname="term_id",
-                Rcolname="go_id",
-                filter="{ontology}='MF'"
+                Rcolname="go_id"
             )
         )
     ),
@@ -284,12 +278,22 @@ createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs <- createAnnDbMaps(GO_DB_AnnDbMap_seeds, seed0)
 
     ## RevAnnDbMap objects
-    ann_objs$BPCHILDREN <- revmap(ann_objs$BPPARENTS, objName="BPCHILDREN")
-    ann_objs$CCCHILDREN <- revmap(ann_objs$CCPARENTS, objName="CCCHILDREN")
-    ann_objs$MFCHILDREN <- revmap(ann_objs$MFPARENTS, objName="MFCHILDREN")
-    ann_objs$BPOFFSPRING <- revmap(ann_objs$BPANCESTOR, objName="BPOFFSPRING")
-    ann_objs$CCOFFSPRING <- revmap(ann_objs$CCANCESTOR, objName="CCOFFSPRING")
-    ann_objs$MFOFFSPRING <- revmap(ann_objs$MFANCESTOR, objName="MFOFFSPRING")
+    revmap2 <- function(from, to)
+    {
+        map <- revmap(ann_objs[[from]], objName=to)
+        L2Rpath <- map@L2Rpath
+        tmp <- L2Rpath[[1]]@filter
+        L2Rpath[[1]]@filter <- L2Rpath[[length(L2Rpath)]]@filter
+        L2Rpath[[length(L2Rpath)]]@filter <- tmp
+        map@L2Rpath <- L2Rpath
+        map
+    }
+    ann_objs$BPCHILDREN <- revmap2("BPPARENTS", "BPCHILDREN")
+    ann_objs$CCCHILDREN <- revmap2("CCPARENTS", "CCCHILDREN")
+    ann_objs$MFCHILDREN <- revmap2("MFPARENTS", "MFCHILDREN")
+    ann_objs$BPOFFSPRING <- revmap2("BPANCESTOR", "BPOFFSPRING")
+    ann_objs$CCOFFSPRING <- revmap2("CCANCESTOR", "CCOFFSPRING")
+    ann_objs$MFOFFSPRING <- revmap2("MFANCESTOR", "MFOFFSPRING")
 
     ## 1 special map that is not an AnnDbMap object (just a named integer vector)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)

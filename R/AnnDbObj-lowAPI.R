@@ -46,31 +46,41 @@
 ### Generate SQL code.
 ###
 
-### Inject colname prefix into filter string.
-### Example:
-###  > .filterToSQLWhere("{aa} < {bb}", "PREFIX.")
-###  [1] "PREFIX.aa < PREFIX.bb"
-.filterToSQLWhere <- function(filter, prefix)
-{
-    if (length(filter) == 0)
-        return("1")
-    gsub("\\{([^}{']*)\\}", paste(prefix, "\\1", sep=""), filter)
-}
+### Some string constants
+.SINGLE_QUOTE <- '\''
+.TWO_SINGLE_QUOTE <- paste(.SINGLE_QUOTE, .SINGLE_QUOTE, sep="")
+.LBRACE_REGX <- '\\{'
+.RBRACE_REGX <- '\\}'
+.L2RBRICK_LOCAL_COLNAME_REGX <- paste(
+    .LBRACE_REGX,
+    "([^{}", .SINGLE_QUOTE, "]*)",
+    .RBRACE_REGX,
+    sep=""
+)
 
-### 'template': a character vector where each element is an SQL template
-### 'alias': a table alias
-.injectTableAlias <- function(template, alias)
+### Replace out-of-context SQL colnames by their "contextualized" versions.
+### Example:
+###   > .contextualizeColnames("{aa} < {bb}", "SOMECONTEXT")
+###   [1] "SOMECONTEXT.aa < SOMECONTEXT.bb"
+###
+### 'template': a character vector where elements are out-of-context SQL code.
+### 'context': a single string providing the "context" i.e. a table name
+###            or table alias.
+.contextualizeColnames <- function(template, context)
 {
     replacement <- "\\1"
-    if (!is.na(alias) && alias != "")
-        replacement <- paste(alias, replacement, sep=".")
-    gsub("\\{([^}{']*)\\}", replacement, template)
+    if (!missing(context) && !is.na(context) && context != "")
+        replacement <- paste(context, replacement, sep=".")
+    gsub(.L2RBRICK_LOCAL_COLNAME_REGX, replacement, template)
 }
 
 .toSQLStringSet <- function(names)
 {
-    names <- gsub("'", "''", names, fixed=TRUE)
-    paste("'", paste(names, collapse="','"), "'", sep="")
+
+    names <- gsub(.SINGLE_QUOTE, .TWO_SINGLE_QUOTE, names, fixed=TRUE)
+    if (length(names) != 0)
+        names <- paste(.SINGLE_QUOTE, names, .SINGLE_QUOTE, sep="")
+    paste(names, collapse=",")
 }
 
 .toSQLWhere <- function(colname, names)
@@ -127,8 +137,7 @@ setMethod("show", "L2Rbrick",
             attribCols <- paste(attribCols, collapse=", ")
             s <- c(s, paste("attribCols:", attribCols))
         }
-        if (!is.na(object@filter[1]))
-            s <- c(s, paste("filter:", object@filter))
+        s <- c(s, paste("filter:", object@filter))
         cat(strwrap(s, exdent=4), sep="\n")
     }
 )
@@ -144,127 +153,129 @@ setMethod("rev", "L2Rbrick",
 )
 
 .left.db_table <- function(L2Rpath) L2Rpath[[1]]@table
-
-.left.colname <- function(L2Rpath) L2Rpath[[1]]@Lcolname
-
 .right.db_table <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@table
 
+.left.colname <- function(L2Rpath) L2Rpath[[1]]@Lcolname
 .right.colname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@Rcolname
 
-.Lprefix <- function(L2Rpath) { if (length(L2Rpath) >= 2) "_left." else "" }
-.Rprefix <- function(L2Rpath) { if (length(L2Rpath) >= 2) "_right." else "" }
-
-.Lcolname <- function(L2Rpath)
+.left.filter <- function(L2Rpath)
 {
-    paste(.Lprefix(L2Rpath), .left.colname(L2Rpath), sep="")
+    filter <- L2Rpath[[1]]@filter
+    if (filter == "1")
+        return(filter)
+    paste("(", .contextualizeColnames(filter), ")", sep="")
 }
 
-.Rcolname <- function(L2Rpath)
+.right.filter <- function(L2Rpath)
 {
-    paste(.Rprefix(L2Rpath), .right.colname(L2Rpath), sep="")
+    filter <- L2Rpath[[length(L2Rpath)]]@filter
+    if (filter == "1")
+        return(filter)
+    paste("(", .contextualizeColnames(filter), ")", sep="")
 }
 
-.LfilterToSQLWhere <- function(L2Rpath, filter)
+.tagnames <- function(L2Rpath)
 {
-    .filterToSQLWhere(filter, .Lprefix(L2Rpath))
-}
-
-.RfilterToSQLWhere <- function(L2Rpath, filter)
-{
-    .filterToSQLWhere(filter, .Rprefix(L2Rpath))
-}
-
-### Returns a list with 4 components:
-###   what
-###   attribs
-###   from
-###   where
-.getSelectComponents <- function(L2Rpath, with.attribs=TRUE)
-{
-    attribs <- where <- character(0)
+    attrib_cols <- NULL
     pathlen <- length(L2Rpath)
-    if (pathlen == 0) # should never happen
-        stop("invalid 'L2Rpath' value (empty list)")
     for (i in seq_len(pathlen)) {
-        L2Rbrick <- L2Rpath[[i]]
-        table <- L2Rbrick@table
-        Lcolname <- L2Rbrick@Lcolname
-        Rcolname <- L2Rbrick@Rcolname
-        filter <- L2Rbrick@filter
-        if (pathlen == 1) {
-            tablealias <- NA
-            from <- table
-            what <- c(Lcolname, Rcolname)
-        } else {
-            if (i == 1) {
-                tablealias <- "_left"
-                what <- paste(tablealias, Lcolname, sep=".")
-                from <- paste(table, "AS", tablealias)
-            } else if (i == pathlen) {
-                tablealias <- "_right"
-                what <- c(what, paste(tablealias, Rcolname, sep="."))
-            } else {
-                tablealias <- paste("_t", i, sep="")
-            }
-            if (i >= 2) {
-                on <- paste(prev_tablealias, ".", prev_Rcolname, "=",
-                            tablealias, ".", Lcolname, sep="")
-                from <- paste(from, "INNER JOIN", table, "AS", tablealias, "ON", on)
-            }
-            prev_tablealias <- tablealias
-            prev_Rcolname <- Rcolname
-        }
-        if (is.na(tablealias))
-            tablealias <- table
-        if (with.attribs) {
-            attribJoin <- L2Rbrick@attribJoin
-            attribCols <- L2Rbrick@attribCols
-            if (!is.na(attribJoin))
-                from <- paste(from, .injectTableAlias(attribJoin, tablealias))
-            if (!is.na(attribCols)[1]) {
-                tmp <- .injectTableAlias(attribCols, tablealias)
-                if (!is.null(names(attribCols)))
-                    tmp <- paste(tmp, "AS", names(attribCols))
-                attribs <- c(attribs, tmp)
-            }
-        }
-        if (!is.na(filter))
-            where <- c(where, .injectTableAlias(filter, tablealias))
+        attribCols <- L2Rpath[[i]]@attribCols
+        if (is.na(attribCols[1]))
+            next
+        cols <- names(attribCols)
+        if (is.null(cols))
+            cols <- .contextualizeColnames(attribCols)
+        attrib_cols <- c(attrib_cols, cols)
     }
-    list(what=what, attribs=attribs, from=from, where=where)
-}
-
-### TO BE REMOVED SOON!
-.toSQLJoin <- function(L2Rpath, type="INNER JOIN")
-{
-    pathlen <- length(L2Rpath)
-    if (pathlen == 0) # should never happen
-        stop("invalid 'L2Rpath' value (empty list)")
-    if (pathlen == 1)
-        return(names(L2Rpath))
-    table1 <- names(L2Rpath)[1]
-    as1 <- "_left"
-    join <- paste(table1, "AS", as1)
-    for (i1 in seq_len(pathlen - 1)) {
-        colname1 <- L2Rpath[[i1]][2]
-        i2 <- i1 + 1
-        table2 <- names(L2Rpath)[i2]
-        if (i2 == pathlen)
-            as2 <- "_right"
-        else
-            as2 <- paste("_t", i2, sep="")
-        colname2 <- L2Rpath[[i2]][1]
-        on <- paste("(", as1, ".", colname1, " = ", as2, ".", colname2, ")", sep="")
-        join <- paste(join, type, table2, "AS", as2, "ON", on)
-        table1 <- table2
-        as1 <- as2
-    }
-    join
+    attrib_cols
 }
 
 .revL2Rpath <- function(L2Rpath) rev(lapply(L2Rpath, rev))
 
 .L2RpathToString <- function(L2Rpath) paste(sapply(L2Rpath, toString), collapse="-")
+
+
+### Return a named list of 5 elements. Those elements are pieces of SQL
+### code that can be put together to build all the possible SELECT statements
+### used by this low-level API.
+### Currently, this API only needs to build SELECT queries of the form
+###   SELECT what FROM from WHERE where
+### hence the 5 elements returned by .getSelectPieces() are divided in
+### 3 groups:
+###   1) The "what" group:
+###      - Lrescol: single string containing the "contextualized" name of
+###        the leftmost col of 'L2Rpath'.
+###      - Rrescol: same but for the rightmost col.
+###      - attrib_rescols: character vector of length the total number of
+###        attribute cols contained in 'L2Rpath' (could be 0). Each element
+###        has been "contextualized" and right-pasted with " AS attrib-name".
+###   2) The "from" group:
+###      - from: single string containing the "from" part of the SELECT.
+###   3) The "where" group:
+###      - where: single string obtained by "contextualizing" all filters
+###        contained in 'L2Rpath', putting them in parenthezis and pasting
+###        them together with the " AND " separator.
+###        If 'L2Rpath' contains no filters then 'where' is the string "1".
+.getSelectPieces <- function(L2Rpath, with.attribs=TRUE)
+{
+    attrib_rescols <- where <- character(0)
+    pathlen <- length(L2Rpath)
+    for (i in seq_len(pathlen)) {
+        L2Rbrick <- L2Rpath[[i]]
+        table <- L2Rbrick@table
+        Lcolname <- L2Rbrick@Lcolname
+        Rcolname <- L2Rbrick@Rcolname
+        if (pathlen == 1) {
+            context <- from <- table
+            Lrescol <- paste(context, Lcolname, sep=".")
+            Rrescol <- paste(context, Rcolname, sep=".")
+        } else {
+            if (i == 1) {
+                context <- "_left"
+                Lrescol <- paste(context, Lcolname, sep=".")
+                from <- paste(table, "AS", context)
+            } else {
+                if (i == pathlen) {
+                    context <- "_right"
+                    Rrescol <- paste(context, Rcolname, sep=".")
+                } else {
+                    context <- paste("_", i, sep="")
+                }
+                on <- paste(prev_context, ".", prev_Rcolname, "=",
+                            context, ".", Lcolname, sep="")
+                from <- paste(from, "INNER JOIN", table, "AS", context, "ON", on)
+            }
+            prev_context <- context
+            prev_Rcolname <- Rcolname
+        }
+        if (with.attribs) {
+            attribJoin <- L2Rbrick@attribJoin
+            attribCols <- L2Rbrick@attribCols
+            if (!is.na(attribJoin))
+                from <- paste(from, .contextualizeColnames(attribJoin, context))
+            if (!is.na(attribCols[1])) {
+                tmp <- .contextualizeColnames(attribCols, context)
+                if (!is.null(names(attribCols)))
+                    tmp <- paste(tmp, "AS", names(attribCols))
+                attrib_rescols <- c(attrib_rescols, tmp)
+            }
+        }
+        filter <- L2Rbrick@filter
+        if (filter != "1")
+            where <- c(where, .contextualizeColnames(filter, context))
+    }
+    if (length(where) == 0)
+        where <- "1"
+    else
+        where <- paste(paste("(", where, ")", sep=""), collapse=" AND ")
+    list(
+        Lrescol=Lrescol,
+        Rrescol=Rrescol,
+        attrib_rescols=attrib_rescols,
+        from=from,
+        where=where
+    )
+}
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -313,28 +324,36 @@ dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname,
 dbSelectFromL2Rpath <- function(conn, L2Rpath, left.names, right.names,
                                       extra.colnames, verbose=FALSE)
 {
-    selcomp <- .getSelectComponents(L2Rpath)
-    what <- selcomp$what
-    Lwhere <- .toSQLWhere(what[1], left.names)
-    Rwhere <- .toSQLWhere(what[2], right.names)
-    where <- paste("(", c(Lwhere, selcomp$where, Rwhere), ")", sep="")
+    pieces <- .getSelectPieces(L2Rpath)
+    Lrescol <- pieces$Lrescol
+    Rrescol <- pieces$Rrescol
+    attrib_rescols <- pieces$attrib_rescols
+    what <- paste(c(Lrescol, Rrescol, attrib_rescols, extra.colnames), collapse=",")
+    where <- c(
+        .toSQLWhere(Lrescol, left.names),
+        pieces$where,
+        .toSQLWhere(Rrescol, right.names)
+    )
     where <- paste(where, collapse=" AND ")
-    what <- paste(c(what, selcomp$attribs, extra.colnames), collapse=",")
-    sql <- paste("SELECT", what, "FROM", selcomp$from, "WHERE", where)
+    sql <- paste("SELECT", what, "FROM", pieces$from, "WHERE", where)
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
 }
 
-dbCountRowsFromL2Rpath <- function(conn, L2Rpath, Lfilter, Rfilter, verbose=FALSE)
+dbCountRowsFromL2Rpath <- function(conn, L2Rpath, verbose=FALSE)
 {
-    Lcolname <- .Lcolname(L2Rpath)
-    Rcolname <- .Rcolname(L2Rpath)
+    pieces <- .getSelectPieces(L2Rpath, with.attribs=FALSE)
+    Lrescol <- pieces$Lrescol
+    Rrescol <- pieces$Rrescol
     what <- "COUNT(*)"
-    Lwhere <- .toSQLWhere(.LfilterToSQLWhere(L2Rpath, Lfilter), Lcolname, NULL)
-    Rwhere <- .toSQLWhere(.RfilterToSQLWhere(L2Rpath, Rfilter), Rcolname, NULL)
-    sql <- paste("SELECT", what, "FROM", .toSQLJoin(L2Rpath),
-                 "WHERE", Lwhere, "AND", Rwhere)
+    where <- c(
+        .toSQLWhere(Lrescol, NULL),
+        pieces$where,
+        .toSQLWhere(Rrescol, NULL)
+    )
+    where <- paste(where, collapse=" AND ")
+    sql <- paste("SELECT", what, "FROM", pieces$from, "WHERE", where)
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)[[1]]
@@ -347,7 +366,7 @@ dbCountRowsFromL2Rpath <- function(conn, L2Rpath, Lfilter, Rfilter, verbose=FALS
 
 dbUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
 {
-    use_cache <- !is.null(datacache) && length(filter) == 0
+    use_cache <- !is.null(datacache) && filter == "1"
     if (use_cache) {
         full.colname <- paste(table, colname, sep=".")
         objname <- paste("dbUniqueVals", full.colname, sep="-")
@@ -356,9 +375,12 @@ dbUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
             return(vals)
         }
     }
-    where <- .toSQLWhere(.filterToSQLWhere(filter, ""), colname, NULL)
-    sql <- paste("SELECT DISTINCT", colname, "FROM", table, "WHERE", where)
-    vals <- .dbGetQuery(conn, sql)[[1]] # could also use [[colname]]
+    what <- paste("DISTINCT", colname)
+    where <- .toSQLWhere(colname, NULL)
+    sql <- paste("SELECT", what, "FROM", table, "WHERE", where)
+    if (filter != "1")
+        sql <- paste(sql, "AND", filter)
+    vals <- .dbGetQuery(conn, sql)[[1]]
     if (!is.character(vals))
         vals <- as.character(vals)
     if (use_cache) {
@@ -370,7 +392,7 @@ dbUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
 ### Read-only caching!
 dbCountUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
 {
-    use_cache <- !is.null(datacache) && length(filter) == 0
+    use_cache <- !is.null(datacache) && filter == "1"
     if (use_cache) {
         full.colname <- paste(table, colname, sep=".")
         objname <- paste("dbUniqueVals", full.colname, sep="-")
@@ -379,15 +401,17 @@ dbCountUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
             return(count)
         }
     }
-    where <- .filterToSQLWhere(filter, "")
-    sql <- paste("SELECT COUNT(DISTINCT ", colname, ") ",
-                 "FROM ", table, " WHERE ", where, sep="")
+    what <- paste("COUNT(DISTINCT ", colname, ")", sep="")
+    sql <- paste("SELECT", what, "FROM", table)
+    if (filter != "1")
+        sql <- paste(sql, "WHERE", filter)
     .dbGetQuery(conn, sql)[[1]]
 }
 
-dbUniqueMappedVals <- function(conn, L2Rpath, Lfilter, Rfilter, datacache=NULL)
+dbUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
 {
-    use_cache <- !is.null(datacache) && length(Lfilter) == 0 && length(Rfilter) == 0
+    pieces <- .getSelectPieces(L2Rpath, with.attribs=FALSE)
+    use_cache <- !is.null(datacache) && pieces$where == "1"
     if (use_cache) {
         objname <- paste("dbUniqueMappedVals", .L2RpathToString(L2Rpath), sep="-")
         if (exists(objname, envir=datacache)) {
@@ -395,14 +419,17 @@ dbUniqueMappedVals <- function(conn, L2Rpath, Lfilter, Rfilter, datacache=NULL)
             return(vals)
         }
     }
-    Lcolname <- .Lcolname(L2Rpath)
-    Rcolname <- .Rcolname(L2Rpath)
-    what <- paste("DISTINCT", Lcolname)
-    Lwhere <- .toSQLWhere(.LfilterToSQLWhere(L2Rpath, Lfilter), Lcolname, NULL)
-    Rwhere <- .toSQLWhere(.RfilterToSQLWhere(L2Rpath, Rfilter), Rcolname, NULL)
-    sql <- paste("SELECT", what, "FROM", .toSQLJoin(L2Rpath),
-                 "WHERE", Lwhere, "AND", Rwhere)
-    vals <- .dbGetQuery(conn, sql)[[1]] # could also use [[.left.colname(L2Rpath)]]
+    Lrescol <- pieces$Lrescol
+    Rrescol <- pieces$Rrescol
+    what <- paste("DISTINCT", Lrescol)
+    where <- c(
+        .toSQLWhere(Lrescol, NULL),
+        pieces$where,
+        .toSQLWhere(Rrescol, NULL)
+    )
+    where <- paste(where, collapse=" AND ")
+    sql <- paste("SELECT", what, "FROM", pieces$from, "WHERE", where)
+    vals <- .dbGetQuery(conn, sql)[[1]]
     if (use_cache) {
         assign(objname, vals, envir=datacache)
     }
@@ -410,9 +437,10 @@ dbUniqueMappedVals <- function(conn, L2Rpath, Lfilter, Rfilter, datacache=NULL)
 }
 
 ### Read-only caching!
-dbCountUniqueMappedVals <- function(conn, L2Rpath, Lfilter, Rfilter, datacache=NULL)
+dbCountUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
 {
-    use_cache <- !is.null(datacache) && length(Lfilter) == 0 && length(Rfilter) == 0
+    pieces <- .getSelectPieces(L2Rpath, with.attribs=FALSE)
+    use_cache <- !is.null(datacache) && pieces$where == "1"
     if (use_cache) {
         objname <- paste("dbUniqueMappedVals", .L2RpathToString(L2Rpath), sep="-")
         if (exists(objname, envir=datacache)) {
@@ -420,13 +448,15 @@ dbCountUniqueMappedVals <- function(conn, L2Rpath, Lfilter, Rfilter, datacache=N
             return(count)
         }
     }
-    Lcolname <- .Lcolname(L2Rpath)
-    Rcolname <- .Rcolname(L2Rpath)
-    what <- paste("COUNT(DISTINCT ", Lcolname, ")", sep="")
-    Lwhere <- .LfilterToSQLWhere(L2Rpath, Lfilter)
-    Rwhere <- .toSQLWhere(.RfilterToSQLWhere(L2Rpath, Rfilter), Rcolname, NULL)
-    sql <- paste("SELECT", what, "FROM", .toSQLJoin(L2Rpath),
-                 "WHERE", Lwhere, "AND", Rwhere)
+    Lrescol <- pieces$Lrescol
+    Rrescol <- pieces$Rrescol
+    what <- paste("COUNT(DISTINCT ", Lrescol, ")", sep="")
+    where <- c(
+        #.toSQLWhere(Lrescol, NULL), # not needed, COUNT(DISTINCT ...) ignores NULLs
+        pieces$where,
+        .toSQLWhere(Rrescol, NULL)
+    )
+    sql <- paste("SELECT", what, "FROM", pieces$from, "WHERE", where)
     .dbGetQuery(conn, sql)[[1]]
 }
 
@@ -484,18 +514,28 @@ setMethod("revmap", "environment",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "db", "left.db_table", "left.colname", "right.db_table"
-### and "right.colname" new generics.
+### The "db", "left.db_table", "right.db_table", "left.colname",
+### "right.colname", "tagnames", "colnames", "left.filter"
+### and "right.filter" generics.
 ###
 
 setMethod("db", "AnnDbObj", function(object) object@conn)
 
 setMethod("left.db_table", "AnnDbMap", function(x) .left.db_table(x@L2Rpath))
-setMethod("left.colname", "AnnDbMap", function(x) .left.colname(x@L2Rpath))
 setMethod("right.db_table", "AnnDbMap", function(x) .right.db_table(x@L2Rpath))
-setMethod("right.colname", "AnnDbMap", function(x) .right.colname(x@L2Rpath))
-
 setMethod("right.db_table", "Go3AnnDbMap", function(x) x@rightTables)
+
+setMethod("left.colname", "AnnDbMap", function(x) .left.colname(x@L2Rpath))
+setMethod("right.colname", "AnnDbMap", function(x) .right.colname(x@L2Rpath))
+setMethod("tagnames", "AnnDbMap", function(x) .tagnames(x@L2Rpath))
+setMethod("tagnames", "Go3AnnDbMap", function(x) c(.tagnames(x@L2Rpath), "Ontology"))
+setMethod("colnames", "AnnDbMap",
+    function(x, do.NULL=TRUE, prefix="col")
+        c(left.colname(x), right.colname(x), tagnames(x))
+)
+
+setMethod("left.filter", "AnnDbMap", function(x) .left.filter(x@L2Rpath))
+setMethod("right.filter", "AnnDbMap", function(x) .right.filter(x@L2Rpath))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -549,12 +589,11 @@ setMethod("toTable", "Go3AnnDbMap",
         {
             table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
-            names(L2Rpath)[length(L2Rpath)] <- table
-            data <- dbSelectFromL2Rpath(db(x), L2Rpath, x@Lfilter, x@Rfilter,
-                                               left.names, right.names,
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            data <- dbSelectFromL2Rpath(db(x), L2Rpath, left.names, right.names,
                                                extra.colnames, verbose)
             if (nrow(data) != 0)
-                data[["ontology"]] <- ontology
+                data[["Ontology"]] <- ontology
             data
         }
         rbind(getPartialSubmap("BP"),
@@ -598,7 +637,7 @@ setMethod("nrow", "AnnDbTable",
 )
 
 setMethod("nrow", "AnnDbMap",
-    function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath, x@Lfilter, x@Rfilter)
+    function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
 )
 
 setMethod("nrow", "Go3AnnDbMap",
@@ -608,8 +647,8 @@ setMethod("nrow", "Go3AnnDbMap",
         {
             table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
-            names(L2Rpath)[length(L2Rpath)] <- table
-            dbCountRowsFromL2Rpath(db(x), x@L2Rpath, x@Lfilter, x@Rfilter)
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
@@ -623,14 +662,16 @@ setMethod("nrow", "Go3AnnDbMap",
 setMethod("left.names", "AnnDbObj",
     function(x)
     {
-        dbUniqueVals(db(x), left.db_table(x), left.colname(x), x@Lfilter, x@datacache)
+        dbUniqueVals(db(x), left.db_table(x), left.colname(x),
+                            left.filter(x), x@datacache)
     }
 )
 
 setMethod("right.names", "AnnDbMap",
     function(x)
     {
-        dbUniqueVals(db(x), right.db_table(x), right.colname(x), x@Rfilter, x@datacache)
+        dbUniqueVals(db(x), right.db_table(x), right.colname(x),
+                            right.filter(x), x@datacache)
     }
 )
 
@@ -640,7 +681,7 @@ setMethod("right.names", "Go3AnnDbMap",
         getNames <- function(ontology)
         {
             table <- right.db_table(x)[ontology]
-            dbUniqueVals(db(x), table, "go_id", x@Rfilter, x@datacache)
+            dbUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         ## (if not, then apply unique to this result)
@@ -663,14 +704,16 @@ setMethod("names", "RevAnnDbMap", function(x) right.names(x))
 setMethod("left.length", "AnnDbObj",
     function(x)
     {
-        dbCountUniqueVals(db(x), left.db_table(x), left.colname(x), x@Lfilter, x@datacache)
+        dbCountUniqueVals(db(x), left.db_table(x), left.colname(x),
+                                 left.filter(x), x@datacache)
     }
 )
 
 setMethod("right.length", "AnnDbMap",
     function(x)
     {
-        dbCountUniqueVals(db(x), right.db_table(x), right.colname(x), x@Rfilter, x@datacache)
+        dbCountUniqueVals(db(x), right.db_table(x), right.colname(x),
+                                 right.filter(x), x@datacache)
     }
 )
 
@@ -680,7 +723,7 @@ setMethod("right.length", "Go3AnnDbMap",
         countNames <- function(ontology)
         {
             table <- right.db_table(x)[ontology]
-            dbCountUniqueVals(db(x), table, "go_id", x@Rfilter, x@datacache)
+            dbCountUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countNames("BP") + countNames("CC") + countNames("MF")
@@ -724,8 +767,8 @@ setMethod("show", "AnnDbMap",
 setMethod("as.character", "AtomicAnnDbMap",
     function(x)
     {
-        if (length(x@tagCols) != 0)
-            stop("cannot coerce to character an AtomicAnnDbMap object with tags")
+        if (length(tagnames(x)) != 0)
+            stop("AtomicAnnDbMap object with tags cannot be coerced to a character vector")
         data <- toTable(x)
         ans <- data[[2]] # could also use [[right.colname(x)]]
         if (!is.character(ans))
@@ -740,7 +783,7 @@ setMethod("as.character", "AtomicAnnDbMap",
 setMethod("as.character", "RevAtomicAnnDbMap",
     function(x)
     {
-        if (length(x@tagCols) != 0)
+        if (length(tagnames(x)) != 0)
             stop("cannot coerce to character an AtomicAnnDbMap object with tags")
         data <- toTable(x)
         ans <- data[[1]] # could also use [[left.colname(x)]]
@@ -875,17 +918,17 @@ setMethod("toList", "RevAnnDbMap",
 ### non-default value like silly maps ENTREZID and MULTIHIT in AG_DB schema.
 ### But who cares, those maps are silly anyway...
 setMethod("mapped.left.names", "AnnDbMap",
-    function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@Lfilter, x@Rfilter, x@datacache)
+    function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 setMethod("count.mapped.left.names", "AnnDbMap",
-    function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@Lfilter, x@Rfilter, x@datacache)
+    function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 
 setMethod("mapped.right.names", "AnnDbMap",
-    function(x) dbUniqueMappedVals(db(x), .revL2Rpath(x@L2Rpath), x@Rfilter, x@Lfilter, x@datacache)
+    function(x) dbUniqueMappedVals(db(x), .revL2Rpath(x@L2Rpath), x@datacache)
 )
 setMethod("count.mapped.right.names", "AnnDbMap",
-    function(x) dbCountUniqueMappedVals(db(x), .revL2Rpath(x@L2Rpath), x@Rfilter, x@Lfilter, x@datacache)
+    function(x) dbCountUniqueMappedVals(db(x), .revL2Rpath(x@L2Rpath), x@datacache)
 )
 
 setMethod("mapped.left.names", "Go3AnnDbMap",
@@ -895,8 +938,8 @@ setMethod("mapped.left.names", "Go3AnnDbMap",
         {
             table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
-            names(L2Rpath)[length(L2Rpath)] <- table
-            dbUniqueMappedVals(db(x), L2Rpath, x@Lfilter, x@Rfilter, x@datacache)
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
         }
         names1 <- getMappedNames("BP")
         names2 <- getMappedNames("CC")
@@ -915,8 +958,8 @@ setMethod("mapped.right.names", "Go3AnnDbMap",
         {
             table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
-            names(L2Rpath)[length(L2Rpath)] <- table
-            dbUniqueMappedVals(db(x), .revL2Rpath(L2Rpath), x@Rfilter, x@Lfilter, x@datacache)
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            dbUniqueMappedVals(db(x), .revL2Rpath(L2Rpath), x@datacache)
         }
         names1 <- getMappedNames("BP")
         names2 <- getMappedNames("CC")
@@ -933,8 +976,8 @@ setMethod("count.mapped.right.names", "Go3AnnDbMap",
         {
             table <- right.db_table(x)[ontology]
             L2Rpath <- x@L2Rpath
-            names(L2Rpath)[length(L2Rpath)] <- table
-            dbCountUniqueMappedVals(db(x), .revL2Rpath(L2Rpath), x@Rfilter, x@Lfilter, x@datacache)
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            dbCountUniqueMappedVals(db(x), .revL2Rpath(L2Rpath), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")

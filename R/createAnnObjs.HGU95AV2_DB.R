@@ -13,124 +13,229 @@
 ### -------------------------------------------------------------------------
 
 
-### Mandatory fields: objName and L2Rpath
-HGU95AV2_DB_AtomicAnnDbMap_seeds <- list(
+HGU95AV2_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
+
+### Mandatory fields: objName, Class and L2Rpath
+HGU95AV2_DB_AnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
-        L2Rpath=list(probes=c("probe_id","accession"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="probes",
+                Lcolname="probe_id",
+                Rcolname="accession"
+            )
+        )
     ),
     list(
         objName="CHR",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     chromosomes=c("id","chromosome"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="chromosomes",
+                Lcolname="id",
+                Rcolname="chromosome"
+            )
+        )
     ),
     list(
         objName="ENTREZID",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     genes=c("id","gene_id")),
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="genes",
+                Lcolname="id",
+                Rcolname="gene_id"
+            )
+        ),
         rightColType="integer"
     ),
     list(
         objName="ENZYME",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     ec=c("id","ec_number"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="ec",
+                Lcolname="id",
+                Rcolname="ec_number"
+            )
+        )
     ),
     list(
         objName="GENENAME",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     gene_info=c("id","gene_name"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="gene_info",
+                Lcolname="id",
+                Rcolname="gene_name"
+            )
+        )
     ),
     list(
         objName="MAP",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     cytogenetic_locations=c("id","cytogenetic_location"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="cytogenetic_locations",
+                Lcolname="id",
+                Rcolname="cytogenetic_location"
+            )
+        )
     ),
     list(
         objName="OMIM",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     omim=c("id","omim_id"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="omim",
+                Lcolname="id",
+                Rcolname="omim_id"
+            )
+        )
     ),
     list(
         objName="PATH",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     kegg=c("id","kegg_id"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="kegg",
+                Lcolname="id",
+                Rcolname="kegg_id"
+            )
+        )
     ),
     list(
         objName="PMID",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     pubmed=c("id","pubmed_id"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="pubmed",
+                Lcolname="id",
+                Rcolname="pubmed_id"
+            )
+        )
     ),
     list(
         objName="REFSEQ",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     refseq=c("id","accession"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="refseq",
+                Lcolname="id",
+                Rcolname="accession"
+            )
+        )
     ),
     list(
         objName="SYMBOL",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     gene_info=c("id","symbol"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="gene_info",
+                Lcolname="id",
+                Rcolname="symbol"
+            )
+        )
     ),
     list(
         objName="UNIGENE",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     unigene=c("id","unigene_id"))
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="unigene",
+                Lcolname="id",
+                Rcolname="unigene_id"
+            )
+        )
     ),
     list(
         objName="CHRLOC",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     chromosome_locations=c("id","start_location")),
-        rightColType="integer",
-        tagCols="chromosome"
-    )
-)
-
-HGU95AV2_DB_IpiAnnDbMap_seeds <- list(
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="chromosome_locations",
+                Lcolname="id",
+                Rcolname="start_location",
+                attribCols=c(Chromosome="{chromosome}")
+            )
+        ),
+        rightColType="integer"
+    ),
     list(
         objName="PFAM",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     pfam=c("id","ipi_id")),
-        tagCols="pfam_id"
+        Class="IpiAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="pfam",
+                Lcolname="id",
+                Rcolname="ipi_id",
+                attribCols=c(PfamId="{pfam_id}")
+            )
+        )
     ),
     list(
         objName="PROSITE",
-        L2Rpath=list(probes=c("probe_id","id"),
-                     prosite=c("id","ipi_id")),
-        tagCols="prosite_id"
+        Class="IpiAnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                table="prosite",
+                Lcolname="id",
+                Rcolname="ipi_id",
+                attribCols=c(PrositeId="{prosite_id}")
+            )
+        )
+    ),
+    list(
+        objName="GO",
+        Class="Go3AnnDbMap",
+        L2Rpath=list(
+            HGU95AV2_DB_L2Rbrick1,
+            list(
+                #table="go_term", # no rightmost table for a Go3AnnDbMap
+                Lcolname="id",
+                Rcolname="go_id",
+                attribCols=c(Evidence="{evidence}")
+            )
+        ),
+        rightTables=GOtables()
     )
 )
 
 createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AtomicAnnDbMap and IpiAnnDbMap objects
+    ## AnnDbMap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnObjs("AtomicAnnDbMap", HGU95AV2_DB_AtomicAnnDbMap_seeds, seed0)
-    createAnnObjs("IpiAnnDbMap", HGU95AV2_DB_IpiAnnDbMap_seeds, seed0, ann_objs)
+    ann_objs <- createAnnDbMaps(HGU95AV2_DB_AnnDbMap_seeds, seed0)
 
     ## RevAtomicAnnDbMap objects
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
 
-    ## Go3AnnDbMap object
-    ann_objs$GO <- new("Go3AnnDbMap",
-        objName="GO",
-        objTarget=objTarget,
-        datacache=datacache,
-        conn=conn,
-        L2Rpath=list(probes=c("probe_id","id"),
-                     c("id", "go_id")), # unnamed element
-        rightTables=GOtables(),
-        tagCols=c("evidence", "Ontology")
-    )
-
     ## RevGo3AnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    ann_objs$GO2ALLPROBES <- new("RevGo3AnnDbMap", ann_objs$GO,
-                                 objName="GO2ALLPROBES", rightTables=GOtables(all=TRUE))
+    map <- ann_objs$GO2PROBE; map@rightTables <- GOtables(all=TRUE)
+    ann_objs$GO2ALLPROBES <- map
 
     ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)

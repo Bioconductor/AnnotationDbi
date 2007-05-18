@@ -4,6 +4,7 @@ setGeneric("count.mapped.right.names", function(x) standardGeneric("count.mapped
 setGeneric("db", function(object) standardGeneric("db"))
 setGeneric("left.colname", function(x) standardGeneric("left.colname"))
 setGeneric("left.db_table", function(x) standardGeneric("left.db_table"))
+setGeneric("left.filter", function(x) standardGeneric("left.filter"))
 setGeneric("left.length", function(x) standardGeneric("left.length"))
 setGeneric("left.names", function(x) standardGeneric("left.names"))
 setGeneric("mapped.left.names", function(x) standardGeneric("mapped.left.names"))
@@ -12,8 +13,9 @@ setGeneric("mapped.right.names", function(x) standardGeneric("mapped.right.names
 setGeneric("revmap", function(x, objName=NULL) standardGeneric("revmap"))
 setGeneric("right.colname", function(x) standardGeneric("right.colname"))
 setGeneric("right.db_table", function(x) standardGeneric("right.db_table"))
+setGeneric("right.filter", function(x) standardGeneric("right.filter"))
 setGeneric("right.length", function(x) standardGeneric("right.length"))
 setGeneric("right.names", function(x) standardGeneric("right.names"))
+setGeneric("tagnames", function(x) standardGeneric("tagnames"))
 setGeneric("toList", function(x, names=NULL) standardGeneric("toList"))
 setGeneric("toTable", function(x, left.names=NULL, ...) standardGeneric("toTable"))
-

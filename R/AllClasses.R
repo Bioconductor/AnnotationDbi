@@ -11,23 +11,7 @@ setClass("L2Rbrick",
     prototype(
         attribJoin=as.character(NA),
         attribCols=as.character(NA),
-        filter=as.character(NA)
-    )
-)
-
-### =========================================================================
-### AnnObj objects
-### --------------
-###
-### -------------------------------------------------------------------------
-
-
-
-setClass("AnnObj",
-    representation(
-        "VIRTUAL",
-        objName="character",
-        objTarget="character"   # "chip hgu95av2" or "YEAST" or...
+        filter="1"
     )
 )
 
@@ -36,6 +20,19 @@ setClass("AnnObj",
 ### =========================================================================
 ### Containers for SQLite-based annotation data.
 ### -------------------------------------------------------------------------
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "AnnObj" class.
+###
+
+setClass("AnnObj",
+    representation(
+        "VIRTUAL",
+        objName="character",
+        objTarget="character"   # "chip hgu95av2" or "YEAST" or...
+    )
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

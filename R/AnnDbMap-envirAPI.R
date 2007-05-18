@@ -83,7 +83,7 @@ setMethod("as.list", "AtomicAnnDbMap",
             ## We must use 'data0[[2]]' instead of 'data0[[right.colname(x)]]'
             ## because 'data0' names are not necessarily unique e.g.:
             ##   > toTable(GOBPPARENTS, "GO:0000001")
-            ##          go_id      go_id evidence
+            ##          go_id      go_id Evidence
             ##   1 GO:0000001 GO:0048308      isa
             ##   2 GO:0000001 GO:0048311      isa
             right_col <- data0[[2]]
@@ -92,7 +92,7 @@ setMethod("as.list", "AtomicAnnDbMap",
                 converter <- get(paste("as.", x@rightColType, sep=""))
                 right_col <- converter(right_col)
             }
-            if (length(x@tagCols) != 0)
+            if (length(data0) == 3)
                 names(right_col) <- data0[[3]]
             ann_list <- split(right_col, data0[[1]])
         }
@@ -112,7 +112,7 @@ setMethod("as.list", "RevAtomicAnnDbMap",
             ann_list <- list()
         } else {
             left_col <- data0[[1]]
-            if (length(x@tagCols) != 0)
+            if (length(data0) == 3)
                 names(left_col) <- data0[[3]]
             ann_list <- split(left_col, data0[[2]])
         }
@@ -172,8 +172,8 @@ setMethod("as.list", "GoAnnDbMap",
                        GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
             }
             GOIDs <- split(data0[["go_id"]], data0[[1]])
-            Evidences <- split(data0[["evidence"]], data0[[1]])
-            Ontologies <- split(data0[["ontology"]], data0[[1]])
+            Evidences <- split(data0[["Evidence"]], data0[[1]])
+            Ontologies <- split(data0[["Ontology"]], data0[[1]])
             ## The 'GOIDs', 'Evidences' and 'Ontologies' lists have the same
             ## names in the same order.
             mapped_names <- names(GOIDs)
@@ -203,7 +203,7 @@ setMethod("as.list", "GoAnnDbMap",
     if (nrow(data0) == 0)
         return(list())
     left_col <- data0[[1]]
-    names(left_col) <- data0[["evidence"]]
+    names(left_col) <- data0[["Evidence"]]
     ann_list <- split(left_col, data0[["go_id"]])
     if (is.null(names))
         names <- names(x)
