@@ -123,7 +123,7 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
             is_na <- eapply(map, function(x) length(x) == 1 && is.na(x))
             mapped_names <- names(is_na)[!as.logical(is_na)]
         } else {
-            mapped_names <- mapped.names(map)
+            mapped_names <- mappedNames(map)
         }
         mapped_names
     }
@@ -226,7 +226,7 @@ checkMAPCOUNTS <- function(pkgname, prefix)
         if (is.numeric(map)) # to deal with the CHRLENGTHS case
             t1 <- system.time(count1 <- sum(!is.na(map)))
         else
-            t1 <- system.time(count1 <- count.mapped.names(map))
+            t1 <- system.time(count1 <- count.mappedNames(map))
         cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
         if (count1 != count0)
             stop("count1 and count0 differ")
@@ -234,7 +234,7 @@ checkMAPCOUNTS <- function(pkgname, prefix)
             next
 
         ## count2
-        t2 <- system.time(count2 <- length(mapped.names(map)))
+        t2 <- system.time(count2 <- length(mappedNames(map)))
         cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
         if (count2 != count0)
             stop("count2 and count0 differ")

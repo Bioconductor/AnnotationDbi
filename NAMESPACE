@@ -39,7 +39,7 @@ exportMethods(
     ## from R/AnnDbObj-lowAPI.R
     "revmap",
     "db",
-    "left.db_table", "right.db_table",
+    "left.table", "right.table",
     "left.colname", "right.colname",
     "tagnames", "colnames",
     "left.filter", "right.filter",
@@ -49,9 +49,8 @@ exportMethods(
     "left.length", "right.length", "length",
     "as.character",
     "toList",
-    "mapped.left.names", "count.mapped.left.names",
-    "mapped.right.names", "count.mapped.right.names",
-    "mapped.names", "count.mapped.names",
+    "left.mappedNames", "right.mappedNames", "mappedNames",
+    "count.left.mappedNames", "count.right.mappedNames", "count.mappedNames",
     "is.na",
 
     ## from R/AnnDbMap-envirAPI.R

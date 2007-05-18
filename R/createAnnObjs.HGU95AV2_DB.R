@@ -243,11 +243,11 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
 
     ## Some pre-caching
     left.names(ann_objs$GO)
-    #mapped.left.names(ann_objs$GO)
+    #left.mappedNames(ann_objs$GO)
     #right.names(ann_objs$GO2PROBE)
-    #mapped.right.names(ann_objs$GO2PROBE)
+    #right.mappedNames(ann_objs$GO2PROBE)
     #right.names(ann_objs$GO2ALLPROBES)
-    #mapped.right.names(ann_objs$GO2ALLPROBES)
+    #right.mappedNames(ann_objs$GO2ALLPROBES)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

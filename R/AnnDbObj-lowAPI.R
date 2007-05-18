@@ -12,7 +12,7 @@
 ###   1) Generics that do _not_ access the database:
 ###        revmap,
 ###        db,
-###        left.db_table, right.db_table,
+###        left.table, right.table,
 ###        left.colname, right.colname,
 ###        tagnames,
 ###        colnames,
@@ -25,11 +25,10 @@
 ###        left.length, right.length, length,
 ###        as.character,
 ###        toList,
-###        mapped.left.names, count.mapped.left.names,
-###        mapped.right.names, count.mapped.right.names,
-###        mapped.names, count.mapped.names,
+###        left.mappedNames, right.mappedNames, mappedNames,
+###        count.left.mappedNames, count.right.mappedNames, count.mappedNames,
 ###        is.na
-###      NB: "names", "length", "mapped.names" and "count.mapped.names" are
+###      NB: "names", "length", "mappedNames" and "count.mappedNames" are
 ###      "oriented" methods i.e. they give a different result on a map and its
 ###      "reverse" map (this result depends on the orientation of the map).
 ###      For each of these methods, there are 2 "unoriented" methods: a left
@@ -92,7 +91,7 @@ setMethod("revmap", "environment",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Generics that return meta information about a given map:
 ###     db,
-###     left.db_table, right.db_table,
+###     left.table, right.table,
 ###     left.colname, right.colname,
 ###     tagnames,
 ###     colnames,
@@ -103,11 +102,11 @@ setMethod("revmap", "environment",
 
 setMethod("db", "AnnDbObj", function(object) object@conn)
 
-setMethod("left.db_table", "AnnDbMap",
+setMethod("left.table", "AnnDbMap",
     function(x) L2Rpath.leftmostTable(x@L2Rpath))
-setMethod("right.db_table", "AnnDbMap",
+setMethod("right.table", "AnnDbMap",
     function(x) L2Rpath.rightmostTable(x@L2Rpath))
-setMethod("right.db_table", "Go3AnnDbMap", function(x) x@rightTables)
+setMethod("right.table", "Go3AnnDbMap", function(x) x@rightTables)
 
 setMethod("left.colname", "AnnDbMap",
     function(x) L2Rpath.leftmostColname(x@L2Rpath))
@@ -152,7 +151,7 @@ setMethod("right.filter", "AnnDbMap",
 setMethod("toTable", "AnnDbTable",
     function(x, left.names=NULL, verbose=FALSE)
     {
-        dbRawAnnDbMapToTable(db(x), left.db_table(x), left.colname(x), left.names,
+        dbRawAnnDbMapToTable(db(x), left.table(x), left.colname(x), left.names,
                                     NULL, NULL, NULL,
                                     x@showCols, x@from, verbose)
     }
@@ -179,7 +178,7 @@ setMethod("toTable", "Go3AnnDbMap",
         extra.colnames <- c("evidence", extra.colnames)
         getPartialSubmap <- function(ontology)
         {
-            table <- right.db_table(x)[ontology]
+            table <- right.table(x)[ontology]
             L2Rpath <- x@L2Rpath
             L2Rpath[[length(L2Rpath)]]@table <- table
             data <- dbSelectFromL2Rpath(db(x), L2Rpath, left.names, right.names,
@@ -224,7 +223,7 @@ setMethod("as.data.frame", "AnnDbObj",
 setMethod("nrow", "AnnDbTable",
     function(x)
     {
-        dbCountRawAnnDbMapRows(db(x), left.db_table(x), left.colname(x), NULL, NULL, x@from)
+        dbCountRawAnnDbMapRows(db(x), left.table(x), left.colname(x), NULL, NULL, x@from)
     }
 )
 
@@ -237,7 +236,7 @@ setMethod("nrow", "Go3AnnDbMap",
     {
         countRows <- function(ontology)
         {
-            table <- right.db_table(x)[ontology]
+            table <- right.table(x)[ontology]
             L2Rpath <- x@L2Rpath
             L2Rpath[[length(L2Rpath)]]@table <- table
             dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
@@ -254,7 +253,7 @@ setMethod("nrow", "Go3AnnDbMap",
 setMethod("left.names", "AnnDbObj",
     function(x)
     {
-        dbUniqueVals(db(x), left.db_table(x), left.colname(x),
+        dbUniqueVals(db(x), left.table(x), left.colname(x),
                             left.filter(x), x@datacache)
     }
 )
@@ -262,7 +261,7 @@ setMethod("left.names", "AnnDbObj",
 setMethod("right.names", "AnnDbMap",
     function(x)
     {
-        dbUniqueVals(db(x), right.db_table(x), right.colname(x),
+        dbUniqueVals(db(x), right.table(x), right.colname(x),
                             right.filter(x), x@datacache)
     }
 )
@@ -272,7 +271,7 @@ setMethod("right.names", "Go3AnnDbMap",
     {
         getNames <- function(ontology)
         {
-            table <- right.db_table(x)[ontology]
+            table <- right.table(x)[ontology]
             dbUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -296,7 +295,7 @@ setMethod("names", "RevAnnDbMap", function(x) right.names(x))
 setMethod("left.length", "AnnDbObj",
     function(x)
     {
-        dbCountUniqueVals(db(x), left.db_table(x), left.colname(x),
+        dbCountUniqueVals(db(x), left.table(x), left.colname(x),
                                  left.filter(x), x@datacache)
     }
 )
@@ -304,7 +303,7 @@ setMethod("left.length", "AnnDbObj",
 setMethod("right.length", "AnnDbMap",
     function(x)
     {
-        dbCountUniqueVals(db(x), right.db_table(x), right.colname(x),
+        dbCountUniqueVals(db(x), right.table(x), right.colname(x),
                                  right.filter(x), x@datacache)
     }
 )
@@ -314,7 +313,7 @@ setMethod("right.length", "Go3AnnDbMap",
     {
         countNames <- function(ontology)
         {
-            table <- right.db_table(x)[ontology]
+            table <- right.table(x)[ontology]
             dbCountUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -487,23 +486,23 @@ setMethod("toList", "RevAnnDbMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "mapped names" family of generics:
-###   - mapped.left.names, count.mapped.left.names
-###   - mapped.right.names, count.mapped.right.names
-###   - mapped.names, count.mapped.names
+### The "mappedNames" family of generics:
+###   - left.mappedNames, count.left.mappedNames
+###   - right.mappedNames, count.right.mappedNames
+###   - mappedNames, count.mappedNames
 ###
 ### Conceptual definitions (for AnnDbMap object x):
 ###
-###     mapped.left.names(x) :== unique values in left col (col 1) of
-###                              toTable(x)
-###     count.mapped.left.names(x) :== length(mapped.left.names(x))
+###     left.mappedNames(x) :== unique values in left col (col 1) of
+###                             toTable(x)
+###     count.left.mappedNames(x) :== length(left.mappedNames(x))
 ###
-###     mapped.right.names(x) :== unique values in right col (col 2) of
-###                               toTable(x)
-###     count.mapped.right.names(x) :== length(mapped.right.names(x))
+###     right.mappedNames(x) :== unique values in right col (col 2) of
+###                              toTable(x)
+###     count.right.mappedNames(x) :== length(right.mappedNames(x))
 ###
 ### Note that all "right names" should be mapped to a "left name" hence
-### mapped.right.names(x) should be the same as right.names(x) (something
+### right.mappedNames(x) should be the same as right.names(x) (something
 ### worth checking in a test unit).
 ###
 
@@ -511,26 +510,26 @@ setMethod("toList", "RevAnnDbMap",
 ### ignored, hence will give wrong results if one of those 2 fields has a
 ### non-default value like silly maps ENTREZID and MULTIHIT in AG_DB schema.
 ### But who cares, those maps are silly anyway...
-setMethod("mapped.left.names", "AnnDbMap",
+setMethod("left.mappedNames", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
-setMethod("count.mapped.left.names", "AnnDbMap",
+setMethod("count.left.mappedNames", "AnnDbMap",
     function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 
-setMethod("mapped.right.names", "AnnDbMap",
+setMethod("right.mappedNames", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
 )
-setMethod("count.mapped.right.names", "AnnDbMap",
+setMethod("count.right.mappedNames", "AnnDbMap",
     function(x) dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
 )
 
-setMethod("mapped.left.names", "Go3AnnDbMap",
+setMethod("left.mappedNames", "Go3AnnDbMap",
     function(x)
     {
         getMappedNames <- function(ontology)
         {
-            table <- right.db_table(x)[ontology]
+            table <- right.table(x)[ontology]
             L2Rpath <- x@L2Rpath
             L2Rpath[[length(L2Rpath)]]@table <- table
             dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
@@ -541,16 +540,16 @@ setMethod("mapped.left.names", "Go3AnnDbMap",
         unique(c(names1, names2, names3))
     }
 )
-setMethod("count.mapped.left.names", "Go3AnnDbMap",
-    function(x) length(mapped.left.names(x))
+setMethod("count.left.mappedNames", "Go3AnnDbMap",
+    function(x) length(left.mappedNames(x))
 )
 
-setMethod("mapped.right.names", "Go3AnnDbMap",
+setMethod("right.mappedNames", "Go3AnnDbMap",
     function(x)
     {
         getMappedNames <- function(ontology)
         {
-            table <- right.db_table(x)[ontology]
+            table <- right.table(x)[ontology]
             L2Rpath <- x@L2Rpath
             L2Rpath[[length(L2Rpath)]]@table <- table
             dbUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
@@ -563,12 +562,12 @@ setMethod("mapped.right.names", "Go3AnnDbMap",
         c(names1, names2, names3)
     }
 )
-setMethod("count.mapped.right.names", "Go3AnnDbMap",
+setMethod("count.right.mappedNames", "Go3AnnDbMap",
     function(x)
     {
         countMappedNames <- function(ontology)
         {
-            table <- right.db_table(x)[ontology]
+            table <- right.table(x)[ontology]
             L2Rpath <- x@L2Rpath
             L2Rpath[[length(L2Rpath)]]@table <- table
             dbCountUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
@@ -578,10 +577,10 @@ setMethod("count.mapped.right.names", "Go3AnnDbMap",
     }
 )
 
-setMethod("mapped.names", "AnnDbMap", function(x) mapped.left.names(x))
-setMethod("mapped.names", "RevAnnDbMap", function(x) mapped.right.names(x))
-setMethod("count.mapped.names", "AnnDbMap", function(x) count.mapped.left.names(x))
-setMethod("count.mapped.names", "RevAnnDbMap", function(x) count.mapped.right.names(x))
+setMethod("mappedNames", "AnnDbMap", function(x) left.mappedNames(x))
+setMethod("mappedNames", "RevAnnDbMap", function(x) right.mappedNames(x))
+setMethod("count.mappedNames", "AnnDbMap", function(x) count.left.mappedNames(x))
+setMethod("count.mappedNames", "RevAnnDbMap", function(x) count.right.mappedNames(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -595,7 +594,7 @@ setMethod("count.mapped.names", "RevAnnDbMap", function(x) count.mapped.right.na
 setMethod("is.na", "AnnDbMap",
     function(x)
     {
-        mapped_names <- mapped.names(x)
+        mapped_names <- mappedNames(x)
         names <- names(x)
         ans <- !(names %in% mapped_names)
         names(ans) <- names

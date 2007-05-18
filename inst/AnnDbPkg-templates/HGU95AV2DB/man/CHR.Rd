@@ -19,7 +19,7 @@
 \examples{
         x <- @ANNOBJPREFIX@CHR
         # Get the probe identifiers that are mapped to a chromosome
-        mapped_probes <- mapped.names(x)
+        mapped_probes <- mappedNames(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_probes)
         if(length(xx) > 0) {

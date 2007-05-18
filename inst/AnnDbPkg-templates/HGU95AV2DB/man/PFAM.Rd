@@ -28,7 +28,7 @@
 \examples{
         x <- @ANNOBJPREFIX@PFAM
         # Get the probe identifiers that are mapped to any Pfam ID
-        mapped_probes <- mapped.names(x)
+        mapped_probes <- mappedNames(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_probes)
         # randomly display 10 probes
