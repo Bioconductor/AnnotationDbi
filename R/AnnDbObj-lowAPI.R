@@ -175,7 +175,6 @@ setMethod("toTable", "AnnDbMap",
 setMethod("toTable", "Go3AnnDbMap",
     function(x, left.names=NULL, right.names=NULL, extra.colnames=NULL, verbose=FALSE)
     {
-        extra.colnames <- c("evidence", extra.colnames)
         getPartialSubmap <- function(ontology)
         {
             table <- right.table(x)[ontology]

@@ -30,11 +30,11 @@
 ### Re-order and format the list 'ann_list' as follow:
 ###   > ann_list <- list(aa=1, b=2, c=3)
 ###   > names <- c("a", "c", "d")
-###   > formatAnnList(ann_list, names)
+###   > .formatAnnList(ann_list, names)
 ### ... must return 'list(a=NA, c=3, d=NA)'
 ### Note that the returned list must have exactly the names in 'names' (in the
 ### same order).
-formatAnnList <- function(ann_list, names, replace.single=NULL, replace.multiple=NULL)
+.formatAnnList <- function(ann_list, names, replace.single=NULL, replace.multiple=NULL)
 {
     if (length(ann_list))
         ann_list <- l2e(ann_list)
@@ -57,6 +57,105 @@ formatAnnList <- function(ann_list, names, replace.single=NULL, replace.multiple
     }
     names(names) <- names
     lapply(names, formatVal)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The ".foldFlatMap" helper function: folds and formats a "flat" map.
+###
+### Folding a map is the action of converting its "flat" representation (as
+### returned by toTable()) to a list of right objects for a mono-valued map,
+### and to a list of lists of right objects for a multi-valued map.
+### By default (if arg 'FUN' is omitted), each right object itself is stored
+### in a named list.
+###
+### Example:
+###
+###   Conceptual map M:
+###     3 objects on the left: a, b, c
+###     2 objects on the right: A, B
+###     Mapping:
+###       a --> A, B
+###       b --> A
+###       c --> B
+###     The right objects have 1 tag, this tag is a numeric vector:
+###       A is tagged with c(1.2, 0.9)
+###       B is tagged with NA
+###
+###   toTable(x) queries the database and returns "flat" representations of
+###   maps. For M it would return something like this:
+###
+###     col1   col2   Tag
+###     a      A      1.2
+###     a      A      0.9
+###     a      B       NA
+###     b      A      1.2
+###     b      A      0.9
+###     c      B       NA
+###
+###   A natural way of representing objects A and B in R is to use lists:
+###     - object A: list(col2="A", Tag=c(1.2, 0.9)) 
+###     - object B: list(col2="B", Tag=NA)
+###
+###   A natural way of representing map M in R is to use a named list with 3
+###   elements (one for each left object) where:
+###     - the "a" element is a named list of 2 elements, one named "A" and
+###       containing the representation of A, and one named "B" and
+###       containing the representation of B,
+###     - the "b" element is a named list of 1 element, named "A" and
+###       containing the representation of A,
+###     - the "c" element is a named list of 1 element, named "B" and
+###       containing the representation of B.
+###   We call this the "folded" representation of map M.
+###   .foldFlatMap() does the conversion from "flat" to "folded".
+###
+### 'FUN' is the formatting function that is applied on-the-fly on each
+### object during the "folding" process. If 'FUN' is omitted then
+### 'function(...) list(...)' is used so no information is lost and the
+### formatting can be done later like this:
+###
+###   > ann_list <- .foldFlatMap(table0, names)
+###   > ann_list <- lapply(ann_list,
+###                        function(val) lapply(val, function(x) do.call(FUN, x)))
+###
+### The result will be the same as with just:
+###
+###   > ann_list <- .foldFlatMap(table0, names, FUN)
+###
+### but the latter will be faster.
+###
+
+.foldFlatMap <- function(table0, names, monovalued=FALSE, FUN)
+{
+    ann_list <- as.list(rep(as.character(NA), length(names)))
+    names(ann_list) <- names
+    if (nrow(table0) == 0)
+        return(ann_list)
+    if (missing(FUN))
+        FUN <- function(...) list(...)
+    ## First slicing (top level)
+    slicing_one <- lapply(2:length(table0), function(j) split(table0[[j]], table0[[1]]))
+    names(slicing_one) <- names(table0)[-1]
+    mapped_names <- names(slicing_one[[1]])
+    ii <- match(mapped_names, names, nomatch=0L)
+    for (i1 in seq_len(length(ii))) {
+        i2 <- ii[i1]
+        slice_one <- lapply(slicing_one, function(col) col[[i1]])
+        if (monovalued) {
+            ann_list[[i2]] <- do.call(FUN, slice_one)
+            next
+        }
+        if (!any(duplicated(slice_one[[1]]))) {
+            ann_list[[i2]] <- do.call("mapply", c(FUN=FUN, slice_one, SIMPLIFY=FALSE))
+            next
+        }
+        ## Sub-slicing
+        slicing_two <- lapply(2:length(slice_one), function(j) split(slice_one[[j]], slice_one[[1]]))
+        slicing_two <- c(list(names(slicing_two[[1]])), slicing_two)
+        names(slicing_two) <- names(slice_one)
+        ann_list[[i2]] <- do.call("mapply", c(FUN=FUN, slicing_two, SIMPLIFY=FALSE))
+    }
+    ann_list
 }
 
 
@@ -100,7 +199,7 @@ setMethod("as.list", "AtomicAnnDbMap",
         }
         if (is.null(names))
             names <- names(x)
-        formatAnnList(ann_list, names, x@replace.single, x@replace.multiple)
+        .formatAnnList(ann_list, names, x@replace.single, x@replace.multiple)
     }
 )
 
@@ -120,7 +219,7 @@ setMethod("as.list", "RevAtomicAnnDbMap",
         }
         if (is.null(names))
             names <- names(x)
-        formatAnnList(ann_list, names, x@replace.single, x@replace.multiple)
+        .formatAnnList(ann_list, names, x@replace.single, x@replace.multiple)
     }
 )
 
@@ -139,7 +238,7 @@ setMethod("as.list", "IpiAnnDbMap",
         }
         if (is.null(names))
             names <- names(x)
-        formatAnnList(ann_list, names)
+        .formatAnnList(ann_list, names)
     }
 )
 
@@ -209,7 +308,7 @@ setMethod("as.list", "GoAnnDbMap",
     ann_list <- split(left_col, data0[["go_id"]])
     if (is.null(names))
         names <- names(x)
-    formatAnnList(ann_list, names)
+    .formatAnnList(ann_list, names)
 }
     
 setMethod("as.list", "RevGoAnnDbMap",
@@ -217,6 +316,26 @@ setMethod("as.list", "RevGoAnnDbMap",
 )
 setMethod("as.list", "RevGo3AnnDbMap",
     function(x, names=NULL) .RevGoAsList(x, names)
+)
+
+setMethod("as.list", "GONodeAnnDbMap",
+    function(x, names=NULL)
+    {
+        if (!is.null(names) && length(names) == 0)
+            return(list())
+        table0 <- toTable(x, left.names=names)
+        if (is.null(names))
+            names <- names(x)
+        makeGONode <- function(go_id, Term, Ontology, Definition, ...)
+        {
+            new("GONode", GOID=go_id[1],
+                          Term=Term[1],
+                          Ontology=Ontology[1],
+                          Definition=Definition[1],
+                          ...)
+        }
+        .foldFlatMap(table0, names, monovalued=TRUE, makeGONode)
+    }
 )
 
 

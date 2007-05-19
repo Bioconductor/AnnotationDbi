@@ -29,14 +29,14 @@ setClass("GONode",
         GOID="character",
         Term="character",
         Ontology="character",
+        Definition="character",
         Synonym="character",
-        Secondary="character",
-        Definition="character"
+        Secondary="character"
     ),
     prototype(
+        #Definition=as.character(NA),
         Synonym=as.character(NA),
-        Secondary=as.character(NA),
-        Definition=as.character(NA)
+        Secondary=as.character(NA)
     )
 )
 
@@ -45,31 +45,30 @@ setClass("GONode",
 ### Constructor-like function.
 ###
 
-GONode <- function(GOID, Term, Ontology,
-                   Synonym=NA, Secondary=NA, Definition=NA)
+GONode <- function(GOID, Term, Ontology, Definition,
+                   Synonym=NA, Secondary=NA)
 {
     if (!is.character(Synonym))
         Synonym <- as.character(Synonym)
     if (!is.character(Secondary))
         Secondary <- as.character(Secondary)
-    if (!is.character(Definition))
-        Definition <- as.character(Definition)
-    new("GONode", GOID=GOID, Term=Term, Ontology=Ontology,
-                  Synonym=Synonym, Secondary=Secondary, Definition=Definition)
+    new("GONode", GOID=GOID, Term=Term,
+                  Ontology=Ontology, Definition=Definition,
+                  Synonym=Synonym, Secondary=Secondary)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "GOID", "Term", "Ontology", "Synonym", "Secondary" and "Definition"
+### The "GOID", "Term", "Ontology", "Definition", "Synonym" and "Secondary" 
 ### generics (accessor methods).
 ###
 
 setGeneric("GOID", function(object) standardGeneric("GOID")) 
 setGeneric("Term", function(object) standardGeneric("Term"))
 setGeneric("Ontology", function(object) standardGeneric("Ontology"))
+setGeneric("Definition", function(object) standardGeneric("Definition"))
 setGeneric("Synonym", function(object) standardGeneric("Synonym"))
 setGeneric("Secondary", function(object) standardGeneric("Secondary"))
-setGeneric("Definition", function(object) standardGeneric("Definition"))
 
 setMethod("GOID", "GONode", function(object) object@GOID)
 
@@ -77,11 +76,11 @@ setMethod("Term", "GONode", function(object) object@Term)
 
 setMethod("Ontology", "GONode", function(object) object@Ontology)
 
+setMethod("Definition", "GONode", function(object) object@Definition)
+
 setMethod("Synonym", "GONode", function(object) object@Synonym)
 
 setMethod("Secondary", "GONode", function(object) object@Secondary)
-
-setMethod("Definition", "GONode", function(object) object@Definition)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -93,18 +92,18 @@ setMethod("show", "GONode",
     {
         s <- character(0)
         if (!is.na(GOID(object)[1]))
-            s <- c(s, paste("GOID =", GOID(object)), "")
+            s <- c(s, paste("GOID:", GOID(object)))
         if (!is.na(Term(object)[1]))
-            s <- c(s, paste("Term =", Term(object)), "")
+            s <- c(s, paste("Term:", Term(object)))
         if (!is.na(Ontology(object)[1]))
-            s <- c(s, paste("\nOntology =", Ontology(object)), "")
-        if (!is.na(Synonym(object)[1]))
-            s <- c(s, paste("\nSynonym =", Synonym(object)), "")
-        if (!is.na(Secondary(object)[1]))
-            s <- c(s, paste("\nSecondary =", Secondary(object)), "")
+            s <- c(s, paste("Ontology:", Ontology(object)))
         if (!is.na(Definition(object)[1]))
-            s <- c(s, paste("\nDefinition =", Definition(object)), "")
-        cat(strwrap(s, exdent=5), sep="\n")
+            s <- c(s, paste("Definition:", Definition(object)))
+        if (!is.na(Synonym(object)[1]))
+            s <- c(s, paste("Synonym:", Synonym(object)))
+        if (!is.na(Secondary(object)[1]))
+            s <- c(s, paste("Secondary:", Secondary(object)))
+        cat(strwrap(s, exdent=4), sep="\n")
     }
 )
 

@@ -9,16 +9,16 @@
 \alias{GOID}
 \alias{Term}
 \alias{Ontology}
+\alias{Definition}
 \alias{Synonym}
 \alias{Secondary}
-\alias{Definition}
 
 \alias{GOID,GONode-method}
 \alias{Term,GONode-method}
 \alias{Ontology,GONode-method}
+\alias{Definition,GONode-method}
 \alias{Synonym,GONode-method}
 \alias{Secondary,GONode-method}
-\alias{Definition,GONode-method}
 
 \alias{show,GONode-method}
 
@@ -28,7 +28,7 @@
 
 \section{Objects from the Class}{
   Objects can be created by calls of the form
-  \code{GONode(GOId, term, ontology, synonym, secondary, definition)}.
+  \code{GONode(GOId, term, ontology, definition, synonym, secondary)}.
   GOId, term, and ontology are required.
 }
 
@@ -42,6 +42,8 @@
     \item{\code{Ontology}:}{Object of class \code{"character"} Gene
       Ontology category. Can be MF - molecular function, CC - cellular
       component, or BP - biological process.}
+    \item{\code{Definition}:}{Object of class \code{"character"} Further
+      definition of the ontology of the primary GO id.}
     \item{\code{Synonym}:}{Object of class \code{"character"} other
       ontology terms that are considered to be synonymous to the primary
       term attached to the GO id (e.g. "type I programmed cell death" is a
@@ -54,8 +56,6 @@
       that are secondary to the primary GO id as results of merging GO
       terms so that One GO id becomes the primary GO id and the rest
       become the secondary.}
-    \item{\code{Definition}:}{Object of class \code{"character"} Further
-      definition of the ontology of the primary GO id.}
   }
 }
 
@@ -67,12 +67,12 @@
       The get method for slot Term.}
     \item{Ontology}{\code{signature(object = "GONode")}:
       The get method for slot Ontology.}
+    \item{Definition}{\code{signature(object = "GONode")}:
+      The get method for slot Definition.}
     \item{Synonym}{\code{signature(object = "GONode")}:
       The get method for slot Synonym.}
     \item{Secondary}{\code{signature(object = "GONode")}:
       The get method for slot Secondary.}
-    \item{Definition}{\code{signature(object = "GONode")}:
-      The get method for slot Definition.}
     \item{show}{\code{signature(x = "GONode")}:
       The method for pretty print.}
   }
