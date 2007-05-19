@@ -3,7 +3,7 @@
 ### ------------
 ###
 ### Helper functions used by the low-level API.
-### Nothing from this file should need to be exported exported.
+### Nothing from this file should need to be exported.
 ###
 ### -------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@
 .TWO_SINGLE_QUOTE <- paste(.SINGLE_QUOTE, .SINGLE_QUOTE, sep="")
 .LBRACE_REGX <- '\\{'
 .RBRACE_REGX <- '\\}'
-.L2RBRICK_LOCAL_COLNAME_REGX <- paste(
+.OUTOFCONTEXT_COLNAME_REGX <- paste(
     .LBRACE_REGX,
     "([^{}", .SINGLE_QUOTE, "]*)",
     .RBRACE_REGX,
@@ -37,31 +37,29 @@
     replacement <- "\\1"
     if (!missing(context) && !is.na(context) && context != "")
         replacement <- paste(context, replacement, sep=".")
-    gsub(.L2RBRICK_LOCAL_COLNAME_REGX, replacement, template)
+    gsub(.OUTOFCONTEXT_COLNAME_REGX, replacement, template)
 }
 
 .toSQLStringSet <- function(names)
 {
-
+    if (length(names) == 0)
+        return("")
     names <- gsub(.SINGLE_QUOTE, .TWO_SINGLE_QUOTE, names, fixed=TRUE)
-    if (length(names) != 0)
-        names <- paste(.SINGLE_QUOTE, names, .SINGLE_QUOTE, sep="")
+    names <- paste(.SINGLE_QUOTE, names, .SINGLE_QUOTE, sep="")
     paste(names, collapse=",")
 }
 
 .toSQLWhere <- function(colname, names)
 {
-    where <- colname
     if (is.null(names))
-        where <- paste(where, "IS NOT NULL")
+        paste(colname, "IS NOT NULL")
     else
-        where <- paste(where, " IN (", .toSQLStringSet(names), ")", sep="")
-    where
+        paste(colname, " IN (", .toSQLStringSet(names), ")", sep="")
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### L2Rpath manipulation.
+### L2Rbrick/L2Rpath manipulation.
 ###
 ### AnnDbMap objects have an L2Rpath slot which must be a non-empty list of
 ### L2Rbrick objects.
@@ -265,6 +263,7 @@ dbGetTable <- function(conn, table, where=NULL)
     .dbGetQuery(conn, sql)
 }
 
+### CURRENTLY BROKEN!
 dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.names,
                                        right.db_table, right.colname, right.names,
                                        show.colnames, from, verbose=FALSE)
@@ -281,6 +280,7 @@ dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.names,
     .dbGetQuery(conn, sql)
 }
 
+### CURRENTLY BROKEN!
 dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname, 
                                          right.db_table, right.colname, from)
 {

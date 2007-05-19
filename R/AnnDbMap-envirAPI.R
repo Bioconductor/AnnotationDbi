@@ -78,7 +78,7 @@
 ###       a --> A, B
 ###       b --> A
 ###       c --> B
-###     The right objects have 1 tag, this tag is a numeric vector:
+###     In addition, the right objects have 1 tag, which is a numeric vector:
 ###       A is tagged with c(1.2, 0.9)
 ###       B is tagged with NA
 ###
@@ -107,16 +107,16 @@
 ###     - the "c" element is a named list of 1 element, named "B" and
 ###       containing the representation of B.
 ###   We call this the "folded" representation of map M.
-###   .foldFlatMap() does the conversion from "flat" to "folded".
+###   .foldFlatMap() does the conversion from "flattened" to "folded".
 ###
 ### 'FUN' is the formatting function that is applied on-the-fly on each
 ### object during the "folding" process. If 'FUN' is omitted then
 ### 'function(...) list(...)' is used so no information is lost and the
-### formatting can be done later like this:
+### formatting can be done later with:
 ###
 ###   > ann_list <- .foldFlatMap(table0, names)
-###   > ann_list <- lapply(ann_list,
-###                        function(val) lapply(val, function(x) do.call(FUN, x)))
+###   > ann_list <- lapply(ann_list, function(val)
+###                                  lapply(val, function(x) do.call(FUN, x)))
 ###
 ### The result will be the same as with just:
 ###
@@ -124,8 +124,18 @@
 ###
 ### but the latter will be faster.
 ###
+### 3 types are supported:
+###   type 1: mono-valued map
+###   type 2: multi-valued map containing 1 right object per row (i.e. all
+###           right objects are stored in a single row, this can only be known
+###           in advance if we know that their tags are mono-valued)
+###   type 3: multi-valued map where more than 1 row can be needed to store
+###           a given right object (this can happen only if at least one of the
+###           tags are multi-valued)
+### In the example above, map M is of type 3.
+###
 
-.foldFlatMap <- function(table0, names, monovalued=FALSE, FUN)
+.foldFlatMap <- function(table0, names, type, FUN)
 {
     ann_list <- as.list(rep(as.character(NA), length(names)))
     names(ann_list) <- names
@@ -141,11 +151,11 @@
     for (i1 in seq_len(length(ii))) {
         i2 <- ii[i1]
         slice_one <- lapply(slicing_one, function(col) col[[i1]])
-        if (monovalued) {
+        if (type == 1) {
             ann_list[[i2]] <- do.call(FUN, slice_one)
             next
         }
-        if (!any(duplicated(slice_one[[1]]))) {
+        if (type == 2 || !any(duplicated(slice_one[[1]]))) {
             ann_list[[i2]] <- do.call("mapply", c(FUN=FUN, slice_one, SIMPLIFY=FALSE))
             next
         }
@@ -318,6 +328,16 @@ setMethod("as.list", "RevGo3AnnDbMap",
     function(x, names=NULL) .RevGoAsList(x, names)
 )
 
+### Formatting the right objects with 'makeGONode' instead of just using the
+### default formatting provided by .foldFlatMap() (the default is to create a
+### list for each object) makes things _much_ slower:
+###  > system.time(aa <- .foldFlatMap(toTable(GOTERM), names(GOTERM), type=1))
+###     user  system elapsed 
+###    1.988   0.020   2.005 
+###  > system.time(bb <- as.list(GOTERM))
+###     user  system elapsed 
+###   27.710   0.048  27.777
+### Why is the S4 initialization mechanism so slow?
 setMethod("as.list", "GONodeAnnDbMap",
     function(x, names=NULL)
     {
@@ -334,7 +354,7 @@ setMethod("as.list", "GONodeAnnDbMap",
                           Definition=Definition[1],
                           ...)
         }
-        .foldFlatMap(table0, names, monovalued=TRUE, makeGONode)
+        .foldFlatMap(table0, names, type=1, makeGONode)
     }
 )
 
