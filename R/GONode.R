@@ -24,38 +24,54 @@
 ###
 ### -------------------------------------------------------------------------
 
+
 setClass("GONode",
     representation(
-        GOID="character",
-        Term="character",
-        Ontology="character",
-        Definition="character",
-        Synonym="character",
-        Secondary="character"
-    ),
-    prototype(
-        #Definition=as.character(NA),
-        Synonym=as.character(NA),
-        Secondary=as.character(NA)
+        GOID="character",       # a single string (mono-valued)
+        Term="character",       # a single string (mono-valued)
+        Ontology="character",   # a single string (mono-valued)
+        Definition="character", # a single string (mono-valued)
+        Synonym="character",    # any length including 0 (multi-valued)
+        Secondary="character"   # any length including 0 (multi-valued)
     )
 )
 
+.GONODE_MONOVALUED_SLOTS <- c("GOID", "Term", "Ontology", "Definition")
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Constructor-like function.
+### Initialization.
 ###
 
-GONode <- function(GOID, Term, Ontology, Definition,
-                   Synonym=NA, Secondary=NA)
-{
-    if (!is.character(Synonym))
-        Synonym <- as.character(Synonym)
-    if (!is.character(Secondary))
-        Secondary <- as.character(Secondary)
-    new("GONode", GOID=GOID, Term=Term,
-                  Ontology=Ontology, Definition=Definition,
-                  Synonym=Synonym, Secondary=Secondary)
-}
+setMethod("initialize", "GONode",
+    function(.Object, ...)
+    {
+        args <- list(...)
+        argnames <- names(args)
+        if (is.null(argnames) || any(argnames == ""))
+            stop("all arguments must be named")
+        argnames <- match.arg(argnames, slotNames(.Object), several.ok=TRUE)
+        if (!(all(.GONODE_MONOVALUED_SLOTS %in% argnames))) {
+            s <- paste(.GONODE_MONOVALUED_SLOTS, collapse=", ")
+            stop("arguments ", s, " are mandatory")
+        }
+        for (i in seq_len(length(args))) {
+            argname <- argnames[i]
+            value <- args[[i]]
+            if ((argname %in% .GONODE_MONOVALUED_SLOTS)) {
+                if (length(value) != 1)
+                    stop("can't assign ", length(value),
+                         " values to mono-valued slot ", argname)
+            } else {
+                value <- value[!(value %in% c(NA, ""))]
+            }
+            slot(.Object, argname) <- value
+        }
+        .Object
+    }
+)
+
+GONode <- function(...) new("GONode", ...)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -91,18 +107,17 @@ setMethod("show", "GONode",
     function(object)
     {
         s <- character(0)
-        if (!is.na(GOID(object)[1]))
-            s <- c(s, paste("GOID:", GOID(object)))
-        if (!is.na(Term(object)[1]))
-            s <- c(s, paste("Term:", Term(object)))
-        if (!is.na(Ontology(object)[1]))
-            s <- c(s, paste("Ontology:", Ontology(object)))
-        if (!is.na(Definition(object)[1]))
-            s <- c(s, paste("Definition:", Definition(object)))
-        if (!is.na(Synonym(object)[1]))
-            s <- c(s, paste("Synonym:", Synonym(object)))
-        if (!is.na(Secondary(object)[1]))
-            s <- c(s, paste("Secondary:", Secondary(object)))
+        for (slotname in slotNames(object)) {
+            x <- slot(object, slotname)
+            if ((slotname %in% .GONODE_MONOVALUED_SLOTS) && length(x) != 1) {
+                warning("mono-valued slot ", slotname,
+                        " contains ", length(x), " values")
+            } else {
+                if (length(x) == 0)
+                    next
+            }
+            s <- c(s, paste(slotname, ": ", x, sep=""))
+        }
         cat(strwrap(s, exdent=4), sep="\n")
     }
 )

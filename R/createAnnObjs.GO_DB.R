@@ -234,8 +234,14 @@ GO_DB_AnnDbMap_seeds <- list(
                     Term="{term}",
                     Ontology="{ontology}",
                     Definition="{definition}",
-                    Synonym="NULL",
-                    Secondary="NULL"
+                    ## The RSQLite driver crashes on queries like
+                    ##   SELECT NULL, ... FROM ...
+                    ## so a temporary workaround is to use
+                    ##   SELECT '', ... FROM ...
+                    #Synonym="NULL",
+                    #Secondary="NULL"
+                    Synonym="''",
+                    Secondary="''"
                 )
             )
         )
