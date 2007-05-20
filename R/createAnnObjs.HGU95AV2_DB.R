@@ -254,9 +254,7 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
 
 compareAnnDataIn2Pkgs.HGU95AV2_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(HGU95AV2_DB_AtomicAnnDbMap_seeds, function(x) x$objName)
-    direct_maps <- c(direct_maps, sapply(HGU95AV2_DB_IpiAnnDbMap_seeds, function(x) x$objName))
-    direct_maps <- c(direct_maps, "GO")
+    direct_maps <- sapply(HGU95AV2_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ENZYME2PROBE",
         "PATH2PROBE",

@@ -51,7 +51,7 @@
 
 .toSQLWhere <- function(colname, names)
 {
-    if (is.null(names))
+    if (is.null(names) || length(names) == 1 && is.na(names))
         paste(colname, "IS NOT NULL")
     else
         paste(colname, " IN (", .toSQLStringSet(names), ")", sep="")
@@ -289,6 +289,16 @@ dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname,
     if (!is.null(right.db_table))
         sql <- paste(sql, "AND", .toSQLWhere(right.colname, NULL))
     .dbGetQuery(conn, sql)[[1]]
+}
+
+dbGetMapLinks <- function(conn, L2Rpath)
+{
+    stop("COMING SOON, SORRY!")
+}
+
+dbCountMapLinks <- function(conn, L2Rpath)
+{
+    stop("COMING SOON, SORRY!")
 }
 
 dbSelectFromL2Rpath <- function(conn, L2Rpath, left.names, right.names,

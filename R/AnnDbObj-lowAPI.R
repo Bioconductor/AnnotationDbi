@@ -16,11 +16,13 @@
 ###        left.colname, right.colname,
 ###        tagnames,
 ###        colnames,
+###        ncol,
 ###        left.filter, right.filter,
 ###        show
 ###
 ###   2) Generics that access the database:
-###        toTable, as.data.frame, nrow,
+###        links, nlinks,
+###        flatten, toTable, nrow, dim,
 ###        left.names, right.names, names,
 ###        left.length, right.length, length,
 ###        as.character,
@@ -83,9 +85,11 @@ setMethod("revmap", "RevGo3AnnDbMap",
     function(x, objName=NULL) stop("already a reverse map")
 )
 
+### one more for environments...
 setMethod("revmap", "environment",
     function(x, objName=NULL) l2e(reverseSplit(as.list(x)))
 )
+
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -123,6 +127,8 @@ setMethod("colnames", "AnnDbMap",
         c(left.colname(x), right.colname(x), tagnames(x))
 )
 
+setMethod("ncol", "AnnDbMap", function(x) length(colnames(x)))
+
 setMethod("left.filter", "AnnDbMap",
     function(x) L2Rpath.leftmostFilter(x@L2Rpath))
 setMethod("right.filter", "AnnDbMap",
@@ -130,11 +136,22 @@ setMethod("right.filter", "AnnDbMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "toTable" new generic.
+### The "links" and "nlinks" new generics.
+###
+
+setMethod("links", "AnnDbMap",
+    function(x) dbGetMapLinks(db(x), x@L2Rpath))
+
+setMethod("nlinks", "AnnDbMap",
+    function(x) dbCountMapLinks(db(x), x@L2Rpath))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "flatten" new generic.
 ###
 ### Note that because we use the same JOIN for a map and its corresponding
 ### "reverse" map (this is made possible thanks to the use of INNER joins),
-### then the result returned by "toTable" or "nrow" does not depend on the
+### then the result returned by "flatten" or "nrow" does not depend on the
 ### orientation (direct/reverse) of the map which is a nice property
 ### (e.g. 'nrow(map) == nrow(revmap(map))').
 ###
@@ -148,20 +165,32 @@ setMethod("right.filter", "AnnDbMap",
 ### only NULL and NA-free character vectors are guaranted to work properly.
 ###
 
-setMethod("toTable", "AnnDbTable",
-    function(x, left.names=NULL, verbose=FALSE)
-    {
-        dbRawAnnDbMapToTable(db(x), left.table(x), left.colname(x), left.names,
-                                    NULL, NULL, NULL,
-                                    x@showCols, x@from, verbose)
-    }
-)
+### CURRENTLY BROKEN!
+#setMethod("flatten", "AnnDbTable",
+#    function(x, left.names, verbose=FALSE)
+#    {
+#        dbRawAnnDbMapToTable(db(x), left.table(x), left.colname(x), left.names,
+#                                    NULL, NULL, NULL,
+#                                    x@showCols, x@from, verbose)
+#    }
+#)
 
-setMethod("toTable", "AnnDbMap",
-    function(x, left.names=NULL, right.names=NULL, extra.colnames=NULL, verbose=FALSE)
+setMethod("flatten", "AnnDbMap",
+    function(x, left.names, right.names, extra.colnames=NULL, verbose=FALSE)
     {
-        dbSelectFromL2Rpath(db(x), x@L2Rpath, left.names, right.names,
-                                   extra.colnames, verbose)
+        if (missing(left.names))
+            left.names <- NULL
+        if (missing(right.names))
+            right.names <- NULL
+        data0 <- dbSelectFromL2Rpath(db(x), x@L2Rpath,
+                                     left.names, right.names,
+                                     extra.colnames, verbose)
+        if (is.null(left.names))
+            left.names <- left.names(x)
+        if (is.null(right.names))
+            right.names <- right.names(x)
+        new("FlatBimap", data=data0,
+                         left.names=left.names, right.names=right.names)
     }
 )
 
@@ -172,53 +201,50 @@ setMethod("toTable", "AnnDbMap",
 ### or later in R with rbind():
 ###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
 ### Surprisingly the latter is almost twice faster than the former!
-setMethod("toTable", "Go3AnnDbMap",
-    function(x, left.names=NULL, right.names=NULL, extra.colnames=NULL, verbose=FALSE)
+setMethod("flatten", "Go3AnnDbMap",
+    function(x, left.names, right.names, extra.colnames=NULL, verbose=FALSE)
     {
+        if (missing(left.names))
+            left.names <- NULL
+        if (missing(right.names))
+            right.names <- NULL
         getPartialSubmap <- function(ontology)
         {
             table <- right.table(x)[ontology]
             L2Rpath <- x@L2Rpath
             L2Rpath[[length(L2Rpath)]]@table <- table
-            data <- dbSelectFromL2Rpath(db(x), L2Rpath, left.names, right.names,
-                                               extra.colnames, verbose)
+            data <- dbSelectFromL2Rpath(db(x), L2Rpath,
+                                        left.names, right.names,
+                                        extra.colnames, verbose)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- ontology
             data
         }
-        rbind(getPartialSubmap("BP"),
-              getPartialSubmap("CC"),
-              getPartialSubmap("MF"))
+        data0 <- rbind(getPartialSubmap("BP"),
+                       getPartialSubmap("CC"),
+                       getPartialSubmap("MF"))
+        if (is.null(left.names))
+            left.names <- left.names(x)
+        if (is.null(right.names))
+            right.names <- right.names(x)
+        new("FlatBimap", data=data0,
+                         left.names=left.names, right.names=right.names)
     }
 )
 
-### "as.data.frame" is equivalent to "toTable". Might be deprecated soon.
-setMethod("as.data.frame", "AnnDbObj",
-    function(x, row.names=NULL, optional=FALSE,
-             left.names=NULL, right.names=NULL, ...)
-    {
-        if (missing(left.names))
-            left.names <- row.names
-        if (missing(right.names)) {
-            if (missing(optional))
-                return(toTable(x, left.names, ...))
-            if (!identical(optional, FALSE))
-                right.names <- optional
-        }
-        toTable(x, left.names, right.names=right.names, ...)
-    }
-)
+setMethod("toTable", "AnnDbMap", function(x, ...) flatten(x, ...)@data)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "nrow" new generic.
 ###
 ### Conceptual definition (for AnnDbMap object x):
-###     nrow(x) :== nrow(toTable(x))
+###     nrow(x) :== nrow(flatten(x))
 ###
-### Since "toTable" is unoriented, then "nrow" is unoriented too.
+### Since "flatten" is unoriented, then "nrow" is unoriented too.
 ###
 
+### CURRENTLY BROKEN!
 setMethod("nrow", "AnnDbTable",
     function(x)
     {
@@ -243,6 +269,9 @@ setMethod("nrow", "Go3AnnDbMap",
         countRows("BP") + countRows("CC") + countRows("MF")
     }
 )
+
+setMethod("dim", "AnnDbMap",
+    function(x) c(nrow(x), ncol(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -361,7 +390,7 @@ setMethod("as.character", "AtomicAnnDbMap",
     {
         if (length(tagnames(x)) != 0)
             stop("AtomicAnnDbMap object with tags cannot be coerced to a character vector")
-        data <- toTable(x)
+        data <- flatten(x, left.names=NA, right.names=NA)@data
         ans <- data[[2]] # could also use [[right.colname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
@@ -377,7 +406,7 @@ setMethod("as.character", "RevAtomicAnnDbMap",
     {
         if (length(tagnames(x)) != 0)
             stop("cannot coerce to character an AtomicAnnDbMap object with tags")
-        data <- toTable(x)
+        data <- flatten(x, left.names=NA, right.names=NA)@data
         ans <- data[[1]] # could also use [[left.colname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
@@ -439,11 +468,11 @@ setMethod("toList", "AnnDbMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data0 <- toTable(x, left.names=names)
+        data0 <- flatten(x, left.names=names, right.names=NA)@data
         if (nrow(data0) == 0) {
             ann_list <- list()
         } else {
-            ## Just to make sure that toTable() is not broken
+            ## Just to make sure that flatten() is not broken
             if (!identical(names(data0)[1:2], c(left.colname(x), right.colname(x))))
                 stop("annotationDbi internal problem, please report to the maintainer")
             data1 <- data0[ , -1]
@@ -465,13 +494,13 @@ setMethod("toList", "RevAnnDbMap",
     {
         if (!is.null(names) && length(names) == 0)
             return(list())
-        data0 <- toTable(x, right.names=names)
+        data0 <- flatten(x, left.names=NA, right.names=names)@data
         if (!is.null(names) && !all(names %in% data0[[2]])) # could also use [[right.colname(x)]]
             .checkNamesExist(names, names(x))
         if (nrow(data0) == 0) {
             ann_list <- list()
         } else {
-            ## Just to make sure that toTable() is not broken
+            ## Just to make sure that flatten() is not broken
             if (!identical(names(data0)[1:2], c(left.colname(x), right.colname(x))))
                 stop("annotationDbi internal problem, please report to the maintainer")
             data2 <- data0[ , -2]
@@ -492,13 +521,11 @@ setMethod("toList", "RevAnnDbMap",
 ###
 ### Conceptual definitions (for AnnDbMap object x):
 ###
-###     left.mappedNames(x) :== unique values in left col (col 1) of
-###                             toTable(x)
-###     count.left.mappedNames(x) :== length(left.mappedNames(x))
+###     left.mappedNames(x) :== left.mappedNames(flatten(x))
+###     count.left.mappedNames(x) :== count.left.mappedNames(flatten(x))
 ###
-###     right.mappedNames(x) :== unique values in right col (col 2) of
-###                              toTable(x)
-###     count.right.mappedNames(x) :== length(right.mappedNames(x))
+###     right.mappedNames(x) :== right.mappedNames(flatten(x))
+###     count.right.mappedNames(x) :== count.right.mappedNames(flatten(x))
 ###
 ### Note that all "right names" should be mapped to a "left name" hence
 ### right.mappedNames(x) should be the same as right.names(x) (something
@@ -578,6 +605,17 @@ setMethod("count.right.mappedNames", "Go3AnnDbMap",
 
 setMethod("mappedNames", "AnnDbMap", function(x) left.mappedNames(x))
 setMethod("mappedNames", "RevAnnDbMap", function(x) right.mappedNames(x))
+
+### and for environments...
+setMethod("mappedNames", "environment",
+    function(x)
+    {
+        is_na <- eapply(x, function(x) length(x) == 1 && is.na(x), all.names=TRUE)
+        names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
+    }
+)
+
+setMethod("count.mappedNames", "ANY", function(x) length(mappedNames(x)))
 setMethod("count.mappedNames", "AnnDbMap", function(x) count.left.mappedNames(x))
 setMethod("count.mappedNames", "RevAnnDbMap", function(x) count.right.mappedNames(x))
 

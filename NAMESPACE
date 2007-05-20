@@ -1,4 +1,5 @@
 import(methods)
+import(utils)
 import(Biobase)
 import(DBI)
 import(RSQLite)
@@ -8,6 +9,7 @@ exportClasses(
     "GONode",
 
     ## from R/AllClasses.R
+    "FlatBimap",
     "L2Rbrick",
     "AnnDbObj",
     "AnnDbTable",
@@ -28,6 +30,8 @@ exportClasses(
 )
 
 exportMethods(
+    "show",
+
     ## from R/GONode.R
     "GOID",
     "Term",
@@ -36,21 +40,35 @@ exportMethods(
     "Secondary",
     "Definition",
 
-    ## from R/AnnDbObj-lowAPI.R
+    ## FlatBimap API
+    "ncol",
+    "colnames",
+    "left.colname", "right.colname",
+    "left.names", "right.names",
+    "left.length", "right.length",
+    "left.mappedNames", "right.mappedNames",
+    "count.left.mappedNames", "count.right.mappedNames",
+    "nrow",
+    "dim",
+    "links",
+    "nlinks",
+    "head",
+    "tail",
+    "fold",
+    
+    ## AnnDbObj lowAPI
     "revmap",
     "db",
     "left.table", "right.table",
-    "left.colname", "right.colname",
-    "tagnames", "colnames",
+    "tagnames",
     "left.filter", "right.filter",
-    "show",
-    "toTable", "as.data.frame", "nrow",
-    "left.names", "right.names", "names",
-    "left.length", "right.length", "length",
+    "flatten", "toTable",
+    "names",
+    "length",
     "as.character",
     "toList",
-    "left.mappedNames", "right.mappedNames", "mappedNames",
-    "count.left.mappedNames", "count.right.mappedNames", "count.mappedNames",
+    "mappedNames",
+    "count.mappedNames",
     "is.na",
 
     ## from R/AnnDbMap-envirAPI.R

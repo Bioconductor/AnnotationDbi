@@ -117,16 +117,6 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
     {
         get(mapname, envir=as.environment(paste("package", pkgname, sep=":")), inherits=FALSE)
     }
-    mappedNames <- function(map)
-    {
-        if (is.environment(map)) {
-            is_na <- eapply(map, function(x) length(x) == 1 && is.na(x))
-            mapped_names <- names(is_na)[!as.logical(is_na)]
-        } else {
-            mapped_names <- mappedNames(map)
-        }
-        mapped_names
-    }
     mismatch_summary <- list()
     for (mapshortname in c(direct_maps, reverse_maps)) {
         mapname <- paste(prefix, mapshortname, sep="")

@@ -1,22 +1,3 @@
-
-setClass("L2Rbrick",
-    representation(
-        table="character",
-        Lcolname="character",
-        Rcolname="character",
-        tagJoin="character",
-        tagCols="character",
-        filter="character"
-    ),
-    prototype(
-        tagJoin=as.character(NA),
-        tagCols=as.character(NA),
-        filter="1"
-    )
-)
-
-
-
 ### =========================================================================
 ### Containers for SQLite-based annotation data.
 ### -------------------------------------------------------------------------
@@ -82,6 +63,22 @@ setClass("AnnDbTable",
 ### DB of the right values depend on the particular subclass of the "AnnDbMap"
 ### object. For reverse "AnnDbMap" objects, the mapping is "right-to-left".
 ###
+
+setClass("L2Rbrick",
+    representation(
+        table="character",
+        Lcolname="character",
+        Rcolname="character",
+        tagJoin="character",
+        tagCols="character",
+        filter="character"
+    ),
+    prototype(
+        tagJoin=as.character(NA),
+        tagCols=as.character(NA),
+        filter="1"
+    )
+)
 
 setClass("AnnDbMap",
     contains="AnnDbObj",
