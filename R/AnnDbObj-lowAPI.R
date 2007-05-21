@@ -21,7 +21,7 @@
 ###        show
 ###
 ###   2) Generics that access the database:
-###        links, nlinks,
+###        links, count.links,
 ###        flatten, toTable, nrow, dim,
 ###        left.names, right.names, names,
 ###        left.length, right.length, length,
@@ -112,22 +112,10 @@ setMethod("right.table", "AnnDbMap",
     function(x) L2Rpath.rightmostTable(x@L2Rpath))
 setMethod("right.table", "Go3AnnDbMap", function(x) x@rightTables)
 
-setMethod("left.colname", "AnnDbMap",
-    function(x) L2Rpath.leftmostColname(x@L2Rpath))
-setMethod("right.colname", "AnnDbMap",
-    function(x) L2Rpath.rightmostColname(x@L2Rpath))
-
 setMethod("tagnames", "AnnDbMap",
     function(x) L2Rpath.tagnames(x@L2Rpath))
 setMethod("tagnames", "Go3AnnDbMap",
     function(x) c(L2Rpath.tagnames(x@L2Rpath), "Ontology"))
-
-setMethod("colnames", "AnnDbMap",
-    function(x, do.NULL=TRUE, prefix="col")
-        c(left.colname(x), right.colname(x), tagnames(x))
-)
-
-setMethod("ncol", "AnnDbMap", function(x) length(colnames(x)))
 
 setMethod("left.filter", "AnnDbMap",
     function(x) L2Rpath.leftmostFilter(x@L2Rpath))
@@ -135,19 +123,254 @@ setMethod("right.filter", "AnnDbMap",
     function(x) L2Rpath.rightmostFilter(x@L2Rpath))
 
 
+
+### =========================================================================
+### BimapAPI0 methods for AnnDbMap objects
+### --------------------------------------
+###
+### Key property: if x is a AnnDbMap object, f1 a BimapAPI0 method for
+### FlatBimap objects and f2 the corresponding method for AnnDbMap objects
+### then f2(x) is expected to return exactly the same thing as f1(flatten(x)).
+###
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "links" and "nlinks" new generics.
+### The "left.colname", "right.colname" and "colnames" methods.
+
+setMethod("left.colname", "AnnDbMap",
+    function(x) L2Rpath.leftmostColname(x@L2Rpath))
+setMethod("right.colname", "AnnDbMap",
+    function(x) L2Rpath.rightmostColname(x@L2Rpath))
+
+setMethod("colnames", "AnnDbMap",
+    function(x, do.NULL=TRUE, prefix="col")
+        c(left.colname(x), right.colname(x), tagnames(x))
+)
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "links" and "count.links" methods.
 ###
 
 setMethod("links", "AnnDbMap",
     function(x) dbGetMapLinks(db(x), x@L2Rpath))
 
-setMethod("nlinks", "AnnDbMap",
+setMethod("count.links", "AnnDbMap",
     function(x) dbCountMapLinks(db(x), x@L2Rpath))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "flatten" new generic.
+### The "nrow" methods.
+###
+
+### CURRENTLY BROKEN!
+setMethod("nrow", "AnnDbTable",
+    function(x)
+    {
+        dbCountRawAnnDbMapRows(db(x), left.table(x), left.colname(x), NULL, NULL, x@from)
+    }
+)
+
+setMethod("nrow", "AnnDbMap",
+    function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
+)
+
+setMethod("nrow", "Go3AnnDbMap",
+    function(x)
+    {
+        countRows <- function(ontology)
+        {
+            table <- right.table(x)[ontology]
+            L2Rpath <- x@L2Rpath
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
+        }
+        countRows("BP") + countRows("CC") + countRows("MF")
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "left.names", "right.names" and "names" generics.
+###
+
+setMethod("left.names", "AnnDbMap",
+    function(x)
+    {
+        dbUniqueVals(db(x), left.table(x), left.colname(x),
+                            left.filter(x), x@datacache)
+    }
+)
+
+setMethod("right.names", "AnnDbMap",
+    function(x)
+    {
+        dbUniqueVals(db(x), right.table(x), right.colname(x),
+                            right.filter(x), x@datacache)
+    }
+)
+
+setMethod("right.names", "Go3AnnDbMap",
+    function(x)
+    {
+        getNames <- function(ontology)
+        {
+            table <- right.table(x)[ontology]
+            dbUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
+        }
+        ## Because a given go_id can only belong to 1 of the 3 ontologies...
+        ## (if not, then apply unique to this result)
+        c(getNames("BP"), getNames("CC"), getNames("MF"))
+    }
+)
+
+setMethod("names", "AnnDbMap", function(x) left.names(x))
+setMethod("names", "RevAnnDbMap", function(x) right.names(x))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "left.length", "right.length" and "length" generic.
+###
+### Conceptual definitions (for AnnDbMap object x):
+###     left.length(x) :== length(left.names(x))
+###     right.length(x) :== length(right.names(x))
+###
+
+setMethod("left.length", "AnnDbMap",
+    function(x)
+    {
+        dbCountUniqueVals(db(x), left.table(x), left.colname(x),
+                                 left.filter(x), x@datacache)
+    }
+)
+
+setMethod("right.length", "AnnDbMap",
+    function(x)
+    {
+        dbCountUniqueVals(db(x), right.table(x), right.colname(x),
+                                 right.filter(x), x@datacache)
+    }
+)
+
+setMethod("right.length", "Go3AnnDbMap",
+    function(x)
+    {
+        countNames <- function(ontology)
+        {
+            table <- right.table(x)[ontology]
+            dbCountUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
+        }
+        ## Because a given go_id can only belong to 1 of the 3 ontologies...
+        countNames("BP") + countNames("CC") + countNames("MF")
+    }
+)
+
+setMethod("length", "AnnDbMap", function(x) left.length(x))
+setMethod("length", "RevAnnDbMap", function(x) right.length(x))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "*mappedNames" methods.
+###
+### Note that for some DB schemas like the HGU95AV2_DB schema, all the "right
+### objects" are expected to be mapped to a "left object" (and this is true
+### for all the maps in the HGU95AV2_DB-based ann package) hence
+### right.mappedNames(x) should be the same as right.names(x) (maybe
+### something worth checking in a test unit).
+###
+
+### For an AtomicAnnDbMap, x@replace.single and x@replace.multiple will be
+### ignored, hence will give wrong results if one of those 2 fields has a
+### non-default value like silly maps ENTREZID and MULTIHIT in AG_DB schema.
+### But who cares, those maps are silly anyway...
+setMethod("left.mappedNames", "AnnDbMap",
+    function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+)
+setMethod("count.left.mappedNames", "AnnDbMap",
+    function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+)
+
+setMethod("right.mappedNames", "AnnDbMap",
+    function(x) dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+)
+setMethod("count.right.mappedNames", "AnnDbMap",
+    function(x) dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+)
+
+setMethod("left.mappedNames", "Go3AnnDbMap",
+    function(x)
+    {
+        getMappedNames <- function(ontology)
+        {
+            table <- right.table(x)[ontology]
+            L2Rpath <- x@L2Rpath
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
+        }
+        names1 <- getMappedNames("BP")
+        names2 <- getMappedNames("CC")
+        names3 <- getMappedNames("MF")
+        unique(c(names1, names2, names3))
+    }
+)
+setMethod("count.left.mappedNames", "Go3AnnDbMap",
+    function(x) length(left.mappedNames(x))
+)
+
+setMethod("right.mappedNames", "Go3AnnDbMap",
+    function(x)
+    {
+        getMappedNames <- function(ontology)
+        {
+            table <- right.table(x)[ontology]
+            L2Rpath <- x@L2Rpath
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            dbUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
+        }
+        names1 <- getMappedNames("BP")
+        names2 <- getMappedNames("CC")
+        names3 <- getMappedNames("MF")
+        ## Because a given go_id can only belong to 1 of the 3 ontologies...
+        ## (if not, then apply unique to this result)
+        c(names1, names2, names3)
+    }
+)
+setMethod("count.right.mappedNames", "Go3AnnDbMap",
+    function(x)
+    {
+        countMappedNames <- function(ontology)
+        {
+            table <- right.table(x)[ontology]
+            L2Rpath <- x@L2Rpath
+            L2Rpath[[length(L2Rpath)]]@table <- table
+            dbCountUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
+        }
+        ## Because a given go_id can only belong to 1 of the 3 ontologies...
+        countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")
+    }
+)
+
+setMethod("mappedNames", "AnnDbMap", function(x) left.mappedNames(x))
+setMethod("mappedNames", "RevAnnDbMap", function(x) right.mappedNames(x))
+
+setMethod("count.mappedNames", "AnnDbMap", function(x) count.left.mappedNames(x))
+setMethod("count.mappedNames", "RevAnnDbMap", function(x) count.right.mappedNames(x))
+
+### and for environments...
+setMethod("mappedNames", "environment",
+    function(x)
+    {
+        is_na <- eapply(x, function(x) length(x) == 1 && is.na(x), all.names=TRUE)
+        names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
+    }
+)
+
+setMethod("count.mappedNames", "environment", function(x) length(mappedNames(x)))
+
+
+
+### =========================================================================
+### The "flatten" methods
+### ---------------------
 ###
 ### Note that because we use the same JOIN for a map and its corresponding
 ### "reverse" map (this is made possible thanks to the use of INNER joins),
@@ -235,122 +458,10 @@ setMethod("flatten", "Go3AnnDbMap",
 setMethod("toTable", "AnnDbMap", function(x, ...) flatten(x, ...)@data)
 
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "nrow" new generic.
-###
-### Conceptual definition (for AnnDbMap object x):
-###     nrow(x) :== nrow(flatten(x))
-###
-### Since "flatten" is unoriented, then "nrow" is unoriented too.
-###
 
-### CURRENTLY BROKEN!
-setMethod("nrow", "AnnDbTable",
-    function(x)
-    {
-        dbCountRawAnnDbMapRows(db(x), left.table(x), left.colname(x), NULL, NULL, x@from)
-    }
-)
-
-setMethod("nrow", "AnnDbMap",
-    function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
-)
-
-setMethod("nrow", "Go3AnnDbMap",
-    function(x)
-    {
-        countRows <- function(ontology)
-        {
-            table <- right.table(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
-            dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
-        }
-        countRows("BP") + countRows("CC") + countRows("MF")
-    }
-)
-
-setMethod("dim", "AnnDbMap",
-    function(x) c(nrow(x), ncol(x)))
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.names", "right.names" and "names" generics.
-###
-
-setMethod("left.names", "AnnDbObj",
-    function(x)
-    {
-        dbUniqueVals(db(x), left.table(x), left.colname(x),
-                            left.filter(x), x@datacache)
-    }
-)
-
-setMethod("right.names", "AnnDbMap",
-    function(x)
-    {
-        dbUniqueVals(db(x), right.table(x), right.colname(x),
-                            right.filter(x), x@datacache)
-    }
-)
-
-setMethod("right.names", "Go3AnnDbMap",
-    function(x)
-    {
-        getNames <- function(ontology)
-        {
-            table <- right.table(x)[ontology]
-            dbUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
-        }
-        ## Because a given go_id can only belong to 1 of the 3 ontologies...
-        ## (if not, then apply unique to this result)
-        c(getNames("BP"), getNames("CC"), getNames("MF"))
-    }
-)
-
-setMethod("names", "AnnDbObj", function(x) left.names(x))
-setMethod("names", "RevAnnDbMap", function(x) right.names(x))
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.length", "right.length" and "length" generic.
-###
-### Conceptual definitions (for AnnDbMap object x):
-###     left.length(x) :== length(left.names(x))
-###     right.length(x) :== length(right.names(x))
-###
-
-setMethod("left.length", "AnnDbObj",
-    function(x)
-    {
-        dbCountUniqueVals(db(x), left.table(x), left.colname(x),
-                                 left.filter(x), x@datacache)
-    }
-)
-
-setMethod("right.length", "AnnDbMap",
-    function(x)
-    {
-        dbCountUniqueVals(db(x), right.table(x), right.colname(x),
-                                 right.filter(x), x@datacache)
-    }
-)
-
-setMethod("right.length", "Go3AnnDbMap",
-    function(x)
-    {
-        countNames <- function(ontology)
-        {
-            table <- right.table(x)[ontology]
-            dbCountUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
-        }
-        ## Because a given go_id can only belong to 1 of the 3 ontologies...
-        countNames("BP") + countNames("CC") + countNames("MF")
-    }
-)
-
-setMethod("length", "AnnDbObj", function(x) left.length(x))
-setMethod("length", "RevAnnDbMap", function(x) right.length(x))
+### =========================================================================
+### Other convenience methods
+### -------------------------
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -511,113 +622,6 @@ setMethod("toList", "RevAnnDbMap",
         alignAnnList(ann_list, names)
     }
 )
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "mappedNames" family of generics:
-###   - left.mappedNames, count.left.mappedNames
-###   - right.mappedNames, count.right.mappedNames
-###   - mappedNames, count.mappedNames
-###
-### Conceptual definitions (for AnnDbMap object x):
-###
-###     left.mappedNames(x) :== left.mappedNames(flatten(x))
-###     count.left.mappedNames(x) :== count.left.mappedNames(flatten(x))
-###
-###     right.mappedNames(x) :== right.mappedNames(flatten(x))
-###     count.right.mappedNames(x) :== count.right.mappedNames(flatten(x))
-###
-### Note that all "right names" should be mapped to a "left name" hence
-### right.mappedNames(x) should be the same as right.names(x) (something
-### worth checking in a test unit).
-###
-
-### For an AtomicAnnDbMap, x@replace.single and x@replace.multiple will be
-### ignored, hence will give wrong results if one of those 2 fields has a
-### non-default value like silly maps ENTREZID and MULTIHIT in AG_DB schema.
-### But who cares, those maps are silly anyway...
-setMethod("left.mappedNames", "AnnDbMap",
-    function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
-)
-setMethod("count.left.mappedNames", "AnnDbMap",
-    function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
-)
-
-setMethod("right.mappedNames", "AnnDbMap",
-    function(x) dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
-)
-setMethod("count.right.mappedNames", "AnnDbMap",
-    function(x) dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
-)
-
-setMethod("left.mappedNames", "Go3AnnDbMap",
-    function(x)
-    {
-        getMappedNames <- function(ontology)
-        {
-            table <- right.table(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
-            dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
-        }
-        names1 <- getMappedNames("BP")
-        names2 <- getMappedNames("CC")
-        names3 <- getMappedNames("MF")
-        unique(c(names1, names2, names3))
-    }
-)
-setMethod("count.left.mappedNames", "Go3AnnDbMap",
-    function(x) length(left.mappedNames(x))
-)
-
-setMethod("right.mappedNames", "Go3AnnDbMap",
-    function(x)
-    {
-        getMappedNames <- function(ontology)
-        {
-            table <- right.table(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
-            dbUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
-        }
-        names1 <- getMappedNames("BP")
-        names2 <- getMappedNames("CC")
-        names3 <- getMappedNames("MF")
-        ## Because a given go_id can only belong to 1 of the 3 ontologies...
-        ## (if not, then apply unique to this result)
-        c(names1, names2, names3)
-    }
-)
-setMethod("count.right.mappedNames", "Go3AnnDbMap",
-    function(x)
-    {
-        countMappedNames <- function(ontology)
-        {
-            table <- right.table(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
-            dbCountUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
-        }
-        ## Because a given go_id can only belong to 1 of the 3 ontologies...
-        countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")
-    }
-)
-
-setMethod("mappedNames", "AnnDbMap", function(x) left.mappedNames(x))
-setMethod("mappedNames", "RevAnnDbMap", function(x) right.mappedNames(x))
-
-### and for environments...
-setMethod("mappedNames", "environment",
-    function(x)
-    {
-        is_na <- eapply(x, function(x) length(x) == 1 && is.na(x), all.names=TRUE)
-        names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
-    }
-)
-
-setMethod("count.mappedNames", "ANY", function(x) length(mappedNames(x)))
-setMethod("count.mappedNames", "AnnDbMap", function(x) count.left.mappedNames(x))
-setMethod("count.mappedNames", "RevAnnDbMap", function(x) count.right.mappedNames(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

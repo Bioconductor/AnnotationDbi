@@ -9,6 +9,7 @@ exportClasses(
     "GONode",
 
     ## from R/AllClasses.R
+    "BimapAPI0",
     "FlatBimap",
     "L2Rbrick",
     "AnnDbObj",
@@ -40,18 +41,20 @@ exportMethods(
     "Secondary",
     "Definition",
 
-    ## FlatBimap API
-    "ncol",
+    ## BimapAPI0 interface
     "colnames",
     "left.colname", "right.colname",
     "left.names", "right.names",
-    "left.length", "right.length",
     "left.mappedNames", "right.mappedNames",
-    "count.left.mappedNames", "count.right.mappedNames",
     "nrow",
-    "dim",
     "links",
-    "nlinks",
+    "ncol",
+    "left.length", "right.length",
+    "count.left.mappedNames", "count.right.mappedNames",
+    "count.links",
+    "dim",
+
+    ## FlatBimap methods
     "head",
     "tail",
     "fold",
@@ -107,6 +110,7 @@ export(
     createAnnObjs.AFFYHUEX_DB,
 
     ## from R/AnnDbPkg-checker.R
+    checkProperty0,
     checkMAPCOUNTS
 )
 

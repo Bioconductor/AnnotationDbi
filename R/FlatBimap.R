@@ -1,6 +1,6 @@
 ### =========================================================================
-### FlatBimap objects
-### -----------------
+### The bimap concept, the BimapAPI0 interface and the FlatBimap objects
+### --------------------------------------------------------------------
 ###
 ### Example of a bimap M:
 ###
@@ -44,6 +44,71 @@
 ### -------------------------------------------------------------------------
 
 
+
+### =========================================================================
+### The "BimapAPI0" interface
+### -------------------------
+###
+### This is the common interface to FlatBimap and to AnnDbMap objects.
+### The "flatten" method defined in AnnDbObj-lowAPI.R plays a central role:
+### it transforms a AnnDbMap object into a FlatBimap.
+###
+### The BimapAPI0 interface must always satisfy Property0:
+###   if x is a AnnDbMap object, f1 a BimapAPI0 method for FlatBimap objects
+###   and f2 the corresponding method for AnnDbMap objects then f2(x) is
+###   expected to return _exactly_ the same thing as f1(flatten(x)).
+### 
+### The checkProperty0() function (AnnDbPkg-checker.R file) checks that
+### Property0 is satisfied on all the AnnDbMap objects of a given package.
+###
+
+
+### KEEP THIS IN SYNC WITH THE STATE OF AFFAIRS
+BimapAPI0_methods <- c(
+    ## 9 methods that _must_ be defined for BimapAPI0 extensions
+    "colnames",
+    "left.colname", "right.colname",
+    "left.names", "right.names",
+    "left.mappedNames", "right.mappedNames",
+    "nrow",
+    "links",
+    ## methods with a default definition
+    "ncol",
+    "left.length", "right.length",
+    "count.left.mappedNames", "count.right.mappedNames",
+    "count.links",
+    "dim"
+)
+    
+setClass("BimapAPI0", representation("VIRTUAL"))
+
+setMethod("ncol", "BimapAPI0",
+    function(x) length(colnames(x)))
+
+setMethod("left.length", "BimapAPI0",
+    function(x) length(left.names(x)))
+setMethod("right.length", "BimapAPI0",
+    function(x) length(right.names(x)))
+
+setMethod("count.left.mappedNames", "BimapAPI0",
+    function(x) length(left.mappedNames(x)))
+setMethod("count.right.mappedNames", "BimapAPI0",
+    function(x) length(right.mappedNames(x)))
+
+setMethod("count.links", "BimapAPI0",
+    function(x) nrow(links(x)))
+
+setMethod("dim", "BimapAPI0",
+    function(x) c(nrow(x), ncol(x)))
+
+
+
+### =========================================================================
+### The "FlatBimap" class
+### ---------------------
+###
+
+
 ### Possible col labels are: "left", "right", "tag", "Lattrib", "Rattrib"
 ### There must be exactly 1 "left" and 1 "right" col.
 ### There can be 0 or 1 "tag" col.
@@ -80,14 +145,9 @@ setMethod("initialize", "FlatBimap",
 )
 
 
-
-### =========================================================================
-### The FlatBimap API
-### -----------------
-
-
-setMethod("ncol", "FlatBimap",
-    function(x) ncol(x@data))
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### BimapAPI0 methods.
+###
 
 setMethod("colnames", "FlatBimap",
     function(x, do.NULL=TRUE, prefix="col") colnames(x@data))
@@ -102,26 +162,13 @@ setMethod("left.names", "FlatBimap",
 setMethod("right.names", "FlatBimap",
     function(x) x@right.names)
 
-setMethod("left.length", "FlatBimap",
-    function(x) length(left.names(x)))
-setMethod("right.length", "FlatBimap",
-    function(x) length(right.names(x)))
-
 setMethod("left.mappedNames", "FlatBimap",
     function(x) unique(x@data[[match("left", x@collabels)]]))
 setMethod("right.mappedNames", "FlatBimap",
     function(x) unique(x@data[[match("right", x@collabels)]]))
 
-setMethod("count.left.mappedNames", "FlatBimap",
-    function(x) length(left.mappedNames(x)))
-setMethod("count.right.mappedNames", "FlatBimap",
-    function(x) length(right.mappedNames(x)))
-
 setMethod("nrow", "FlatBimap",
     function(x) nrow(x@data))
-
-setMethod("dim", "FlatBimap",
-    function(x) c(nrow(x), ncol(x)))
 
 setMethod("links", "FlatBimap",
     function(x)
@@ -131,9 +178,11 @@ setMethod("links", "FlatBimap",
     }
 )
 
-setMethod("nlinks", "FlatBimap",
-    function(x) nrow(links(x)))
-    
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Other methods.
+###
+
 setMethod("head", "FlatBimap",
     function(x, n=10, ...)
     {

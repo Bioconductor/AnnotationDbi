@@ -8,7 +8,100 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Helper functions.
+### The "checkProperty0" function.
+###
+### Check that Property0 is satisfied on a given package (see FlatBimap.R
+### file for more info).
+###
+
+checkProperty0 <- function(pkgname)
+{
+    ## First we check that there is a generic for all the expected BimapAPI0
+    ## methods and that this generic has indeed a corresponding method for
+    ## BimapAPI0 objects.
+    for (FUN in BimapAPI0_methods) {
+        if (!isGeneric(FUN))
+            stop("AnnotationDbi problem: \"",
+                 FUN, "\" should be a generic")
+        fdef <- getGeneric(FUN)
+        classes <- ls(get(".MTable", envir = environment(fdef)), all.names=TRUE)
+        if (!any(sapply(classes, function(class) extends(class, "BimapAPI0"))))
+            stop("AnnotationDbi problem: can't find a \"",
+                 FUN, "\" method for BimapAPI0 objects")
+    }
+    ## Then we check  
+    #pkgenv <- asNamespace(pkgname) # so it works also if the pkg has no NAMESPACE
+    pkgenv <- as.environment(paste("package", pkgname, sep=":"))
+    for (objname in ls(pkgenv)) {
+        x <- pkgenv[[objname]]
+        if (!is(x, "AnnDbMap"))
+            next
+        cat("Testing BimapAPI0 methods on object '", objname, "':\n", sep="")
+        for (FUN in BimapAPI0_methods) {
+            cat(" - method: \"", FUN, "\"... ", sep="")
+            fdef <- get(FUN)
+            y1 <- fdef(x)
+            y2 <- fdef(flatten(x))
+            if (!identical(y1, y2))
+                stop(FUN, "(x) and ", FUN, "(flatten(x)) are not identical")
+            cat("OK\n")
+        }
+    }
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "checkMAPCOUNTS" function.
+###
+### Typical use:
+###   > checkMAPCOUNTS("hgu95av2db", "hgu95av2")
+###
+
+checkMAPCOUNTS <- function(pkgname, prefix)
+{
+    require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
+    getMap <- function(mapname) get(mapname, envir=asNamespace(pkgname))
+    MAPCOUNTS <- getMap(paste(prefix, "MAPCOUNTS", sep=""))
+    for (mapname in names(MAPCOUNTS)) {
+        cat("Counting mapped names for map ", mapname, ":\n", sep="")
+        map <- getMap(mapname)
+        map_length <- length(map)
+        cat("  - length(map) = ", map_length, "\n", sep="")
+
+        ## count0
+        count0 <- MAPCOUNTS[mapname]
+        cat("  - MAPCOUNTS[\"", mapname, "\"] = ", count0, "\n", sep="")
+
+        ## count1
+        if (is.numeric(map)) # to deal with the CHRLENGTHS case
+            t1 <- system.time(count1 <- sum(!is.na(map)))
+        else
+            t1 <- system.time(count1 <- count.mappedNames(map))
+        cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
+        if (count1 != count0)
+            stop("count1 and count0 differ")
+        if (is.numeric(map))
+            next
+
+        ## count2
+        t2 <- system.time(count2 <- length(mappedNames(map)))
+        cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
+        if (count2 != count0)
+            stop("count2 and count0 differ")
+        if (is(map, "IpiAnnDbMap"))
+            next
+
+        ## count3
+        t3 <- system.time(count3 <- sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x))))
+        cat("  - count3 = ", count3, " (", t3[3], " s)\n", sep="")
+        if (count3 != count0)
+            stop("count3 and count0 differ")
+    }
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "compareAnnDataIn2Pkgs" function.
 ###
 
 ### The identical.uulists function is a replacement for setequal when
@@ -81,10 +174,6 @@ identical.collections <- function(x, y)
     return(TRUE)
 }
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "compareAnnDataIn2Pkgs" function.
-###
 ### "compareAnnDataIn2Pkgs" compares the annotation data between 2 packages.
 ### We use it to validate our SQLite-based ann packages by comparing each of
 ### them to its envir-based sibling package e.g.:
@@ -107,7 +196,6 @@ identical.collections <- function(x, y)
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("ratLLMappings",
 ###                                                           "ratLLMappingsdb", "ratLLMappings")
 ###
-
 compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
                                   reverse_maps=c(), quick=FALSE, verbose=FALSE)
 {
@@ -184,58 +272,5 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
     cat("  - nb of PASSED maps = ", nb_PASSED, "\n", sep="")
     cat("  - nb of FAILED maps = ", nb_FAILED, "\n", sep="")
     mismatch_summary
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "checkMAPCOUNTS" function.
-###
-### Typical use:
-###   > checkMAPCOUNTS("hgu95av2db", "hgu95av2")
-###
-
-checkMAPCOUNTS <- function(pkgname, prefix)
-{
-    require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
-    getMap <- function(mapname)
-    {
-        get(mapname, envir=asNamespace(pkgname))
-    }
-    MAPCOUNTS <- getMap(paste(prefix, "MAPCOUNTS", sep=""))
-    for (mapname in names(MAPCOUNTS)) {
-        cat("Counting mapped names for map ", mapname, ":\n", sep="")
-        map <- getMap(mapname)
-        map_length <- length(map)
-        cat("  - length(map) = ", map_length, "\n", sep="")
-
-        ## count0
-        count0 <- MAPCOUNTS[mapname]
-        cat("  - MAPCOUNTS[\"", mapname, "\"] = ", count0, "\n", sep="")
-
-        ## count1
-        if (is.numeric(map)) # to deal with the CHRLENGTHS case
-            t1 <- system.time(count1 <- sum(!is.na(map)))
-        else
-            t1 <- system.time(count1 <- count.mappedNames(map))
-        cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
-        if (count1 != count0)
-            stop("count1 and count0 differ")
-        if (is.numeric(map))
-            next
-
-        ## count2
-        t2 <- system.time(count2 <- length(mappedNames(map)))
-        cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
-        if (count2 != count0)
-            stop("count2 and count0 differ")
-        if (is(map, "IpiAnnDbMap"))
-            next
-
-        ## count3
-        t3 <- system.time(count3 <- sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x))))
-        cat("  - count3 = ", count3, " (", t3[3], " s)\n", sep="")
-        if (count3 != count0)
-            stop("count3 and count0 differ")
-    }
 }
 

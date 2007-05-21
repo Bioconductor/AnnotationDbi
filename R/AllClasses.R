@@ -81,7 +81,7 @@ setClass("L2Rbrick",
 )
 
 setClass("AnnDbMap",
-    contains="AnnDbObj",
+    contains=c("AnnDbObj", "BimapAPI0"),
     representation(
         L2Rpath="list",             # list of L2Rbrick objects
         rightColType="character"

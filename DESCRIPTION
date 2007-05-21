@@ -8,8 +8,9 @@ Maintainer: Biocore Team <biocpkgs@lists.fhcrc.org>
 Depends: R (>= 2.5.0), methods, Biobase (>= 1.14.0), DBI (>= 0.2-3), RSQLite (>= 0.5-4)
 Imports: methods, Biobase, DBI, RSQLite
 Suggests: GO, hgu95av2db, hgu95av2
-Collate: AllClasses.R AllGenerics.R
+Collate: AllGenerics.R
          FlatBimap.R
+         AllClasses.R
          GONode.R
          db.R
          AnnDbObj-lowAPI.R
