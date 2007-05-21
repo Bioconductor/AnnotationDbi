@@ -2,13 +2,21 @@
 ### 
 ###
 
-GOtables <- function(all=FALSE)
+Go3tables <- function(all=FALSE)
 {
     tables <- c("go_bp", "go_cc", "go_mf")
     if (all)
         tables <- paste(tables, "_all", sep="")
     names(tables) <- c("BP", "CC", "MF")
     tables
+}
+
+makeGo3L2Rpath <- function(L2Rpath, table, ontology)
+{
+    l <- length(L2Rpath)
+    L2Rpath[[l]]@table <- table
+    L2Rpath[[l]]@tagCols[2] <- paste("'", ontology, "'", sep="")
+    L2Rpath
 }
 
 

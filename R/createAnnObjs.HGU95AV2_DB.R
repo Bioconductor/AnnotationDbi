@@ -210,10 +210,10 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
                 #table="go_term", # no rightmost table for a Go3AnnDbMap
                 Lcolname="id",
                 Rcolname="go_id",
-                tagCols=c(Evidence="{evidence}")
+                tagCols=c(Evidence="{evidence}", Ontology="NULL")
             )
         ),
-        rightTables=GOtables()
+        rightTables=Go3tables()
     )
 )
 
@@ -234,7 +234,7 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
 
     ## RevGo3AnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    map <- ann_objs$GO2PROBE; map@rightTables <- GOtables(all=TRUE)
+    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
 
     ## 2 special maps that are not AnnDbMap objects (just named integer vectors)

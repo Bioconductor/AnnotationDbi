@@ -119,6 +119,10 @@ setMethod("rev", "L2Rbrick",
     }
 )
 
+L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
+
+.L2Rpath.toString <- function(L2Rpath) paste(sapply(L2Rpath, toString), collapse="-")
+
 L2Rpath.leftmostTable <- function(L2Rpath) L2Rpath[[1]]@table
 L2Rpath.rightmostTable <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@table
 
@@ -141,6 +145,7 @@ L2Rpath.rightmostFilter <- function(L2Rpath)
     paste("(", .contextualizeColnames(filter), ")", sep="")
 }
 
+
 L2Rpath.tagnames <- function(L2Rpath)
 {
     tag_names <- NULL
@@ -157,10 +162,16 @@ L2Rpath.tagnames <- function(L2Rpath)
     tag_names
 }
 
-L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
+### THIS IS THE CURRENT DESIGN: the left col is the 1st col, the right col is
+### the 2nd col and then we have all the tags,  IT MUST BE KEPT CONSISTENT
+### THROUGH ALL THE REST OF THIS FILE... FOR NOW.
+L2Rpath.collabels <- function(L2Rpath)
+    c("left", "right", rep("tag", length(L2Rpath.tagnames(L2Rpath))))
 
-.L2Rpath.toString <- function(L2Rpath) paste(sapply(L2Rpath, toString), collapse="-")
-
+L2Rpath.colnames <- function(L2Rpath)
+    c(L2Rpath.leftmostColname(L2Rpath),
+      L2Rpath.rightmostColname(L2Rpath),
+      L2Rpath.tagnames(L2Rpath))
 
 ### Return a named list of 5 elements. Those elements are pieces of an SQL
 ### SELECT statement used by some of the DB functions in this file to build

@@ -63,27 +63,27 @@
 ###
 
 
-### KEEP THIS IN SYNC WITH THE STATE OF AFFAIRS
+### KEEP THIS IN SYNC WITH THE STATE OF AFFAIRS! Only methods of the first and
+### second group go here.
 BimapAPI0_methods <- c(
-    ## 9 methods that _must_ be defined for BimapAPI0 extensions
+    ## GROUP 1: 8 methods that _must_ be defined for the FlatBimap objects and
+    ## the AnnDbMap objects (or extensions)
+    "collabels",
     "colnames",
-    "left.colname", "right.colname",
     "left.names", "right.names",
     "left.mappedNames", "right.mappedNames",
     "nrow",
     "links",
-    ## methods with a default definition
-    "ncol",
+    ## GROUP 2: Methods for which a default is provided (below) but that are
+    ## redefined for the AnnDbMap objects to obtain better performance
     "left.length", "right.length",
     "count.left.mappedNames", "count.right.mappedNames",
     "count.links",
-    "dim"
+    "left.colname", "right.colname"
 )
-    
+ 
 setClass("BimapAPI0", representation("VIRTUAL"))
 
-setMethod("ncol", "BimapAPI0",
-    function(x) length(colnames(x)))
 
 setMethod("left.length", "BimapAPI0",
     function(x) length(left.names(x)))
@@ -97,6 +97,40 @@ setMethod("count.right.mappedNames", "BimapAPI0",
 
 setMethod("count.links", "BimapAPI0",
     function(x) nrow(links(x)))
+
+setMethod("ncol", "BimapAPI0",
+    function(x) length(colnames(x)))
+
+### left-to-right: direction =  1
+### right-to-left: direction = -1
+setMethod("from.colpos", "BimapAPI0",
+    function(x, direction)
+    {
+        if (direction == 1) side = "left" else side = "right"
+        match(side, collabels(x))
+    }
+)
+setMethod("to.colpos", "BimapAPI0",
+    function(x, direction) from.colpos(x, - direction))
+
+setMethod("left.colname", "BimapAPI0",
+    function(x) colnames(x)[from.colpos(x,  1)])
+setMethod("right.colname", "BimapAPI0",
+    function(x) colnames(x)[from.colpos(x, -1)])
+
+### FIXME
+### For now, tags and attributes are all mixed together which bad and will
+### cause problems when reversing some maps or when plugging maps together.
+### We need to make the distinction between tags and attributes but this
+### will require to change the current L2Rbrick class and make things more
+### complicated...
+setMethod("tags.colpos", "BimapAPI0",
+    function(x) seq_len(ncol(x))[-c(from.colpos(x, 1), from.colpos(x, -1))])
+
+setMethod("from.names", "BimapAPI0",
+    function(x, direction) if (direction == 1) left.names(x) else right.names(x))
+setMethod("to.names", "BimapAPI0",
+    function(x, direction) from.names(x, - direction))
 
 setMethod("dim", "BimapAPI0",
     function(x) c(nrow(x), ncol(x)))
@@ -114,6 +148,7 @@ setMethod("dim", "BimapAPI0",
 ### There can be 0 or 1 "tag" col.
 ### There can be any number of "Lattrib", "Rattrib" or unlabelled (NA) cols.
 setClass("FlatBimap",
+    contains="BimapAPI0",
     representation(
         collabels="character",   # must have the same length as the 'data' slot
         data="data.frame",
@@ -146,16 +181,14 @@ setMethod("initialize", "FlatBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### BimapAPI0 methods.
+### Required methods of the BimapAPI0 interface.
 ###
+
+setMethod("collabels", "FlatBimap",
+    function(x) x@collabels)
 
 setMethod("colnames", "FlatBimap",
     function(x, do.NULL=TRUE, prefix="col") colnames(x@data))
-
-setMethod("left.colname", "FlatBimap",
-    function(x) colnames(x)[match("left", x@collabels)])
-setMethod("right.colname", "FlatBimap",
-    function(x) colnames(x)[match("right", x@collabels)])
 
 setMethod("left.names", "FlatBimap",
     function(x) x@left.names)
@@ -180,7 +213,7 @@ setMethod("links", "FlatBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Other methods.
+### Other convenience methods.
 ###
 
 setMethod("head", "FlatBimap",
@@ -224,9 +257,17 @@ setMethod("show", "FlatBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "fold" method.
+### 2 functions for folding and formatting FlatBimap objects.
 ###
-### Folds and formats a FlatBimap object.
+
+
+### The "foldListOfAtomicVectors" function.
+foldListOfAtomicVectors <- function(x, direction, FUN)
+{
+    stop("NOT READY YET, SORRY")
+}
+
+### The "foldListOfLists" function.
 ###
 ### Folding a bimap is the action of converting its "flat" representation
 ### (as a FlatBimap object) to a list of right objects for a mono-valued map,
@@ -252,11 +293,11 @@ setMethod("show", "FlatBimap",
 ###     - the "d" element is a named list of 1 element, named "C" and
 ###       containing the representation of C.
 ###
-###   fold() does this conversion from "flat" to "list".
+###   foldListOfLists() does this conversion from "flat" to "list".
 ###
 ### Arguments:
 ###
-### 'from': "left" or "right"
+### 'direction': 1 for left-to-right and 2 for right-to-left
 ###
 ### 'mode': 3 modes are supported:
 ###         mode 1: mono-valued map
@@ -273,62 +314,61 @@ setMethod("show", "FlatBimap",
 ###        'function(...) list(...)' is used so no information is lost and
 ###        the formatting can always be done later with:
 ###
-###        > y <- fold(x)
+###        > y <- foldListOfLists(x)
 ###        > y <- lapply(y, function(val)
 ###                           lapply(val, function(x) do.call(myfun, x)))
 ###
 ###        The result will be the same as with just:
 ###
-###        > y <- fold(x, FUN=myfun)
+###        > y <- foldListOfLists(x, FUN=myfun)
 ###
 ###        but the latter will be faster.
 ###
-###
-
-### WARNING: only folding from "left" is working for now
-### TODO: make from "right" work!
-setMethod("fold", "FlatBimap",
-    function(x, from="left", mode, FUN)
-    {
-        from <- match.arg(from, c("left", "right"))
-        names <- switch(from,
-                        "left"=left.names(x),
-                        "right"=right.names(x))
-        ans <- as.list(rep(as.character(NA), length(names)))
-        names(ans) <- names
-        if (nrow(x) == 0)
-            return(ans)
-        if (from == "right")
-            stop("folding from \"right\" not yet ready, sorry")
-        if (missing(FUN))
-            FUN <- function(...) list(...)
-        ## First slicing (top level)
-        slicing_one <- lapply(2:length(x@data),
-                         function(j) split(x@data[[j]], x@data[[1]]))
-        names(slicing_one) <- names(x@data)[-1]
-        mapped_names <- names(slicing_one[[1]])
-        ii <- match(mapped_names, names)
-        for (i1 in seq_len(length(ii))) {
-            i2 <- ii[i1]
-            slice_one <- lapply(slicing_one, function(col) col[[i1]])
-            if (mode == 1) {
-                ans[[i2]] <- do.call(FUN, slice_one)
-                next
-            }
-            if (mode == 2 || !any(duplicated(slice_one[[1]]))) {
-                ans[[i2]] <- do.call("mapply",
-                                     c(FUN=FUN, slice_one, SIMPLIFY=FALSE))
-                next
-            }
-            ## Sub-slicing
-            slicing_two <- lapply(2:length(slice_one),
-                             function(j) split(slice_one[[j]], slice_one[[1]]))
-            slicing_two <- c(list(names(slicing_two[[1]])), slicing_two)
-            names(slicing_two) <- names(slice_one)
-            ans[[i2]] <- do.call("mapply",
-                                 c(FUN=FUN, slicing_two, SIMPLIFY=FALSE))
+### WARNING: only folding in direction 1 is currently working.
+### TODO: make it work with from="right"!
+foldListOfLists <- function(x, direction, mode, FUN)
+{
+    names <- from.names(x, direction)
+    ans <- as.list(rep(as.character(NA), length(names)))
+    names(ans) <- names
+    if (nrow(x) == 0)
+        return(ans)
+    if (direction == -1)
+        stop("right-to-left folding not yet ready, sorry")
+    if (missing(FUN))
+        FUN <- function(...) list(...)
+    ## First slicing (top level)
+    slicer1 <- from.colpos(x, direction)
+    slicer2 <- to.colpos(x, direction)
+    if (slicer2 > slicer1)
+        slicer2 <- slicer2 - 1
+    keepcols <- seq_len(length(x@data))[- slicer1]
+    slicing_one <- lapply(keepcols,
+                     function(j) split(x@data[[j]], x@data[[slicer1]]))
+    names(slicing_one) <- names(x@data)[- slicer1]
+    mapped_names <- names(slicing_one[[1]])
+    ii <- match(mapped_names, names)
+    for (i1 in seq_len(length(ii))) {
+        i2 <- ii[i1]
+        slice_one <- lapply(slicing_one, function(col) col[[i1]])
+        if (mode == 1) {
+            ans[[i2]] <- do.call(FUN, slice_one)
+            next
         }
-        ans
+        if (mode == 2 || !any(duplicated(slice_one[[1]]))) {
+            ans[[i2]] <- do.call("mapply",
+                                 c(FUN=FUN, slice_one, SIMPLIFY=FALSE))
+            next
+        }
+        ## Sub-slicing
+        keepcols <- seq_len(length(slice_one))[- slicer2]
+        slicing_two <- lapply(keepcols,
+                         function(j) split(slice_one[[j]], slice_one[[slicer2]]))
+        slicing_two <- c(list(names(slicing_two[[1]])), slicing_two)
+        names(slicing_two) <- c(names(slice_one)[slicer2], names(slice_one)[- slicer2])
+        ans[[i2]] <- do.call("mapply",
+                             c(FUN=FUN, slicing_two, SIMPLIFY=FALSE))
     }
-)
+    ans
+}
 

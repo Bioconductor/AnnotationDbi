@@ -13,10 +13,8 @@
 ###        revmap,
 ###        db,
 ###        left.table, right.table,
-###        left.colname, right.colname,
-###        tagnames,
+###        collabels,
 ###        colnames,
-###        ncol,
 ###        left.filter, right.filter,
 ###        show
 ###
@@ -97,7 +95,6 @@ setMethod("revmap", "environment",
 ###     db,
 ###     left.table, right.table,
 ###     left.colname, right.colname,
-###     tagnames,
 ###     colnames,
 ###     left.filter, right.filter
 ###
@@ -111,11 +108,6 @@ setMethod("left.table", "AnnDbMap",
 setMethod("right.table", "AnnDbMap",
     function(x) L2Rpath.rightmostTable(x@L2Rpath))
 setMethod("right.table", "Go3AnnDbMap", function(x) x@rightTables)
-
-setMethod("tagnames", "AnnDbMap",
-    function(x) L2Rpath.tagnames(x@L2Rpath))
-setMethod("tagnames", "Go3AnnDbMap",
-    function(x) c(L2Rpath.tagnames(x@L2Rpath), "Ontology"))
 
 setMethod("left.filter", "AnnDbMap",
     function(x) L2Rpath.leftmostFilter(x@L2Rpath))
@@ -135,17 +127,15 @@ setMethod("right.filter", "AnnDbMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.colname", "right.colname" and "colnames" methods.
+### The "collabels" and "colnames" methods.
 
-setMethod("left.colname", "AnnDbMap",
-    function(x) L2Rpath.leftmostColname(x@L2Rpath))
-setMethod("right.colname", "AnnDbMap",
-    function(x) L2Rpath.rightmostColname(x@L2Rpath))
+setMethod("collabels", "AnnDbMap",
+    function(x) L2Rpath.collabels(x@L2Rpath))
 
 setMethod("colnames", "AnnDbMap",
     function(x, do.NULL=TRUE, prefix="col")
-        c(left.colname(x), right.colname(x), tagnames(x))
-)
+        L2Rpath.colnames(x@L2Rpath))
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "links" and "count.links" methods.
@@ -180,9 +170,8 @@ setMethod("nrow", "Go3AnnDbMap",
         countRows <- function(ontology)
         {
             table <- right.table(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
-            dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
+            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
+            dbCountRowsFromL2Rpath(db(x), L2Rpath)
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
@@ -302,8 +291,7 @@ setMethod("left.mappedNames", "Go3AnnDbMap",
         getMappedNames <- function(ontology)
         {
             table <- right.table(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
+            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
             dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
         }
         names1 <- getMappedNames("BP")
@@ -340,8 +328,7 @@ setMethod("count.right.mappedNames", "Go3AnnDbMap",
         countMappedNames <- function(ontology)
         {
             table <- right.table(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
+            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
             dbCountUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -412,7 +399,7 @@ setMethod("flatten", "AnnDbMap",
             left.names <- left.names(x)
         if (is.null(right.names))
             right.names <- right.names(x)
-        new("FlatBimap", data=data0,
+        new("FlatBimap", collabels=collabels(x), data=data0,
                          left.names=left.names, right.names=right.names)
     }
 )
@@ -434,8 +421,7 @@ setMethod("flatten", "Go3AnnDbMap",
         getPartialSubmap <- function(ontology)
         {
             table <- right.table(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
+            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
             data <- dbSelectFromL2Rpath(db(x), L2Rpath,
                                         left.names, right.names,
                                         extra.colnames, verbose)
@@ -450,7 +436,7 @@ setMethod("flatten", "Go3AnnDbMap",
             left.names <- left.names(x)
         if (is.null(right.names))
             right.names <- right.names(x)
-        new("FlatBimap", data=data0,
+        new("FlatBimap", collabels=collabels(x), data=data0,
                          left.names=left.names, right.names=right.names)
     }
 )
@@ -499,7 +485,7 @@ setMethod("show", "AnnDbMap",
 setMethod("as.character", "AtomicAnnDbMap",
     function(x)
     {
-        if (length(tagnames(x)) != 0)
+        if (ncol(x) > 2)
             stop("AtomicAnnDbMap object with tags cannot be coerced to a character vector")
         data <- flatten(x, left.names=NA, right.names=NA)@data
         ans <- data[[2]] # could also use [[right.colname(x)]]
@@ -515,7 +501,7 @@ setMethod("as.character", "AtomicAnnDbMap",
 setMethod("as.character", "RevAtomicAnnDbMap",
     function(x)
     {
-        if (length(tagnames(x)) != 0)
+        if (ncol(x) > 2)
             stop("cannot coerce to character an AtomicAnnDbMap object with tags")
         data <- flatten(x, left.names=NA, right.names=NA)@data
         ans <- data[[1]] # could also use [[left.colname(x)]]

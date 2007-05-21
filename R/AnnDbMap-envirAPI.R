@@ -213,13 +213,13 @@ setMethod("as.list", "RevGo3AnnDbMap",
 )
 
 ### Formatting the right objects with 'makeGONode' instead of just using the
-### default formatting provided by fold() (the default is to create a
-### list for each object) makes things _much_ slower:
+### default formatting provided by foldListOfLists() (the default is to create
+### a list for each object) makes things _much_ slower:
 ###  > x <- flatten(GOTERM)
-###  > system.time(y <- fold(x, "left", mode=1))
+###  > system.time(y <- foldListOfLists(x, "left", mode=1))
 ###     user  system elapsed 
 ###    1.888   0.016   1.905 
-###  > system.time(y <- fold(x, "left", mode=1, FUN=makeGONode))
+###  > system.time(y <- foldListOfLists(x, "left", mode=1, FUN=makeGONode))
 ###     user  system elapsed 
 ###   20.893   0.072  21.066 
 ### Why is the S4 initialization mechanism so slow?
@@ -237,7 +237,7 @@ setMethod("as.list", "GONodeAnnDbMap",
                           Definition=Definition[1],
                           ...)
         }
-        fold(y, "left", mode=1, makeGONode)
+        foldListOfLists(y, direction=1, mode=1, makeGONode)
     }
 )
 
