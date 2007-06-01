@@ -36,6 +36,7 @@ setClass("GONode",
     )
 )
 
+### The mono-valued slots are also the mandatory slots.
 .GONODE_MONOVALUED_SLOTS <- c("GOID", "Term", "Ontology", "Definition")
 
 

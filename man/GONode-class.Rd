@@ -84,7 +84,8 @@
    SQLite-based annotation data package GOdb.}
 
 \examples{
-  gonode <- new("GONode", GOID="GO:1234567", Term="Test", Ontology="MF")
+  gonode <- new("GONode", GOID="GO:1234567", Term="Test", Ontology="MF",
+                          Definition="just for testing")
   GOID(gonode)
   Term(gonode)
   Ontology(gonode)
