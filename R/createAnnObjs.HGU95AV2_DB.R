@@ -50,8 +50,8 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
                 Lcolname="id",
                 Rcolname="gene_id"
             )
-        ),
-        rightColType="integer"
+        )
+        ##rightColType="integer"
     ),
     list(
         objName="ENZYME",
