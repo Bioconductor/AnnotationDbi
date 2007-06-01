@@ -43,14 +43,23 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "revmap" new generic.
 ###
+### Conceptual definition:
+###     revmap(x) is the reverse of map x i.e. the map that provides the
+###     reverse lookup (or mapping)
+###
 ### I would have liked to use "reverse" instead of "revmap" but "reverse" is
 ### already defined as a generic in Biostrings and it seems that the second
 ### of the 2 packages to be loaded breaks the generic and attached methods
 ### defined in the first. Don't know how to deal with this situation :-/
-### The "rev" generic defined in package:base doesn't work neither because
-### we want to be able to use a different signature (2 args).
 ###
-### Note that this generic does _not_ query the database!
+### The "rev" generic defined in package:base can't be used neither because
+### it doesn't allow passing additional arguments to or from methods (i.e. it
+### has no '...' arg) and we want to be able to pass the 'objName' arg.
+### Other generics defined in package:base where having a '...' arg could be
+### useful: "unlist", "t" and "scale" (just in case someone feels brave enough
+### to request this on R-devel).
+###
+### Note that "revmap" does _not_ query the database!
 ###
 
 .revmap <- function(class, x, objName)
