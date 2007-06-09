@@ -58,7 +58,7 @@ checkProperty0 <- function(pkgname)
 ### The "checkMAPCOUNTS" function.
 ###
 ### Typical use:
-###   > checkMAPCOUNTS("hgu95av2db", "hgu95av2")
+###   > checkMAPCOUNTS("hgu95av2.db", "hgu95av2")
 ###
 
 checkMAPCOUNTS <- function(pkgname, prefix)
@@ -183,22 +183,22 @@ identical.collections <- function(x, y)
 ### them to its envir-based sibling package e.g.:
 ###     > library(AnnotationDbi)
 ###   HGU95AV2_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.HGU95AV2_DB("hgu95av2", "hgu95av2db", "hgu95av2")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.HGU95AV2_DB("hgu95av2", "hgu95av2.db", "hgu95av2")
 ###   YEAST2_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST2_DB("yeast2", "yeast2db", "yeast2")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST2_DB("ygs98", "ygs98db", "ygs98")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST2_DB("yeast2", "yeast2.db", "yeast2")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST2_DB("ygs98", "ygs98.db", "ygs98")
 ###   AG_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ag", "agdb", "ag")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ath1121501", "ath1121501db", "ath1121501")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ag", "ag.db", "ag")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ath1121501", "ath1121501.db", "ath1121501")
 ###   YEAST_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST_DB("YEAST", "YEASTdb", "YEAST")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST_DB("YEAST", "YEAST.db", "YEAST")
 ###   LLMAPPINGS_DB schema
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("humanLLMappings",
-###                                                           "humanLLMappingsdb", "humanLLMappings")
+###                                                           "humanLLMappings.db", "humanLLMappings")
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("mouseLLMappings",
-###                                                           "mouseLLMappingsdb", "mouseLLMappings")
+###                                                           "mouseLLMappings.db", "mouseLLMappings")
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("ratLLMappings",
-###                                                           "ratLLMappingsdb", "ratLLMappings")
+###                                                           "ratLLMappings.db", "ratLLMappings")
 ###
 compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
                                   reverse_maps=c(), quick=FALSE, verbose=FALSE)

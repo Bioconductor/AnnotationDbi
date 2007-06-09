@@ -81,7 +81,7 @@
 \references{\url{http://www.geneontology.org/}}
 
 \note{GONode objects are used to represent primary GO nodes in the
-   SQLite-based annotation data package GOdb.}
+   SQLite-based annotation data package GO.db}
 
 \examples{
   gonode <- new("GONode", GOID="GO:1234567", Term="Test", Ontology="MF",

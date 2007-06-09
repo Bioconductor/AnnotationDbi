@@ -39,21 +39,21 @@
 \examples{
   ## With a "AnnDbPkgSeed" object:
   seed <- new("AnnDbPkgSeed",
-      Package="hgu133a2db",
+      Package="hgu133a2.db",
       Version="0.0.99",
       PkgTemplate="HGU95AV2DB",
       AnnObjPrefix="hgu133a2"
   )
   #makeAnnDbPkg(seed, "path/to/hgu133a2.sqlite")
 
-  ## With a package name:
-  ## (Note that in this case makeAnnDbPkg() will use the package description
-  ## found in the central index file ANNDBPKG-INDEX.TXT located in the
+  ## With package names:
+  ## (Note that in this case makeAnnDbPkg() will use the package descriptions
+  ## found in the master index file ANNDBPKG-INDEX.TXT located in the
   ## AnnotationDbi package.)
-  #makeAnnDbPkg("hgu133a2db")
+  #makeAnnDbPkg(c("hgu95av2.db", "hgu133a2.db"))
 
-  ## Regular expressions are accepted e.g. to make all the packages described
-  ## in the central index:
+  ## A character vector of length 1 is treated as a regular expression.
+  ## For example to make all the packages described in the master index:
   #makeAnnDbPkg(".*")
 }
 

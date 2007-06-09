@@ -1,5 +1,5 @@
 %\VignetteIndexEntry{AnnDbMap API Demo}
-%\VignetteDepends{hgu95av2db}
+%\VignetteDepends{hgu95av2.db}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
 \documentclass[11pt]{article}
@@ -23,7 +23,7 @@
 
 The \Rpackage{AnnotationDbi} package provides an interface to
 SQLite-based annotation packages.  Each SQLite-based annotation
-package (identified by a ``db'' suffix in the package name) contains a
+package (identified by a ``.db'' suffix in the package name) contains a
 number of \Rclass{AnnDbMap} objects in place of the \Rclass{environment}
 objects found in the old-style environment-based annotation packages.
 The API provided by \Rpackage{AnnotationDbi} allows you to treat the
@@ -39,7 +39,7 @@ options(continue=" ", prompt="R> ", width=72L)
 @ 
 
 <<setup, results=hide>>=
-library("hgu95av2db")
+library("hgu95av2.db")
 @ 
 
 The same basic set of objects is provided with the db packages:
@@ -169,7 +169,7 @@ SQLite-based packages:
 system.time({
 sql <- "select symbol from go_bp inner join gene_info using(id)
         where go_bp.evidence in ('IPI', 'IDA', 'IMP', 'IGI')"
-zz <- dbGetQuery(hgu95av2db::db_conn, sql)
+zz <- dbGetQuery(hgu95av2.db::db_conn, sql)
 })
 
 @ 
@@ -188,7 +188,7 @@ as.list(revmap(hgu95av2PATH), "00300")
 @ 
 
 In the case of the PATH map, we don't need to use revmap(x)
-because hgu95av2db already provides the PATH2PROBE map:
+because hgu95av2.db already provides the PATH2PROBE map:
 
 <<revmap2>>=
 x <- hgu95av2PATH
@@ -234,7 +234,7 @@ allKEGGIds <- names(revx)
 
 There are "unoriented" methods related to these methods:
 <<moreUnorientedMethods>>=
-junk <- left.names(x)    # same for all maps in hgu95av2db (except pseudo-map
+junk <- left.names(x)    # same for all maps in hgu95av2.db (except pseudo-map
                          # MAPCOUNTS)
 left.length(x)           # nb of left names
 junk <- right.names(x)   # KEGG ids for PATH/PATH2PROBE maps, GO ids for

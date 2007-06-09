@@ -14,7 +14,7 @@
 setClass(
     "AnnDbPkgSeed",
     representation(
-        Package="character",            # e.g. "hgu133a2db"
+        Package="character",            # e.g. "hgu133a2.db"
         Version="character",            # e.g. "0.0.99"
         License="character", 
         Author="character", 
@@ -242,9 +242,10 @@ setMethod("makeAnnDbPkg", "list",
 ### 'x' can be a regular expression.
 ### Typical use:
 ###   > library(AnnotationDbi)
-###   > makeAnnDbPkg("hgu133a2db")
+###   > makeAnnDbPkg(c("hgu95av2.db", "hgu133a2.db"))
 ### or to make all the packages:
-###   > makeAnnDbPkg(".*")
+###   > makeAnnDbPkg(".*") # a character vector of length 1 is treated as a
+###                        # regular expression
 ###
 setMethod("makeAnnDbPkg", "character",
     function(x, db_file, dest_dir=".")
@@ -256,15 +257,23 @@ setMethod("makeAnnDbPkg", "character",
         removeCommentsFromFile(db_file, tmp_file)
         index <- read.dcf(tmp_file)
         file.remove(tmp_file)
-        pkgname <- paste("^", x, "$", sep="")
-        subindex <- index[grep(pkgname, index[ , "Package"]), , drop=FALSE]
-        for (i in seq_len(nrow(subindex))) {
-            y <- subindex[i, ]
+        if (length(x) == 1) {
+            pkgname <- paste("^", x, "$", sep="")
+            ii <- grep(pkgname, index[ , "Package"])
+        } else {
+            ii <- match(x, index[ , "Package"])
+            if (any(is.na(ii)))
+                stop("packages ", paste(x[is.na(ii)], collapse=", "), " not in ", db_file)
+        }
+        for (i in ii) {
+            y <- index[i, ]
             y <- as.list(y[!is.na(y)])
+            cat("[", i, "/", length(ii), "] making package ", y[["Package"]], ": ", sep="")
             db_file <- y[["DBfile"]]
             y <- y[names(y) != "DBfile"]
             makeAnnDbPkg(y, db_file, dest_dir)
         }
+        cat("DONE (", length(ii), " package(s) made under the ", dest_dir, " directory)\n", sep="")
     }
 )
 

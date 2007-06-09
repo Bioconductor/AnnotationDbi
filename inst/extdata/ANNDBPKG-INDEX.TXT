@@ -1,3 +1,14 @@
+### PLEASE READ THIS!
+###
+### TO EVERYBODY: This is the master index files for db packages produced at
+### the Gentleman-Lab. It is for Gentleman-Lab's internal use only.
+###
+### TO GENTLEMAN LAB MEMBERS: This file contains absolute paths that point to
+### our NFS-mounted shared partition. This means that you must use
+### makeAnnDbPkg("pkg") on a server where user homes are NFS-mounted for
+### this to work (e.g. on any gopher).
+
+
 ### =========================================================================
 ### HGU95AV2DB template
 ###   Possible DBschemas for this template: HGU95AV2_DB, YEAST2_DB, AG_DB
@@ -17,271 +28,271 @@
 ###     biocViews
 ### Fields marked with an (*) are required.
 
-Package: hcg110db
+Package: hcg110.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hcg110.sqlite
 AnnObjPrefix: hcg110
 
-Package: hgfocusdb
+Package: hgfocus.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgfocus.sqlite
 AnnObjPrefix: hgfocus
 
-Package: hgu133a2db
+Package: hgu133a2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu133a2.sqlite
 AnnObjPrefix: hgu133a2
 
-Package: hgu133adb
+Package: hgu133a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu133a.sqlite
 AnnObjPrefix: hgu133a
 
-Package: hgu133bdb
+Package: hgu133b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu133b.sqlite
 AnnObjPrefix: hgu133b
 
-Package: hgu133plus2db
+Package: hgu133plus2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu133plus2.sqlite
 AnnObjPrefix: hgu133plus2
 
-Package: hgu95adb
+Package: hgu95a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95a.sqlite
 AnnObjPrefix: hgu95a
 
-Package: hgu95av2db
+Package: hgu95av2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95av2.sqlite
 AnnObjPrefix: hgu95av2
 
-Package: hgu95bdb
+Package: hgu95b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95b.sqlite
 AnnObjPrefix: hgu95b
 
-Package: hgu95cdb
+Package: hgu95c.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95c.sqlite
 AnnObjPrefix: hgu95c
 
-Package: hgu95ddb
+Package: hgu95d.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95d.sqlite
 AnnObjPrefix: hgu95d
 
-Package: hgu95edb
+Package: hgu95e.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95e.sqlite
 AnnObjPrefix: hgu95e
 
-Package: hu35ksubadb
+Package: hu35ksuba.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu35ksuba.sqlite
 AnnObjPrefix: hu35ksuba
 
-Package: hu35ksubbdb
+Package: hu35ksubb.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu35ksubb.sqlite
 AnnObjPrefix: hu35ksubb
 
-Package: hu35ksubcdb
+Package: hu35ksubc.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu35ksubc.sqlite
 AnnObjPrefix: hu35ksubc
 
-Package: hu35ksubddb
+Package: hu35ksubd.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu35ksubd.sqlite
 AnnObjPrefix: hu35ksubd
 
-Package: hu6800db
+Package: hu6800.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu6800.sqlite
 AnnObjPrefix: hu6800
 
-Package: u133x3pdb
+Package: u133x3p.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/u133x3p.sqlite
 AnnObjPrefix: u133x3p
 
-Package: mgu74adb
+Package: mgu74a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74a.sqlite
 AnnObjPrefix: mgu74a
 
-Package: mgu74av2db
+Package: mgu74av2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74av2.sqlite
 AnnObjPrefix: mgu74av2
 
-Package: mgu74bdb
+Package: mgu74b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74b.sqlite
 AnnObjPrefix: mgu74b
 
-Package: mgu74bv2db
+Package: mgu74bv2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74bv2.sqlite
 AnnObjPrefix: mgu74bv2
 
-Package: mgu74cdb
+Package: mgu74c.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74c.sqlite
 AnnObjPrefix: mgu74c
 
-Package: mgu74cv2db
+Package: mgu74cv2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74cv2.sqlite
 AnnObjPrefix: mgu74cv2
 
-Package: moe430adb
+Package: moe430a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/moe430a.sqlite
 AnnObjPrefix: moe430a
 
-Package: moe430bdb
+Package: moe430b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/moe430b.sqlite
 AnnObjPrefix: moe430b
 
-Package: mouse4302db
+Package: mouse4302.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mouse4302.sqlite
 AnnObjPrefix: mouse4302
 
-Package: mouse430a2db
+Package: mouse430a2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mouse430a2.sqlite
 AnnObjPrefix: mouse430a2
 
-Package: mu11ksubadb
+Package: mu11ksuba.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu11ksuba.sqlite
 AnnObjPrefix: mu11ksuba
 
-Package: mu11ksubbdb
+Package: mu11ksubb.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu11ksubb.sqlite
 AnnObjPrefix: mu11ksubb
 
-Package: mu19ksubadb
+Package: mu19ksuba.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu19ksuba.sqlite
 AnnObjPrefix: mu19ksuba
 
-Package: mu19ksubbdb
+Package: mu19ksubb.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu19ksubb.sqlite
 AnnObjPrefix: mu19ksubb
 
-Package: mu19ksubcdb
+Package: mu19ksubc.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu19ksubc.sqlite
 AnnObjPrefix: mu19ksubc
 
-Package: rae230adb
+Package: rae230a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rae230a.sqlite
 AnnObjPrefix: rae230a
 
-Package: rae230bdb
+Package: rae230b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rae230b.sqlite
 AnnObjPrefix: rae230b
 
-Package: rat2302db
+Package: rat2302.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rat2302.sqlite
 AnnObjPrefix: rat2302
 
-Package: rgu34adb
+Package: rgu34a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rgu34a.sqlite
 AnnObjPrefix: rgu34a
 
-Package: rgu34bdb
+Package: rgu34b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rgu34b.sqlite
 AnnObjPrefix: rgu34b
 
-Package: rgu34cdb
+Package: rgu34c.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rgu34c.sqlite
 AnnObjPrefix: rgu34c
 
-Package: rnu34db
+Package: rnu34.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rnu34.sqlite
 AnnObjPrefix: rnu34
 
-Package: rtu34db
+Package: rtu34.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rtu34.sqlite
 AnnObjPrefix: rtu34
 
-Package: yeast2db
+Package: yeast2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/yeast/yeast2.sqlite
 AnnObjPrefix: yeast2
 
-Package: ygs98db
+Package: ygs98.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/yeast/ygs98.sqlite
 AnnObjPrefix: ygs98
 
-Package: agdb
+Package: ag.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB  
 DBfile:                                                                            
 AnnObjPrefix: ag
 
-Package: ath1121501db
+Package: ath1121501.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile:
@@ -302,7 +313,7 @@ AnnObjPrefix: ath1121501
 ###     species
 ###     biocViews
 
-Package: YEASTdb
+Package: YEAST.db
 Version: 1.17.0
 PkgTemplate: YEASTDB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite
@@ -322,7 +333,7 @@ AnnObjPrefix: YEAST
 ###     AnnObjTarget
 ###     biocViews
 
-Package: humanLLMappingsdb
+Package: humanLLMappings.db
 Version: 1.17.0
 PkgTemplate: LLMAPPINGSDB
 DBfile:
@@ -331,7 +342,7 @@ AnnObjPrefix: humanLLMappings
 AnnObjTarget: human LocusLink ids
 biocViews: Homo_sapiens, humanLLMappings
 
-Package: mouseLLMappingsdb
+Package: mouseLLMappings.db
 Version: 1.17.0
 PkgTemplate: LLMAPPINGSDB
 DBfile:
@@ -340,7 +351,7 @@ AnnObjPrefix: mouseLLMappings
 AnnObjTarget: mouse LocusLink ids
 biocViews: Mus_musculus, mouseLLMappings
 
-Package: ratLLMappingsdb
+Package: ratLLMappings.db
 Version: 1.17.0
 PkgTemplate: LLMAPPINGSDB
 DBfile:
@@ -364,7 +375,7 @@ biocViews: Rattus_norvegicus, ratLLMappings
 ###     biocViews (*)
 ### Fields marked with an (*) are required.
 
-Package: GOdb
+Package: GO.db
 Version: 1.17.0
 PkgTemplate: GODB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/GO.sqlite
@@ -391,7 +402,7 @@ biocViews: FunctionalAnnotation
 ###     manufacturerUrl
 ###     biocViews
 
-Package: huex10stv2db
+Package: huex10stv2.db
 Version: 1.17.0
 PkgTemplate: AFFYHUEXDB
 DBfile:
