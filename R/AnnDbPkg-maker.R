@@ -265,10 +265,10 @@ setMethod("makeAnnDbPkg", "character",
             if (any(is.na(ii)))
                 stop("packages ", paste(x[is.na(ii)], collapse=", "), " not in ", db_file)
         }
-        for (i in ii) {
-            y <- index[i, ]
+        for (j in seq_len(length(ii))) {
+            y <- index[ii[j], ]
             y <- as.list(y[!is.na(y)])
-            cat("[", i, "/", length(ii), "] making package ", y[["Package"]], ": ", sep="")
+            cat("[", j, "/", length(ii), "] making package ", y[["Package"]], ": ", sep="")
             db_file <- y[["DBfile"]]
             y <- y[names(y) != "DBfile"]
             makeAnnDbPkg(y, db_file, dest_dir)
