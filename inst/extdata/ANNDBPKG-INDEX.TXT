@@ -136,6 +136,12 @@ PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/u133x3p.sqlite
 AnnObjPrefix: u133x3p
 
+Package: hgug4100a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/hgug4100a.sqlite
+AnnObjPrefix: hgug4100a
+
 Package: mgu74a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
