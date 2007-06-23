@@ -33,7 +33,7 @@ setClass(
     prototype(
         #License="The Artistic License, Version 2.0",
         License="LGPL",
-        Author="Nianhua Li, Seth Falcon, Herve Pages",
+        Author="Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
         Maintainer="Biocore Data Team <biocannotation@lists.fhcrc.org>",
         DBschema=as.character(NA),
         AnnObjPrefix=as.character(NA),
@@ -83,6 +83,10 @@ initWithDbMetada <- function(x, db_file)
     db_conn <- dbFileConnect(db_file)
     on.exit(dbFileDisconnect(db_conn))
     metadata <- dbGetTable(db_conn, "metadata")
+    if (any(duplicated(metadata$name))) {
+        stop("col \"name\" in \"metadata\" table has duplicated values\n",
+             "  (this would never happen if \"name\" was defined as a PRIMARY KEY!)")
+    }
     row.names(metadata) <- metadata$name
     for (i in seq_len(length(metadata2slot))) {
         slot_name <- metadata2slot[i]

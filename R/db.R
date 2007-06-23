@@ -261,8 +261,25 @@ L2Rpath.colnames <- function(L2Rpath)
 ### DB functions.
 ###
 
+assign("debugSQL", FALSE, envir=RTobjs)
+
+debug.sql <- function()
+{
+    debugSQL <- !get("debugSQL", envir=RTobjs)
+    assign("debugSQL", debugSQL, envir=RTobjs)
+    debugSQL
+}
+
 .dbGetQuery <- function(conn, sql)
 {
+    if (get("debugSQL", envir=RTobjs)) {
+        if (!is.character(sql) || length(sql) != 1 || is.na(sql))
+            stop("'sql' must be a single string")
+        cat("SQL query: ", sql, "\n", sep="")
+        st <- system.time(data <- dbGetQuery(conn, sql))
+        cat("     time: ", st["user.self"], " seconds\n", sep="")
+        return(data)
+    } 
     dbGetQuery(conn, sql)
 }
 
@@ -447,6 +464,7 @@ dbCountUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
         chunks$where,
         .toSQLWhere(what_rightCol, NULL)
     )
+    where <- paste(where, collapse=" AND ")
     sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
     .dbGetQuery(conn, sql)[[1]]
 }
