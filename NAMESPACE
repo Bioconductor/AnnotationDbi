@@ -114,6 +114,9 @@ export(
     createAnnObjs.GO_DB,
     createAnnObjs.AFFYHUEX_DB,
 
+    ## from R/AnnDbPkg-maker.R
+    loadAnnDbPkgIndex,
+
     ## from R/AnnDbPkg-checker.R
     checkProperty0,
     checkMAPCOUNTS

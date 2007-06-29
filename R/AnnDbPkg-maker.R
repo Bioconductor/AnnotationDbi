@@ -135,6 +135,10 @@ getSymbolValuesForManPages <- function(map_names, db_file)
 
 removeCommentsFromFile <- function(infile, outfile)
 {
+    if (!is.character(infile) || length(infile) != 1 || is.na(infile))
+        stop("'infile' must be a character string naming a file")
+    if (!is.character(outfile) || length(outfile) != 1 || is.na(outfile))
+        stop("'outfile' must be a character string naming a file")
     if (file.exists(outfile))
         stop("file '", outfile, "' already exists")
     outfile <- file(outfile, "w")
@@ -150,6 +154,22 @@ removeCommentsFromFile <- function(infile, outfile)
     }
     close(infile)
     close(outfile)
+}
+
+loadAnnDbPkgIndex <- function(file)
+{
+    if (missing(file)) {
+        file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
+                            package="AnnotationDbi")
+    } else {
+        if (!is.character(file) || length(file) != 1 || is.na(file))
+            stop("'file' must be a character string naming a file")
+    }
+    tmp_file <- file.path(tempdir(), paste(basename(file), "tmp", sep="."))
+    removeCommentsFromFile(file, tmp_file)
+    index <- read.dcf(tmp_file)
+    file.remove(tmp_file)
+    index
 }
 
 
@@ -170,7 +190,9 @@ setMethod("initialize", "AnnDbPkgSeed",
 ### The "makeAnnDbPkg" new generic.
 ###
 
-setGeneric("makeAnnDbPkg", function(x, db_file, dest_dir=".") standardGeneric("makeAnnDbPkg"))
+setGeneric("makeAnnDbPkg", signature="x",
+    function(x, db_file, dest_dir=".") standardGeneric("makeAnnDbPkg")
+)
 
 setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
     function(x, db_file, dest_dir=".")
@@ -254,13 +276,11 @@ setMethod("makeAnnDbPkg", "list",
 setMethod("makeAnnDbPkg", "character",
     function(x, db_file, dest_dir=".")
     {
-        if (missing(db_file))
-            db_file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
-                                   package="AnnotationDbi")
-        tmp_file <- file.path(dest_dir, paste(basename(db_file), "tmp", sep="."))
-        removeCommentsFromFile(db_file, tmp_file)
-        index <- read.dcf(tmp_file)
-        file.remove(tmp_file)
+        if (missing(db_file)) {
+            file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
+                                package="AnnotationDbi")
+        }
+        index <- loadAnnDbPkgIndex(db_file)
         if (length(x) == 1) {
             pkgname <- paste("^", x, "$", sep="")
             ii <- grep(pkgname, index[ , "Package"])

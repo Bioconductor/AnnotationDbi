@@ -4,6 +4,7 @@
 \alias{makeAnnDbPkg,AnnDbPkgSeed-method}
 \alias{makeAnnDbPkg,list-method}
 \alias{makeAnnDbPkg,character-method}
+\alias{loadAnnDbPkgIndex}
 
 
 \title{Creates an SQLite-based annotation package}
@@ -14,6 +15,7 @@
 
 \usage{
   makeAnnDbPkg(x, db_file, dest_dir=".")
+  loadAnnDbPkgIndex(file)
 }
 
 \arguments{
@@ -26,6 +28,10 @@
   }
   \item{dest_dir}{
     The directory where the package will be created.
+  }
+  \item{file}{
+    The path to a DCF file containing the list of annotation package
+    to build.
   }
 }
 
@@ -55,6 +61,9 @@
   ## A character vector of length 1 is treated as a regular expression.
   ## For example to make all the packages described in the master index:
   #makeAnnDbPkg(".*")
+
+  ## The master index file ANNDBPKG-INDEX.TXT can be loaded with:
+  loadAnnDbPkgIndex()
 }
 
 \keyword{methods}

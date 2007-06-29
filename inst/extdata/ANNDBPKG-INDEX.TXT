@@ -10,12 +10,12 @@
 
 
 ### =========================================================================
-### HGU95AV2DB template
-###   Possible DBschemas for this template: HGU95AV2_DB, YEAST2_DB, AG_DB
+### HGU95AV2_DB schema
+### ------------------
 ###   Fields:
 ###     Package (*)
 ###     Version (*)
-###     PkgTemplate (*)
+###     PkgTemplate: HGU95AV2DB
 ###     DBfile (*)
 ###     DBschema
 ###     AnnObjPrefix (*)
@@ -28,289 +28,388 @@
 ###     biocViews
 ### Fields marked with an (*) are required.
 
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Affymetrix chips
+
 Package: hcg110.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hcg110.sqlite
 AnnObjPrefix: hcg110
+manufacturer: Affymetrix
 
 Package: hgfocus.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgfocus.sqlite
 AnnObjPrefix: hgfocus
+manufacturer: Affymetrix
 
 Package: hgu133a2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu133a2.sqlite
 AnnObjPrefix: hgu133a2
+manufacturer: Affymetrix
 
 Package: hgu133a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu133a.sqlite
 AnnObjPrefix: hgu133a
+manufacturer: Affymetrix
 
 Package: hgu133b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu133b.sqlite
 AnnObjPrefix: hgu133b
+manufacturer: Affymetrix
 
 Package: hgu133plus2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu133plus2.sqlite
 AnnObjPrefix: hgu133plus2
+manufacturer: Affymetrix
 
 Package: hgu95a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95a.sqlite
 AnnObjPrefix: hgu95a
+manufacturer: Affymetrix
 
 Package: hgu95av2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95av2.sqlite
 AnnObjPrefix: hgu95av2
+manufacturer: Affymetrix
 
 Package: hgu95b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95b.sqlite
 AnnObjPrefix: hgu95b
+manufacturer: Affymetrix
 
 Package: hgu95c.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95c.sqlite
 AnnObjPrefix: hgu95c
+manufacturer: Affymetrix
 
 Package: hgu95d.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95d.sqlite
 AnnObjPrefix: hgu95d
+manufacturer: Affymetrix
 
 Package: hgu95e.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hgu95e.sqlite
 AnnObjPrefix: hgu95e
+manufacturer: Affymetrix
 
 Package: hu35ksuba.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu35ksuba.sqlite
 AnnObjPrefix: hu35ksuba
+manufacturer: Affymetrix
 
 Package: hu35ksubb.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu35ksubb.sqlite
 AnnObjPrefix: hu35ksubb
+manufacturer: Affymetrix
 
 Package: hu35ksubc.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu35ksubc.sqlite
 AnnObjPrefix: hu35ksubc
+manufacturer: Affymetrix
 
 Package: hu35ksubd.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu35ksubd.sqlite
 AnnObjPrefix: hu35ksubd
+manufacturer: Affymetrix
 
 Package: hu6800.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/hu6800.sqlite
 AnnObjPrefix: hu6800
+manufacturer: Affymetrix
 
 Package: u133x3p.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/u133x3p.sqlite
 AnnObjPrefix: u133x3p
-
-Package: hgug4100a.db
-Version: 1.17.0
-PkgTemplate: HGU95AV2DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgug4100a.sqlite
-AnnObjPrefix: hgug4100a
+manufacturer: Affymetrix
 
 Package: mgu74a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74a.sqlite
 AnnObjPrefix: mgu74a
+manufacturer: Affymetrix
 
 Package: mgu74av2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74av2.sqlite
 AnnObjPrefix: mgu74av2
+manufacturer: Affymetrix
 
 Package: mgu74b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74b.sqlite
 AnnObjPrefix: mgu74b
+manufacturer: Affymetrix
 
 Package: mgu74bv2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74bv2.sqlite
 AnnObjPrefix: mgu74bv2
+manufacturer: Affymetrix
 
 Package: mgu74c.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74c.sqlite
 AnnObjPrefix: mgu74c
+manufacturer: Affymetrix
 
 Package: mgu74cv2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mgu74cv2.sqlite
 AnnObjPrefix: mgu74cv2
+manufacturer: Affymetrix
 
 Package: moe430a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/moe430a.sqlite
 AnnObjPrefix: moe430a
+manufacturer: Affymetrix
 
 Package: moe430b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/moe430b.sqlite
 AnnObjPrefix: moe430b
+manufacturer: Affymetrix
 
 Package: mouse4302.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mouse4302.sqlite
 AnnObjPrefix: mouse4302
+manufacturer: Affymetrix
 
 Package: mouse430a2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mouse430a2.sqlite
 AnnObjPrefix: mouse430a2
+manufacturer: Affymetrix
 
 Package: mu11ksuba.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu11ksuba.sqlite
 AnnObjPrefix: mu11ksuba
+manufacturer: Affymetrix
 
 Package: mu11ksubb.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu11ksubb.sqlite
 AnnObjPrefix: mu11ksubb
+manufacturer: Affymetrix
 
 Package: mu19ksuba.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu19ksuba.sqlite
 AnnObjPrefix: mu19ksuba
+manufacturer: Affymetrix
 
 Package: mu19ksubb.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu19ksubb.sqlite
 AnnObjPrefix: mu19ksubb
+manufacturer: Affymetrix
 
 Package: mu19ksubc.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/mu19ksubc.sqlite
 AnnObjPrefix: mu19ksubc
+manufacturer: Affymetrix
 
 Package: rae230a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rae230a.sqlite
 AnnObjPrefix: rae230a
+manufacturer: Affymetrix
 
 Package: rae230b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rae230b.sqlite
 AnnObjPrefix: rae230b
+manufacturer: Affymetrix
 
 Package: rat2302.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rat2302.sqlite
 AnnObjPrefix: rat2302
+manufacturer: Affymetrix
 
 Package: rgu34a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rgu34a.sqlite
 AnnObjPrefix: rgu34a
+manufacturer: Affymetrix
 
 Package: rgu34b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rgu34b.sqlite
 AnnObjPrefix: rgu34b
+manufacturer: Affymetrix
 
 Package: rgu34c.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rgu34c.sqlite
 AnnObjPrefix: rgu34c
+manufacturer: Affymetrix
 
 Package: rnu34.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rnu34.sqlite
 AnnObjPrefix: rnu34
+manufacturer: Affymetrix
 
 Package: rtu34.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/rtu34.sqlite
 AnnObjPrefix: rtu34
+manufacturer: Affymetrix
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Agilent chips
+
+Package: hgug4100a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/hgug4100a.sqlite
+AnnObjPrefix: hgug4100a
+manufacturer: Agilent
+
+
+### =========================================================================
+### YEAST2_DB schema
+### ----------------
+###   Fields:
+###     Package (*)
+###     Version (*)
+###     PkgTemplate: HGU95AV2DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Affymetrix chips
 
 Package: yeast2.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/yeast/yeast2.sqlite
 AnnObjPrefix: yeast2
+manufacturer: Affymetrix
 
 Package: ygs98.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/yeast/ygs98.sqlite
 AnnObjPrefix: ygs98
+manufacturer: Affymetrix
+
+
+### =========================================================================
+### AG_DB schema
+### ------------
+###   Fields:
+###     Package (*)
+###     Version (*)
+###     PkgTemplate (*)
+###     DBfile (*)
+###     DBschema: HGU95AV2DB
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Affymetrix chips
 
 Package: ag.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB  
 DBfile:                                                                            
 AnnObjPrefix: ag
+manufacturer: Affymetrix
 
 Package: ath1121501.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2DB
 DBfile:
 AnnObjPrefix: ath1121501
+manufacturer: Affymetrix
+
 
 ### =========================================================================
-### YEASTDB template
-###   Possible DBschemas for this template: YEAST_DB
+### YEAST_DB schema
+### ---------------
 ###   Fields:
 ###     Package
 ###     Version
-###     PkgTemplate
+###     PkgTemplate: YEASTDB
 ###     DBfile
 ###     DBschema
 ###     AnnObjPrefix
@@ -326,13 +425,14 @@ DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite
 DBschema: YEAST_DB
 AnnObjPrefix: YEAST
 
+
 ### =========================================================================
-### LLMAPPINGSDB template
-###   Possible DBschemas for this template: LLMAPPINGS_DB
+### LLMAPPINGS_DB schema
+### --------------------
 ###   Fields:
 ###     Package
 ###     Version
-###     PkgTemplate
+###     PkgTemplate: LLMAPPINGSDB
 ###     DBfile
 ###     DBschema
 ###     AnnObjPrefix
@@ -368,12 +468,12 @@ biocViews: Rattus_norvegicus, ratLLMappings
 
 
 ### =========================================================================
-### GODB template
-###   Possible DBschemas for this template: GO_DB
+### GO_DB schema
+### ------------
 ###   Fields:
 ###     Package (*)
 ###     Version (*)
-###     PkgTemplate (*)
+###     PkgTemplate: GODB
 ###     DBfile (*)
 ###     DBschema
 ###     AnnObjPrefix (*)
@@ -391,12 +491,12 @@ biocViews: FunctionalAnnotation
 
 
 ### =========================================================================
-### AFFYHUEXDB template
-###   Possible DBschemas for this template: AFFYHUEX_DB
+### AFFYHUEX_DB schema
+### ------------------
 ###   Fields:
 ###     Package
 ###     Version
-###     PkgTemplate
+###     PkgTemplate: AFFYHUEXDB
 ###     DBfile
 ###     DBschema
 ###     AnnObjPrefix
@@ -407,6 +507,9 @@ biocViews: FunctionalAnnotation
 ###     chipName
 ###     manufacturerUrl
 ###     biocViews
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Affymetrix chips
 
 Package: huex10stv2.db
 Version: 1.17.0
