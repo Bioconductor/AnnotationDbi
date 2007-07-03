@@ -328,6 +328,57 @@ DBfile: /home/mcarlson/sanctionedSqlite/hgug4100a.sqlite
 AnnObjPrefix: hgug4100a
 manufacturer: Agilent
 
+Package: hgug4110b.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/hgug4110b.sqlite
+AnnObjPrefix: hgug4110b
+manufacturer: Agilent
+
+Package: hgug4111a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/hgug4111a.sqlite
+AnnObjPrefix: hgug4111a
+manufacturer: Agilent
+
+Package: hgug4112a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/hgug4112a.sqlite
+AnnObjPrefix: hgug4112a
+manufacturer: Agilent
+
+
+Package: mgug4121a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/mgug4121a.sqlite
+AnnObjPrefix: mgug4121a
+manufacturer: Agilent
+
+Package: mgug4122a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/mgug4122a.sqlite
+AnnObjPrefix: mgug4122a
+manufacturer: Agilent
+
+
+Package: rgug4130a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/rgug4130a.sqlite
+AnnObjPrefix: rgug4130a
+manufacturer: Agilent
+
+Package: rgug4131a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2DB
+DBfile: /home/mcarlson/sanctionedSqlite/rgug4131a.sqlite
+AnnObjPrefix: rgug4131a
+manufacturer: Agilent
+
 
 ### =========================================================================
 ### YEAST2_DB schema
@@ -484,7 +535,7 @@ biocViews: Rattus_norvegicus, ratLLMappings
 Package: GO.db
 Version: 1.17.0
 PkgTemplate: GODB
-DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/GO.sqlite
+DBfile: /home/mcarlson/sanctionedSqlite/GO.sqlite 
 AnnObjPrefix: GO
 AnnObjTarget: GO
 biocViews: FunctionalAnnotation
