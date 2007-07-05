@@ -533,7 +533,7 @@ biocViews: Rattus_norvegicus, ratLLMappings
 ### Fields marked with an (*) are required.
 
 Package: GO.db
-Version: 1.17.0
+Version: 1.17.1
 PkgTemplate: GODB
 DBfile: /home/mcarlson/sanctionedSqlite/GO.sqlite 
 AnnObjPrefix: GO

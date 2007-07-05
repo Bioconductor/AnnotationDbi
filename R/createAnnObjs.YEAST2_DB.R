@@ -3,6 +3,30 @@
 ### with db schema YEAST2_DB
 ### -------------------------------------------------------------------------
 
+
+### TODO: The following maps are missing for now:
+###   miscellaneous maps: CHRLENGTHS
+
+YEAST2_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
+YEAST2_DB_L2Rbrick2 <- list(table="sgd", Lcolname="id", Rcolname="id")
+
+### Mandatory fields: objName, Class and L2Rpath
+YEAST2_DB_AnnDbMap_seeds <- list(
+    list(
+        objName="ALIAS",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            YEAST2_DB_L2Rbrick2,
+            list(
+                table="gene2alias",
+                Lcolname="",
+                Rcolname=""
+            )
+        )
+    )
+)
+
 ### TODO: The following maps are missing for now:
 ###   miscellaneous maps: CHRLENGTHS
 
