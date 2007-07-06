@@ -1,6 +1,6 @@
 \name{@ANNOBJPREFIX@GO2ALLPROBES}
 \alias{@ANNOBJPREFIX@GO2ALLPROBES}
-\title{Map Between Gene Ontology (GO) Identifiers and all Manufacturer
+\title{Map between Gene Ontology (GO) Identifiers and all Manufacturer
   Identifiers in the subtree}
 \description{
   @ANNOBJPREFIX@GO2ALLPROBES is an R object that provides mappings

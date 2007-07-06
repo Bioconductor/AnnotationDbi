@@ -1,6 +1,6 @@
 \name{@ANNOBJPREFIX@ENZYME}
 \alias{@ANNOBJPREFIX@ENZYME}
-\title{Map Between Manufacturer IDs and Enzyme Commission (EC) Numbers}
+\title{Map between Manufacturer IDs and Enzyme Commission (EC) Numbers}
 \description{ 
   @ANNOBJPREFIX@ENZYME is an R object that provides mappings between
   manufacturer identifiers and EC numbers. 

@@ -1,6 +1,6 @@
 \name{@ANNOBJPREFIX@GENENAME}
 \alias{@ANNOBJPREFIX@GENENAME}
-\title{Map Between Manufacturer IDs and Genes}
+\title{Map between Manufacturer IDs and Genes}
 \description{
   @ANNOBJPREFIX@GENENAME is an R object that maps manufacturer
   identifiers to the corresponding gene name.

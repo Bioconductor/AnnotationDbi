@@ -1,6 +1,6 @@
 \name{@ANNOBJPREFIX@GO2PROBE}
 \alias{@ANNOBJPREFIX@GO2PROBE}
-\title{Map Between Gene Ontology (GO) and Manufacturer Identifiers}
+\title{Map between Gene Ontology (GO) and Manufacturer Identifiers}
 \description{
    @ANNOBJPREFIX@GO2PROBE is an R object that provides mappings between
    GO identifiers and manufacturer identifiers.
