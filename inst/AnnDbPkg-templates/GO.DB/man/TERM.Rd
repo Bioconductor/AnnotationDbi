@@ -29,9 +29,7 @@
   \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene} 
 }
 \examples{
-    require("GO") || stop("GO unavailable")
-    require("annotate") || stop("annotate unavailable")
-    # Convert the environment object to a list
+    # Convert the object to a list
     xx <- as.list(@ANNOBJPREFIX@TERM)
     if(length(xx) > 0){
         # Get the TERMS for the first elent of xx

@@ -5,7 +5,7 @@
   This data set describes associations between GO Biological Process (BP)
   terms and their ancestor BP terms, based on the directed acyclic
   graph (DAG) defined by the Gene Ontology Consortium. The format is an R
-  environment mapping the GO BP terms to all ancestor terms, where an
+  object mapping the GO BP terms to all ancestor terms, where an
   ancestor term is a more general GO term that precedes
   the given GO term in the DAG (in other words, the parents, and all
   their parents, etc.).
@@ -26,8 +26,7 @@
 \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene} 
 }
 \examples{
-  require("GO", character.only = TRUE) || stop("GO unavailable")
-  # Convert the environment object to a list
+  # Convert the object to a list
   xx <- as.list(@ANNOBJPREFIX@BPANCESTOR)
   # Remove GO IDs that do not have any ancestor
   xx <- xx[!is.na(xx)]

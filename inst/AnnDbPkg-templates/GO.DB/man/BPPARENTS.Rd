@@ -5,7 +5,7 @@
   This data set describes associations between GO molecular function (BP)
   terms and their direct parent BP terms, based on the directed acyclic
   graph (DAG) defined by the Gene Ontology Consortium. The format is an R
-  environment mapping the GO BP terms to all direct parent terms, where a
+  object mapping the GO BP terms to all direct parent terms, where a
   direct parent term is a more general GO term that immediately precedes
   the given GO term in the DAG.
 }
@@ -30,9 +30,7 @@
 \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene} 
 }
 \examples{
-  require("GO", character.only = TRUE) || stop("GO unavailable")
-  require("annotate", character.only = TRUE) || stop("annotate unavailable")
-  # Convert the environment object to a list
+  # Convert the object to a list
   xx <- as.list(@ANNOBJPREFIX@BPPARENTS)
   # Remove GO IDs that do not have any parent
   xx <- xx[!is.na(xx)]

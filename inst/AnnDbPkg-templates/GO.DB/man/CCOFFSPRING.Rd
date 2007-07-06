@@ -2,7 +2,7 @@
 \alias{@ANNOBJPREFIX@CCOFFSPRING}
 \title{Annotation of GO Identifiers to their Cellular Component Offspring} 
 \description{
-This is an R environment (hash table) mapping GO identifiers to all the GO
+This is an R object mapping GO identifiers to all the GO
 identifiers of their offspring based on the  cellular component (CC) GO terms. Offspring are
 defined as the direct or indirect children/grand children nodes of a
 given node for a GO identifier based on the directed acyclic graph defined by
@@ -28,8 +28,7 @@ than that of the parent.
 \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene} 
 }
 \examples{
-  require("GO", character.only = TRUE) || stop("GO unavailable")
-  # Convert the environment object to a list
+  # Convert the object to a list
   xx <- as.list(@ANNOBJPREFIX@CCOFFSPRING)
   # Remove GO identifiers that do not have any offspring
   xx <- xx[!is.na(xx)]
