@@ -19,7 +19,7 @@ setClass(
         License="character", 
         Author="character", 
         Maintainer="character", 
-        PkgTemplate="character",        # e.g. "HGU95AV2DB"
+        PkgTemplate="character",        # e.g. "HGU95AV2.DB"
         DBschema="character",           # e.g. "HGU95AV2_DB"
         AnnObjPrefix="character",       # e.g. "hgu133a2"
         AnnObjTarget="character",       # e.g. "chip hgu133a2"
