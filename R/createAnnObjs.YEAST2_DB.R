@@ -7,8 +7,8 @@
 ### TODO: The following maps are missing for now:
 ###   miscellaneous maps: CHRLENGTHS
 
-YEAST2_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
-YEAST2_DB_L2Rbrick2 <- list(table="sgd", Lcolname="id", Rcolname="id")
+YEAST2_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="systematic_name")
+YEAST2_DB_L2Rbrick2 <- list(table="sgd", Lcolname="systematic_name", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
 YEAST2_DB_AnnDbMap_seeds <- list(
@@ -20,7 +20,59 @@ YEAST2_DB_AnnDbMap_seeds <- list(
             YEAST2_DB_L2Rbrick2,
             list(
                 table="gene2alias",
-                Lcolname="",
+                Lcolname="id",
+                Rcolname="alias"
+            )
+        )
+    ),
+    list(
+        objName="CHR",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            YEAST2_DB_L2Rbrick2,
+            list(
+                table="chromosome_features",
+                Lcolname="id",
+                Rcolname="chromosome"
+            )
+        )
+    ),
+    list(
+        objName="",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            YEAST2_DB_L2Rbrick2,
+            list(
+                table="",
+                Lcolname="id",
+                Rcolname=""
+            )
+        )
+    ),
+    list(
+        objName="",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            YEAST2_DB_L2Rbrick2,
+            list(
+                table="",
+                Lcolname="id",
+                Rcolname=""
+            )
+        )
+    ),
+    list(
+        objName="",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            YEAST2_DB_L2Rbrick2,
+            list(
+                table="",
+                Lcolname="id",
                 Rcolname=""
             )
         )
@@ -38,16 +90,6 @@ YEAST2_DB_default_rightColType <- character(0)
 
 ### Mandatory fields: objName, rightTable and rightCol
 YEAST2_DB_AtomicAnnDbMap_seeds <- list(
-    list(
-        objName="ALIAS",
-        rightTable="gene2alias",
-        rightCol="alias"
-    ),
-    list(
-        objName="CHR",
-        rightTable="chromosome_features",
-        rightCol="chromosome"
-    ),
     list(
         objName="DESCRIPTION",
         rightTable="chromosome_features",
