@@ -442,7 +442,7 @@ manufacturer: Affymetrix
 Package: ag.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2.DB  
-DBfile: /home/mcarlson/sanctionedSqlite/ag.sqlite                                                                         
+DBfile: /home/mcarlson/sanctionedSqlite/ag.sqlite 
 AnnObjPrefix: ag
 manufacturer: Affymetrix
 

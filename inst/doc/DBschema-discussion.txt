@@ -10,6 +10,9 @@ should be a PRIMARY KEY. It seems that in our current schemas, this col is
 always probes.probe_id and that the values store here are unique so making it
 a PRIMARY KEY should be straightforward.
 
+All chip-based schemas: except in the "probes" and "genes" tables, add a
+NOT NULL constraint on the "id" column.
+
 All schemas: prefix "internal" col names with an underscore. E.g. in the
 chip-based schemas, the "id" column (_our_ internal gene id, which is unique
 within a given .sqlite file only, not across those files) becomes "_id". In
@@ -35,6 +38,10 @@ this:
 Also, for easy importation of the schemas in other RDBMS, tables that are
 referenced by a foreign key should be created _before_ the tables that
 reference them.
+
+All schemas: make metadata.name, map_metadata.map_name and qcdata.map_name
+PRIMARY KEYs (then the UNIQUE constraint on qcdata.map_name is not needed
+anymore).
 
 
 YEAST_DB schema
