@@ -1,11 +1,40 @@
-HGU95AV2_DB schema
-------------------
+Proposal for schema improvements
+--------------------------------
 
-- make probes.probe_id a PRIMARY KEY. More generally speaking, all chip-based
-  schemas should have a col of reference for storage of all the valid probeset
-  ids and this col should be a PRIMARY KEY. Even more generally speaking,
-  all schemas should have a clearly defined "left col" somewhere that is
-  a PRIMARY KEY.
+The goal is to make our schemas portable, more efficient and more readable.
+
+All chip-based schemas (HGU95AV2_DB, YEAST2_DB, AG_DB): make probes.probe_id
+a PRIMARY KEY. More generally speaking, all chip-based schemas should have a
+col of reference for storage of all the valid probeset ids and this col
+should be a PRIMARY KEY. It seems that in our current schemas, this col is
+always probes.probe_id and that the values store here are unique so making it
+a PRIMARY KEY should be straightforward.
+
+All schemas: prefix "internal" col names with an underscore. E.g. in the
+chip-based schemas, the "id" column (_our_ internal gene id, which is unique
+within a given .sqlite file only, not across those files) becomes "_id". In
+the GO_DB schema, "term_id", "parent_id" and "offspring_id" become "_term_id",
+"_parent_id" and "_offspring_id". Etc...
+
+Foreign keys: all our schemas should define foreign keys (even if they are
+ignored by SQLite) everywhere it makes sense. There are only benefits of doing
+this:
+  - It makes the schema easier to understand (self-describing): a foreign
+    key not only indicates that the values in the left col must also exist
+    in the right col (referential integrity), but also that this relationship
+    between left and right values is many-to-one.
+  - If indexes are correctly defined on both sides of the links (must be
+    a UNIQUE index or PRIMARY KEY on the right side, this enforces the
+    many-to-one relationship), it makes the joins that follow those links
+    _very_ efficient (especially thanks to the UNIQUE index, most SQL
+    engines know how to take advantage of it). Another advantage of making
+    the right col UNIQUE (or PRIMARY KEY) is that it makes the schema
+    compatible with PostgreSQL which requires it.
+  - It guarantees the referential integrity of the data (well ok, not on
+    SQLite of course, since it ignores them).
+Also, for easy importation of the schemas in other RDBMS, tables that are
+referenced by a foreign key should be created _before_ the tables that
+reference them.
 
 
 YEAST_DB schema
@@ -77,28 +106,4 @@ genes2systematic: "Named Genes Only" UNION "All chromosomal features" UNION alia
 go_bp, go_mf, go_cc: "Gene Products";   GO
 pubmed: "All chromosomal features";  PMID  
 interpro, pfam, smart: "ORFs";  INTERPRO, PFAM, SMART
-
-
-note about foreign keys (links)
----------------------------------
-
-Schemas should define foreign keys (even if they are ignored by SQLite)
-everywhere it makes sense. There are only benefits of doing this:
-  - It makes the schema easier to understand (self-describing): a foreign
-    key not only indicates that the values in the left col must also exist
-    in the right col (referential integrity), but also that this relationship
-    between left and right values is many-to-one.
-  - If indexes are correctly defined on both sides of the links (must be
-    a UNIQUE index or PRIMARY KEY on the right side, this enforces the
-    many-to-one relationship), it makes the joins that follow those links
-    _very_ efficient (especially thanks to the UNIQUE index, most SQL
-    engines know how to take advantage of it). Another advantage of making
-    the right col UNIQUE (or PRIMARY KEY) is that it makes the schema
-    compatible with PostgreSQL which requires it.
-  - It guarantees the referential integrity of the data (well ok, not on
-    SQLite of course, since it ignores them).
-
-Also, for easy importation of the schemas in other RDBMS, tables that are
-referenced by a foreign key should be created _before_ the tables that
-reference them.
 
