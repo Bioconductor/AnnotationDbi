@@ -328,6 +328,13 @@ DBfile: /home/mcarlson/sanctionedSqlite/hgug4100a.sqlite
 AnnObjPrefix: hgug4100a
 manufacturer: Agilent
 
+Package: hgug4101a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/hgug4101a.sqlite
+AnnObjPrefix: hgug4101a
+manufacturer: Agilent
+
 Package: hgug4110b.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2.DB
@@ -350,6 +357,20 @@ AnnObjPrefix: hgug4112a
 manufacturer: Agilent
 
 
+Package: mgug4104a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/mgug4104a.sqlite
+AnnObjPrefix: mgug4104a
+manufacturer: Agilent
+
+Package: mgug4120a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/mgug4120a.sqlite
+AnnObjPrefix: mgug4120a
+manufacturer: Agilent
+
 Package: mgug4121a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2.DB
@@ -365,6 +386,13 @@ AnnObjPrefix: mgug4122a
 manufacturer: Agilent
 
 
+Package: rgug4105a.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/rgug4105a.sqlite
+AnnObjPrefix: rgug4105a
+manufacturer: Agilent
+
 Package: rgug4130a.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2.DB
@@ -378,6 +406,141 @@ PkgTemplate: HGU95AV2.DB
 DBfile: /home/mcarlson/sanctionedSqlite/rgug4131a.sqlite
 AnnObjPrefix: rgug4131a
 manufacturer: Agilent
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### OTHER platforms (not affy or agilent, but still rat, mouse & human)
+###
+
+Package: hguatlas13k.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/hguatlas13k.sqlite
+AnnObjPrefix: hguatlas13k
+manufacturer: Clontech
+
+Package: hgubeta7.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/hgubeta7.sqlite
+AnnObjPrefix: hgubeta7
+manufacturer: Unknown
+
+Package: hguDKFZ31.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/hguDKFZ31.sqlite
+AnnObjPrefix: hguDKFZ31
+manufacturer: Unknown
+
+Package: hguqiagenv3.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/hguqiagenv3.sqlite
+AnnObjPrefix: hguqiagenv3
+manufacturer: Qiagen
+
+Package: HuO22.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/HuO22.sqlite
+AnnObjPrefix: HuO22
+manufacturer: FHCRC Genomics Shared Resource
+
+Package: JazaeriMetaData.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/JazaeriMetaData.sqlite
+AnnObjPrefix: JazaeriMetaData
+manufacturer: National Cancer Institute
+
+Package: Norway981.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/Norway981.sqlite
+AnnObjPrefix: Norway981
+manufacturer: Stanford Microarray Database
+
+Package: OperonHumanV3.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/OperonHumanV3.sqlite
+AnnObjPrefix: OperonHumanV3
+manufacturer: FHCRC Nelson Lab
+
+Package: PartheenMetaData.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/PartheenMetaData.sqlite
+AnnObjPrefix: PartheenMetaData
+manufacturer: Swegene DNA Microarray Resource Centre, Lund, Sweden
+
+Package: pedbarrayv9.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/pedbarrayv9.sqlite
+AnnObjPrefix: pedbarrayv9
+manufacturer: FHCRC Nelson Lab
+
+Package: pedbarrayv10.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/pedbarrayv10.sqlite
+AnnObjPrefix: pedbarrayv10
+manufacturer: FHCRC Nelson Lab
+
+Package: Roberts2005Annotation.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/Roberts2005Annotation.sqlite
+AnnObjPrefix: Roberts2005Annotation
+manufacturer: Roberts2005Annotation
+
+Package: SHDZ.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/SHDZ.sqlite
+AnnObjPrefix: SHDZ
+manufacturer: Stanford Microarray Database
+
+
+Package: mguatlas5k.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/mguatlas5k.sqlite
+AnnObjPrefix: mguatlas5k
+manufacturer: Clontech
+
+Package: mpedbarray.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/mpedbarray.sqlite
+AnnObjPrefix: mpedbarray
+manufacturer: FHCRC Nelson Lab
+
+Package: Mu15v1.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/Mu15v1.sqlite
+AnnObjPrefix: Mu15v1
+manufacturer: FHCRC Genomics Shared Resource
+
+Package: Mu22v3.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/Mu22v3.sqlite
+AnnObjPrefix: Mu22v3
+manufacturer: FHCRC Genomics Shared Resource
+
+
+Package: rguatlas4k.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/rguatlas4k.sqlite
+AnnObjPrefix: rguatlas4k
+manufacturer: Clontech
+
+
 
 
 ### =========================================================================
