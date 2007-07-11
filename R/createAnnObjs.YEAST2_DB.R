@@ -1,14 +1,19 @@
 ### =========================================================================
-### Create all data objects for an annotation data package
-### with db schema YEAST2_DB
+### An SQLite-based ann data package (AnnDbPkg) provides a set of pre-defined
+### AnnObj objects that are created at load-time. This set depends only on
+### the underlying db schema i.e. all the SQLite-based ann data packages that
+### share the same underlying db schema will provide the same set of AnnObj
+### objects.
+###
+### This file describes the set of AnnObj objects provided by any
+### YEAST2_DB-based package i.e. any SQLite-based ann data package based
+### on the YEAST2_DB schema.
+### The createAnnObjs.YEAST2_DB() function is the main entry point for
+### this file: it is called by any YEAST2_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
 
-### TODO: The following maps are missing for now:
-###   miscellaneous maps: CHRLENGTHS
-
-YEAST2_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="systematic_name")
-YEAST2_DB_L2Rbrick2 <- list(table="sgd", Lcolname="systematic_name", Rcolname="id")
+YEAST2_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
 YEAST2_DB_AnnDbMap_seeds <- list(
@@ -17,7 +22,6 @@ YEAST2_DB_AnnDbMap_seeds <- list(
         Class="AtomicAnnDbMap",
         L2Rpath=list(
             YEAST2_DB_L2Rbrick1,
-            YEAST2_DB_L2Rbrick2,
             list(
                 table="gene2alias",
                 Lcolname="id",
@@ -30,7 +34,6 @@ YEAST2_DB_AnnDbMap_seeds <- list(
         Class="AtomicAnnDbMap",
         L2Rpath=list(
             YEAST2_DB_L2Rbrick1,
-            YEAST2_DB_L2Rbrick2,
             list(
                 table="chromosome_features",
                 Lcolname="id",
@@ -39,146 +42,140 @@ YEAST2_DB_AnnDbMap_seeds <- list(
         )
     ),
     list(
-        objName="",
-        Class="AtomicAnnDbMap",
-        L2Rpath=list(
-            YEAST2_DB_L2Rbrick1,
-            YEAST2_DB_L2Rbrick2,
-            list(
-                table="",
-                Lcolname="id",
-                Rcolname=""
-            )
-        )
-    ),
-    list(
-        objName="",
-        Class="AtomicAnnDbMap",
-        L2Rpath=list(
-            YEAST2_DB_L2Rbrick1,
-            YEAST2_DB_L2Rbrick2,
-            list(
-                table="",
-                Lcolname="id",
-                Rcolname=""
-            )
-        )
-    ),
-    list(
-        objName="",
-        Class="AtomicAnnDbMap",
-        L2Rpath=list(
-            YEAST2_DB_L2Rbrick1,
-            YEAST2_DB_L2Rbrick2,
-            list(
-                table="",
-                Lcolname="id",
-                Rcolname=""
-            )
-        )
-    )
-)
-
-### TODO: The following maps are missing for now:
-###   miscellaneous maps: CHRLENGTHS
-
-YEAST2_DB_default_leftTable <- "probes"
-YEAST2_DB_default_leftCol <- "probe_id"
-YEAST2_DB_short_join <- "INNER JOIN probes USING (systematic_name)"
-YEAST2_DB_default_join <- paste("INNER JOIN sgd USING (id)", YEAST2_DB_short_join)
-YEAST2_DB_default_rightColType <- character(0)
-
-### Mandatory fields: objName, rightTable and rightCol
-YEAST2_DB_AtomicAnnDbMap_seeds <- list(
-    list(
         objName="DESCRIPTION",
-        rightTable="chromosome_features",
-        rightCol="feature_description"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="chromosome_features",
+                Lcolname="id",
+                Rcolname="feature_description"
+            )
+        )
     ),
     list(
         objName="ENZYME",
-        rightTable="ec",
-        rightCol="ec_number"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="ec",
+                Lcolname="id",
+                Rcolname="ec_number"
+            )
+        )
     ),
     list(
         objName="GENENAME",
-        rightTable="sgd",
-        rightCol="gene_name",
-        join=YEAST2_DB_short_join
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="sgd",
+                Lcolname="id",
+                Rcolname="gene_name"
+            )
+        )
     ),
     list(
         objName="ORF",
-        rightTable="probes",
-        rightCol="systematic_name",
-        join=character(0)
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="sgd",
+                Lcolname="id",
+                Rcolname="systematic_name"
+            )
+        )
     ),
     list(
         objName="PATH",
-        rightTable="kegg",
-        rightCol="kegg_id"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="kegg",
+                Lcolname="id",
+                Rcolname="kegg_id"
+            )
+        )
     ),
     list(
         objName="PMID",
-        rightTable="pubmed",
-        rightCol="pubmed_id"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="pubmed",
+                Lcolname="id",
+                Rcolname="pubmed_id"
+            )
+        )
     ),
     list(
         objName="CHRLOC",
-        rightTable="chromosome_features",
-        rightCol="start",
-        rightColType="integer",
-        tagCol="chromosome"
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="chromosome_features",
+                Lcolname="id",
+                Rcolname="start",
+                tagCols=c(Chromosome="{chromosome}")
+            )
+        ),
+        rightColType="integer"
+    ),
+    list(
+        objName="GO",
+        Class="Go3AnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                #table="go_term", # no rightmost table for a Go3AnnDbMap
+                Lcolname="id",
+                Rcolname="go_id",
+                tagCols=c(Evidence="{evidence}", Ontology="NULL")
+            )
+        ),
+        rightTables=Go3tables()
     )
 )
 
 createAnnObjs.YEAST2_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AtomicAnnDbMap objects
+    ## AnnDbMap objects
     seed0 <- list(
         objTarget=objTarget,
-        conn=conn,
         datacache=datacache,
-        rightColType=YEAST2_DB_default_rightColType,
-        leftTable=YEAST2_DB_default_leftTable,
-        leftCol=YEAST2_DB_default_leftCol,
-        join=YEAST2_DB_default_join
+        conn=conn
     )
-    ann_objs <- createAnnObjs("AtomicAnnDbMap", YEAST2_DB_AtomicAnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbMaps(YEAST2_DB_AnnDbMap_seeds, seed0)
 
     ## RevAtomicAnnDbMap objects
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
 
-    ## Go3AnnDbMap object
-    ann_objs$GO <- new("Go3AnnDbMap",
-        objTarget=objTarget,
-        conn=conn,
-        datacache=datacache,
-        objName="GO",
-        leftTable=YEAST2_DB_default_leftTable,
-        leftCol=YEAST2_DB_default_leftCol,
-        join=YEAST2_DB_default_join,
-        all=FALSE
-    )
-
     ## RevGo3AnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    ann_objs$GO2ALLPROBES <- new("RevGo3AnnDbMap", ann_objs$GO, objName="GO2ALLPROBES", all=TRUE)
+    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
+    ann_objs$GO2ALLPROBES <- map
+
+    ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
+    ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
     left.names(ann_objs$GO)
-
-    ## The MAPCOUNTS object (named integer vector)
-    #ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     prefixAnnObjNames(ann_objs, prefix)
 }
 
 compareAnnDataIn2Pkgs.YEAST2_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(YEAST2_DB_AtomicAnnDbMap_seeds, function(x) x$objName)
-    direct_maps <- c(direct_maps, "GO")
+    direct_maps <- sapply(YEAST2_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ENZYME2PROBE",
         "PATH2PROBE",
