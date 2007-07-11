@@ -538,7 +538,30 @@ PkgTemplate: GO.DB
 DBfile: /home/mcarlson/sanctionedSqlite/GO.sqlite 
 AnnObjPrefix: GO
 AnnObjTarget: GO
-biocViews: FunctionalAnnotation
+biocViews: AnnotationData, FunctionalAnnotation
+
+
+### =========================================================================
+### KEGG_DB schema
+### ------------
+###   Fields:
+###     Package (*)
+###     Version (*)
+###     PkgTemplate: KEGG.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget (*)
+###     biocViews (*)
+### Fields marked with an (*) are required.
+
+Package: KEGG.db
+Version: 1.17.0
+PkgTemplate: KEGG.DB
+DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/KEGG.sqlite
+AnnObjPrefix: KEGG
+AnnObjTarget: KEGG
+biocViews: AnnotationData, FunctionalAnnotation
 
 
 ### =========================================================================
