@@ -668,9 +668,9 @@ biocViews: Rattus_norvegicus, ratLLMappings
 ###     Version (*)
 ###     PkgTemplate: YEAST.DB
 ###     DBfile (*)
-###     DBschema: YEAST_DB
+###     DBschema
 ###     AnnObjPrefix (*)
-###     AnnObjTarget
+###     AnnObjTarget (*)
 ###     organism
 ###     species
 ###     biocViews (*)
@@ -680,8 +680,8 @@ Package: YEAST.db
 Version: 1.17.0
 PkgTemplate: YEAST.DB
 DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite
-DBschema: YEAST_DB
 AnnObjPrefix: YEAST
+AnnObjTarget: YEAST
 biocViews: AnnotationData, Saccharomyces_cerevisiae
 
 
