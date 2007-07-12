@@ -129,6 +129,17 @@ YEAST_DB_AnnDbMap_seeds <- list(
         rightTables=Go3tables()
     ),
     list(
+        objName="COMMON2SYSTEMATIC",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            list(
+                table="gene2systematic",
+                Lcolname="gene_name",
+                Rcolname="systematic_name"
+            )
+        )
+    ),
+    list(
         objName="INTERPRO",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
@@ -178,7 +189,6 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
 
     ## RevAtomicAnnDbMap objects
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
-    ann_objs$COMMON2SYSTEMATIC <- revmap(ann_objs$GENENAME, objName="COMMON2SYSTEMATIC")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
 
@@ -203,7 +213,6 @@ compareAnnDataIn2Pkgs.YEAST_DB <- function(pkgname1, pkgname2, prefix, quick=FAL
     direct_maps <- sapply(YEAST_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ENZYME2PROBE",
-        "COMMON2SYSTEMATIC",
         "PATH2PROBE",
         "PMID2PROBE",
         "GO2PROBE",
