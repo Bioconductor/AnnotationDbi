@@ -42,6 +42,20 @@ YEAST2_DB_AnnDbMap_seeds <- list(
         )
     ),
     list(
+        objName="CHRLOC",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="chromosome_features",
+                Lcolname="id",
+                Rcolname="start",
+                tagCols=c(Chromosome="{chromosome}")
+            )
+        ),
+        rightColType="integer"
+    ),
+    list(
         objName="DESCRIPTION",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
@@ -78,18 +92,6 @@ YEAST2_DB_AnnDbMap_seeds <- list(
         )
     ),
     list(
-        objName="ORF",
-        Class="AtomicAnnDbMap",
-        L2Rpath=list(
-            YEAST2_DB_L2Rbrick1,
-            list(
-                table="sgd",
-                Lcolname="id",
-                Rcolname="systematic_name"
-            )
-        )
-    ),
-    list(
         objName="PATH",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
@@ -114,20 +116,6 @@ YEAST2_DB_AnnDbMap_seeds <- list(
         )
     ),
     list(
-        objName="CHRLOC",
-        Class="AtomicAnnDbMap",
-        L2Rpath=list(
-            YEAST2_DB_L2Rbrick1,
-            list(
-                table="chromosome_features",
-                Lcolname="id",
-                Rcolname="start",
-                tagCols=c(Chromosome="{chromosome}")
-            )
-        ),
-        rightColType="integer"
-    ),
-    list(
         objName="GO",
         Class="Go3AnnDbMap",
         L2Rpath=list(
@@ -140,6 +128,18 @@ YEAST2_DB_AnnDbMap_seeds <- list(
             )
         ),
         rightTables=Go3tables()
+    ),
+    list(
+        objName="ORF",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            YEAST2_DB_L2Rbrick1,
+            list(
+                table="sgd",
+                Lcolname="id",
+                Rcolname="systematic_name"
+            )
+        )
     )
 )
 

@@ -57,7 +57,7 @@ createAnnDbMaps <- function(seeds, seed0, envir=NULL)
     envir
 }
 
-### 2 special maps that are not AnnDbMap objects (just named integer vectors).
+### 3 special maps that are not AnnDbMap objects (just named vectors).
 
 createCHRLENGTHS <- function(conn)
 {
@@ -65,6 +65,12 @@ createCHRLENGTHS <- function(conn)
     CHRLENGTHS <- data[["length"]]
     names(CHRLENGTHS) <- data[["chr"]]
     CHRLENGTHS
+}
+
+createREJECTORF <- function(conn)
+{
+    data <- dbGetTable(conn, "reject_orf")
+    data[["systematic_name"]]
 }
 
 createMAPCOUNTS <- function(conn, prefix)
