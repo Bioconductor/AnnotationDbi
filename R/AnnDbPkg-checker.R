@@ -190,8 +190,6 @@ identical.collections <- function(x, y)
 ###   AG_DB schema
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ag", "ag.db", "ag")
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ath1121501", "ath1121501.db", "ath1121501")
-###   YEAST_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST_DB("YEAST", "YEAST.db", "YEAST")
 ###   LLMAPPINGS_DB schema
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("humanLLMappings",
 ###                                                           "humanLLMappings.db", "humanLLMappings")
@@ -199,6 +197,8 @@ identical.collections <- function(x, y)
 ###                                                           "mouseLLMappings.db", "mouseLLMappings")
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("ratLLMappings",
 ###                                                           "ratLLMappings.db", "ratLLMappings")
+###   YEAST_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST_DB("YEAST", "YEAST.db", "YEAST")
 ###
 compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
                                   reverse_maps=c(), quick=FALSE, verbose=FALSE)
