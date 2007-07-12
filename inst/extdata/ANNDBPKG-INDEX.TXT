@@ -620,29 +620,6 @@ manufacturer: Affymetrix
 
 
 ### =========================================================================
-### YEAST_DB schema
-### ---------------
-###   Fields:
-###     Package
-###     Version
-###     PkgTemplate: YEAST.DB
-###     DBfile
-###     DBschema
-###     AnnObjPrefix
-###     AnnObjTarget
-###     organism
-###     species
-###     biocViews
-
-Package: YEAST.db
-Version: 1.17.0
-PkgTemplate: YEAST.DB
-DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite
-DBschema: YEAST_DB
-AnnObjPrefix: YEAST
-
-
-### =========================================================================
 ### LLMAPPINGS_DB schema
 ### --------------------
 ###   Fields:
@@ -681,6 +658,31 @@ DBschema: LLMAPPINGS_DB
 AnnObjPrefix: ratLLMappings
 AnnObjTarget: rat LocusLink ids
 biocViews: Rattus_norvegicus, ratLLMappings
+
+
+### =========================================================================
+### YEAST_DB schema
+### ---------------
+###   Fields:
+###     Package (*)
+###     Version (*)
+###     PkgTemplate: YEAST.DB
+###     DBfile (*)
+###     DBschema: YEAST_DB
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     biocViews (*)
+### Fields marked with an (*) are required.
+
+Package: YEAST.db
+Version: 1.17.0
+PkgTemplate: YEAST.DB
+DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite
+DBschema: YEAST_DB
+AnnObjPrefix: YEAST
+biocViews: AnnotationData, Saccharomyces_cerevisiae
 
 
 ### =========================================================================
