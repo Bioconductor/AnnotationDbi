@@ -89,13 +89,21 @@ initWithDbMetada <- function(x, db_file)
     }
     row.names(metadata) <- metadata$name
     for (i in seq_len(length(metadata2slot))) {
-        slot_name <- metadata2slot[i]
         metadata_name <- names(metadata2slot)[i]
+        if (!(metadata_name %in% row.names(metadata))) {
+            if (metadata_name == "DBSCHEMA")
+                stop("'DBSCHEMA' not found in \"metadata\" table")
+            next
+        }
+        slot_name <- metadata2slot[i]
         val <- metadata[metadata_name, "value"]
-        if (!is.na(slot(x, slot_name)) && slot(x, slot_name) != val)
-            warning(metadata_name, " specified in '", db_file, "' (\"", val, "\") ",
-                    "doesn't match 'x@", slot_name, "' (\"", slot(x, slot_name), "\")")
-        slot(x, slot_name) <- val
+        if (is.na(slot(x, slot_name))) {
+            slot(x, slot_name) <- val
+            next
+        }
+        if (slot(x, slot_name) != val)
+            stop(metadata_name, " specified in '", db_file, "' (\"", val, "\") ",
+                 "doesn't match 'x@", slot_name, "' (\"", slot(x, slot_name), "\")")
     }
     x
 }
