@@ -174,7 +174,7 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(YEAST2_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbMaps(YEAST_DB_AnnDbMap_seeds, seed0)
 
     ## RevAtomicAnnDbMap objects
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
