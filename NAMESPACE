@@ -112,6 +112,7 @@ export(
     createAnnObjs.LLMAPPINGS_DB,
     createAnnObjs.YEAST_DB,
     createAnnObjs.GO_DB,
+    createAnnObjs.KEGG_DB,
     createAnnObjs.AFFYHUEX_DB,
 
     ## from R/AnnDbPkg-maker.R
