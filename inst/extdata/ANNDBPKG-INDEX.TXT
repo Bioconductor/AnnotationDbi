@@ -407,10 +407,8 @@ DBfile: /home/mcarlson/sanctionedSqlite/rgug4131a.sqlite
 AnnObjPrefix: rgug4131a
 manufacturer: Agilent
 
-
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### OTHER platforms (not affy or agilent, but still rat, mouse & human)
-###
+### Clontech chips
 
 Package: hguatlas13k.db
 Version: 1.17.0
@@ -419,19 +417,22 @@ DBfile: /home/mcarlson/sanctionedSqlite/hguatlas13k.sqlite
 AnnObjPrefix: hguatlas13k
 manufacturer: Clontech
 
-Package: hgubeta7.db
+Package: mguatlas5k.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgubeta7.sqlite
-AnnObjPrefix: hgubeta7
-manufacturer: Unknown
+DBfile: /home/mcarlson/sanctionedSqlite/mguatlas5k.sqlite
+AnnObjPrefix: mguatlas5k
+manufacturer: Clontech
 
-Package: hguDKFZ31.db
+Package: rguatlas4k.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hguDKFZ31.sqlite
-AnnObjPrefix: hguDKFZ31
-manufacturer: Unknown
+DBfile: /home/mcarlson/sanctionedSqlite/rguatlas4k.sqlite
+AnnObjPrefix: rguatlas4k
+manufacturer: Clontech
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Qiagen chips
 
 Package: hguqiagenv3.db
 Version: 1.17.0
@@ -439,6 +440,24 @@ PkgTemplate: HGU95AV2.DB
 DBfile: /home/mcarlson/sanctionedSqlite/hguqiagenv3.sqlite
 AnnObjPrefix: hguqiagenv3
 manufacturer: Qiagen
+chipName: Qiagen V3.0 oligo set
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Custom arrays
+
+Package: hgubeta7.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/hgubeta7.sqlite
+AnnObjPrefix: hgubeta7
+biocViews: AnnotationData, CustomArray, Homo_sapiens
+
+Package: hguDKFZ31.db
+Version: 1.17.0
+PkgTemplate: HGU95AV2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/hguDKFZ31.sqlite
+AnnObjPrefix: hguDKFZ31
+biocViews: AnnotationData, CustomArray, Homo_sapiens
 
 Package: HuO22.db
 Version: 1.17.0
@@ -453,6 +472,7 @@ PkgTemplate: HGU95AV2.DB
 DBfile: /home/mcarlson/sanctionedSqlite/JazaeriMetaData.sqlite
 AnnObjPrefix: JazaeriMetaData
 manufacturer: National Cancer Institute
+
 
 Package: Norway981.db
 Version: 1.17.0
@@ -504,13 +524,6 @@ AnnObjPrefix: SHDZ
 manufacturer: Stanford Microarray Database
 
 
-Package: mguatlas5k.db
-Version: 1.17.0
-PkgTemplate: HGU95AV2.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mguatlas5k.sqlite
-AnnObjPrefix: mguatlas5k
-manufacturer: Clontech
-
 Package: mpedbarray.db
 Version: 1.17.0
 PkgTemplate: HGU95AV2.DB
@@ -531,16 +544,6 @@ PkgTemplate: HGU95AV2.DB
 DBfile: /home/mcarlson/sanctionedSqlite/Mu22v3.sqlite
 AnnObjPrefix: Mu22v3
 manufacturer: FHCRC Genomics Shared Resource
-
-
-Package: rguatlas4k.db
-Version: 1.17.0
-PkgTemplate: HGU95AV2.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rguatlas4k.sqlite
-AnnObjPrefix: rguatlas4k
-manufacturer: Clontech
-
-
 
 
 ### =========================================================================
