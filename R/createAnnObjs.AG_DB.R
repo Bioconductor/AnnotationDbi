@@ -70,9 +70,9 @@ AG_DB_AnnDbMap_seeds <- list(
         L2Rpath=list(
             AG_DB_L2Rbrick1,
             list(
-                table="ec",
+                table="enzyme",
                 Lcolname="id",
-                Rcolname="ec_number"
+                Rcolname="ec_name"
             )
         )
     ),
