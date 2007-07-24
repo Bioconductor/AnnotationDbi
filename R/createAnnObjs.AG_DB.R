@@ -16,17 +16,19 @@ AG_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
 AG_DB_AnnDbMap_seeds <- list(
-    #list(
-    #    objName="ACCNUM",
-    #    Class="AtomicAnnDbMap",
-    #    L2Rpath=list(
-    #        list(
-    #            table="probes",
-    #            Lcolname="probe_id",
-    #            Rcolname="accession"
-    #        )
-    #    )
-    #),
+    list(
+        objName="ACCNUM",
+        Class="AtomicAnnDbMap",
+        L2Rpath=list(
+            AG_DB_L2Rbrick1,
+            list(
+                table="genes",
+                Lcolname="id",
+                Rcolname="gene_id"
+            )
+        ),
+        replace.multiple="multiple"
+    ),
     list(
         objName="ARACYC",
         Class="AtomicAnnDbMap",
@@ -50,19 +52,6 @@ AG_DB_AnnDbMap_seeds <- list(
                 Rcolname="chromosome"
             )
         )
-    ),
-    list(
-        objName="ENTREZID",
-        Class="AtomicAnnDbMap",
-        L2Rpath=list(
-            AG_DB_L2Rbrick1,
-            list(
-                table="genes",
-                Lcolname="id",
-                Rcolname="gene_id"
-            )
-        ),
-        replace.multiple="multiple"
     ),
     list(
         objName="ENZYME",
@@ -191,6 +180,9 @@ createAnnObjs.AG_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
     map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
+
+    ## Aliases for AnnDbMap objects
+    ann_objs$ENTREZID <- ann_objs$ACCNUM
 
     ## 1 special map that is not an AnnDbMap object (just a named integer vector)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
