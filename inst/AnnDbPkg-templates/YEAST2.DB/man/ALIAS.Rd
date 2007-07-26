@@ -4,7 +4,7 @@
 \description{
   A set of gene names may have been used to report yeast genes
   represented by ORF identifiers. One of these names is chosen to be the primary
-  gene name, and the others are considered aliases. This R environment
+  gene name, and the others are considered aliases. This R object
   provides mappings between the primary name and aliases.
 }
 \details{

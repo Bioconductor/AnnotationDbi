@@ -2,7 +2,7 @@
 \alias{@ANNOBJPREFIX@ORF}
 \title{Map Manufacturer Identifiers to Open Reading Frame (ORF) Identifiers} 
 \description{
-  @ANNOBJPREFIX@ORF is an R environment that provides mappings between
+  @ANNOBJPREFIX@ORF is an R object that provides mappings between
   manufacturer and ORF identifiers.
 }
 \details{

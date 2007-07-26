@@ -605,15 +605,15 @@ manufacturer: Affymetrix
 ### Affymetrix chips
 
 Package: ag.db
-Version: 1.17.0
-PkgTemplate: HGU95AV2.DB  
+Version: 1.17.1
+PkgTemplate: AG.DB  
 DBfile: /home/mcarlson/sanctionedSqlite/ag.sqlite 
 AnnObjPrefix: ag
 manufacturer: Affymetrix
 
 Package: ath1121501.db
-Version: 1.17.0
-PkgTemplate: HGU95AV2.DB
+Version: 1.17.1
+PkgTemplate: AG.DB
 DBfile: /home/mcarlson/sanctionedSqlite/ath1121501.sqlite
 AnnObjPrefix: ath1121501
 manufacturer: Affymetrix
