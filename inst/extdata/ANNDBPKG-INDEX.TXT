@@ -568,16 +568,16 @@ manufacturer: FHCRC Genomics Shared Resource
 ### Affymetrix chips
 
 Package: yeast2.db
-Version: 1.17.0
-PkgTemplate: HGU95AV2.DB
-DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/yeast/yeast2.sqlite
+Version: 1.17.1
+PkgTemplate: YEAST2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/yeast2.sqlite
 AnnObjPrefix: yeast2
 manufacturer: Affymetrix
 
 Package: ygs98.db
-Version: 1.17.0
-PkgTemplate: HGU95AV2.DB
-DBfile: /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/yeast/ygs98.sqlite
+Version: 1.17.1
+PkgTemplate: YEAST2.DB
+DBfile: /home/mcarlson/sanctionedSqlite/ygs98.sqlite
 AnnObjPrefix: ygs98
 manufacturer: Affymetrix
 
