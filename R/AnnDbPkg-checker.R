@@ -182,23 +182,28 @@ identical.collections <- function(x, y)
 ### We use it to validate our SQLite-based ann packages by comparing each of
 ### them to its envir-based sibling package e.g.:
 ###     > library(AnnotationDbi)
-###   HGU95AV2_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.HGU95AV2_DB("hgu95av2", "hgu95av2.db", "hgu95av2")
-###   YEAST2_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST2_DB("yeast2", "yeast2.db", "yeast2")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST2_DB("ygs98", "ygs98.db", "ygs98")
-###   AG_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ag", "ag.db", "ag")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.AG_DB("ath1121501", "ath1121501.db", "ath1121501")
-###   LLMAPPINGS_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("humanLLMappings",
-###                                                           "humanLLMappings.db", "humanLLMappings")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("mouseLLMappings",
-###                                                           "mouseLLMappings.db", "mouseLLMappings")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.LLMAPPINGS_DB("ratLLMappings",
-###                                                           "ratLLMappings.db", "ratLLMappings")
+###   HUMANCHIP_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.HUMANCHIP_DB("hgu95av2", "hgu95av2.db", "hgu95av2")
+###   RODENTCHIP_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.RODENTCHIP_DB("mgu74a", "mgu74a.db", "mgu74a")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.RODENTCHIP_DB("rae230a.db", "rae230a.db", "rae230a")
+###   YEASTCHIP_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEASTCHIP_DB("yeast2", "yeast2.db", "yeast2")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEASTCHIP_DB("ygs98", "ygs98.db", "ygs98")
+###   ARABIDOPSISCHIP_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.ARABIDOPSISCHIP_DB("ag", "ag.db", "ag")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.ARABIDOPSISCHIP_DB("ath1121501", "ath1121501.db", "ath1121501")
+###   HUMAN_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.HUMAN_DB("org.Hs", "org.Hs.db", "org.Hs")
+###   RODENT_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.RODENT_DB("org.Mm", "org.Mm.db", "org.Mm")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.RODENT_DB("org.Rn", "org.Rn.db", "org.Rn")
 ###   YEAST_DB schema
 ###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST_DB("YEAST", "YEAST.db", "YEAST")
+###   GO_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.GO_DB("GO", "GO.db", "GO")
+###   KEGG_DB schema
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs.KEGG_DB("KEGG", "KEGG.db", "KEGG")
 ###
 compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
                                   reverse_maps=c(), quick=FALSE, verbose=FALSE)

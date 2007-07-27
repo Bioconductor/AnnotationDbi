@@ -6,21 +6,21 @@
 ### objects.
 ###
 ### This file describes the set of AnnObj objects provided by any
-### AG_DB-based package i.e. any SQLite-based ann data package based
-### on the AG_DB schema.
-### The createAnnObjs.AG_DB() function is the main entry point for
-### this file: it is called by any AG_DB-based package at load-time.
+### ARABIDOPSISCHIP_DB-based package i.e. any SQLite-based ann data package based
+### on the ARABIDOPSISCHIP_DB schema.
+### The createAnnObjs.ARABIDOPSISCHIP_DB() function is the main entry point for
+### this file: it is called by any ARABIDOPSISCHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
-AG_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
+ARABIDOPSISCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
-AG_DB_AnnDbMap_seeds <- list(
+ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="genes",
                 Lcolname="id",
@@ -33,7 +33,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="ARACYC",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="aracyc",
                 Lcolname="id",
@@ -45,7 +45,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="CHR",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="gene_info",
                 Lcolname="id",
@@ -57,7 +57,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="ENZYME",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="enzyme",
                 Lcolname="id",
@@ -69,7 +69,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="GENENAME",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="gene_info",
                 Lcolname="id",
@@ -81,7 +81,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="MULTIHIT",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="genes",
                 Lcolname="id",
@@ -94,7 +94,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="PATH",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="kegg",
                 Lcolname="id",
@@ -106,7 +106,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="PMID",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="pubmed",
                 Lcolname="id",
@@ -118,7 +118,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="SYMBOL",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="gene_info",
                 Lcolname="id",
@@ -130,7 +130,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="CHRLOC",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 table="chromosome_locations",
                 Lcolname="id",
@@ -144,7 +144,7 @@ AG_DB_AnnDbMap_seeds <- list(
         objName="GO",
         Class="Go3AnnDbMap",
         L2Rpath=list(
-            AG_DB_L2Rbrick1,
+            ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
                 #table="go_term", # no rightmost table for a Go3AnnDbMap
                 Lcolname="id",
@@ -156,12 +156,12 @@ AG_DB_AnnDbMap_seeds <- list(
     )
 )
 
-AG_DB_default_leftTable <- "probes"
-AG_DB_default_leftCol <- "probe_id"
-AG_DB_default_rightColType <- character(0)
-AG_DB_default_join <- "INNER JOIN probes USING (id)"
+ARABIDOPSISCHIP_DB_default_leftTable <- "probes"
+ARABIDOPSISCHIP_DB_default_leftCol <- "probe_id"
+ARABIDOPSISCHIP_DB_default_rightColType <- character(0)
+ARABIDOPSISCHIP_DB_default_join <- "INNER JOIN probes USING (id)"
 
-createAnnObjs.AG_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AnnDbMap objects
     seed0 <- list(
@@ -169,7 +169,7 @@ createAnnObjs.AG_DB <- function(prefix, objTarget, conn, datacache)
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(AG_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbMaps(ARABIDOPSISCHIP_DB_AnnDbMap_seeds, seed0)
 
     ## RevAtomicAnnDbMap objects
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
@@ -193,9 +193,9 @@ createAnnObjs.AG_DB <- function(prefix, objTarget, conn, datacache)
     prefixAnnObjNames(ann_objs, prefix)
 }
 
-compareAnnDataIn2Pkgs.AG_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
+compareAnnDataIn2Pkgs.ARABIDOPSISCHIP_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(AG_DB_AnnDbMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(ARABIDOPSISCHIP_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ENZYME2PROBE",
         "PATH2PROBE",

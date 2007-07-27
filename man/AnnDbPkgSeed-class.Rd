@@ -21,7 +21,7 @@
   seed <- new("AnnDbPkgSeed",
       Package="hgu133a2.db",
       Version="0.0.99",
-      PkgTemplate="HGU95AV2.DB",
+      PkgTemplate="HUMANCHIP.DB",
       AnnObjPrefix="hgu133a2"
   )
 

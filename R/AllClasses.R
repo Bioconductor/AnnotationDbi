@@ -96,11 +96,12 @@ setClass("RevAnnDbMap", representation("VIRTUAL"))
 ###
 ### For a "AtomicAnnDbMap" object, the right values are unnamed atomic vectors
 ### (character or integer).
-### The 2 additional slots ('replace.single' and 'replace.multiple') allow dealing
-### with silly maps ENTREZID and MULTIHIT in AG_DB schema: they are complementary
-### maps that both map probeset ids to Entrez ids. In the ENTREZID map, probeset
-### ids that have multiple matches are mapped to "multiple". In the MULTIHIT
-### map, probeset ids that have <= 1 match are mapped to NAs. Sooooo:
+### The 2 additional slots ('replace.single' and 'replace.multiple') allow
+### dealing with silly maps ENTREZID and MULTIHIT in ARABIDOPSISCHIP_DB schema:
+### they are complementary maps that both map probeset ids to Entrez ids.
+### In the ENTREZID map, probeset ids that have multiple matches are mapped
+### to "multiple". In the MULTIHIT map, probeset ids that have <= 1 match are
+### mapped to NAs. Sooooo:
 ###   - for ENTREZID: don't set replace.single (default is character(0)),
 ###                   use replace.multiple="multiple",
 ###   - for MULTIHIT: use replace.single=NA,

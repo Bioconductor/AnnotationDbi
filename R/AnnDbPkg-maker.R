@@ -19,8 +19,8 @@ setClass(
         License="character", 
         Author="character", 
         Maintainer="character", 
-        PkgTemplate="character",        # e.g. "HGU95AV2.DB"
-        DBschema="character",           # e.g. "HGU95AV2_DB"
+        PkgTemplate="character",        # e.g. "HUMANCHIP.DB"
+        DBschema="character",           # e.g. "HUMANCHIP_DB"
         AnnObjPrefix="character",       # e.g. "hgu133a2"
         AnnObjTarget="character",       # e.g. "chip hgu133a2"
         organism="character",           # e.g. "Homo sapiens"

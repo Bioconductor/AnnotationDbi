@@ -106,10 +106,10 @@ export(
     mergeToNamespaceAndExport,
 
     ## from the R/createAnnObjs.*_DB.R files
-    createAnnObjs.HGU95AV2_DB,
-    createAnnObjs.YEAST2_DB,
-    createAnnObjs.AG_DB,
-    createAnnObjs.LLMAPPINGS_DB,
+    createAnnObjs.HUMANCHIP_DB,
+    createAnnObjs.YEASTCHIP_DB,
+    createAnnObjs.ARABIDOPSISCHIP_DB,
+    createAnnObjs.HUMAN_DB,
     createAnnObjs.YEAST_DB,
     createAnnObjs.GO_DB,
     createAnnObjs.KEGG_DB,

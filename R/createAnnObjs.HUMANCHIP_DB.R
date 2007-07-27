@@ -6,17 +6,17 @@
 ### objects.
 ###
 ### This file describes the set of AnnObj objects provided by any
-### HGU95AV2_DB-based package i.e. any SQLite-based ann data package based
-### on the HGU95AV2_DB schema.
-### The createAnnObjs.HGU95AV2_DB() function is the main entry point for
-### this file: it is called by any HGU95AV2_DB-based package at load-time.
+### HUMANCHIP_DB-based package i.e. any SQLite-based ann data package based
+### on the HUMANCHIP_DB schema.
+### The createAnnObjs.HUMANCHIP_DB() function is the main entry point for
+### this file: it is called by any HUMANCHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
 
-HGU95AV2_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
+HUMANCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
-HGU95AV2_DB_AnnDbMap_seeds <- list(
+HUMANCHIP_DB_AnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
         Class="AtomicAnnDbMap",
@@ -32,7 +32,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="CHR",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="chromosomes",
                 Lcolname="id",
@@ -44,7 +44,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="ENTREZID",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="genes",
                 Lcolname="id",
@@ -57,7 +57,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="ENZYME",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="ec",
                 Lcolname="id",
@@ -69,7 +69,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="GENENAME",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="gene_info",
                 Lcolname="id",
@@ -81,7 +81,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="MAP",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="cytogenetic_locations",
                 Lcolname="id",
@@ -93,7 +93,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="OMIM",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="omim",
                 Lcolname="id",
@@ -105,7 +105,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="PATH",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="kegg",
                 Lcolname="id",
@@ -117,7 +117,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="PMID",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="pubmed",
                 Lcolname="id",
@@ -129,7 +129,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="REFSEQ",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="refseq",
                 Lcolname="id",
@@ -141,7 +141,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="SYMBOL",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="gene_info",
                 Lcolname="id",
@@ -153,7 +153,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="UNIGENE",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="unigene",
                 Lcolname="id",
@@ -165,7 +165,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="CHRLOC",
         Class="AtomicAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="chromosome_locations",
                 Lcolname="id",
@@ -179,7 +179,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="PFAM",
         Class="IpiAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="pfam",
                 Lcolname="id",
@@ -192,7 +192,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="PROSITE",
         Class="IpiAnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 table="prosite",
                 Lcolname="id",
@@ -205,7 +205,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
         objName="GO",
         Class="Go3AnnDbMap",
         L2Rpath=list(
-            HGU95AV2_DB_L2Rbrick1,
+            HUMANCHIP_DB_L2Rbrick1,
             list(
                 #table="go_term", # no rightmost table for a Go3AnnDbMap
                 Lcolname="id",
@@ -217,7 +217,7 @@ HGU95AV2_DB_AnnDbMap_seeds <- list(
     )
 )
 
-createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.HUMANCHIP_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AnnDbMap objects
     seed0 <- list(
@@ -225,7 +225,7 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(HGU95AV2_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbMaps(HUMANCHIP_DB_AnnDbMap_seeds, seed0)
 
     ## RevAtomicAnnDbMap objects
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
@@ -252,9 +252,9 @@ createAnnObjs.HGU95AV2_DB <- function(prefix, objTarget, conn, datacache)
     prefixAnnObjNames(ann_objs, prefix)
 }
 
-compareAnnDataIn2Pkgs.HGU95AV2_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
+compareAnnDataIn2Pkgs.HUMANCHIP_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(HGU95AV2_DB_AnnDbMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(HUMANCHIP_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ENZYME2PROBE",
         "PATH2PROBE",

@@ -3,12 +3,12 @@ Proposal for schema improvements
 
 The goal is to make our schemas portable, more efficient and more readable.
 
-All chip-based schemas (HGU95AV2_DB, YEAST2_DB, AG_DB): make probes.probe_id
-a PRIMARY KEY. More generally speaking, all chip-based schemas should have a
-col of reference for storage of all the valid probeset ids and this col
-should be a PRIMARY KEY. It seems that in our current schemas, this col is
-always probes.probe_id and that the values store here are unique so making it
-a PRIMARY KEY should be straightforward.
+All chip-based schemas (HUMANCHIP_DB, YEASTCHIP_DB, ARABIDOPSISCHIP_DB):
+make probes.probe_id a PRIMARY KEY. More generally speaking, all chip-based
+schemas should have a col of reference for storage of all the valid probeset
+ids and this col should be a PRIMARY KEY. It seems that in our current schemas,
+this col is always probes.probe_id and that the values store here are unique
+so making it a PRIMARY KEY should be straightforward.
 
 All chip-based schemas: except in the "probes" and "genes" tables, add a
 NOT NULL constraint on the "id" column.

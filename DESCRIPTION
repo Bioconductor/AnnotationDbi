@@ -2,7 +2,7 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 0.0.86
+Version: 0.0.87
 Author: Herve Pages, Seth Falcon, Nianhua Li
 Maintainer: Biocore Team <biocpkgs@lists.fhcrc.org>
 Depends: R (>= 2.5.0), methods, Biobase (>= 1.14.0), DBI (>= 0.2-3), RSQLite (>= 0.5-4)
@@ -17,10 +17,10 @@ Collate: 00RTobjs.R
          AnnDbObj-lowAPI.R
          AnnDbMap-envirAPI.R
          createAnnObjs-utils.R
-         createAnnObjs.HGU95AV2_DB.R
-         createAnnObjs.YEAST2_DB.R
-         createAnnObjs.AG_DB.R
-         createAnnObjs.LLMAPPINGS_DB.R
+         createAnnObjs.HUMANCHIP_DB.R
+         createAnnObjs.YEASTCHIP_DB.R
+         createAnnObjs.ARABIDOPSISCHIP_DB.R
+         createAnnObjs.HUMAN_DB.R
          createAnnObjs.YEAST_DB.R
          createAnnObjs.GO_DB.R
          createAnnObjs.KEGG_DB.R

@@ -269,17 +269,17 @@ setMethod("length", "RevAnnDbMap", function(x) right.length(x))
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "*mappedNames" methods.
 ###
-### Note that for some DB schemas like the HGU95AV2_DB schema, all the "right
+### Note that for some DB schemas like the HUMANCHIP_DB schema, all the "right
 ### objects" are expected to be mapped to a "left object" (and this is true
-### for all the maps in the HGU95AV2_DB-based ann package) hence
+### for all the maps in the HUMANCHIP_DB-based ann package) hence
 ### right.mappedNames(x) should be the same as right.names(x) (maybe
 ### something worth checking in a test unit).
 ###
 
 ### For an AtomicAnnDbMap, x@replace.single and x@replace.multiple will be
 ### ignored, hence will give wrong results if one of those 2 fields has a
-### non-default value like silly maps ENTREZID and MULTIHIT in AG_DB schema.
-### But who cares, those maps are silly anyway...
+### non-default value like silly maps ENTREZID and MULTIHIT in ARABIDOPSISCHIP_DB
+### schema. But who cares, those maps are silly anyway...
 setMethod("left.mappedNames", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
