@@ -107,9 +107,11 @@ export(
 
     ## from the R/createAnnObjs.*_DB.R files
     createAnnObjs.HUMANCHIP_DB,
+    createAnnObjs.RODENTCHIP_DB,
     createAnnObjs.YEASTCHIP_DB,
     createAnnObjs.ARABIDOPSISCHIP_DB,
     createAnnObjs.HUMAN_DB,
+    createAnnObjs.RODENT_DB,
     createAnnObjs.YEAST_DB,
     createAnnObjs.GO_DB,
     createAnnObjs.KEGG_DB,

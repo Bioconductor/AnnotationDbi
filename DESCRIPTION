@@ -18,9 +18,11 @@ Collate: 00RTobjs.R
          AnnDbMap-envirAPI.R
          createAnnObjs-utils.R
          createAnnObjs.HUMANCHIP_DB.R
+         createAnnObjs.RODENTCHIP_DB.R
          createAnnObjs.YEASTCHIP_DB.R
          createAnnObjs.ARABIDOPSISCHIP_DB.R
          createAnnObjs.HUMAN_DB.R
+         createAnnObjs.RODENT_DB.R
          createAnnObjs.YEAST_DB.R
          createAnnObjs.GO_DB.R
          createAnnObjs.KEGG_DB.R
