@@ -14,7 +14,7 @@
 }
 
 \usage{
-  makeAnnDbPkg(x, db_file, dest_dir=".")
+  makeAnnDbPkg(x, db_file, dest_dir=".", ...)
   loadAnnDbPkgIndex(file)
 }
 
@@ -33,6 +33,9 @@
     The path to a DCF file containing the list of annotation package
     to build.
   }
+  \item{...}{
+    Extra args used for extra filtering.
+  }
 }
 
 \details{
@@ -50,17 +53,27 @@
       PkgTemplate="HUMANCHIP.DB",
       AnnObjPrefix="hgu133a2"
   )
-  #makeAnnDbPkg(seed, "path/to/hgu133a2.sqlite")
+  if (FALSE)
+      makeAnnDbPkg(seed, "path/to/hgu133a2.sqlite")
 
   ## With package names:
   ## (Note that in this case makeAnnDbPkg() will use the package descriptions
   ## found in the master index file ANNDBPKG-INDEX.TXT located in the
   ## AnnotationDbi package.)
-  #makeAnnDbPkg(c("hgu95av2.db", "hgu133a2.db"))
+  if (FALSE)
+      makeAnnDbPkg(c("hgu95av2.db", "hgu133a2.db"))
 
-  ## A character vector of length 1 is treated as a regular expression.
-  ## For example to make all the packages described in the master index:
-  #makeAnnDbPkg(".*")
+  ## A character vector of length 1 is treated as a regular expression:
+  if (FALSE)
+      makeAnnDbPkg("hgu.*")
+  ## To make all the packages described in the master index:
+  if (FALSE)
+      makeAnnDbPkg("")
+  ## Extra args can be used to narrow down the roaster of packages to make:
+  if (FALSE) {
+      makeAnnDbPkg("", PkgTemplate="HUMANCHIP.DB", manufacturer="Affymetrix")
+      makeAnnDbPkg(".*[3k]\\\\.db", species=c("Mouse", "Rat"))
+  }
 
   ## The master index file ANNDBPKG-INDEX.TXT can be loaded with:
   loadAnnDbPkgIndex()

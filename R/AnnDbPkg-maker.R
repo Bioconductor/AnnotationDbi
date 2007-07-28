@@ -199,11 +199,11 @@ setMethod("initialize", "AnnDbPkgSeed",
 ###
 
 setGeneric("makeAnnDbPkg", signature="x",
-    function(x, db_file, dest_dir=".") standardGeneric("makeAnnDbPkg")
+    function(x, db_file, dest_dir=".", ...) standardGeneric("makeAnnDbPkg")
 )
 
 setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
-    function(x, db_file, dest_dir=".")
+    function(x, db_file, dest_dir=".", ...)
     {
         x <- initWithDbMetada(x, db_file)
         x <- initComputedSlots(x)
@@ -259,13 +259,12 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
 	dest_db_file <- file.path(dest_dir, x@Package, "inst", "extdata", db_file_basename)
         if (!file.copy(db_file, dest_db_file))
             stop("cannot copy file '", db_file, "' to '", dest_db_file, "'")
-	
         return(invisible(TRUE))
     }
 )
 
 setMethod("makeAnnDbPkg", "list",
-    function(x, db_file, dest_dir=".")
+    function(x, db_file, dest_dir=".", ...)
     {
         x$Class <- "AnnDbPkgSeed"
         y <- do.call("new", x)
@@ -282,30 +281,44 @@ setMethod("makeAnnDbPkg", "list",
 ###                        # regular expression
 ###
 setMethod("makeAnnDbPkg", "character",
-    function(x, db_file, dest_dir=".")
+    function(x, db_file, dest_dir=".", ...)
     {
         if (missing(db_file)) {
             file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
                                 package="AnnotationDbi")
         }
         index <- loadAnnDbPkgIndex(db_file)
-        if (length(x) == 1) {
-            pkgname <- paste("^", x, "$", sep="")
-            ii <- grep(pkgname, index[ , "Package"])
-        } else {
+        if (length(x) != 1) {
             ii <- match(x, index[ , "Package"])
             if (any(is.na(ii)))
                 stop("packages ", paste(x[is.na(ii)], collapse=", "), " not in ", db_file)
+            index <- index[ii, , drop=FALSE]
+        } else if (!is.na(x) && x != "") {
+            pkgname <- paste("^", x, "$", sep="")
+            ii <- grep(pkgname, index[ , "Package"])
+            index <- index[ii, , drop=FALSE]
         }
-        for (j in seq_len(length(ii))) {
-            y <- index[ii[j], ]
+        filter <- list(...)
+        for (j in seq_len(length(filter))) {
+            colname <- names(filter)[j]
+            if (!(colname %in% colnames(index)))
+                stop("unknown field '", colname, "'")
+            colvals <- filter[[j]]
+            if (!is.character(colvals))
+                stop("extra arg values must be of type character")
+            index <- index[index[ , colname] %in% colvals, , drop=FALSE]
+        }
+        pkgnames_in1string <- paste(index[, "Package"], collapse=", ")
+        cat(nrow(index), " package(s) to make: ", pkgnames_in1string, "\n", sep="")
+        for (i in seq_len(nrow(index))) {
+            y <- index[i, ]
             y <- as.list(y[!is.na(y)])
-            cat("[", j, "/", length(ii), "] making package ", y[["Package"]], ": ", sep="")
+            cat("[", i, "/", nrow(index), "] making package ", y[["Package"]], ": ", sep="")
             db_file <- y[["DBfile"]]
             y <- y[names(y) != "DBfile"]
             makeAnnDbPkg(y, db_file, dest_dir)
         }
-        cat("DONE (", length(ii), " package(s) made under the ", dest_dir, " directory)\n", sep="")
+        cat("DONE (", nrow(index), " package(s) made under the ", dest_dir, " directory)\n", sep="")
     }
 )
 
