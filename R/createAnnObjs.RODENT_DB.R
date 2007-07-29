@@ -246,7 +246,7 @@ compareAnnDataIn2Pkgs.RODENT_DB <- function(pkgname1, pkgname2, prefix, quick=FA
         "SYMBOL2EG",
         "UNIGENE2EG",
         "PFAM2EG",
-        "PROSITE2EG"
+        "PROSITE2EG",
         "GO2EG"
     )
     compareAnnDataIn2Pkgs(pkgname1, pkgname2, prefix, direct_maps, reverse_maps, quick, verbose)
