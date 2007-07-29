@@ -213,8 +213,8 @@ createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$REFSEQ2EG <- revmap(ann_objs$REFSEQ, objName="REFSEQ2EG")
     ann_objs$SYMBOL2EG <- revmap(ann_objs$SYMBOL, objName="SYMBOL2EG")
     ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
-    ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
-    ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
+    #ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
+    #ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
 
     ## RevGo3AnnDbMap objects
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
@@ -245,8 +245,8 @@ compareAnnDataIn2Pkgs.RODENT_DB <- function(pkgname1, pkgname2, prefix, quick=FA
         "REFSEQ2EG",
         "SYMBOL2EG",
         "UNIGENE2EG",
-        "PFAM2EG",
-        "PROSITE2EG",
+        #"PFAM2EG",
+        #"PROSITE2EG",
         "GO2EG"
     )
     compareAnnDataIn2Pkgs(pkgname1, pkgname2, prefix, direct_maps, reverse_maps, quick, verbose)
