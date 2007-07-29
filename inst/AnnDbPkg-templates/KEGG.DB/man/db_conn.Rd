@@ -20,8 +20,8 @@
 }
 
 \examples{
-  ## Count the number of rows in the "go_term" table:
-  dbGetQuery(db_conn, "SELECT COUNT(*) FROM go_term")
+  ## Count the number of rows in the "pathway2name" table:
+  dbGetQuery(db_conn, "SELECT COUNT(*) FROM pathway2name")
 }
 
 \keyword{utilities}
