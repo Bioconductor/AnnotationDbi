@@ -4,7 +4,7 @@ Description: Annotation data file for @ANNOBJTARGET@ assembled using data from p
 Version: @PKGVERSION@
 Author: @AUTHOR@
 Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
-Depends: R (>= 2.5.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
+Depends: R (>= 2.6.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
 Imports: methods, AnnotationDbi
 License: @LIC@
 organism: @ORGANISM@

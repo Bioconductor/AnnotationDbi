@@ -149,10 +149,10 @@ removeCommentsFromFile <- function(infile, outfile)
         stop("'outfile' must be a character string naming a file")
     if (file.exists(outfile))
         stop("file '", outfile, "' already exists")
-    outfile <- file(outfile, "w")
-    #on.exit(close(outfile)) # doesn't seem to work
     infile <- file(infile, "r")
     #on.exit(close(infile))
+    outfile <- file(outfile, "w")
+    #on.exit(close(outfile)) # doesn't seem to work
     while (TRUE) {
         text <- readLines(infile, n=1)
         if (length(text) == 0)
@@ -160,8 +160,8 @@ removeCommentsFromFile <- function(infile, outfile)
         if (substr(text, 1, 1) != "#")
             writeLines(text, outfile)
     }
-    close(infile)
     close(outfile)
+    close(infile)
 }
 
 loadAnnDbPkgIndex <- function(file)
@@ -284,8 +284,8 @@ setMethod("makeAnnDbPkg", "character",
     function(x, db_file, dest_dir=".", ...)
     {
         if (missing(db_file)) {
-            file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
-                                package="AnnotationDbi")
+            db_file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
+                                   package="AnnotationDbi")
         }
         index <- loadAnnDbPkgIndex(db_file)
         if (length(x) != 1) {

@@ -236,7 +236,7 @@ manufacturer: Clontech
 ### HUMANCHIP_DB > Qiagen chips
 
 Package: hguqiagenv3.db
-Version: 1.17.1
+Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/hguqiagenv3.sqlite
 AnnObjPrefix: hguqiagenv3
@@ -755,10 +755,10 @@ Package: org.Hs.db
 Version: 0.0.1
 PkgTemplate: HUMAN.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Hs.sqlite
-AnnObjPrefix: humanLLMappings
+AnnObjPrefix: org.Hs
 AnnObjTarget: Human
 species: Human
-biocViews: Homo_sapiens, humanLLMappings
+biocViews: AnnotationData, Homo_sapiens, humanLLMappings
 
 
 ### =========================================================================
@@ -781,21 +781,19 @@ Package: org.Mm.db
 Version: 0.0.1
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Mm.sqlite
-DBschema: RODENT.DB
-AnnObjPrefix: mouseLLMappings
+AnnObjPrefix: org.Mm
 AnnObjTarget: Mouse
 species: Mouse
-biocViews: Mus_musculus, mouseLLMappings
+biocViews: AnnotationData, Mus_musculus, mouseLLMappings
 
 Package: org.Rn.db
 Version: 0.0.1
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Rn.sqlite
-DBschema: RODENT.DB
-AnnObjPrefix: ratLLMappings
+AnnObjPrefix: org.Rn
 AnnObjTarget: Rat
 species: Rat
-biocViews: Rattus_norvegicus, ratLLMappings
+biocViews: AnnotationData, Rattus_norvegicus, ratLLMappings
 
 
 ### =========================================================================
@@ -903,6 +901,6 @@ species: Human
 manufacturer: Affymetrix
 chipName: HuEx-1_0-st-v2
 manufacturerUrl: NA
-biocViews: AffymetrixChip, Homo_sapiens, huex10stv2
+biocViews: AnnotationData, AffymetrixChip, Homo_sapiens, huex10stv2
 
 
