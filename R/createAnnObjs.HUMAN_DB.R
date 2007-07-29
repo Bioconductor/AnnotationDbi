@@ -216,14 +216,21 @@ createAnnObjs.HUMAN_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs <- createAnnDbMaps(HUMAN_DB_AnnDbMap_seeds, seed0)
 
     ## RevAtomicAnnDbMap objects
-    ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
-    ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
-    ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
+    ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
+    ann_objs$ENZYME2EG <- revmap(ann_objs$ENZYME, objName="ENZYME2EG")
+    ann_objs$GENENAME2EG <- revmap(ann_objs$GENENAME, objName="GENENAME2EG")
+    ann_objs$MAP2EG <- revmap(ann_objs$MAP, objName="MAP2EG")
+    ann_objs$OMIM2EG <- revmap(ann_objs$OMIM, objName="OMIM2EG")
+    ann_objs$PATH2EG <- revmap(ann_objs$PATH, objName="PATH2EG")
+    ann_objs$PMID2EG <- revmap(ann_objs$PMID, objName="PMID2EG")
+    ann_objs$REFSEQ2EG <- revmap(ann_objs$REFSEQ, objName="REFSEQ2EG")
+    ann_objs$SYMBOL2EG <- revmap(ann_objs$SYMBOL, objName="SYMBOL2EG")
+    ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
+    ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
+    ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
 
     ## RevGo3AnnDbMap objects
-    ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
-    ann_objs$GO2ALLPROBES <- map
+    ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
 
     ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
@@ -232,10 +239,8 @@ createAnnObjs.HUMAN_DB <- function(prefix, objTarget, conn, datacache)
     ## Some pre-caching
     left.names(ann_objs$GO)
     #left.mappedNames(ann_objs$GO)
-    #right.names(ann_objs$GO2PROBE)
-    #right.mappedNames(ann_objs$GO2PROBE)
-    #right.names(ann_objs$GO2ALLPROBES)
-    #right.mappedNames(ann_objs$GO2ALLPROBES)
+    #right.names(ann_objs$GO2EG)
+    #right.mappedNames(ann_objs$GO2EG)
 
     prefixAnnObjNames(ann_objs, prefix)
 }
@@ -244,11 +249,19 @@ compareAnnDataIn2Pkgs.HUMAN_DB <- function(pkgname1, pkgname2, prefix, quick=FAL
 {
     direct_maps <- sapply(HUMAN_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
-        "ENZYME2PROBE",
-        "PATH2PROBE",
-        "PMID2PROBE",
-        "GO2PROBE",
-        "GO2ALLPROBES"
+        "ACCNUM2EG",
+        "ENZYME2EG",
+        "GENENAME2EG",
+        "MAP2EG",
+        "OMIM2EG",
+        "PATH2EG",
+        "PMID2EG",
+        "REFSEQ2EG",
+        "SYMBOL2EG",
+        "UNIGENE2EG",
+        "PFAM2EG",
+        "PROSITE2EG"
+        "GO2EG"
     )
     compareAnnDataIn2Pkgs(pkgname1, pkgname2, prefix, direct_maps, reverse_maps, quick, verbose)
 }
