@@ -813,9 +813,10 @@ biocViews: AnnotationData, Rattus_norvegicus, ratLLMappings
 ### Fields marked with an (*) are required.
 
 Package: YEAST.db
-Version: 1.17.0
+Version: 1.17.3
 PkgTemplate: YEAST.DB
-DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite
+### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite (broken)
+DBfile: /home/mcarlson/sanctionedSqlite/YEAST.sqlite
 AnnObjPrefix: YEAST
 AnnObjTarget: Yeast
 species: Yeast
@@ -839,6 +840,7 @@ biocViews: AnnotationData, Saccharomyces_cerevisiae
 Package: GO.db
 Version: 1.17.1
 PkgTemplate: GO.DB
+### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/GO.sqlite
 DBfile: /home/mcarlson/sanctionedSqlite/GO.sqlite 
 AnnObjPrefix: GO
 AnnObjTarget: GO
@@ -860,9 +862,10 @@ biocViews: AnnotationData, FunctionalAnnotation
 ### Fields marked with an (*) are required.
 
 Package: KEGG.db
-Version: 1.17.0
+Version: 1.17.1
 PkgTemplate: KEGG.DB
-DBfile: /home/nli/proj/ann/nli/annosrc.orig/db/KEGG.sqlite
+### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/KEGG.sqlite
+DBfile: /home/mcarlson/sanctionedSqlite/KEGG.sqlite
 AnnObjPrefix: KEGG
 AnnObjTarget: KEGG
 biocViews: AnnotationData, FunctionalAnnotation
