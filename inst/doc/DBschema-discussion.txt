@@ -3,6 +3,8 @@ Proposal for schema improvements
 
 The goal is to make our schemas portable, more efficient and more readable.
 
+All schemas: rename "qcdata" table -> "map_counts".
+
 All chip-based schemas (HUMANCHIP_DB, RODENTCHIP_DB, YEASTCHIP_DB,
 ARABIDOPSISCHIP_DB): make probes.probe_id a PRIMARY KEY. More generally
 speaking, all chip-based schemas should have a col of reference for storage
