@@ -754,7 +754,7 @@ manufacturer: Affymetrix
 Package: org.Hs.db
 Version: 0.0.1
 PkgTemplate: HUMAN.DB
-DBfile: /home/mcarlson/sanctionedSqlite/org.Hs.sqlite
+DBfile: /home/mcarlson/sanctionedSqlite/org.Hs.eg.sqlite
 AnnObjPrefix: org.Hs
 AnnObjTarget: Human
 species: Human
@@ -780,7 +780,7 @@ biocViews: AnnotationData, Homo_sapiens, humanLLMappings
 Package: org.Mm.db
 Version: 0.0.1
 PkgTemplate: RODENT.DB
-DBfile: /home/mcarlson/sanctionedSqlite/org.Mm.sqlite
+DBfile: /home/mcarlson/sanctionedSqlite/org.Mm.eg.sqlite
 AnnObjPrefix: org.Mm
 AnnObjTarget: Mouse
 species: Mouse
@@ -789,7 +789,7 @@ biocViews: AnnotationData, Mus_musculus, mouseLLMappings
 Package: org.Rn.db
 Version: 0.0.1
 PkgTemplate: RODENT.DB
-DBfile: /home/mcarlson/sanctionedSqlite/org.Rn.sqlite
+DBfile: /home/mcarlson/sanctionedSqlite/org.Rn.eg.sqlite
 AnnObjPrefix: org.Rn
 AnnObjTarget: Rat
 species: Rat
