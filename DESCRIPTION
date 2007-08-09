@@ -11,6 +11,7 @@ Suggests: GO, hgu95av2.db, hgu95av2
 Collate: 00RTobjs.R
          AllGenerics.R
          FlatBimap.R
+         flatten.R
          AllClasses.R
          GONode.R
          db.R
