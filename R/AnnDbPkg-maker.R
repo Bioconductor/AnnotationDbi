@@ -15,6 +15,7 @@ setClass(
     "AnnDbPkgSeed",
     representation(
         Package="character",            # e.g. "hgu133a2.db"
+        Title="character",
         Version="character",            # e.g. "0.0.99"
         License="character", 
         Author="character", 
@@ -54,12 +55,24 @@ setClass(
 
 initComputedSlots <- function(x)
 {
-    if (is.na(x@AnnObjTarget)
-     && !is.na(x@AnnObjPrefix)) {
+    if (is.na(x@AnnObjPrefix))
+        stop("the 'AnnObjPrefix' slot has not value for package ", x@Package)
+    ## Automatic default for "AnnObjTarget" slot
+    if (is.na(x@AnnObjTarget))
         x@AnnObjTarget <- paste("chip", x@AnnObjPrefix)
-    }
+    ## Automatic default for "Title" slot
+    if (is.na(x@Title)) {
+        if (is.na(x@manufacturer) || is.na(x@chipName) || is.na(x@AnnObjTarget))
+            stop("not enough information to set the 'Title' slot for package ", x@Package)
+        x@Title <- paste(x@manufacturer,
+                         " ",
+                         x@chipName,
+                         " annotation data (",
+                         x@AnnObjTarget,
+                         ")", sep="")
+    } 
+    ## Automatic default for "biocViews" slot
     if (is.na(x@biocViews)
-     && !is.na(x@AnnObjPrefix)
      && !is.na(x@organism)
      && !is.na(x@manufacturer)) {
         chip_view <- paste(x@manufacturer, "Chip", sep="")
@@ -216,6 +229,7 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
         ann_dbi_version <- installed.packages()['AnnotationDbi','Version']
         symvals <- list(
             DBSCHEMA=x@DBschema,
+            PKGTITLE=x@Title,
             ANNOBJPREFIX=x@AnnObjPrefix,
             ANNOBJTARGET=x@AnnObjTarget,
             ORGANISM=x@organism,

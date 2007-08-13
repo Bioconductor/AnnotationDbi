@@ -14,6 +14,7 @@
 ### -------------------
 ###   Fields:
 ###     Package (*)
+###     Title
 ###     Version (*)
 ###     PkgTemplate: HUMANCHIP.DB
 ###     DBfile (*)
@@ -263,6 +264,7 @@ species: Human
 biocViews: AnnotationData, CustomArray, Homo_sapiens
 
 Package: HuO22.db
+Title: FHCRC Genomics Shared Resource HuO22 Annotation Data (HuO22)
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/HuO22.sqlite
@@ -271,6 +273,7 @@ species: Human
 manufacturer: FHCRC Genomics Shared Resource
 
 Package: JazaeriMetaData.db
+Title: A data package containing annotation data for JazaeriMetaData
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/JazaeriMetaData.sqlite
@@ -279,6 +282,7 @@ species: Human
 manufacturer: National Cancer Institute
 
 Package: Norway981.db
+Title: Norway981 http://genome-www5.stanford.edu/ Annotation Data (Norway981)
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/Norway981.sqlite
@@ -287,6 +291,7 @@ species: Human
 manufacturer: Stanford Microarray Database
 
 Package: OperonHumanV3.db
+Title: FHCRC Nelson Lab OperonHumanV3 Annotation Data (OperonHumanV3)
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/OperonHumanV3.sqlite
@@ -295,6 +300,7 @@ species: Human
 manufacturer: FHCRC Nelson Lab
 
 Package: PartheenMetaData.db
+Title: PartheenMetaData http://swegene.onk.lu.se Annotation Data (PartheenMetaData)
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/PartheenMetaData.sqlite
@@ -303,6 +309,7 @@ species: Human
 manufacturer: Swegene DNA Microarray Resource Centre, Lund, Sweden
 
 Package: pedbarrayv9.db
+Title: FHCRC Nelson Lab pedbarrayv9 Annotation Data (pedbarrayv9)
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/pedbarrayv9.sqlite
@@ -311,6 +318,7 @@ species: Human
 manufacturer: FHCRC Nelson Lab
 
 Package: pedbarrayv10.db
+Title: FHCRC Nelson Lab pedbarrayv10 Annotation Data (pedbarrayv10)
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/pedbarrayv10.sqlite
@@ -319,6 +327,7 @@ species: Human
 manufacturer: FHCRC Nelson Lab
 
 Package: Roberts2005Annotation.db
+Title: Roberts2005Annotation Annotation Data (Roberts2005Annotation)
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/Roberts2005Annotation.sqlite
@@ -327,6 +336,7 @@ species: Human
 manufacturer: Roberts2005Annotation
 
 Package: SHDZ.db
+Title: SHDZ http://genome-www5.stanford.edu/ Annotation Data (SHDZ)
 Version: 1.17.3
 PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/SHDZ.sqlite
@@ -340,6 +350,7 @@ manufacturer: Stanford Microarray Database
 ### --------------------
 ###   Fields:
 ###     Package (*)
+###     Title
 ###     Version (*)
 ###     PkgTemplate: RODENTCHIP.DB
 ###     DBfile (*)
@@ -627,6 +638,7 @@ manufacturer: Clontech
 ### RODENTCHIP_DB > custom arrays
 
 Package: mpedbarray.db
+Title: FHCRC Nelson Lab mpedbarray Annotation Data (mpedbarray)
 Version: 1.17.3
 PkgTemplate: RODENTCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/mpedbarray.sqlite
@@ -635,6 +647,7 @@ species: Mouse
 manufacturer: FHCRC Nelson Lab
 
 Package: Mu15v1.db
+Title: FHCRC Genomics Shared Resource Mu15v1 Annotation Data (Mu15v1)
 Version: 1.17.3
 PkgTemplate: RODENTCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/Mu15v1.sqlite
@@ -643,6 +656,7 @@ species: Mouse
 manufacturer: FHCRC Genomics Shared Resource
 
 Package: Mu22v3.db
+Title: FHCRC Genomics Shared Resource Mu22v3 Annotation Data (Mu22v3)
 Version: 1.17.3
 PkgTemplate: RODENTCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/Mu22v3.sqlite
@@ -656,6 +670,7 @@ manufacturer: FHCRC Genomics Shared Resource
 ### -------------------
 ###   Fields:
 ###     Package (*)
+###     Title
 ###     Version (*)
 ###     PkgTemplate: YEASTCHIP.DB
 ###     DBfile (*)
@@ -698,6 +713,7 @@ manufacturer: Affymetrix
 ### -------------------------
 ###   Fields:
 ###     Package (*)
+###     Title
 ###     Version (*)
 ###     PkgTemplate: ARABIDOPSISCHIP.DB
 ###     DBfile (*)
