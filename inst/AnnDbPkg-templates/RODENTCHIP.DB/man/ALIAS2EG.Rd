@@ -6,9 +6,12 @@
   common gene symbol identifiers and entrez gene.
 }
 \details{
-  Each gene symbol is mapped to its entrez gene identifier. 
-  An \code{NA} is reported for any gene symbols that cannot 
-  be mapped to an entrez gene identifier.
+  Each gene symbol is mapped to its entrez gene identifier. An \code{NA} is 
+  reported for any gene symbols that cannot be mapped to an entrez gene identifier.
+
+  This mapping includes ALL gene symbols including those which are already listed 
+  in the SYMBOL map.  The SYMBOL map is meant to only list official gene symbols, 
+  while the ALIAS maps are meant to store all used symbols.
 
   Mappings were based on data provided by: @ALIAS2EGSOURCE@
 }

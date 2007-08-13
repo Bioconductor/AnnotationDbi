@@ -11,6 +11,10 @@
   that are found for that symbol. An \code{NA} is reported for any gene symbol that 
   cannot be mapped to any manufacturer identifiers.
 
+  This mapping includes ALL gene symbols including those which are already listed 
+  in the SYMBOL map.  The SYMBOL map is meant to only list official gene symbols, 
+  while the ALIAS maps are meant to store all used symbols.
+
   Mappings were based on data provided by: @ALIAS2PROBESOURCE@
 }
 \examples{
