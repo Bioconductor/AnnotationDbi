@@ -283,11 +283,11 @@ debug.sql <- function()
     dbGetQuery(conn, sql)
 }
 
-dbGetTable <- function(conn, table, where=NULL)
+dbGetTable <- function(conn, table, extra.sql=NULL)
 {
     sql <- paste("SELECT * FROM ", table, sep="")
-    if (!is.null(where))
-        sql <- paste(sql, " WHERE ", where, sep="")
+    if (!is.null(extra.sql))
+        sql <- paste(sql, extra.sql)
     .dbGetQuery(conn, sql)
 }
 

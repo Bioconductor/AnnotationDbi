@@ -79,7 +79,7 @@ createREJECTORF <- function(conn)
 
 createMAPCOUNTS <- function(conn, prefix)
 {
-    data <- dbGetTable(conn, "qcdata", "map_name != 'TOTAL'")
+    data <- dbGetTable(conn, "qcdata", "WHERE map_name != 'TOTAL' ORDER BY map_name")
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
     MAPCOUNTS
