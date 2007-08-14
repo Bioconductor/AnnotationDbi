@@ -135,7 +135,7 @@ initWithDbDoc <- function(db_file)
 getSymbolValuesForManPages <- function(map_names, db_file)
 {
     map_metadata <- initWithDbDoc(db_file)
-    map_source <- lapply(map_names,
+    map_source <- sapply(map_names,
                          function(this_map)
                          {
                              map_index <- which(map_metadata$map_name == this_map)
@@ -148,11 +148,11 @@ getSymbolValuesForManPages <- function(map_names, db_file)
                                      map_metadata[map_index, "source_date"],
                                      sep=" ", collapse=" and ")
                              } else {
-                                 this_source <- ""
+                                 this_source <- NA
                              }
                              this_source
                          })
-    map_source <- sub("_", "\\\\_", map_source)
+    map_source <- gsub("_", "\\_", map_source, fixed=TRUE)
     names(map_source) <- paste(map_names, "SOURCE", sep="")
     map_source
 }
