@@ -752,12 +752,13 @@ manufacturer: Affymetrix
 
 
 ### =========================================================================
-### HUMAN_DB schema
-### ---------------
+### HUMAN_DB/RODENT_DB/YEAST_DB schemas
+### -----------------------------------
 ###   Fields:
 ###     Package (*)
+###     Title (*)
 ###     Version (*)
-###     PkgTemplate: HUMAN.DB
+###     PkgTemplate: HUMAN.DB|RODENT.DB|YEAST.DB
 ###     DBfile (*)
 ###     DBschema
 ###     AnnObjPrefix (*)
@@ -768,6 +769,7 @@ manufacturer: Affymetrix
 ### Fields marked with an (*) are required.
 
 Package: org.Hs.eg.db
+Title: Entrez Gene centric annotation maps for Human
 Version: 0.0.1
 PkgTemplate: HUMAN.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Hs.eg.sqlite
@@ -776,24 +778,8 @@ AnnObjTarget: Human
 species: Human
 biocViews: AnnotationData, Homo_sapiens, humanLLMappings
 
-
-### =========================================================================
-### RODENT_DB schema
-### ----------------
-###   Fields:
-###     Package (*)
-###     Version (*)
-###     PkgTemplate: RODENT.DB
-###     DBfile (*)
-###     DBschema
-###     AnnObjPrefix (*)
-###     AnnObjTarget (*)
-###     organism
-###     species
-###     biocViews (*)
-### Fields marked with an (*) are required.
-
 Package: org.Mm.eg.db
+Title: Entrez Gene centric annotation maps for Mouse
 Version: 0.0.1
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Mm.eg.sqlite
@@ -803,6 +789,7 @@ species: Mouse
 biocViews: AnnotationData, Mus_musculus, mouseLLMappings
 
 Package: org.Rn.eg.db
+Title: Entrez Gene centric annotation maps for Rat
 Version: 0.0.1
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Rn.eg.sqlite
@@ -811,29 +798,13 @@ AnnObjTarget: Rat
 species: Rat
 biocViews: AnnotationData, Rattus_norvegicus, ratLLMappings
 
-
-### =========================================================================
-### YEAST_DB schema
-### ---------------
-###   Fields:
-###     Package (*)
-###     Version (*)
-###     PkgTemplate: YEAST.DB
-###     DBfile (*)
-###     DBschema
-###     AnnObjPrefix (*)
-###     AnnObjTarget (*)
-###     organism
-###     species
-###     biocViews (*)
-### Fields marked with an (*) are required.
-
-Package: YEAST.db
-Version: 1.17.3
+Package: org.Sc.sgd.db
+Title: SGD centric annotation maps for Yeast
+Version: 0.0.1
 PkgTemplate: YEAST.DB
 ### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite (broken)
-DBfile: /home/mcarlson/sanctionedSqlite/YEAST.sqlite
-AnnObjPrefix: YEAST
+DBfile: /home/mcarlson/sanctionedSqlite/org.Sc.sgd.sqlite
+AnnObjPrefix: org.Sc.sgd
 AnnObjTarget: Yeast
 species: Yeast
 biocViews: AnnotationData, Saccharomyces_cerevisiae
@@ -844,6 +815,7 @@ biocViews: AnnotationData, Saccharomyces_cerevisiae
 ### ------------
 ###   Fields:
 ###     Package (*)
+###     Title (*)
 ###     Version (*)
 ###     PkgTemplate: GO.DB
 ###     DBfile (*)
@@ -854,6 +826,7 @@ biocViews: AnnotationData, Saccharomyces_cerevisiae
 ### Fields marked with an (*) are required.
 
 Package: GO.db
+Title: A set of annotation maps describing the entire Gene Ontology
 Version: 1.17.1
 PkgTemplate: GO.DB
 ### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/GO.sqlite
@@ -868,6 +841,7 @@ biocViews: AnnotationData, FunctionalAnnotation
 ### ------------
 ###   Fields:
 ###     Package (*)
+###     Title (*)
 ###     Version (*)
 ###     PkgTemplate: KEGG.DB
 ###     DBfile (*)
@@ -878,6 +852,7 @@ biocViews: AnnotationData, FunctionalAnnotation
 ### Fields marked with an (*) are required.
 
 Package: KEGG.db
+Title: A set of annotation maps for KEGG
 Version: 1.17.1
 PkgTemplate: KEGG.DB
 ### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/KEGG.sqlite
@@ -892,6 +867,7 @@ biocViews: AnnotationData, FunctionalAnnotation
 ### ------------------
 ###   Fields:
 ###     Package
+###     Title
 ###     Version
 ###     PkgTemplate: AFFYHUEX.DB
 ###     DBfile

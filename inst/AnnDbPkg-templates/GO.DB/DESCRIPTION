@@ -1,13 +1,11 @@
 Package: @PKGNAME@
-Title: A data package containing annotation data for @ANNOBJTARGET@
-Description: Annotation data file for @ANNOBJTARGET@ assembled using data
-   from GO
+Title: @PKGTITLE@
+Description: @PKGTITLE@ assembled using data from GO
 Version: @PKGVERSION@
 Author: @AUTHOR@
 Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
 Depends: R (>= 2.6.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
 Imports: methods, AnnotationDbi
-Suggests: annotate
 License: @LIC@
 biocViews: @BIOCVIEWS@
 
