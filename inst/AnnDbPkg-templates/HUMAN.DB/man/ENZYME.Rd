@@ -17,7 +17,7 @@
   identified. 
   
   An Enzyme Commission number is of the format EC x.y.z.w, where x, y, z,
-  and w are numeric numbers. In @ANNOBJPREFIX@ENZYME2ENTREZID, EC is dropped from the
+  and w are numeric numbers. In @ANNOBJPREFIX@ENZYME2EG, EC is dropped from the
   Enzyme Commission numbers.
 
   Enzyme Commission numbers have corresponding names that describe the

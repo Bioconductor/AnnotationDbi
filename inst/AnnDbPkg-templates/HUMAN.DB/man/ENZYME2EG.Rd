@@ -1,5 +1,5 @@
-\name{@ANNOBJPREFIX@ENZYME2PENTREZID}
-\alias{@ANNOBJPREFIX@ENZYME2ENTREZID}
+\name{@ANNOBJPREFIX@ENZYME2PEG}
+\alias{@ANNOBJPREFIX@ENZYME2EG}
 \title{Map between Enzyme Commission Numbers and Entrez Gene Identifiers}
 \description{
   @ANNOBJPREFIX@ENZYME2PROBE is an R object that maps Enzyme Commission
@@ -39,7 +39,7 @@
   The EC name for a given EC number can be viewed at
   \url{http://www.chem.qmul.ac.uk/iupac/jcbn/index.html#6} 
   
-  Mappings were based on data provided by: @ENZYME2ENTREZIDSOURCE@
+  Mappings were based on data provided by: @ENZYME2EGSOURCE@
 
 }
 \references{
@@ -47,7 +47,7 @@
 }
 \examples{
     # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@ENZYME2ENTREZID)
+    xx <- as.list(@ANNOBJPREFIX@ENZYME2EG)
    if(length(xx) > 0){
        # Gets the probe identifiers for the first five enzyme
        #commission numbers
