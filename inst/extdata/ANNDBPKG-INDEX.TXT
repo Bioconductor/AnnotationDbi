@@ -767,11 +767,11 @@ manufacturer: Affymetrix
 ###     biocViews (*)
 ### Fields marked with an (*) are required.
 
-Package: org.Hs.db
+Package: org.Hs.eg.db
 Version: 0.0.1
 PkgTemplate: HUMAN.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Hs.eg.sqlite
-AnnObjPrefix: org.Hs
+AnnObjPrefix: org.Hs.eg
 AnnObjTarget: Human
 species: Human
 biocViews: AnnotationData, Homo_sapiens, humanLLMappings
@@ -793,20 +793,20 @@ biocViews: AnnotationData, Homo_sapiens, humanLLMappings
 ###     biocViews (*)
 ### Fields marked with an (*) are required.
 
-Package: org.Mm.db
+Package: org.Mm.eg.db
 Version: 0.0.1
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Mm.eg.sqlite
-AnnObjPrefix: org.Mm
+AnnObjPrefix: org.Mm.eg
 AnnObjTarget: Mouse
 species: Mouse
 biocViews: AnnotationData, Mus_musculus, mouseLLMappings
 
-Package: org.Rn.db
+Package: org.Rn.eg.db
 Version: 0.0.1
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Rn.eg.sqlite
-AnnObjPrefix: org.Rn
+AnnObjPrefix: org.Rn.eg
 AnnObjTarget: Rat
 species: Rat
 biocViews: AnnotationData, Rattus_norvegicus, ratLLMappings
