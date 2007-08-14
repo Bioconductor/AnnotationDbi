@@ -217,6 +217,19 @@ createAnnObjs.HUMAN_DB <- function(prefix, objTarget, conn, datacache)
 
     ## RevAtomicAnnDbMap objects
     ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
+    ALIAS2EG_seed <- list(
+        objName="ALIAS2EG",
+        Class="RevAtomicAnnDbMap",
+        L2Rpath=list(
+            HUMAN_DB_L2Rbrick1,
+            list(
+                table="alias",
+                Lcolname="id",
+                Rcolname="alias_symbol"
+            )
+        )
+    )
+    ann_objs$ALIAS2EG <- createAnnDbMap(ALIAS2EG_seed, seed0)
     ann_objs$ENZYME2EG <- revmap(ann_objs$ENZYME, objName="ENZYME2EG")
     ann_objs$GENENAME2EG <- revmap(ann_objs$GENENAME, objName="GENENAME2EG")
     ann_objs$MAP2EG <- revmap(ann_objs$MAP, objName="MAP2EG")
@@ -250,6 +263,7 @@ compareAnnDataIn2Pkgs.HUMAN_DB <- function(pkgname1, pkgname2, prefix, quick=FAL
     direct_maps <- sapply(HUMAN_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ACCNUM2EG",
+        "ALIAS2EG",
         "ENZYME2EG",
         "GENENAME2EG",
         "MAP2EG",

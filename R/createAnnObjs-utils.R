@@ -41,19 +41,23 @@ createAnnObjs <- function(class, seeds, seed0, envir=NULL)
     envir
 }
 
+createAnnDbMap <- function(seed, seed0)
+{
+    for (slot in names(seed0)) {
+        if (is.null(seed[slot][[1]]))
+            seed[[slot]] <- seed0[[slot]]
+    }
+    L2Rpath <- seed$L2Rpath
+    seed$L2Rpath <- lapply(L2Rpath, function(brick) do.call("L2Rbrick", brick))
+    do.call("new", seed)
+}
+
 createAnnDbMaps <- function(seeds, seed0, envir=NULL)
 {
     if (is.null(envir))
         envir <- new.env(hash=TRUE, parent=emptyenv())
-    for (seed in seeds) {
-        for (slot in names(seed0)) {
-            if (is.null(seed[slot][[1]]))
-                seed[[slot]] <- seed0[[slot]]
-        }
-        L2Rpath <- seed$L2Rpath
-        seed$L2Rpath <- lapply(L2Rpath, function(brick) do.call("L2Rbrick", brick))
-        envir[[seed$objName]] <- do.call("new", seed)
-    }
+    for (seed in seeds)
+        envir[[seed$objName]] <- createAnnDbMap(seed, seed0)
     envir
 }
 
