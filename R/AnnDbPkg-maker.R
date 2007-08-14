@@ -54,6 +54,46 @@ setClass(
 ### Some helper functions.
 ###
 
+initWithDbMetada <- function(x, db_file)
+{
+    metadata2slot <- c(
+        DBSCHEMA="DBschema",
+        ORGANISM="organism",
+        SPECIES="species",
+        MANUFACTURER="manufacturer",
+        CHIPNAME="chipName",
+        MANUFACTURERURL="manufacturerUrl"
+    )
+    db_conn <- dbFileConnect(db_file)
+    on.exit(dbFileDisconnect(db_conn))
+    metadata <- dbGetTable(db_conn, "metadata")
+    if (!identical(colnames(metadata), c("name", "value")))
+        stop("\"metadata\" table has unexpected col names")
+    if (any(duplicated(metadata$name))) {
+        stop("col \"name\" in \"metadata\" table has duplicated values\n",
+             "  (this would never happen if \"name\" was defined as a PRIMARY KEY!)")
+    }
+    row.names(metadata) <- metadata$name
+    for (i in seq_len(length(metadata2slot))) {
+        metadata_name <- names(metadata2slot)[i]
+        if (!(metadata_name %in% row.names(metadata))) {
+            if (metadata_name == "DBSCHEMA")
+                stop("'DBSCHEMA' not found in \"metadata\" table")
+            next
+        }
+        slot_name <- metadata2slot[i]
+        val <- metadata[metadata_name, "value"]
+        if (is.na(slot(x, slot_name))) {
+            slot(x, slot_name) <- val
+            next
+        }
+        if (slot(x, slot_name) != val)
+            stop(metadata_name, " specified in '", db_file, "' (\"", val, "\") ",
+                 "doesn't match 'x@", slot_name, "' (\"", slot(x, slot_name), "\")")
+    }
+    x
+}
+
 initComputedSlots <- function(x)
 {
     if (is.na(x@AnnObjPrefix))
@@ -80,44 +120,6 @@ initComputedSlots <- function(x)
         org_view <- chartr(" ", "_", x@organism)
         x@biocViews <- paste("AnnotationData", chip_view, org_view,
                              x@AnnObjPrefix, sep=", ")
-    }
-    x
-}
-
-initWithDbMetada <- function(x, db_file)
-{
-    metadata2slot <- c(
-        DBSCHEMA="DBschema",
-        ORGANISM="organism",
-        SPECIES="species",
-        MANUFACTURER="manufacturer",
-        CHIPNAME="chipName",
-        MANUFACTURERURL="manufacturerUrl"
-    )
-    db_conn <- dbFileConnect(db_file)
-    on.exit(dbFileDisconnect(db_conn))
-    metadata <- dbGetTable(db_conn, "metadata")
-    if (any(duplicated(metadata$name))) {
-        stop("col \"name\" in \"metadata\" table has duplicated values\n",
-             "  (this would never happen if \"name\" was defined as a PRIMARY KEY!)")
-    }
-    row.names(metadata) <- metadata$name
-    for (i in seq_len(length(metadata2slot))) {
-        metadata_name <- names(metadata2slot)[i]
-        if (!(metadata_name %in% row.names(metadata))) {
-            if (metadata_name == "DBSCHEMA")
-                stop("'DBSCHEMA' not found in \"metadata\" table")
-            next
-        }
-        slot_name <- metadata2slot[i]
-        val <- metadata[metadata_name, "value"]
-        if (is.na(slot(x, slot_name))) {
-            slot(x, slot_name) <- val
-            next
-        }
-        if (slot(x, slot_name) != val)
-            stop(metadata_name, " specified in '", db_file, "' (\"", val, "\") ",
-                 "doesn't match 'x@", slot_name, "' (\"", slot(x, slot_name), "\")")
     }
     x
 }
@@ -193,19 +195,6 @@ loadAnnDbPkgIndex <- function(file)
     file.remove(tmp_file)
     index
 }
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "initialize" method for AnnDbPkgSeed objects.
-###
-
-setMethod("initialize", "AnnDbPkgSeed",
-    function(.Object, ...)
-    {
-        .Object <- callNextMethod()
-        initComputedSlots(.Object)
-    }
-)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
