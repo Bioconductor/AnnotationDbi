@@ -32,6 +32,7 @@ setClass(
         biocViews="character"
     ),
     prototype(
+        Title=as.character(NA),
         #License="The Artistic License, Version 2.0",
         License="LGPL",
         Author="Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
@@ -56,7 +57,7 @@ setClass(
 initComputedSlots <- function(x)
 {
     if (is.na(x@AnnObjPrefix))
-        stop("the 'AnnObjPrefix' slot has not value for package ", x@Package)
+        stop("'AnnObjPrefix' slot must be set for package ", x@Package)
     ## Automatic default for "AnnObjTarget" slot
     if (is.na(x@AnnObjTarget))
         x@AnnObjTarget <- paste("chip", x@AnnObjPrefix)
