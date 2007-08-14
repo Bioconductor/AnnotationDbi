@@ -1,5 +1,5 @@
-\name{@ANNOBJPREFIX@ALIAS2ENTREZID}
-\alias{@ANNOBJPREFIX@ALIAS2ENTREZID}
+\name{@ANNOBJPREFIX@ALIAS2EG}
+\alias{@ANNOBJPREFIX@ALIAS2EG}
 \title{Map between Common Gene Symbol Identifiers and Entrez Gene}
 \description{
   @ANNOBJPREFIX@ALIAS is an R object that provides mappings between
@@ -20,14 +20,14 @@
   in the SYMBOL map.  The SYMBOL map is meant to only list official gene symbols, 
   while the ALIAS maps are meant to store all used symbols.
 
-  Mappings were based on data provided by: @ALIAS2ENTREZIDSOURCE@
+  Mappings were based on data provided by: @ALIAS2EGSOURCE@
 }
 \references{
   \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene}
 }
 \examples{
     # Convert the object to a list
-    xx <- as.list(@ANNOBJPREFIX@ALIAS2ENTREZID)
+    xx <- as.list(@ANNOBJPREFIX@ALIAS2EG)
     # Remove pathway identifiers that do not map to any probe id
     xx <- xx[!is.na(xx)]
     if(length(xx) > 0){

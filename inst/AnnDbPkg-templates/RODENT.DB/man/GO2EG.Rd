@@ -1,8 +1,8 @@
-\name{@ANNOBJPREFIX@GO2ENTREZID}
-\alias{@ANNOBJPREFIX@GO2ENTREZID}
+\name{@ANNOBJPREFIX@GO2EG}
+\alias{@ANNOBJPREFIX@GO2EG}
 \title{Map between Gene Ontology (GO) and Entrez Gene Identifiers}
 \description{
-   @ANNOBJPREFIX@GO2ENTREZID is an R object that provides mappings between
+   @ANNOBJPREFIX@GO2EG is an R object that provides mappings between
    GO identifiers and entrez gene identifiers.
 }
 \details{
@@ -41,7 +41,7 @@
   
   Mappings were based on data provided by:
 
-  @GO2ENTREZIDSOURCE@
+  @GO2EGSOURCE@
 
 }
 \references{
@@ -49,7 +49,7 @@
 }
 \examples{
     # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@GO2ENTREZID)
+    xx <- as.list(@ANNOBJPREFIX@GO2EG)
     if(length(xx) > 0){
         # Gets the probe identifiers for the top 2nd and 3nd GO identifiers
         goids <- xx[2:3]

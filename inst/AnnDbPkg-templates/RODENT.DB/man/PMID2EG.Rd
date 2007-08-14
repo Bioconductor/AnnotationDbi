@@ -1,8 +1,8 @@
-\name{@ANNOBJPREFIX@PMID2ENTREZID}
-\alias{@ANNOBJPREFIX@PMID2ENTREZID}
+\name{@ANNOBJPREFIX@PMID2EG}
+\alias{@ANNOBJPREFIX@PMID2EG}
 \title{Map between PubMed Identifiers and Entrez Gene Identifiers}
 \description{
-  @ANNOBJPREFIX@PMID2ENTREZID is an R object that provides mappings between
+  @ANNOBJPREFIX@PMID2EG is an R object that provides mappings between
   PubMed identifiers and entrez gene identifiers.
 }
 \details{
@@ -16,13 +16,13 @@
   from PubMed by providing a valid PubMed identifier. The pubmed function of
   annotate can also be used for the same purpose
   
-  Mappings were based on data provided by: @PMID2ENTREZIDSOURCE@
+  Mappings were based on data provided by: @PMID2EGSOURCE@
   
 }
 
 \examples{
     # Convert the object to a list
-    xx <- as.list(@ANNOBJPREFIX@PMID2ENTREZID)
+    xx <- as.list(@ANNOBJPREFIX@PMID2EG)
     if(length(xx) > 0){
         # The entrez gene identifiers for the first two elements of XX
         xx[1:2]

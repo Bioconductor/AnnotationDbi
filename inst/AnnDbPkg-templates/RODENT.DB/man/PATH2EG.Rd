@@ -1,5 +1,5 @@
-\name{@ANNOBJPREFIX@PATH2ENTREZID}
-\alias{@ANNOBJPREFIX@PATH2ENTREZID}
+\name{@ANNOBJPREFIX@PATH2EG}
+\alias{@ANNOBJPREFIX@PATH2EG}
 \title{Map between Kyoto Encyclopedia of Genes and Genomes (KEGG)
   pathway identifiers and Entrez Gene Identifiers}
 \description{
