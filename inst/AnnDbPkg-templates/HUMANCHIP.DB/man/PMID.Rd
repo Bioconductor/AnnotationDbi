@@ -29,15 +29,15 @@
         # Convert to a list
         xx <- as.list(x, names=mapped_probes)
     if(length(xx) > 0){
-        # The probe identifiers for the first two elements of XX
+        # Get the PubMed identifiers for the first two probe identifiers
         xx[1:2]
         # Get the first one
         xx[[1]]
         if(interactive() && !is.null(xx[[1]]) && !is.na(xx[[1]])
            && require(annotate)){
-            # Gets article information as XML files
+            # Get article information as XML files
             xmls <- pubmed(xx[[1]], disp = "data")
-            # Views article information using a browser
+            # View article information using a browser
             pubmed(xx[[1]], disp = "browser")
         }
     }

@@ -60,9 +60,9 @@
     # Convert to a list
     xx <- as.list(@ANNOBJPREFIX@GO2ALLPROBES)
     if(length(xx) > 0){
-        # Gets the probe identifiers for the top 2nd and 3nd GO identifiers
+        # Get the probe identifiers for the top 2nd and 3nd GO identifiers
         goids <- xx[2:3]
-        # Gets all the probe identifiers for the first element of goids
+        # Get all the probe identifiers for the first element of goids
         goids[[1]]
         # Evidence code for the mappings
         names(goids[[1]])

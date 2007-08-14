@@ -20,10 +20,8 @@
 \examples{
     # Convert the object to a list
     xx <- as.list(@ANNOBJPREFIX@ALIAS2PROBE)
-    # Remove pathway identifiers that do not map to any probe id
-    xx <- xx[!is.na(xx)]
     if(length(xx) > 0){
-        # The probe identifiers for the first two elements of XX
+        # Get the probe identifiers for the first two aliases
         xx[1:2]
         # Get the first one
         xx[[1]]

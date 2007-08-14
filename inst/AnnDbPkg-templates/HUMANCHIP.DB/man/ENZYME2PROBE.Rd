@@ -49,7 +49,7 @@
     # Convert to a list
     xx <- as.list(@ANNOBJPREFIX@ENZYME2PROBE)
    if(length(xx) > 0){
-       # Gets the probe identifiers for the first five enzyme
+       # Get the probe identifiers for the first five enzyme
        #commission numbers
        xx[1:5]
        # Get the first one
