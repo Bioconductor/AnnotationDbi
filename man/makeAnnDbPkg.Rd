@@ -14,7 +14,7 @@
 }
 
 \usage{
-  makeAnnDbPkg(x, db_file, dest_dir=".", ...)
+  makeAnnDbPkg(x, db_file, dest_dir=".", no.man=FALSE, ...)
   loadAnnDbPkgIndex(file)
 }
 
