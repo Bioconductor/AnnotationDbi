@@ -202,11 +202,11 @@ loadAnnDbPkgIndex <- function(file)
 ###
 
 setGeneric("makeAnnDbPkg", signature="x",
-    function(x, db_file, dest_dir=".", ...) standardGeneric("makeAnnDbPkg")
+    function(x, db_file, dest_dir=".", no.docs=FALSE, ...) standardGeneric("makeAnnDbPkg")
 )
 
 setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
-    function(x, db_file, dest_dir=".", ...)
+    function(x, db_file, dest_dir=".", no.docs=FALSE, ...)
     {
         x <- initWithDbMetada(x, db_file)
         x <- initComputedSlots(x)
@@ -236,12 +236,16 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
         )
         man_dir <- file.path(template_path, "man")
         if (file.exists(man_dir)) {
-            doc_template_names <- list.files(man_dir, "\\.Rd$")
-            is_static <- doc_template_names %in% c("db_conn.Rd", "db_file.Rd")
-            doc_template_names <- doc_template_names[!is_static]
-            map_names <- sub("\\.Rd$", "", doc_template_names)
-            if (length(map_names) != 0)
-                symvals <- c(symvals, getSymbolValuesForManPages(map_names, db_file))
+            if (!no.docs) {
+                doc_template_names <- list.files(man_dir, "\\.Rd$")
+                is_static <- doc_template_names %in% c("db_conn.Rd", "db_file.Rd")
+                doc_template_names <- doc_template_names[!is_static]
+                map_names <- sub("\\.Rd$", "", doc_template_names)
+                if (length(map_names) != 0)
+                    symvals <- c(symvals, getSymbolValuesForManPages(map_names, db_file))
+            } else {
+                unlink(man_dir, recursive=TRUE)
+            }
         }
         if (any(duplicated(names(symvals)))) {
             str(symvals)
@@ -252,13 +256,13 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
                       originDir=template_path,
                       symbolValues=symvals)
         ## rename Rd files
-        if (file.exists(man_dir) && length(doc_template_names) != 0) {
+        if (file.exists(man_dir) && !no.docs && length(doc_template_names) != 0) {
             doc_path <- file.path(dest_dir, x@Package, "man")
             from_doc_names <- paste(doc_path, doc_template_names, sep=.Platform$file.sep)
             to_doc_names <- paste(x@AnnObjPrefix, doc_template_names, sep="")
             to_doc_names <- paste(doc_path, to_doc_names, sep=.Platform$file.sep)
             mapply(file.rename, from_doc_names, to_doc_names)
-	}
+        }
 
 	dest_db_file <- file.path(dest_dir, x@Package, "inst", "extdata", db_file_basename)
         if (!file.copy(db_file, dest_db_file))
@@ -268,11 +272,11 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
 )
 
 setMethod("makeAnnDbPkg", "list",
-    function(x, db_file, dest_dir=".", ...)
+    function(x, db_file, dest_dir=".", no.docs=FALSE, ...)
     {
         x$Class <- "AnnDbPkgSeed"
         y <- do.call("new", x)
-        makeAnnDbPkg(y, db_file, dest_dir)
+        makeAnnDbPkg(y, db_file, dest_dir, no.docs)
     }
 )
 
@@ -285,7 +289,7 @@ setMethod("makeAnnDbPkg", "list",
 ###                        # regular expression
 ###
 setMethod("makeAnnDbPkg", "character",
-    function(x, db_file, dest_dir=".", ...)
+    function(x, db_file, dest_dir=".", no.docs=FALSE, ...)
     {
         if (missing(db_file)) {
             db_file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
@@ -320,7 +324,7 @@ setMethod("makeAnnDbPkg", "character",
             cat("[", i, "/", nrow(index), "] making package ", y[["Package"]], ": ", sep="")
             db_file <- y[["DBfile"]]
             y <- y[names(y) != "DBfile"]
-            makeAnnDbPkg(y, db_file, dest_dir)
+            makeAnnDbPkg(y, db_file, dest_dir, no.docs)
         }
         cat("DONE (", nrow(index), " package(s) made under the ", dest_dir, " directory)\n", sep="")
     }

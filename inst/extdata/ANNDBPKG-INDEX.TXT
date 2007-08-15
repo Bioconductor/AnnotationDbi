@@ -770,7 +770,7 @@ manufacturer: Affymetrix
 
 Package: org.Hs.eg.db
 Title: Entrez Gene centric annotation maps for Human
-Version: 0.0.1
+Version: 0.0.2
 PkgTemplate: HUMAN.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Hs.eg.sqlite
 AnnObjPrefix: org.Hs.eg
@@ -780,7 +780,7 @@ biocViews: AnnotationData, Homo_sapiens, humanLLMappings
 
 Package: org.Mm.eg.db
 Title: Entrez Gene centric annotation maps for Mouse
-Version: 0.0.1
+Version: 0.0.2
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Mm.eg.sqlite
 AnnObjPrefix: org.Mm.eg
@@ -790,7 +790,7 @@ biocViews: AnnotationData, Mus_musculus, mouseLLMappings
 
 Package: org.Rn.eg.db
 Title: Entrez Gene centric annotation maps for Rat
-Version: 0.0.1
+Version: 0.0.2
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Rn.eg.sqlite
 AnnObjPrefix: org.Rn.eg
