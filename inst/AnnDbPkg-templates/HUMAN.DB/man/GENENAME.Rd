@@ -21,16 +21,17 @@
 
 \examples{
         x <- @ANNOBJPREFIX@GENENAME
-        # Get the entrez gene identifiers that are mapped to a gene name
+        # Get the gene names that are mapped to an entrez gene identifier
         mapped_genes <- mappedNames(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         if(length(xx) > 0) {
-          # Get the GENENAME for the first five genes
+          # Get the GENE NAME for the first five genes
           xx[1:5]
           # Get the first one
           xx[[1]]
         }
 }
 \keyword{datasets}
+
 

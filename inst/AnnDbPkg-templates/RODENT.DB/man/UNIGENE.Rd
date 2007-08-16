@@ -21,7 +21,7 @@
 }
 \examples{
         x <- @ANNOBJPREFIX@UNIGENE
-        # Get the entrez gene identifiers that are mapped to an UNIGENE ID
+        # Get the Unigene identifiers that are mapped to an entrez gene id
         mapped_genes <- mappedNames(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
@@ -35,3 +35,43 @@
 
 \keyword{datasets}
 
+
+
+
+\name{@ANNOBJPREFIX@UNIGENE2EG}
+\alias{@ANNOBJPREFIX@UNIGENE2EG}
+\title{Map betweeen UniGene cluster identifiers and Entrez Gene Identifiers}
+\description{
+   @ANNOBJPREFIX@UNIGENE2EG is an R object that provides mappings between
+   UniGene identifiers and entrez gene identifiers.
+}
+\details{
+  Each UniGene identifier is mapped to a entrez gene identifier. An
+  \code{NA} is reported if the unigene identifier cannot be mapped to
+  the entrez gene identifier at this time.
+
+  A UniGene identifier represents a cluster of sequences of a gene. Using
+  UniGene identifiers one can query the UniGene database for information about
+  the sequences.  
+  
+  Mappings were based on data provided by: @UNIGENESOURCE@
+
+}
+\references{
+  \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene}
+}
+\examples{
+        x <- @ANNOBJPREFIX@UNIGENE2EG
+        # Get the entrez gene identifiers that are mapped to a Unigene id
+        mapped_genes <- mappedNames(x)
+        # Convert to a list
+        xx <- as.list(x, names=mapped_genes)
+        if(length(xx) > 0) {
+          # Get the entrez gene for the first five genes
+          xx[1:5]
+          # Get the first one
+          xx[[1]]
+        }
+}
+
+\keyword{datasets}

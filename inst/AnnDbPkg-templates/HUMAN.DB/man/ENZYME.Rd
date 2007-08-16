@@ -115,7 +115,7 @@
     # Convert to a list
     xx <- as.list(@ANNOBJPREFIX@ENZYME2EG)
    if(length(xx) > 0){
-       # Gets the probe identifiers for the first five enzyme
+       # Gets the entrez gene identifiers for the first five enzyme
        #commission numbers
        xx[1:5]
        # Get the first one

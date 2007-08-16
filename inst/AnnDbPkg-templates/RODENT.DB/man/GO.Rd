@@ -127,9 +127,9 @@
     # Convert to a list
     xx <- as.list(@ANNOBJPREFIX@GO2EG)
     if(length(xx) > 0){
-        # Gets the probe identifiers for the top 2nd and 3nd GO identifiers
+        # Gets the entrez gene ids for the top 2nd and 3nd GO identifiers
         goids <- xx[2:3]
-        # Gets the probe identifiers for the first element of goids
+        # Gets the entrez gene ids for the first element of goids
         goids[[1]]
         # Evidence code for the mappings
         names(goids[[1]])

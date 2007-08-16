@@ -28,10 +28,10 @@
 \examples{
     # Convert the object to a list
     xx <- as.list(@ANNOBJPREFIX@ALIAS2EG)
-    # Remove pathway identifiers that do not map to any probe id
+    # Remove pathway identifiers that do not map to any entrez gene id
     xx <- xx[!is.na(xx)]
     if(length(xx) > 0){
-        # The probe identifiers for the first two elements of XX
+        # The entrez gene identifiers for the first two elements of XX
         xx[1:2]
         # Get the first one
         xx[[1]]
