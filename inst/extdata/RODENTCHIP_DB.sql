@@ -44,8 +44,8 @@ CREATE TABLE ec (
 );
 CREATE TABLE gene_info (
   _id INTEGER NOT NULL REFERENCES genes,
-  symbol VARCHAR(80) NOT NULL,
-  gene_name VARCHAR(255) NOT NULL
+  gene_name VARCHAR(255) NOT NULL,
+  symbol VARCHAR(80) NOT NULL
 );
 CREATE TABLE go_bp (
   _id INTEGER NOT NULL REFERENCES genes,

@@ -1,19 +1,12 @@
 --
--- HUMANCHIP_DB schema
--- ===================
+-- HUMAN_DB schema
+-- ===============
 --
 
 -- The "genes" table is the central table.
 CREATE TABLE genes (
   _id INTEGER PRIMARY KEY,
   gene_id VARCHAR(10) UNIQUE NOT NULL
-);
-
--- The "probes" table
-CREATE TABLE probes (
-  probe_id VARCHAR(80) PRIMARY KEY,
-  accession VARCHAR(20) NOT NULL,
-  _id INTEGER NULL REFERENCES genes
 );
 
 -- Other data tables
@@ -52,27 +45,12 @@ CREATE TABLE go_bp (
   go_id CHAR(10) NOT NULL,
   evidence CHAR(3) NOT NULL
 );
-CREATE TABLE go_bp_all ( 
-  _id INTEGER NOT NULL REFERENCES genes,
-  go_id CHAR(10) NOT NULL,
-  evidence CHAR(3) NOT NULL
-);
 CREATE TABLE go_cc (
   _id INTEGER NOT NULL REFERENCES genes,
   go_id CHAR(10) NOT NULL,
   evidence CHAR(3) NOT NULL
 );
-CREATE TABLE go_cc_all (
-  _id INTEGER NOT NULL REFERENCES genes,
-  go_id CHAR(10) NOT NULL,
-  evidence CHAR(3) NOT NULL
-);
 CREATE TABLE go_mf (
-  _id INTEGER NOT NULL REFERENCES genes,
-  go_id CHAR(10) NOT NULL,
-  evidence CHAR(3) NOT NULL
-);
-CREATE TABLE go_mf_all (
   _id INTEGER NOT NULL REFERENCES genes,
   go_id CHAR(10) NOT NULL,
   evidence CHAR(3) NOT NULL
@@ -142,7 +120,6 @@ CREATE TABLE map_metadata (
 -- indexes automatically.
 --
 
-CREATE INDEX iprobes ON probes (_id);
 CREATE INDEX iaccessions ON accessions (_id);
 CREATE INDEX ialias ON alias (_id);
 CREATE INDEX ichromosomes ON chromosomes (_id);
@@ -151,11 +128,8 @@ CREATE INDEX icytogenetic_locations ON cytogenetic_locations (_id);
 CREATE INDEX iec ON ec (_id);
 CREATE INDEX igene_info ON gene_info (_id);
 CREATE INDEX igo_bp ON go_bp (_id);
-CREATE INDEX igo_bp_all ON go_bp_all (_id);
 CREATE INDEX igo_cc ON go_cc (_id);
-CREATE INDEX igo_cc_all ON go_cc_all (_id);
 CREATE INDEX igo_mf ON go_mf (_id);
-CREATE INDEX igo_mf_all ON go_mf_all (_id);
 CREATE INDEX ikegg ON kegg (_id);
 CREATE INDEX iomim ON omim (_id);
 CREATE INDEX ipfam ON pfam (_id);
