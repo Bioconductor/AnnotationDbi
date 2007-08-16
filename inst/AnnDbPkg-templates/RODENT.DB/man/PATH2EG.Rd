@@ -3,7 +3,7 @@
 \title{Map between Kyoto Encyclopedia of Genes and Genomes (KEGG)
   pathway identifiers and Entrez Gene Identifiers}
 \description{
- @ANNOBJPREFIX@PATH2PROBE is an R object that provides mappings between
+ @ANNOBJPREFIX@PATH2EG is an R object that provides mappings between
  KEGG identifiers and entrez gene identifiers.
 }
 \details{
@@ -19,7 +19,7 @@
   Graphic presentations of pathways are searchable at
   \url{http://www.genome.ad.jp/kegg/pathway.html} using pathway identifiers as keys.
   
-  Mappings were based on data provided by: @PATH2PROBESOURCE@
+  Mappings were based on data provided by: @PATH2EGSOURCE@
 
 }
 \references{
@@ -27,7 +27,7 @@
 }
 \examples{
     # Convert the object to a list
-    xx <- as.list(@ANNOBJPREFIX@PATH2PROBE)
+    xx <- as.list(@ANNOBJPREFIX@PATH2EG)
     # Remove pathway identifiers that do not map to any entrez gene id
     xx <- xx[!is.na(xx)]
     if(length(xx) > 0){

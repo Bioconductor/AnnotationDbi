@@ -2,7 +2,7 @@
 \alias{@ANNOBJPREFIX@ENZYME2EG}
 \title{Map between Enzyme Commission Numbers and Entrez Gene Identifiers}
 \description{
-  @ANNOBJPREFIX@ENZYME2PROBE is an R object that maps Enzyme Commission
+  @ANNOBJPREFIX@ENZYME2EG is an R object that maps Enzyme Commission
   (EC) numbers to entrez gene identifiers.
 }
 \details{
@@ -16,7 +16,7 @@
   identified. 
   
   An Enzyme Commission number is of the format EC x.y.z.w, where x, y, z,
-  and w are numeric numbers. In @ANNOBJPREFIX@ENZYME2PROBE, EC is dropped from the
+  and w are numeric numbers. In @ANNOBJPREFIX@ENZYME2EG, EC is dropped from the
   Enzyme Commission numbers.
 
   Enzyme Commission numbers have corresponding names that describe the
