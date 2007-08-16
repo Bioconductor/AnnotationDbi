@@ -1,6 +1,6 @@
 --
--- HUMAN_DB schema
--- ===============
+-- RODENT_DB schema
+-- ================
 --
 -- Differences with the schema currently in use:
 --
@@ -36,7 +36,6 @@
 --     GO ID                      CHAR(10)       go_[bp|cc|mf].go_id
 --     GO evidence code           CHAR(3)        go_[bp|cc|mf].evidence
 --     KEGG ID                    CHAR(5)        kegg.kegg_id
---     OMIM ID                    CHAR(6)        omim.omim_id
 --     IPI accession number       CHAR(11)       pfam.ipi_id, prosite.ipi_id
 --     Pfam ID                    CHAR(7)        pfam.pfam_id
 --     PROSITE ID                 CHAR(7)        prosite.prosite_id
@@ -126,10 +125,6 @@ CREATE TABLE kegg (
   _id INTEGER NOT NULL REFERENCES genes,
   kegg_id CHAR(5) NOT NULL
 );
-CREATE TABLE omim (
-  _id INTEGER NOT NULL REFERENCES genes,
-  omim_id CHAR(6) NOT NULL
-);
 CREATE TABLE pfam (
   _id INTEGER NOT NULL REFERENCES genes,
   ipi_id CHAR(11) NOT NULL,
@@ -202,7 +197,6 @@ CREATE INDEX igo_cc_all ON go_cc_all (_id);
 CREATE INDEX igo_mf ON go_mf (_id);
 CREATE INDEX igo_mf_all ON go_mf_all (_id);
 CREATE INDEX ikegg ON kegg (_id);
-CREATE INDEX iomim ON omim (_id);
 CREATE INDEX ipfam ON pfam (_id);
 CREATE INDEX iprosite ON prosite (_id);
 CREATE INDEX ipubmed ON pubmed (_id);
