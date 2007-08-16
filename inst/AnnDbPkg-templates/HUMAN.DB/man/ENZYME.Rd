@@ -105,7 +105,7 @@
   The EC name for a given EC number can be viewed at
   \url{http://www.chem.qmul.ac.uk/iupac/jcbn/index.html#6}
 
-  Mappings were based on data provided by: @ENZYME2EGSOURCE@
+  Mappings were based on data provided by: @ENZYMESOURCE@
 
 }
 \references{
