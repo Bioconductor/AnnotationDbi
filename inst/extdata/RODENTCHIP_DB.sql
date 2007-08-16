@@ -1,66 +1,22 @@
 --
--- RODENT_DB schema
--- ================
---
--- Differences with the schema currently in use:
---
---   o renamed "qcdata" table -> "map_counts"
---   o renamed internal id "id" -> "_id"
---   o renamed chrlengths.chr col -> "chromosome"
---   o made sure that referenced tables are created before referecing tables
---   o added a PRIMARY KEY constraint on probes.probe_id and metadata.name
---   o added UNIQUE constraint on genes.gene_id and gene_info._id
---   o explicit use of the NULL or NOT NULL constraint on every column (except
---     on primary key cols that are implicitly NOT NULL)
---   o put "_id" col in last position in "probes" table
---   o replaced the non-standard TEXT type by one of the standard SQL
---     character types (see "Table of character types" below)
---   o replaced foreign key def
---       REFERENCES genes(_id)
---     with
---       REFERENCES genes
-
--- Table of character types:
---   Note: MySQL supports VARCHAR up to 255 chars only
---
---     Description                Type           Columns
---     ------------------------   ------------   ---------
---     Entrez Gene ID             VARCHAR(10)    genes.gene_id
---     manufacturer ID            VARCHAR(80)    probes.probe_id
---     GenBank accession number   VARCHAR(20)    probes.accession, accessions.accession
---     gene symbol or alias       VARCHAR(80)    alias.alias_symbol, gene_info.symbol
---     chromosome name            VARCHAR(2)     chromosomes.chromosome
---                                               chromosome_locations.chromosome
---                                               chrlengths.chromosome
---     gene name                  VARCHAR(255)   gene_info.gene_name
---     GO ID                      CHAR(10)       go_[bp|cc|mf].go_id
---     GO evidence code           CHAR(3)        go_[bp|cc|mf].evidence
---     KEGG ID                    CHAR(5)        kegg.kegg_id
---     IPI accession number       CHAR(11)       pfam.ipi_id, prosite.ipi_id
---     Pfam ID                    CHAR(7)        pfam.pfam_id
---     PROSITE ID                 CHAR(7)        prosite.prosite_id
---     PubMed ID                  VARCHAR(10)    pubmed.pubmed_id
---     RefSeq accession number    VARCHAR(20)    refseq.accession
---     UniGene ID                 VARCHAR(10)    unigene.unigene_id
+-- RODENTCHIP_DB schema
+-- ====================
 --
 
---
 -- The "genes" table is the central table.
---
 CREATE TABLE genes (
   _id INTEGER PRIMARY KEY,
   gene_id VARCHAR(10) UNIQUE NOT NULL
 );
 
---
 -- The "probes" table
---
 CREATE TABLE probes (
   probe_id VARCHAR(80) PRIMARY KEY,
   accession VARCHAR(20) NOT NULL,
   _id INTEGER NULL REFERENCES genes
 );
 
+-- Other data tables
 CREATE TABLE accessions (
   _id INTEGER NOT NULL REFERENCES genes,
   accession VARCHAR(20) NOT NULL
