@@ -263,9 +263,9 @@ setMethod("mget", signature(envir="AnnDbMap"),
     {
         .checkNamesAreStrings(x)
         if (missing(ifnotfound))
-          .checkNamesExist(x, names(envir))
-        else if (!is.na(ifnotfound))
-          stop("only NA is currently supported for 'ifnotfound'")
+            .checkNamesExist(x, names(envir))
+        else if (!is.vector(ifnotfound) || length(ifnotfound) != 1 || !is.na(ifnotfound))
+            stop("only NA is currently supported for 'ifnotfound'")
         as.list(envir, names=x)
     }
 )
