@@ -262,7 +262,10 @@ setMethod("mget", signature(envir="AnnDbMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         .checkNamesAreStrings(x)
-        .checkNamesExist(x, names(envir))
+        if (missing(ifnotfound))
+          .checkNamesExist(x, names(envir))
+        else if (!is.na(ifnotfound))
+          stop("only NA is currently supported for 'ifnotfound'")
         as.list(envir, names=x)
     }
 )
