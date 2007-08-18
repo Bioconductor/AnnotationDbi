@@ -109,21 +109,15 @@ CREATE TABLE chrlengths (
   length INTEGER NOT NULL
 );
 
-
---
 -- Metadata tables
---
-
 CREATE TABLE metadata (
   name VARCHAR(80) PRIMARY KEY,
   value VARCHAR(255)
 );
-
 CREATE TABLE map_counts (
   map_name VARCHAR(80) PRIMARY KEY,
   count INTEGER NOT NULL
 );
-
 CREATE TABLE map_metadata (
   map_name VARCHAR(80) NOT NULL,
   source_name VARCHAR(80) NOT NULL,
@@ -131,13 +125,9 @@ CREATE TABLE map_metadata (
   source_date VARCHAR(20) NOT NULL
 );
 
-
---
 -- Explicit index creation on the referencing column of all the foreign keys.
 -- Note that this is only needed for SQLite: PostgreSQL and MySQL create those
 -- indexes automatically.
---
-
 CREATE INDEX iprobes ON probes (_id);
 CREATE INDEX iaccessions ON accessions (_id);
 CREATE INDEX ialias ON alias (_id);
