@@ -6,7 +6,7 @@
 -- The "genes" table is the central table.
 CREATE TABLE genes (
   _id INTEGER PRIMARY KEY,
-  gene_id VARCHAR(10) UNIQUE NOT NULL
+  gene_id VARCHAR(10) NOT NULL UNIQUE
 );
 
 -- Other data tables
@@ -36,7 +36,7 @@ CREATE TABLE ec (
   ec_number VARCHAR(20) NOT NULL
 );
 CREATE TABLE gene_info (
-  _id INTEGER NOT NULL REFERENCES genes,
+  _id INTEGER NOT NULL UNIQUE REFERENCES genes,
   gene_name VARCHAR(255) NOT NULL,
   symbol VARCHAR(80) NOT NULL
 );
