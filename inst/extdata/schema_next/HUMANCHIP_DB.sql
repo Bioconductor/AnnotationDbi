@@ -132,25 +132,25 @@ CREATE TABLE map_metadata (
 -- Explicit index creation on the referencing column of all the foreign keys.
 -- Note that this is only needed for SQLite: PostgreSQL and MySQL create those
 -- indexes automatically.
-CREATE INDEX iprobes ON probes (_id);
-CREATE INDEX iaccessions ON accessions (_id);
-CREATE INDEX ialias ON alias (_id);
-CREATE INDEX ichromosomes ON chromosomes (_id);
-CREATE INDEX ichromosome_locations ON chromosome_locations (_id);
-CREATE INDEX icytogenetic_locations ON cytogenetic_locations (_id);
-CREATE INDEX iec ON ec (_id);
-CREATE INDEX igene_info ON gene_info (_id);
-CREATE INDEX igo_bp ON go_bp (_id);
-CREATE INDEX igo_bp_all ON go_bp_all (_id);
-CREATE INDEX igo_cc ON go_cc (_id);
-CREATE INDEX igo_cc_all ON go_cc_all (_id);
-CREATE INDEX igo_mf ON go_mf (_id);
-CREATE INDEX igo_mf_all ON go_mf_all (_id);
-CREATE INDEX ikegg ON kegg (_id);
-CREATE INDEX iomim ON omim (_id);
-CREATE INDEX ipfam ON pfam (_id);
-CREATE INDEX iprosite ON prosite (_id);
-CREATE INDEX ipubmed ON pubmed (_id);
-CREATE INDEX irefseq ON refseq (_id);
-CREATE INDEX iunigene ON unigene (_id);
+CREATE INDEX Fprobes ON probes (_id);
+CREATE INDEX Faccessions ON accessions (_id);
+CREATE INDEX Falias ON alias (_id);
+CREATE INDEX Fchromosomes ON chromosomes (_id);
+CREATE INDEX Fchromosome_locations ON chromosome_locations (_id);
+CREATE INDEX Fcytogenetic_locations ON cytogenetic_locations (_id);
+CREATE INDEX Fec ON ec (_id);
+CREATE INDEX Fgene_info ON gene_info (_id);
+CREATE INDEX Fgo_bp ON go_bp (_id);
+CREATE INDEX Fgo_bp_all ON go_bp_all (_id);
+CREATE INDEX Fgo_cc ON go_cc (_id);
+CREATE INDEX Fgo_cc_all ON go_cc_all (_id);
+CREATE INDEX Fgo_mf ON go_mf (_id);
+CREATE INDEX Fgo_mf_all ON go_mf_all (_id);
+CREATE INDEX Fkegg ON kegg (_id);
+CREATE INDEX Fomim ON omim (_id);
+CREATE INDEX Fpfam ON pfam (_id);
+CREATE INDEX Fprosite ON prosite (_id);
+CREATE INDEX Fpubmed ON pubmed (_id);
+CREATE INDEX Frefseq ON refseq (_id);
+CREATE INDEX Funigene ON unigene (_id);
 

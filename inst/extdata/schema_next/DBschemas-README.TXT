@@ -32,7 +32,7 @@ All probe-based and org-based schemas:
 All probe-based schemas:
 
   o added a PRIMARY KEY constraint on probes.probe_id
-  o moved "_id" col in last position in "probes" table
+  o moved "_id" col to last position in "probes" table
 
 GO_DB schema:
 
@@ -45,12 +45,16 @@ GO_DB schema:
   o added UNIQUE constraint on go_ontology.term_type and go_term.go_id
   o added foreign key on [go_term|go_obsolete].ontology: REFERENCES go_ontology
   o changed go_synonym.like_go_id type from INTEGER to SMALLINT
-  o removed go_obsolete.term_id column, made go_obsolete.go_id the new PRIMARY KEY
+  o removed go_obsolete.term_id column and made go_obsolete.go_id the
+    new PRIMARY KEY
 
-  Note that, ideally, we could add UNIQUE constraints on (_id, _offspring_id) in the
-  go_[bp|cc|mf]_offspring tables and on (_id, _parent_id) in the go_[bp|cc|mf]_parents
-  tables but the cost of doing this is high (+5M for the size of GO.sqlite: 37M
-  instead of 32M).
+  Note that, ideally, we could add UNIQUE constraints on (_id, _parent_id) in
+  the go_[bp|cc|mf]_parents tables and on (_id, _offspring_id) in the
+  go_[bp|cc|mf]_offspring tables but the cost of doing this is high (+5M for
+  the size of GO.sqlite: 37M instead of 32M).
+
+KEGG_DB schema:
+  o added UNIQUE constraint on pathway2name.path_id and pathway2name.path_name
 
 
 Table of character types
@@ -60,15 +64,18 @@ Table of character types
   ------------------------------------   ------------   ---------
   Entrez Gene ID                         VARCHAR(10)    genes.gene_id
   manufacturer ID                        VARCHAR(80)    probes.probe_id
-  GenBank accession number               VARCHAR(20)    probes.accession, accessions.accession
-  gene symbol or alias                   VARCHAR(80)    alias.alias_symbol, gene_info.symbol
+  GenBank accession number               VARCHAR(20)    probes.accession
+                                                        accessions.accession
+  gene symbol or alias                   VARCHAR(80)    alias.alias_symbol
+                                                        gene_info.symbol
   chromosome name                        VARCHAR(2)     chromosomes.chromosome
                                                         chromosome_locations.chromosome
                                                         chrlengths.chromosome
   gene name                              VARCHAR(255)   gene_info.gene_name
   KEGG ID                                CHAR(5)        kegg.kegg_id
   OMIM ID                                CHAR(6)        omim.omim_id
-  IPI accession number                   CHAR(11)       pfam.ipi_id, prosite.ipi_id
+  IPI accession number                   CHAR(11)       pfam.ipi_id
+                                                        prosite.ipi_id
   Pfam ID                                CHAR(7)        pfam.pfam_id
   PROSITE ID                             CHAR(7)        prosite.prosite_id
   PubMed ID                              VARCHAR(10)    pubmed.pubmed_id
@@ -82,6 +89,12 @@ Table of character types
   textual definition for the GO term     TEXT           [go_term|go_obsolete].definition
   type of GO child-parent relationship   VARCHAR(7)     go_[bp|cc|mf]_parents.relationship_type
   GO evidence code                       CHAR(3)        go_[bp|cc|mf].evidence
+
+  Enzyme Commission number               VARCHAR(16)    ec2go.ec_no
+  KEGG pathway ID                        CHAR(8)        pathway2gene.pathway_id
+  Entrez Gene or ORF ID                  VARCHAR(14)    pathway2gene.gene_id
+  KEGG pathway short ID                  CHAR(5)        pathway2name.path_id
+  KEGG pathway name                      VARCHAR(80)    pathway2name.path_name
 
 Notes: - MySQL supports VARCHAR up to 255 chars only.
        - These types should be used consistently across all schemas.

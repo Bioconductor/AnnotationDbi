@@ -77,19 +77,19 @@ CREATE TABLE map_metadata (
 -- Explicit index creation on the referencing column of all the foreign keys.
 -- Note that this is only needed for SQLite: PostgreSQL and MySQL create those
 -- indexes automatically.
-CREATE INDEX igo_term on go_term (ontology);
-CREATE INDEX igo_synonym on go_synonym (_id);
-CREATE INDEX igo_obsolete on go_obsolete (ontology);
-CREATE INDEX i1go_bp_parents on go_bp_parents (_id);
-CREATE INDEX i2go_bp_parents on go_bp_parents (_parent_id);
-CREATE INDEX i1go_cc_parents on go_bp_parents (_id);
-CREATE INDEX i2go_cc_parents on go_bp_parents (_parent_id);
-CREATE INDEX i1go_mf_parents on go_bp_parents (_id);
-CREATE INDEX i2go_mf_parents on go_bp_parents (_parent_id);
-CREATE INDEX i1go_bp_offspring on go_bp_offspring (_id);
-CREATE INDEX i2go_bp_offspring on go_bp_offspring (_offspring_id);
-CREATE INDEX i1go_cc_offspring on go_bp_offspring (_id);
-CREATE INDEX i2go_cc_offspring on go_bp_offspring (_offspring_id);
-CREATE INDEX i1go_mf_offspring on go_bp_offspring (_id);
-CREATE INDEX i2go_mf_offspring on go_bp_offspring (_offspring_id);
+CREATE INDEX Fgo_term on go_term (ontology);
+CREATE INDEX Fgo_synonym on go_synonym (_id);
+CREATE INDEX Fgo_obsolete on go_obsolete (ontology);
+CREATE INDEX F1go_bp_parents on go_bp_parents (_id);
+CREATE INDEX F2go_bp_parents on go_bp_parents (_parent_id);
+CREATE INDEX F1go_cc_parents on go_bp_parents (_id);
+CREATE INDEX F2go_cc_parents on go_bp_parents (_parent_id);
+CREATE INDEX F1go_mf_parents on go_bp_parents (_id);
+CREATE INDEX F2go_mf_parents on go_bp_parents (_parent_id);
+CREATE INDEX F1go_bp_offspring on go_bp_offspring (_id);
+CREATE INDEX F2go_bp_offspring on go_bp_offspring (_offspring_id);
+CREATE INDEX F1go_cc_offspring on go_bp_offspring (_id);
+CREATE INDEX F2go_cc_offspring on go_bp_offspring (_offspring_id);
+CREATE INDEX F1go_mf_offspring on go_bp_offspring (_id);
+CREATE INDEX F2go_mf_offspring on go_bp_offspring (_offspring_id);
 
