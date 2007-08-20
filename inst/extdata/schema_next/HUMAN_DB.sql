@@ -6,88 +6,88 @@
 -- The "genes" table is the central table.
 CREATE TABLE genes (
   _id INTEGER PRIMARY KEY,
-  gene_id VARCHAR(10) NOT NULL UNIQUE
+  gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
 );
 
 -- Other data tables
 CREATE TABLE accessions (
   _id INTEGER NOT NULL REFERENCES genes,
-  accession VARCHAR(20) NOT NULL
+  accession VARCHAR(20) NOT NULL                -- GenBank accession number
 );
 CREATE TABLE alias (
   _id INTEGER NOT NULL REFERENCES genes,
-  alias_symbol VARCHAR(80) NOT NULL
+  alias_symbol VARCHAR(80) NOT NULL             -- gene symbol or alias
 );
 CREATE TABLE chromosomes (
   _id INTEGER NOT NULL REFERENCES genes,
-  chromosome VARCHAR(2) NOT NULL
+  chromosome VARCHAR(2) NOT NULL                -- chromosome name
 );
 CREATE TABLE chromosome_locations (
   _id INTEGER NOT NULL REFERENCES genes,
-  chromosome VARCHAR(2) NOT NULL,
+  chromosome VARCHAR(2) NOT NULL,               -- chromosome name
   start_location INTEGER NOT NULL
 );
 CREATE TABLE cytogenetic_locations (
   _id INTEGER NOT NULL REFERENCES genes,
-  cytogenetic_location VARCHAR(20) NOT NULL
+  cytogenetic_location VARCHAR(20) NOT NULL     -- cytoband location
 );
 CREATE TABLE ec (
   _id INTEGER NOT NULL REFERENCES genes,
-  ec_number VARCHAR(20) NOT NULL
+  ec_number VARCHAR(13) NOT NULL                -- EC number (no "EC:" prefix)
 );
 CREATE TABLE gene_info (
   _id INTEGER NOT NULL UNIQUE REFERENCES genes,
-  gene_name VARCHAR(255) NOT NULL,
-  symbol VARCHAR(80) NOT NULL
+  gene_name VARCHAR(255) NOT NULL,              -- gene name
+  symbol VARCHAR(80) NOT NULL                   -- gene symbol
 );
 CREATE TABLE go_bp (
   _id INTEGER NOT NULL REFERENCES genes,
-  go_id CHAR(10) NOT NULL,
-  evidence CHAR(3) NOT NULL
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL                     -- GO evidence code
 );
 CREATE TABLE go_cc (
   _id INTEGER NOT NULL REFERENCES genes,
-  go_id CHAR(10) NOT NULL,
-  evidence CHAR(3) NOT NULL
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL                     -- GO evidence code
 );
 CREATE TABLE go_mf (
   _id INTEGER NOT NULL REFERENCES genes,
-  go_id CHAR(10) NOT NULL,
-  evidence CHAR(3) NOT NULL
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL                     -- GO evidence code
 );
 CREATE TABLE kegg (
   _id INTEGER NOT NULL REFERENCES genes,
-  kegg_id CHAR(5) NOT NULL
+  path_id CHAR(5) NOT NULL                      -- KEGG pathway short ID
 );
 CREATE TABLE omim (
   _id INTEGER NOT NULL REFERENCES genes,
-  omim_id CHAR(6) NOT NULL
+  omim_id CHAR(6) NOT NULL                      -- OMIM ID
 );
 CREATE TABLE pfam (
   _id INTEGER NOT NULL REFERENCES genes,
-  ipi_id CHAR(11) NOT NULL,
-  pfam_id CHAR(7) NULL
+  ipi_id CHAR(11) NOT NULL,                     -- IPI accession number
+  pfam_id CHAR(7) NULL                          -- Pfam ID
 );
 CREATE TABLE prosite (
   _id INTEGER NOT NULL REFERENCES genes,
-  ipi_id CHAR(11) NOT NULL,
-  prosite_id CHAR(7) NULL
+  ipi_id CHAR(11) NOT NULL,                     -- IPI accession number
+  prosite_id CHAR(7) NULL                       -- PROSITE ID
 );
 CREATE TABLE pubmed (
   _id INTEGER NOT NULL REFERENCES genes,
-  pubmed_id VARCHAR(10) NOT NULL
+  pubmed_id VARCHAR(10) NOT NULL                -- PubMed ID
 );
 CREATE TABLE refseq (
   _id INTEGER NOT NULL REFERENCES genes,
-  accession VARCHAR(20) NOT NULL
+  accession VARCHAR(20) NOT NULL                -- RefSeq accession number
 );
 CREATE TABLE unigene (
   _id INTEGER NOT NULL REFERENCES genes,
-  unigene_id VARCHAR(10) NOT NULL
+  unigene_id VARCHAR(10) NOT NULL               -- UniGene ID
 );
 
 CREATE TABLE chrlengths (
-  chromosome VARCHAR(2) PRIMARY KEY,
+  chromosome VARCHAR(2) PRIMARY KEY,            -- chromosome name
   length INTEGER NOT NULL
 );
 

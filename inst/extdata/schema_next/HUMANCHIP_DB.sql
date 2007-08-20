@@ -32,7 +32,7 @@ CREATE TABLE chromosomes (
 CREATE TABLE chromosome_locations (
   _id INTEGER NOT NULL REFERENCES genes,
   chromosome VARCHAR(2) NOT NULL,               -- chromosome name
-  start_location INTEGER NOT NULL 
+  start_location INTEGER NOT NULL
 );
 CREATE TABLE cytogenetic_locations (
   _id INTEGER NOT NULL REFERENCES genes,
