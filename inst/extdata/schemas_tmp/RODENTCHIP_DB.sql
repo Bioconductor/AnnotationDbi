@@ -11,9 +11,9 @@ CREATE TABLE genes (
 
 -- The "probes" table
 CREATE TABLE probes (
-  id INTEGER NULL REFERENCES genes
+  id INTEGER NULL REFERENCES genes,
   probe_id VARCHAR(80) PRIMARY KEY,             -- manufacturer ID
-  accession VARCHAR(20) NOT NULL,               -- GenBank accession number
+  accession VARCHAR(20) NOT NULL                -- GenBank accession number
 );
 
 -- Other data tables
