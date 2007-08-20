@@ -1,13 +1,14 @@
 
-This directory contains version 1.0 of the schemas used in the sqlilte-based
+This directory contains version 1.0 of the schemas used in the sqlite-based
 annotation data packages.
 
-IMPORTANT: Version 1.0 of the schemas is the version that _will_ be used
-in the data packages released with Bioconductor 2.1 (AnnotationDbi 1.0.0).
+IMPORTANT: Version 1.0 of the schemas is our target for BioC 2.1 release
+i.e. it is the version that we plan to use in the data packages that will
+be released with Bioconductor 2.1 (AnnotationDbi 1.0.0).
 At this time (Aug 20, 2007) the schemas _effectively_ in use to produce the
-data packages included in BioC 2.1 devel for testing purpose are slightly
-different but will converge to version 1.0. See extdata/schemas_tmp for the
-current schemas.
+data packages that we put in BioC 2.1 devel for testing purpose are slightly
+different but will converge to version 1.0 before the release.
+See extdata/schemas_tmp for the schemas currently in use.
 
 The 1.0 schemas are portable (tested on SQLite and PostgreSQL only so far,
 still need to test them on MySQL and Oracle), self-describing, easier to
