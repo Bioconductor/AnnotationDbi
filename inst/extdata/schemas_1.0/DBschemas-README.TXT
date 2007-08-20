@@ -1,9 +1,17 @@
 
-The *_DB.sql files in this directory contain the new DB schemas.
+This directory contains version 1.0 of the schemas used in the sqlilte-based
+annotation data packages.
 
-The new schemas are portable (tested on SQLite and PostgreSQL only so far,
+IMPORTANT: Version 1.0 of the schemas is the version that _will_ be used
+in the data packages released with Bioconductor 2.1 (AnnotationDbi 1.0.0).
+At this time (Aug 20, 2007) the schemas _effectively_ in use to produce the
+data packages included in BioC 2.1 devel for testing purpose are slightly
+different but will converge to version 1.0. See extdata/schemas_tmp for the
+current schemas.
+
+The 1.0 schemas are portable (tested on SQLite and PostgreSQL only so far,
 still need to test them on MySQL and Oracle), self-describing, easier to
-read and easier to understand than the current ones.
+read and easier to understand than the current schemas.
 
 
 Summary of modifications from the current schemas
@@ -11,6 +19,7 @@ Summary of modifications from the current schemas
 
 All schemas:
 
+  o add DBSCHEMAVERSION entry (with value "1.0") in the "metadata" table
   o renamed "qcdata" table -> "map_counts"
   o explicit use of the NULL or NOT NULL constraint on every column (except
     on primary key cols that are implicitly NOT NULL)
