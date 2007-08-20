@@ -11,52 +11,67 @@ CREATE TABLE go_term (
   term_id INTEGER PRIMARY KEY, 
   go_id CHAR(10) NOT NULL UNIQUE,               -- GO ID
   term VARCHAR(255) NOT NULL,                   -- textual label for the GO term
-  ontology VARCHAR(9) NOT NULL REFERENCES go_ontology,
-  definition TEXT NULL                          -- textual definition for the GO term
+  ontology VARCHAR(9) NOT NULL,                 -- REFERENCES go_ontology
+  definition TEXT NULL,                         -- textual definition for the GO term
+  FOREIGN KEY (ontology) REFERENCES go_ontology (ontology)
 );
 CREATE TABLE go_synonym (
-  term_id INTEGER NOT NULL REFERENCES go_term,
+  term_id INTEGER NOT NULL,                     -- REFERENCES go_term
   synonym VARCHAR(255) NOT NULL,                -- label or GO ID
   secondary CHAR(10) NULL,                      -- GO ID
-  like_go_id SMALLINT                           -- boolean (1 or 0)
+  like_go_id SMALLINT,                          -- boolean (1 or 0)
+  FOREIGN KEY (term_id) REFERENCES go_term (term_id)
 );
 CREATE TABLE go_obsolete (
   term_id INTEGER,
   go_id CHAR(10) PRIMARY KEY,                   -- GO ID
   term VARCHAR(255) NOT NULL,                   -- textual label for the GO term
-  ontology VARCHAR(9) NOT NULL REFERENCES go_ontology,
-  definition TEXT NULL                          -- textual definition for the GO term
+  ontology VARCHAR(9) NOT NULL,                 -- REFERENCES go_ontology
+  definition TEXT NULL,                         -- textual definition for the GO term
+  FOREIGN KEY (ontology) REFERENCES go_ontology (ontology)
 );
 
 -- child-parent relationship
 CREATE TABLE go_bp_parents (
-  term_id INTEGER NOT NULL REFERENCES go_term,
-  parent_id INTEGER NOT NULL REFERENCES go_term,
-  evidence VARCHAR(7) NOT NULL                  -- type of GO child-parent relationship
+  term_id INTEGER NOT NULL,                     -- REFERENCES go_term
+  parent_id INTEGER NOT NULL,                   -- REFERENCES go_term
+  evidence VARCHAR(7) NOT NULL,                 -- type of GO child-parent relationship
+  FOREIGN KEY (term_id) REFERENCES go_term (term_id),
+  FOREIGN KEY (parent_id) REFERENCES go_term (term_id)
 );
 CREATE TABLE go_cc_parents (
-  term_id INTEGER NOT NULL REFERENCES go_term,
-  parent_id INTEGER NOT NULL REFERENCES go_term,
-  evidence VARCHAR(7) NOT NULL                  -- type of GO child-parent relationship
+  term_id INTEGER NOT NULL,                     -- REFERENCES go_term
+  parent_id INTEGER NOT NULL,                   -- REFERENCES go_term
+  evidence VARCHAR(7) NOT NULL,                 -- type of GO child-parent relationship
+  FOREIGN KEY (term_id) REFERENCES go_term (term_id),
+  FOREIGN KEY (parent_id) REFERENCES go_term (term_id)
 );
 CREATE TABLE go_mf_parents (
-  term_id INTEGER NOT NULL REFERENCES go_term,
-  parent_id INTEGER NOT NULL REFERENCES go_term,
-  evidence VARCHAR(7) NOT NULL                  -- type of GO child-parent relationship
+  term_id INTEGER NOT NULL,                     -- REFERENCES go_term
+  parent_id INTEGER NOT NULL,                   -- REFERENCES go_term
+  evidence VARCHAR(7) NOT NULL,                 -- type of GO child-parent relationship
+  FOREIGN KEY (term_id) REFERENCES go_term (term_id),
+  FOREIGN KEY (parent_id) REFERENCES go_term (term_id)
 );
 
 -- parent-offspring relationship
 CREATE TABLE go_bp_offspring (
-  term_id INTEGER NOT NULL REFERENCES go_term,      
-  offspring_id INTEGER NOT NULL REFERENCES go_term
+  term_id INTEGER NOT NULL,                     -- REFERENCES go_term
+  offspring_id INTEGER NOT NULL,                -- REFERENCES go_term
+  FOREIGN KEY (term_id) REFERENCES go_term (term_id),
+  FOREIGN KEY (offspring_id) REFERENCES go_term (term_id)
 );
 CREATE TABLE go_cc_offspring (
-  term_id INTEGER NOT NULL REFERENCES go_term,
-  offspring_id INTEGER NOT NULL REFERENCES go_term
+  term_id INTEGER NOT NULL,                     -- REFERENCES go_term
+  offspring_id INTEGER NOT NULL,                -- REFERENCES go_term
+  FOREIGN KEY (term_id) REFERENCES go_term (term_id),
+  FOREIGN KEY (offspring_id) REFERENCES go_term (term_id)
 );
 CREATE TABLE go_mf_offspring (
-  term_id INTEGER NOT NULL REFERENCES go_term,
-  offspring_id INTEGER NOT NULL REFERENCES go_term
+  term_id INTEGER NOT NULL,                     -- REFERENCES go_term
+  offspring_id INTEGER NOT NULL,                -- REFERENCES go_term
+  FOREIGN KEY (term_id) REFERENCES go_term (term_id),
+  FOREIGN KEY (offspring_id) REFERENCES go_term (term_id)
 );
 
 -- Metadata tables

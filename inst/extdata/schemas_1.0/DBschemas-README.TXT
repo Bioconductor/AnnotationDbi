@@ -28,10 +28,8 @@ All schemas:
   o replaced the non-standard TEXT type by one of the standard SQL
     character types (see "Table of character types" below)
   o made sure that referenced tables are created before referencing tables
-  o removed col specification from foreign key defs, e.g.:
-      REFERENCES genes(_id)
-    with
-      REFERENCES genes
+  o use portable FOREIGN KEY syntax (compatible with MySQL+InnoDB and PostgreSQL)
+      FOREIGN KEY (col) REFERENCES table (col)
 
 All probe-based and org-based schemas:
 
