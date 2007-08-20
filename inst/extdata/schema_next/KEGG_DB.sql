@@ -4,11 +4,11 @@
 --
 
 CREATE TABLE ec2go (
-  ec_no VARCHAR(16) NOT NULL,                   -- Enzyme Commission number
+  ec_no VARCHAR(16) NOT NULL,                   -- EC number (with "EC:" prefix)
   go_id CHAR(10) NOT NULL                       -- GO ID
 );
 CREATE TABLE pathway2gene (
-  pathway_id CHAR(8) NOT NULL,                  -- KEGG pathway ID
+  pathway_id CHAR(8) NOT NULL,                  -- KEGG pathway long ID
   gene_id VARCHAR(14) NOT NULL                  -- Entrez Gene or ORF ID
 );
 CREATE TABLE pathway2name (

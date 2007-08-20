@@ -27,6 +27,7 @@ All probe-based and org-based schemas:
 
   o renamed internal id "id" -> "_id"
   o renamed chrlengths.chr col -> "chromosome"
+  o renamed kegg.kegg_id col -> kegg.path_id
   o added UNIQUE constraint on genes.gene_id and gene_info._id
 
 All probe-based schemas:
@@ -71,8 +72,9 @@ Table of character types
   chromosome name                        VARCHAR(2)     chromosomes.chromosome
                                                         chromosome_locations.chromosome
                                                         chrlengths.chromosome
+  cytoband location                      VARCHAR(20)    cytogenetic_locations.cytogenetic_location
+  EC number (no "EC:" prefix)            VARCHAR(13)    ec.ec_number
   gene name                              VARCHAR(255)   gene_info.gene_name
-  KEGG ID                                CHAR(5)        kegg.kegg_id
   OMIM ID                                CHAR(6)        omim.omim_id
   IPI accession number                   CHAR(11)       pfam.ipi_id
                                                         prosite.ipi_id
@@ -84,17 +86,17 @@ Table of character types
 
   GO ontology (short label)              VARCHAR(9)     [go_ontology|go_term|go_obsolete].ontology
   GO ontology (full label)               VARCHAR(18)    go_ontology.term_type
-  GO ID                                  CHAR(10)       go_[bp|cc|mf].go_id
+  GO ID                                  CHAR(10)       go_id
   textual label for the GO term          VARCHAR(255)   [go_term|go_obsolete].term
   textual definition for the GO term     TEXT           [go_term|go_obsolete].definition
   type of GO child-parent relationship   VARCHAR(7)     go_[bp|cc|mf]_parents.relationship_type
   GO evidence code                       CHAR(3)        go_[bp|cc|mf].evidence
 
-  Enzyme Commission number               VARCHAR(16)    ec2go.ec_no
-  KEGG pathway ID                        CHAR(8)        pathway2gene.pathway_id
-  Entrez Gene or ORF ID                  VARCHAR(14)    pathway2gene.gene_id
-  KEGG pathway short ID                  CHAR(5)        pathway2name.path_id
+  KEGG pathway short ID                  CHAR(5)        [kegg|pathway2name].path_id
   KEGG pathway name                      VARCHAR(80)    pathway2name.path_name
+  EC number (with "EC:" prefix)          VARCHAR(16)    ec2go.ec_no
+  KEGG pathway long ID                   CHAR(8)        pathway2gene.pathway_id
+  Entrez Gene or ORF ID                  VARCHAR(14)    pathway2gene.gene_id
 
 Notes: - MySQL supports VARCHAR up to 255 chars only.
        - These types should be used consistently across all schemas.
