@@ -34,8 +34,9 @@ All schemas:
 All probe-based and org-based schemas:
 
   o renamed internal id "id" -> "_id"
-  o renamed chrlengths.chr col -> "chromosome"
+  o renamed chromosome_locations.chromosome -> chromosome_locations.seqname
   o renamed kegg.kegg_id col -> kegg.path_id
+  o renamed chrlengths.chr col -> chrlengths.chromosome
   o added UNIQUE constraint on genes.gene_id and gene_info._id
 
 All probe-based schemas:
