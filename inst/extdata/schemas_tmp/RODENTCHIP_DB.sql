@@ -135,7 +135,6 @@ CREATE INDEX Fchromosomes ON chromosomes (id);
 CREATE INDEX Fchromosome_locations ON chromosome_locations (id);
 CREATE INDEX Fcytogenetic_locations ON cytogenetic_locations (id);
 CREATE INDEX Fec ON ec (id);
-CREATE INDEX Fgene_info ON gene_info (id);
 CREATE INDEX Fgo_bp ON go_bp (id);
 CREATE INDEX Fgo_bp_all ON go_bp_all (id);
 CREATE INDEX Fgo_cc ON go_cc (id);
