@@ -78,8 +78,8 @@ Table of character types
   gene symbol or alias                   VARCHAR(80)    alias.alias_symbol
                                                         gene_info.symbol
   chromosome name                        VARCHAR(2)     chromosomes.chromosome
-                                                        chromosome_locations.chromosome
                                                         chrlengths.chromosome
+  sequence name                          VARCHAR(20)    chromosome_locations.seqname
   cytoband location                      VARCHAR(20)    cytogenetic_locations.cytogenetic_location
   EC number (no "EC:" prefix)            VARCHAR(13)    ec.ec_number
   gene name                              VARCHAR(255)   gene_info.gene_name

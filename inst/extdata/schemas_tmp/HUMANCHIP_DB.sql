@@ -35,7 +35,7 @@ CREATE TABLE chromosomes (
 );
 CREATE TABLE chromosome_locations (
   id INTEGER NOT NULL,                          -- REFERENCES genes
-  chromosome VARCHAR(2) NOT NULL,               -- chromosome name
+  chromosome VARCHAR(20) NOT NULL,              -- sequence name
   start_location INTEGER NOT NULL,
   FOREIGN KEY (id) REFERENCES genes (id)
 );

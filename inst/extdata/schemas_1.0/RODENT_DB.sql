@@ -24,7 +24,7 @@ CREATE TABLE chromosomes (
 );
 CREATE TABLE chromosome_locations (
   _id INTEGER NOT NULL REFERENCES genes,
-  chromosome VARCHAR(2) NOT NULL,               -- chromosome name
+  seqname VARCHAR(20) NOT NULL,                 -- sequence name
   start_location INTEGER NOT NULL
 );
 CREATE TABLE cytogenetic_locations (
