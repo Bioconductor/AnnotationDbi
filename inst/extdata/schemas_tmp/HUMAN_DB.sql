@@ -11,79 +11,96 @@ CREATE TABLE genes (
 
 -- Other data tables
 CREATE TABLE accessions (
-  id INTEGER NOT NULL REFERENCES genes,
-  accession VARCHAR(20) NOT NULL                -- GenBank accession number
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  accession VARCHAR(20) NOT NULL,               -- GenBank accession number
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE alias (
-  id INTEGER NOT NULL REFERENCES genes,
-  alias_symbol VARCHAR(80) NOT NULL             -- gene symbol or alias
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  alias_symbol VARCHAR(80) NOT NULL,            -- gene symbol or alias
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE chromosomes (
-  id INTEGER NOT NULL REFERENCES genes,
-  chromosome VARCHAR(2) NOT NULL                -- chromosome name
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  chromosome VARCHAR(2) NOT NULL,               -- chromosome name
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE chromosome_locations (
-  id INTEGER NOT NULL REFERENCES genes,
+  id INTEGER NOT NULL,                          -- REFERENCES genes
   chromosome VARCHAR(2) NOT NULL,               -- chromosome name
-  start_location INTEGER NOT NULL
+  start_location INTEGER NOT NULL,
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE cytogenetic_locations (
-  id INTEGER NOT NULL REFERENCES genes,
-  cytogenetic_location VARCHAR(20) NOT NULL     -- cytoband location
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  cytogenetic_location VARCHAR(20) NOT NULL,    -- cytoband location
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE ec (
-  id INTEGER NOT NULL REFERENCES genes,
-  ec_number VARCHAR(13) NOT NULL                -- EC number (no "EC:" prefix)
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  ec_number VARCHAR(13) NOT NULL,               -- EC number (no "EC:" prefix)
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE gene_info (
-  id INTEGER NOT NULL UNIQUE REFERENCES genes,
+  id INTEGER NOT NULL UNIQUE,                   -- REFERENCES genes
   gene_name VARCHAR(255) NOT NULL,              -- gene name
-  symbol VARCHAR(80) NOT NULL                   -- gene symbol
+  symbol VARCHAR(80) NOT NULL,                  -- gene symbol
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE go_bp (
-  id INTEGER NOT NULL REFERENCES genes,
+  id INTEGER NOT NULL,                          -- REFERENCES genes
   go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL                     -- GO evidence code
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE go_cc (
-  id INTEGER NOT NULL REFERENCES genes,
+  id INTEGER NOT NULL,                          -- REFERENCES genes
   go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL                     -- GO evidence code
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE go_mf (
-  id INTEGER NOT NULL REFERENCES genes,
+  id INTEGER NOT NULL,                          -- REFERENCES genes
   go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL                     -- GO evidence code
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE kegg (
-  id INTEGER NOT NULL REFERENCES genes,
-  kegg_id CHAR(5) NOT NULL                      -- KEGG pathway short ID
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  kegg_id CHAR(5) NOT NULL,                     -- KEGG pathway short ID
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE omim (
-  id INTEGER NOT NULL REFERENCES genes,
-  omim_id CHAR(6) NOT NULL                      -- OMIM ID
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  omim_id CHAR(6) NOT NULL,                     -- OMIM ID
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE pfam (
-  id INTEGER NOT NULL REFERENCES genes,
+  id INTEGER NOT NULL,                          -- REFERENCES genes
   ipi_id CHAR(11) NOT NULL,                     -- IPI accession number
-  pfam_id CHAR(7) NULL                          -- Pfam ID
+  pfam_id CHAR(7) NULL,                         -- Pfam ID
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE prosite (
-  id INTEGER NOT NULL REFERENCES genes,
+  id INTEGER NOT NULL,                          -- REFERENCES genes
   ipi_id CHAR(11) NOT NULL,                     -- IPI accession number
-  prosite_id CHAR(7) NULL                       -- PROSITE ID
+  prosite_id CHAR(7) NULL,                      -- PROSITE ID
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE pubmed (
-  id INTEGER NOT NULL REFERENCES genes,
-  pubmed_id VARCHAR(10) NOT NULL                -- PubMed ID
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  pubmed_id VARCHAR(10) NOT NULL,               -- PubMed ID
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE refseq (
-  id INTEGER NOT NULL REFERENCES genes,
-  accession VARCHAR(20) NOT NULL                -- RefSeq accession number
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  accession VARCHAR(20) NOT NULL,               -- RefSeq accession number
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE unigene (
-  id INTEGER NOT NULL REFERENCES genes,
-  unigene_id VARCHAR(10) NOT NULL               -- UniGene ID
+  id INTEGER NOT NULL,                          -- REFERENCES genes
+  unigene_id VARCHAR(10) NOT NULL,              -- UniGene ID
+  FOREIGN KEY (id) REFERENCES genes (id)
 );
 
 CREATE TABLE chrlengths (
