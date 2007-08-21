@@ -18,11 +18,6 @@ CREATE TABLE probes (
 );
 
 -- Other data tables
-CREATE TABLE accessions (
-  _id INTEGER NOT NULL,                         -- REFERENCES genes
-  accession VARCHAR(20) NOT NULL,               -- GenBank accession number
-  FOREIGN KEY (_id) REFERENCES genes (_id)
-);
 CREATE TABLE alias (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
   alias_symbol VARCHAR(80) NOT NULL,            -- gene symbol or alias
@@ -154,7 +149,6 @@ CREATE TABLE map_metadata (
 -- Note that this is only needed for SQLite: PostgreSQL and MySQL create those
 -- indexes automatically.
 CREATE INDEX Fprobes ON probes (_id);
-CREATE INDEX Faccessions ON accessions (_id);
 CREATE INDEX Falias ON alias (_id);
 CREATE INDEX Fchromosomes ON chromosomes (_id);
 CREATE INDEX Fchromosome_locations ON chromosome_locations (_id);

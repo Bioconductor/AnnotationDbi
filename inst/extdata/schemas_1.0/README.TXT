@@ -43,6 +43,7 @@ All probe-based schemas:
 
   o added a PRIMARY KEY constraint on probes.probe_id
   o moved "_id" col to last position in "probes" table
+  o removed the "accessions" table
 
 GO_DB schema:
 
