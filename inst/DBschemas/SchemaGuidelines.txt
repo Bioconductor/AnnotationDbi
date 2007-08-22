@@ -26,7 +26,7 @@ o Use preferably CHAR(n) or VARCHAR(n) types instead of non-standard TEXT type
   large (i.e. > 80) since this is not portable either. Doing so when n <= 80
   should be safe though.
 
-o Allways use a character type for external (i.e. real world) ids even for
+o Always use a character type for "external" (aka "real world") ids even for
   ids like Entrez Gene IDs, PubMed IDs or OMIM IDs that are in fact integers.
 
 o Put PRIMARY KEY and UNIQUE definitions "in line" at the end of the column
@@ -40,13 +40,14 @@ o Put "regular" (i.e. non PRIMARY KEY, non UNIQUE) INDEX definitions all
 o Make sure that referenced tables are created before referencing tables.
 
 o Make the FOREIGN KEYs portable. This means that:
-    - There must be NOT NULL and UNIQUE constraints on the referenced column
-      (typically a PRIMARY KEY).
     - Use portable syntax. Putting 
         FOREIGN KEY (col) REFERENCES table (col)
       inside the CREATE TABLE statement but at the end of it (after all the
       column definitions) is compatible with SQLite (which will just ignore
       it) MySQL+InnoDB and PostgreSQL.
+    - There must be NOT NULL and UNIQUE constraints on the referenced column
+      (typically a PRIMARY KEY).
+    - The referencing and referenced columns must have the same type.
 
-o Prefix with an underscore column names that store internal ids.
+o Prefix with an underscore the column names that store "internal" ids.
 
