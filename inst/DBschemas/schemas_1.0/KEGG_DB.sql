@@ -9,7 +9,7 @@ CREATE TABLE ec2go (
 );
 CREATE TABLE pathway2gene (
   pathway_id CHAR(8) NOT NULL,                  -- KEGG pathway long ID
-  gene_id VARCHAR(20) NOT NULL                  -- Entrez Gene or ORF ID
+  gene_or_orf_id VARCHAR(20) NOT NULL           -- Entrez Gene or ORF ID
 );
 CREATE TABLE pathway2name (
   path_id CHAR(5) NOT NULL UNIQUE,              -- KEGG pathway short ID 

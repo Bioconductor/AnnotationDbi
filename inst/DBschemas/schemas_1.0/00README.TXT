@@ -53,3 +53,7 @@ GO_DB schema:
   go_[bp|cc|mf]_offspring tables but the cost of doing this is high (+5M for
   the size of GO.sqlite: 37M instead of 32M).
 
+KEGG_DB schema:
+
+  o renamed "gene_id" col -> "gene_or_orf_id"
+
