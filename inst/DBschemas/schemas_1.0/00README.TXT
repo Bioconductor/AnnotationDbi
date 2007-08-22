@@ -3,7 +3,7 @@ sqlite-based annotation data packages.
 
 Version 1.0 is our "ideal" target for the BioC 2.1 release but we might
 not have enough time and resources to make this happen (because of other
-priorities) so we might stick to version 0.9.
+priorities) so we might just stick to version 0.9.
 
 Version 1.0 has been successfully tested (i.e. imported) with SQLite
 (3.4.1), MySQL+InnoDB (5.0.26) and PostgreSQL (8.1.9) on a 64-bit openSUSE
