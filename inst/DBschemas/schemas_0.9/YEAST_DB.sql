@@ -83,7 +83,7 @@ CREATE TABLE gene2systematic (
   systematic_name VARCHAR(12) NULL
 );
 CREATE TABLE reject_orf (
-  systematic_name VARCHAR(12) NOT NULL UNIQUE
+  systematic_name VARCHAR(12) PRIMARY KEY
 );
 
 -- Metadata tables.
