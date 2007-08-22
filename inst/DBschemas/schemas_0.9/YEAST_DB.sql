@@ -1,99 +1,119 @@
+--
+-- YEAST_DB schema
+-- ===============
+--
+
+-- The "sgd" table is the central table.
 CREATE TABLE sgd (
   id INTEGER PRIMARY KEY,
-  systematic_name VARCHAR(11) NULL UNIQUE,
-  gene_name VARCHAR(12) NULL UNIQUE,
-  sgd_id CHAR(10) NOT NULL UNIQUE,  -- check the UNIQUE assumption
+  systematic_name VARCHAR(12) NULL UNIQUE,
+  gene_name VARCHAR(13) NULL UNIQUE,
+  sgd_id CHAR(10) NOT NULL UNIQUE
 );
 
-CREATE TABLE chrlengths (
- chr TEXT PRIMARY KEY,
- length INTEGER
-);
+-- Data linked to the "sgd" table.
 CREATE TABLE chromosome_features (
- id INTEGER REFERENCES sgd(id),
- chromosome TEXT,
- start INTEGER,
- feature_description TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  chromosome VARCHAR(2) NULL,
+  start INTEGER NULL,
+  feature_description TEXT NULL,
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE ec (
- id INTEGER REFERENCES sgd(id),
- ec_number TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  ec_number VARCHAR(13) NOT NULL,               -- EC number (no "EC:" prefix)
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE gene2alias (
- id INTEGER REFERENCES sgd(id),
- alias TEXT
-);
-CREATE TABLE gene2systematic (
- gene_name TEXT,
- systematic_name TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  alias VARCHAR(12) NOT NULL,
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE go_bp (
- id INTEGER REFERENCES sgd(id),
- go_id TEXT,
- evidence TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE go_cc (
- id INTEGER REFERENCES sgd(id),
- go_id TEXT,
- evidence TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE go_mf (
- id INTEGER REFERENCES sgd(id),
- go_id TEXT,
- evidence TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE interpro (
- id INTEGER REFERENCES sgd(id),
- interpro_id TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  interpro_id CHAR(9) NOT NULL,
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE kegg (
- id INTEGER REFERENCES sgd(id),
- kegg_id TEXT
-);
-CREATE TABLE map_metadata (
- map_name TEXT,
- source_name TEXT,
- source_url TEXT,
- source_date TEXT
-);
-CREATE TABLE metadata (
-        name TEXT,
-        value TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  kegg_id CHAR(5) NOT NULL,                     -- KEGG pathway short ID
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE pfam (
- id INTEGER REFERENCES sgd(id),
- pfam_id TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  pfam_id CHAR(7) NOT NULL,                     -- Pfam ID
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE pubmed (
- id INTEGER REFERENCES sgd(id),
- pubmed_id TEXT
-);
-CREATE TABLE qcdata (
- map_name TEXT,
- count INTEGER,
- UNIQUE(map_name)
-);
-CREATE TABLE reject_orf (
- systematic_name TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  pubmed_id VARCHAR(10) NOT NULL,               -- PubMed ID
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE smart (
- id INTEGER REFERENCES sgd(id),
- smart_id TEXT
+  id INTEGER NOT NULL,                          -- REFERENCES sgd
+  smart_id CHAR(7) NOT NULL,
+  FOREIGN KEY (id) REFERENCES sgd (id)
 );
-CREATE INDEX cf1 on chromosome_features(id);
-CREATE INDEX e1 ON ec(id);
-CREATE INDEX ga1 on gene2alias(id);
-CREATE INDEX go1 on go_bp(id);
-CREATE INDEX go2 on go_mf(id);
-CREATE INDEX go3 on go_cc(id);
-CREATE INDEX go4 on go_bp(go_id);
-CREATE INDEX go5 on go_mf(go_id);
-CREATE INDEX go6 on go_cc(go_id);
-CREATE INDEX in1 ON interpro(id);
-CREATE INDEX k1 ON kegg(id);
-CREATE INDEX pf1 ON pfam(id);
-CREATE INDEX pm1 ON pubmed(id);
-CREATE INDEX s1 on sgd(sgd_id);
-CREATE INDEX s2 on sgd(systematic_name);
-CREATE INDEX sm1 ON smart(id);
+
+-- Standalone data tables.
+CREATE TABLE chrlengths (
+  chr VARCHAR(2) PRIMARY KEY,                   -- chromosome name
+  length INTEGER NOT NULL
+);
+CREATE TABLE gene2systematic (
+  gene_name VARCHAR(13) NULL,
+  systematic_name VARCHAR(12) NULL
+);
+CREATE TABLE reject_orf (
+  systematic_name VARCHAR(12) NOT NULL UNIQUE
+);
+
+-- Metadata tables.
+CREATE TABLE metadata (
+  name VARCHAR(80) PRIMARY KEY,
+  value VARCHAR(255)
+);
+CREATE TABLE qcdata (
+  map_name VARCHAR(80) PRIMARY KEY,
+  count INTEGER NOT NULL
+);
+CREATE TABLE map_metadata (
+  map_name VARCHAR(80) NOT NULL,
+  source_name VARCHAR(80) NOT NULL,
+  source_url VARCHAR(255) NOT NULL,
+  source_date VARCHAR(20) NOT NULL
+);
+
+-- Explicit index creation on the referencing column of all the foreign keys.
+-- Note that this is only needed for SQLite: PostgreSQL and MySQL create those
+-- indexes automatically.
+CREATE INDEX Fchromosome_features ON chromosome_features (id);
+CREATE INDEX Fec ON ec (id);
+CREATE INDEX Fgene2alias ON gene2alias (id);
+CREATE INDEX Fgo_bp ON go_bp (id);
+CREATE INDEX Fgo_cc ON go_cc (id);
+CREATE INDEX Fgo_mf ON go_mf (id);
+CREATE INDEX Finterpro ON interpro (id);
+CREATE INDEX Fkegg ON kegg (id);
+CREATE INDEX Fpfam ON pfam (id);
+CREATE INDEX Fpubmed ON pubmed (id);
+CREATE INDEX Fsmart ON smart (id);
 

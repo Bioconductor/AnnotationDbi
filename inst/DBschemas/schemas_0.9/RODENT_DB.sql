@@ -9,7 +9,7 @@ CREATE TABLE genes (
   gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
 );
 
--- Other data tables
+-- Data linked to the "genes" table.
 CREATE TABLE accessions (
   id INTEGER NOT NULL,                          -- REFERENCES genes
   accession VARCHAR(20) NOT NULL,               -- GenBank accession number
@@ -98,12 +98,13 @@ CREATE TABLE unigene (
   FOREIGN KEY (id) REFERENCES genes (id)
 );
 
+-- Standalone data tables.
 CREATE TABLE chrlengths (
   chr VARCHAR(2) PRIMARY KEY,                   -- chromosome name
   length INTEGER NOT NULL
 );
 
--- Metadata tables
+-- Metadata tables.
 CREATE TABLE metadata (
   name VARCHAR(80) PRIMARY KEY,
   value VARCHAR(255)

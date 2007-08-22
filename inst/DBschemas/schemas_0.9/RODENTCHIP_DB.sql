@@ -9,15 +9,13 @@ CREATE TABLE genes (
   gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
 );
 
--- The "probes" table
+-- Data linked to the "genes" table.
 CREATE TABLE probes (
   id INTEGER NULL,                              -- REFERENCES genes
   probe_id VARCHAR(80) PRIMARY KEY,             -- manufacturer ID
   accession VARCHAR(20) NOT NULL,               -- GenBank accession number
   FOREIGN KEY (id) REFERENCES genes (id)
 );
-
--- Other data tables
 CREATE TABLE alias (
   id INTEGER NOT NULL,                          -- REFERENCES genes
   alias_symbol VARCHAR(80) NOT NULL,            -- gene symbol or alias
@@ -119,12 +117,13 @@ CREATE TABLE unigene (
   FOREIGN KEY (id) REFERENCES genes (id)
 );
 
+-- Standalone data tables.
 CREATE TABLE chrlengths (
   chr VARCHAR(2) PRIMARY KEY,                   -- chromosome name
   length INTEGER NOT NULL
 );
 
--- Metadata tables
+-- Metadata tables.
 CREATE TABLE metadata (
   name VARCHAR(80) PRIMARY KEY,
   value VARCHAR(255)

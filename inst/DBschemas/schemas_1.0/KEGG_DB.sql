@@ -16,7 +16,7 @@ CREATE TABLE pathway2name (
   path_name VARCHAR(80) NOT NULL UNIQUE         -- KEGG pathway name
 );
 
--- Metadata tables
+-- Metadata tables.
 CREATE TABLE metadata (
   name VARCHAR(80) PRIMARY KEY,
   value VARCHAR(255)
@@ -32,6 +32,6 @@ CREATE TABLE map_metadata (
   source_date VARCHAR(20) NOT NULL
 );
 
---- Indexes
+-- Indexes.
 CREATE INDEX Ipathway2gene on pathway2gene (gene_id);
 
