@@ -6,17 +6,17 @@
 -- The "sgd" table is the central table.
 CREATE TABLE sgd (
   id INTEGER PRIMARY KEY,
-  systematic_name VARCHAR(12) NULL UNIQUE,
-  gene_name VARCHAR(13) NULL UNIQUE,
-  sgd_id CHAR(10) NOT NULL UNIQUE
+  systematic_name VARCHAR(14) NULL UNIQUE,      -- Yeast gene systematic name
+  gene_name VARCHAR(14) NULL UNIQUE,            -- Yeast gene name
+  sgd_id CHAR(10) NOT NULL UNIQUE               -- SGD ID
 );
 
 -- Data linked to the "sgd" table.
 CREATE TABLE chromosome_features (
   id INTEGER NOT NULL,                          -- REFERENCES sgd
-  chromosome VARCHAR(2) NULL,
+  chromosome VARCHAR(2) NULL,                   -- chromosome name
   start INTEGER NULL,
-  feature_description TEXT NULL,
+  feature_description TEXT NULL,                -- Yeast feature description
   FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE ec (
@@ -26,7 +26,7 @@ CREATE TABLE ec (
 );
 CREATE TABLE gene2alias (
   id INTEGER NOT NULL,                          -- REFERENCES sgd
-  alias VARCHAR(12) NOT NULL,
+  alias VARCHAR(13) NOT NULL,                   -- Yeast gene alias
   FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE go_bp (
@@ -49,7 +49,7 @@ CREATE TABLE go_mf (
 );
 CREATE TABLE interpro (
   id INTEGER NOT NULL,                          -- REFERENCES sgd
-  interpro_id CHAR(9) NOT NULL,
+  interpro_id CHAR(9) NOT NULL,                 -- InterPro ID
   FOREIGN KEY (id) REFERENCES sgd (id)
 );
 CREATE TABLE kegg (
@@ -69,7 +69,7 @@ CREATE TABLE pubmed (
 );
 CREATE TABLE smart (
   id INTEGER NOT NULL,                          -- REFERENCES sgd
-  smart_id CHAR(7) NOT NULL,
+  smart_id CHAR(7) NOT NULL,                    -- SMART ID
   FOREIGN KEY (id) REFERENCES sgd (id)
 );
 
@@ -79,11 +79,11 @@ CREATE TABLE chrlengths (
   length INTEGER NOT NULL
 );
 CREATE TABLE gene2systematic (
-  gene_name VARCHAR(13) NULL,
-  systematic_name VARCHAR(12) NULL
+  gene_name VARCHAR(14) NULL,                   -- Yeast gene name
+  systematic_name VARCHAR(14) NULL              -- Yeast gene systematic name
 );
 CREATE TABLE reject_orf (
-  systematic_name VARCHAR(12) PRIMARY KEY
+  systematic_name VARCHAR(14) PRIMARY KEY       -- Yeast gene systematic name
 );
 
 -- Metadata tables.

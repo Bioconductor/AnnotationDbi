@@ -102,6 +102,52 @@ UniGene ID
   Examples: 'Hs.2', 'Hs.511848', 'Hs.695912'
   Note: highest value observed so far for Human is Hs.695912
 
+Yeast gene systematic name
+--------------------------
+  SQL type: VARCHAR(14)
+  Examples: 'YPL141C', 'YGRWsigma7', 'YPRWdelta14'
+  Note: the maximum length observed so far is 11 but using VARCHAR(14)
+        is a safety precaution for longer Yeast gene systematic names
+        that could appear in the future
+
+Yeast gene name
+---------------
+  SQL type: VARCHAR(14)
+  Examples: 'ADK2', 'TMA23', '21S_RRNA_4', 'MF(ALPHA)1'
+  Note: the maximum length observed so far is 10 but using VARCHAR(14)
+        is a safety precaution for longer Yeast gene systematic names
+        that could appear in the future
+
+SGD ID
+------
+  SQL type: CHAR(10)
+  Examples: 'S000004794', 'S000037040', 'S000123281'
+  Note: highest value observed so far is S000123281
+
+Yeast feature description
+-------------------------
+  SQL type: TEXT
+  Note: this can be a text of any length
+
+Yeast gene alias
+----------------
+  SQL type: VARCHAR(13)
+  Examples: 'CDH1', 'DNA33', 'EF-1 alpha', 'ATPEPSILON'
+  Note: the maximum length observed so far is 10 but using VARCHAR(13)
+        is a safety precaution for longer Yeast gene aliases that could
+        appear in the future
+
+InterPro ID
+-----------
+  SQL type: CHAR(9)
+  Examples: 'IPR001440', 'IPR008688', 'IPR015809'
+  Note: highest value observed so far is IPR015809
+
+SMART ID
+--------
+  SQL type: CHAR(7)
+  Examples: 'SM00055', 'SM00220', 'SM00717'
+
 GO ontology (short label)
 -------------------------
   SQL type: VARCHAR(9)
