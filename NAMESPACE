@@ -122,6 +122,11 @@ export(
 
     ## from R/AnnDbPkg-checker.R
     checkProperty0,
-    checkMAPCOUNTS
+    checkMAPCOUNTS,
+
+    ## helpers for map creation, temporary
+    ## until pluggable maps come online
+    make_eg_to_go_map,
+    make_go_to_eg_map
 )
 
