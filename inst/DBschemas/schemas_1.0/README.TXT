@@ -106,7 +106,7 @@ Table of character types
   KEGG pathway name                      VARCHAR(80)    pathway2name.path_name
   EC number (with "EC:" prefix)          VARCHAR(16)    ec2go.ec_no
   KEGG pathway long ID                   CHAR(8)        pathway2gene.pathway_id
-  Entrez Gene or ORF ID                  VARCHAR(14)    pathway2gene.gene_id
+  Entrez Gene or ORF ID                  VARCHAR(20)    pathway2gene.gene_id
 
 Notes: - MySQL supports VARCHAR up to 255 chars only.
        - These types should be used consistently across all schemas.

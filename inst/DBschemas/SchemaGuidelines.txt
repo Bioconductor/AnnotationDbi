@@ -14,6 +14,9 @@ o All of the *_DB.sql files must define a "metadata" table (with cols "name"
 o Make explicit use of the NULL or NOT NULL constraint on every column (except
   on PRIMARY KEY cols that are implicitly NOT NULL).
 
+o Centralize all the data type definitions in the DataTypes.txt file and use
+  them consistently across all the *_DB.sql files.
+
 o Use preferably CHAR(n) or VARCHAR(n) types instead of non-standard TEXT type
   for character columns. Note that n must be <= 255 for compatibility with
   MySQL. Don't define an INDEX (or try to put a UNIQUE constraint, which
@@ -22,8 +25,8 @@ o Use preferably CHAR(n) or VARCHAR(n) types instead of non-standard TEXT type
   large (i.e. > 80) since this is not portable either. Doing so when n <= 80
   should be safe though.
 
-o Centralize all the data type definitions in the DataTypes.txt file and use
-  them consistently across all the *_DB.sql files.
+o Allways use a character type for external (i.e. real world) ids even for
+  ids like Entrez Gene IDs, PubMed IDs or OMIM IDs that are in fact integers.
 
 o Put PRIMARY KEY and UNIQUE definitions "in line" at the end of the column
   definition (after the SQL type and the NULL/NOT NULL constraint for UNIQUE).
