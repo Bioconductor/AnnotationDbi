@@ -33,5 +33,5 @@ CREATE TABLE map_metadata (
 );
 
 -- Indexes.
-CREATE INDEX Ipathway2gene on pathway2gene (gene_id);
+CREATE INDEX Ipathway2gene ON pathway2gene (gene_id);
 
