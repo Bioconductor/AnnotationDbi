@@ -9,7 +9,8 @@ schemas_1.0/) have been successfully tested (i.e. imported) with SQLite
 10.2 system. They have not been tested on Oracle yet.
 
 o All of the *_DB.sql files must define a "metadata" table (with cols "name"
-  and "value") with one entry for 'DBSCHEMA' and one for 'DBSCHEMAVERSION'.
+  and "value") and all the *.sqlite files using one of these schemas must
+  have a 'DBSCHEMA' and a 'DBSCHEMAVERSION' entry in their "metadata" table.
 
 o Make explicit use of the NULL or NOT NULL constraint on every column (except
   on PRIMARY KEY cols that are implicitly NOT NULL).
