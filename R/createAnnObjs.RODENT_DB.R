@@ -224,10 +224,10 @@ createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
-    left.names(ann_objs$GO)
-    #left.mappedNames(ann_objs$GO)
-    #right.names(ann_objs$GO2EG)
-    #right.mappedNames(ann_objs$GO2EG)
+    left.keys(ann_objs$GO)
+    #left.mappedKeys(ann_objs$GO)
+    #right.keys(ann_objs$GO2EG)
+    #right.mappedKeys(ann_objs$GO2EG)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

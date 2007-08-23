@@ -23,7 +23,7 @@
 \examples{
         x <- @ANNOBJPREFIX@UNIGENE
         # Get the probe identifiers that are mapped to an UNIGENE ID
-        mapped_probes <- mappedNames(x)
+        mapped_probes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_probes)
         if(length(xx) > 0) {

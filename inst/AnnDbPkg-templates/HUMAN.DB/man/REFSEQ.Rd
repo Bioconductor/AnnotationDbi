@@ -48,7 +48,7 @@
 \examples{
         x <- @ANNOBJPREFIX@REFSEQ
         # Get the entrez gene identifiers that are mapped to any RefSeq ID
-        mapped_genes <- mappedNames(x)
+        mapped_genes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         if(length(xx) > 0) {
@@ -112,7 +112,7 @@
 \examples{
         x <- @ANNOBJPREFIX@REFSEQ2EG
         # Get the RefSeq identifier that are mapped to an entrez gene ID
-        mapped_seqs <- mappedNames(x)
+        mapped_seqs <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_seqs)
         if(length(xx) > 0) {

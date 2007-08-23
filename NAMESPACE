@@ -44,17 +44,17 @@ exportMethods(
     ## BimapAPI0 interface
     "collabels",
     "colnames",
-    "left.names", "right.names",
-    "left.mappedNames", "right.mappedNames",
+    "left.keys", "right.keys",
+    "left.mappedKeys", "right.mappedKeys",
     "nrow",
     "links",
     "left.length", "right.length",
-    "count.left.mappedNames", "count.right.mappedNames",
+    "count.left.mappedKeys", "count.right.mappedKeys",
     "count.links",
     "left.colname", "right.colname",
     "ncol",
     "from.colpos", "to.colpos", "tags.colpos",
-    "from.names", "to.names",
+    "from.keys", "to.keys",
     "dim",
 
     ## FlatBimap methods
@@ -67,12 +67,12 @@ exportMethods(
     "left.table", "right.table",
     "left.filter", "right.filter",
     "flatten", "toTable",
-    "names",
+    "keys",
     "length",
     "as.character",
     "toList",
-    "mappedNames",
-    "count.mappedNames",
+    "mappedKeys",
+    "count.mappedKeys",
     "is.na",
 
     ## from R/AnnDbMap-envirAPI.R

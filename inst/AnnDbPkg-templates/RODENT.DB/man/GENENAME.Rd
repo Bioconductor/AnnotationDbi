@@ -22,7 +22,7 @@
 \examples{
         x <- @ANNOBJPREFIX@GENENAME
         # Get the gene names that are mapped to an entrez gene identifier
-        mapped_genes <- mappedNames(x)
+        mapped_genes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         if(length(xx) > 0) {

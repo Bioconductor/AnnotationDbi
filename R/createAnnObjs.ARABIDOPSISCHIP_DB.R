@@ -188,7 +188,7 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
-    left.names(ann_objs$GO)
+    left.keys(ann_objs$GO)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

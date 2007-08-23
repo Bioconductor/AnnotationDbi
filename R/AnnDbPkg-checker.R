@@ -80,7 +80,7 @@ checkMAPCOUNTS <- function(pkgname, prefix)
         if (is.numeric(map)) # to deal with the CHRLENGTHS case
             t1 <- system.time(count1 <- sum(!is.na(map)))
         else
-            t1 <- system.time(count1 <- count.mappedNames(map))
+            t1 <- system.time(count1 <- count.mappedKeys(map))
         cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
         if (count1 != count0)
             stop("count1 and count0 differ")
@@ -88,7 +88,7 @@ checkMAPCOUNTS <- function(pkgname, prefix)
             next
 
         ## count2
-        t2 <- system.time(count2 <- length(mappedNames(map)))
+        t2 <- system.time(count2 <- length(mappedKeys(map)))
         cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
         if (count2 != count0)
             stop("count2 and count0 differ")
@@ -225,22 +225,22 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
 
         ## Compare lengths
         length1 <- length(map1)
-        mapped_names1 <- mappedNames(map1)
-        count1 <- length(mapped_names1)
+        mapped_keys1 <- mappedKeys(map1)
+        count1 <- length(mapped_keys1)
         cat("***   length(map1) = ", length1,
-            " (", count1, " mapped names)\n", sep="")
+            " (", count1, " mapped keys)\n", sep="")
 
         length2 <- length(map2)
-        mapped_names2 <- mappedNames(map2)
-        count2 <- length(mapped_names2)
+        mapped_keys2 <- mappedKeys(map2)
+        count2 <- length(mapped_keys2)
         cat("***   length(map2) = ", length2,
-            " (", count2, " mapped names)\n", sep="")
+            " (", count2, " mapped keys)\n", sep="")
 
-        common_names <- intersect(ls(map1), ls(map2))
-        common_mapped_names <- intersect(mapped_names1, mapped_names2)
-        count3 <- length(common_mapped_names)
-        cat("***   nb of common names = ", length(common_names),
-            " (", count3, " common mapped names)\n", sep="")
+        common_keys <- intersect(ls(map1), ls(map2))
+        common_mapped_keys <- intersect(mapped_keys1, mapped_keys2)
+        count3 <- length(common_mapped_keys)
+        cat("***   nb of common keys = ", length(common_keys),
+            " (", count3, " common mapped keys)\n", sep="")
 
         if (count3 == 0) {
             cat("*** ==> NOTHING WORTH COMPARING!\n")
@@ -248,25 +248,25 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
             next
         }
         if (quick) {
-            ## Quick test (on a sample of 50 common mapped names)
+            ## Quick test (on a sample of 50 common mapped keys)
             size <- 50L
             if (size > count3)
                 size <- count3
-            random_names <- sample(common_mapped_names, size)
-            submap1 <- mget(random_names, envir=map1)
+            random_keys <- sample(common_mapped_keys, size)
+            submap1 <- mget(random_keys, envir=map1)
             if (!identical(names(submap1), random_names))
-                stop("mget() didn't return the expected names on map1")
-            submap2 <- mget(random_names, envir=map2)
-            if (!identical(names(submap2), random_names))
-                stop("mget() didn't return the expected names on map2")
-            OK <- sapply(random_names,
-                         function(name) identical.collections(map1[[name]], map2[[name]]))
+                stop("mget() didn't return the expected keys on map1")
+            submap2 <- mget(random_keys, envir=map2)
+            if (!identical(names(submap2), random_keys))
+                stop("mget() didn't return the expected keys on map2")
+            OK <- sapply(random_keys,
+                         function(key) identical.collections(map1[[key]], map2[[key]]))
             nmis <- sum(!OK)
-            cat("***   nb of mismatches (on a sample of ", size, " names) = ", nmis, "\n", sep="")
+            cat("***   nb of mismatches (on a sample of ", size, " keys) = ", nmis, "\n", sep="")
         } else {
-            ## Full test (on all common names)
-            OK <- sapply(common_names,
-                         function(name) identical.collections(map1[[name]], map2[[name]]))
+            ## Full test (on all common keys)
+            OK <- sapply(common_keys,
+                         function(key) identical.collections(map1[[key]], map2[[key]]))
             nmis <- sum(!OK)
             cat("***   nb of mismatches = ", nmis, "\n", sep="")
         }

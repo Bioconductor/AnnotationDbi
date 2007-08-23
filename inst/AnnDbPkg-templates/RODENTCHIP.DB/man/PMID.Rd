@@ -25,7 +25,7 @@
 \examples{
         x <- @ANNOBJPREFIX@PMID
         # Get the probe identifiers that are mapped to any PubMed ID
-        mapped_probes <- mappedNames(x)
+        mapped_probes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_probes)
     if(length(xx) > 0){

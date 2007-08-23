@@ -23,7 +23,7 @@
 \examples{
         x <- @ANNOBJPREFIX@SYMBOL
         # Get the gene symbol that are mapped to an entrez gene identifiers
-        mapped_genes <- mappedNames(x)
+        mapped_genes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         if(length(xx) > 0) {
@@ -63,7 +63,7 @@
 \examples{
         x <- @ANNOBJPREFIX@SYMBOL2EG
         # Get the entrez gene identifiers that are mapped to a gene symbol
-        mapped_genes <- mappedNames(x)
+        mapped_genes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         if(length(xx) > 0) {

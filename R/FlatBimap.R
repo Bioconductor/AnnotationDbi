@@ -4,8 +4,8 @@
 ###
 ### Example of a bimap M:
 ###
-###   4 objects on the left (left names): a, b, c, d
-###   2 objects on the right (right names): A, B, C
+###   4 objects on the left (left keys): a, b, c, d
+###   2 objects on the right (right keys): A, B, C
 ###
 ###   Links:
 ###      a <--> A
@@ -70,14 +70,14 @@ BimapAPI0_methods <- c(
     ## the AnnDbMap objects (or extensions)
     "collabels",
     "colnames",
-    "left.names", "right.names",
-    "left.mappedNames", "right.mappedNames",
+    "left.keys", "right.keys",
+    "left.mappedKeys", "right.mappedKeys",
     "nrow",
     "links",
     ## GROUP 2: Methods for which a default is provided (below) but that are
     ## redefined for the AnnDbMap objects to obtain better performance
     "left.length", "right.length",
-    "count.left.mappedNames", "count.right.mappedNames",
+    "count.left.mappedKeys", "count.right.mappedKeys",
     "count.links",
     "left.colname", "right.colname"
 )
@@ -86,14 +86,14 @@ setClass("BimapAPI0", representation("VIRTUAL"))
 
 
 setMethod("left.length", "BimapAPI0",
-    function(x) length(left.names(x)))
+    function(x) length(left.keys(x)))
 setMethod("right.length", "BimapAPI0",
-    function(x) length(right.names(x)))
+    function(x) length(right.keys(x)))
 
-setMethod("count.left.mappedNames", "BimapAPI0",
-    function(x) length(left.mappedNames(x)))
-setMethod("count.right.mappedNames", "BimapAPI0",
-    function(x) length(right.mappedNames(x)))
+setMethod("count.left.mappedKeys", "BimapAPI0",
+    function(x) length(left.mappedKeys(x)))
+setMethod("count.right.mappedKeys", "BimapAPI0",
+    function(x) length(right.mappedKeys(x)))
 
 setMethod("count.links", "BimapAPI0",
     function(x) nrow(links(x)))
@@ -127,10 +127,10 @@ setMethod("right.colname", "BimapAPI0",
 setMethod("tags.colpos", "BimapAPI0",
     function(x) seq_len(ncol(x))[-c(from.colpos(x, 1), from.colpos(x, -1))])
 
-setMethod("from.names", "BimapAPI0",
-    function(x, direction) if (direction == 1) left.names(x) else right.names(x))
-setMethod("to.names", "BimapAPI0",
-    function(x, direction) from.names(x, - direction))
+setMethod("from.keys", "BimapAPI0",
+    function(x, direction) if (direction == 1) left.keys(x) else right.keys(x))
+setMethod("to.keys", "BimapAPI0",
+    function(x, direction) from.keys(x, - direction))
 
 setMethod("dim", "BimapAPI0",
     function(x) c(nrow(x), ncol(x)))
@@ -152,17 +152,17 @@ setClass("FlatBimap",
     representation(
         collabels="character",   # must have the same length as the 'data' slot
         data="data.frame",
-        left.names="character",
-        right.names="character"
+        left.keys="character",
+        right.keys="character"
     ),
     prototype(
-        left.names=as.character(NA),
-        right.names=as.character(NA)
+        left.keys=as.character(NA),
+        right.keys=as.character(NA)
     )
 )
 
 setMethod("initialize", "FlatBimap",
-    function(.Object, collabels, data, left.names, right.names)
+    function(.Object, collabels, data, left.keys, right.keys)
     {
         if (missing(collabels)) {
             collabels <- rep(NA, ncol(data))
@@ -171,10 +171,10 @@ setMethod("initialize", "FlatBimap",
         }
         .Object@collabels <- collabels
         .Object@data <- data
-        if (length(left.names) != 1 || !is.na(left.names))
-            .Object@left.names <- left.names
-        if (length(right.names) != 1 || !is.na(right.names))
-            .Object@right.names <- right.names
+        if (length(left.keys) != 1 || !is.na(left.keys))
+            .Object@left.keys <- left.keys
+        if (length(right.keys) != 1 || !is.na(right.keys))
+            .Object@right.keys <- right.keys
         .Object
     }
 )
@@ -190,14 +190,14 @@ setMethod("collabels", "FlatBimap",
 setMethod("colnames", "FlatBimap",
     function(x, do.NULL=TRUE, prefix="col") colnames(x@data))
 
-setMethod("left.names", "FlatBimap",
-    function(x) x@left.names)
-setMethod("right.names", "FlatBimap",
-    function(x) x@right.names)
+setMethod("left.keys", "FlatBimap",
+    function(x) x@left.keys)
+setMethod("right.keys", "FlatBimap",
+    function(x) x@right.keys)
 
-setMethod("left.mappedNames", "FlatBimap",
+setMethod("left.mappedKeys", "FlatBimap",
     function(x) unique(x@data[[match("left", x@collabels)]]))
-setMethod("right.mappedNames", "FlatBimap",
+setMethod("right.mappedKeys", "FlatBimap",
     function(x) unique(x@data[[match("right", x@collabels)]]))
 
 setMethod("nrow", "FlatBimap",
@@ -328,9 +328,9 @@ foldListOfAtomicVectors <- function(x, direction, FUN)
 ### TODO: make it work with from="right"!
 foldListOfLists <- function(x, direction, mode, FUN)
 {
-    names <- from.names(x, direction)
-    ans <- as.list(rep(as.character(NA), length(names)))
-    names(ans) <- names
+    keys <- from.keys(x, direction)
+    ans <- as.list(rep(as.character(NA), length(keys)))
+    names(ans) <- keys
     if (nrow(x) == 0)
         return(ans)
     if (direction == -1)
@@ -346,8 +346,8 @@ foldListOfLists <- function(x, direction, mode, FUN)
     slicing_one <- lapply(keepcols,
                      function(j) split(x@data[[j]], x@data[[slicer1]]))
     names(slicing_one) <- names(x@data)[- slicer1]
-    mapped_names <- names(slicing_one[[1]])
-    ii <- match(mapped_names, names)
+    mapped_keys <- names(slicing_one[[1]])
+    ii <- match(mapped_keys, keys)
     for (i1 in seq_len(length(ii))) {
         i2 <- ii[i1]
         slice_one <- lapply(slicing_one, function(col) col[[i1]])

@@ -292,17 +292,17 @@ dbGetTable <- function(conn, table, extra.sql=NULL)
 }
 
 ### CURRENTLY BROKEN!
-dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.names,
-                                       right.db_table, right.colname, right.names,
+dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.keys,
+                                       right.db_table, right.colname, right.keys,
                                        show.colnames, from, verbose=FALSE)
 {
 #    if (!is.null(right.db_table))
 #        right.colname <- paste(right.db_table, right.colname, sep=".")
 #    left.colname <- paste(left.db_table, left.colname, sep=".")
     sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", from)
-    sql <- paste(sql, "WHERE", .toSQLWhere(left.colname, left.names))
+    sql <- paste(sql, "WHERE", .toSQLWhere(left.colname, left.keys))
     if (!is.null(right.db_table))
-        sql <- paste(sql, "AND", .toSQLWhere(right.colname, right.names))
+        sql <- paste(sql, "AND", .toSQLWhere(right.colname, right.keys))
     if (verbose)
         cat(sql, "\n", sep="")
     .dbGetQuery(conn, sql)
@@ -329,7 +329,7 @@ dbCountMapLinks <- function(conn, L2Rpath)
     stop("COMING SOON, SORRY!")
 }
 
-dbSelectFromL2Rpath <- function(conn, L2Rpath, left.names, right.names,
+dbSelectFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys,
                                       extra.colnames, verbose=FALSE)
 {
     chunks <- .getSelectChunks(L2Rpath)
@@ -338,9 +338,9 @@ dbSelectFromL2Rpath <- function(conn, L2Rpath, left.names, right.names,
     what_tagCols <- chunks$what_tagCols
     what <- paste(c(what_leftCol, what_rightCol, what_tagCols, extra.colnames), collapse=",")
     where <- c(
-        .toSQLWhere(what_leftCol, left.names),
+        .toSQLWhere(what_leftCol, left.keys),
         chunks$where,
-        .toSQLWhere(what_rightCol, right.names)
+        .toSQLWhere(what_rightCol, right.keys)
     )
     where <- paste(where, collapse=" AND ")
     sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)

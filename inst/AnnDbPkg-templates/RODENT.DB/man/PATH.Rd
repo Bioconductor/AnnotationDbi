@@ -25,7 +25,7 @@
 \examples{
         x <- @ANNOBJPREFIX@PATH
         # Get the entrez gene identifiers that are mapped to a KEGG pathway ID
-        mapped_genes <- mappedNames(x)
+        mapped_genes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         if(length(xx) > 0) {

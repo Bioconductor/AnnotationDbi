@@ -21,14 +21,14 @@
 ###   2) Generics that access the database:
 ###        links, count.links,
 ###        flatten, toTable, nrow, dim,
-###        left.names, right.names, names,
+###        left.keys, right.keys, keys,
 ###        left.length, right.length, length,
 ###        as.character,
 ###        toList,
-###        left.mappedNames, right.mappedNames, mappedNames,
-###        count.left.mappedNames, count.right.mappedNames, count.mappedNames,
+###        left.mappedKeys, right.mappedKeys, mappedKeys,
+###        count.left.mappedKeys, count.right.mappedKeys, count.mappedKeys,
 ###        is.na
-###      NB: "names", "length", "mappedNames" and "count.mappedNames" are
+###      NB: "keys", "length", "mappedKeys" and "count.mappedKeys" are
 ###      "oriented" methods i.e. they give a different result on a map and its
 ###      "reverse" map (this result depends on the orientation of the map).
 ###      For each of these methods, there are 2 "unoriented" methods: a left
@@ -188,10 +188,10 @@ setMethod("nrow", "Go3AnnDbMap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.names", "right.names" and "names" generics.
+### The "left.keys", "right.keys" and "keys" generics.
 ###
 
-setMethod("left.names", "AnnDbMap",
+setMethod("left.keys", "AnnDbMap",
     function(x)
     {
         dbUniqueVals(db(x), left.table(x), left.colname(x),
@@ -199,7 +199,7 @@ setMethod("left.names", "AnnDbMap",
     }
 )
 
-setMethod("right.names", "AnnDbMap",
+setMethod("right.keys", "AnnDbMap",
     function(x)
     {
         dbUniqueVals(db(x), right.table(x), right.colname(x),
@@ -207,7 +207,7 @@ setMethod("right.names", "AnnDbMap",
     }
 )
 
-setMethod("right.names", "Go3AnnDbMap",
+setMethod("right.keys", "Go3AnnDbMap",
     function(x)
     {
         getNames <- function(ontology)
@@ -221,16 +221,16 @@ setMethod("right.names", "Go3AnnDbMap",
     }
 )
 
-setMethod("names", "AnnDbMap", function(x) left.names(x))
-setMethod("names", "RevAnnDbMap", function(x) right.names(x))
+setMethod("keys", "AnnDbMap", function(x) left.keys(x))
+setMethod("keys", "RevAnnDbMap", function(x) right.keys(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "left.length", "right.length" and "length" generic.
 ###
 ### Conceptual definitions (for AnnDbMap object x):
-###     left.length(x) :== length(left.names(x))
-###     right.length(x) :== length(right.names(x))
+###     left.length(x) :== length(left.keys(x))
+###     right.length(x) :== length(right.keys(x))
 ###
 
 setMethod("left.length", "AnnDbMap",
@@ -267,12 +267,12 @@ setMethod("length", "RevAnnDbMap", function(x) right.length(x))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "*mappedNames" methods.
+### The "*mappedKeys" methods.
 ###
 ### Note that for some DB schemas like the HUMANCHIP_DB schema, all the "right
 ### objects" are expected to be mapped to a "left object" (and this is true
 ### for all the maps in the HUMANCHIP_DB-based ann package) hence
-### right.mappedNames(x) should be the same as right.names(x) (maybe
+### right.mappedKeys(x) should be the same as right.keys(x) (maybe
 ### something worth checking in a test unit).
 ###
 
@@ -280,58 +280,58 @@ setMethod("length", "RevAnnDbMap", function(x) right.length(x))
 ### ignored, hence will give wrong results if one of those 2 fields has a
 ### non-default value like silly maps ENTREZID and MULTIHIT in ARABIDOPSISCHIP_DB
 ### schema. But who cares, those maps are silly anyway...
-setMethod("left.mappedNames", "AnnDbMap",
+setMethod("left.mappedKeys", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
-setMethod("count.left.mappedNames", "AnnDbMap",
+setMethod("count.left.mappedKeys", "AnnDbMap",
     function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 
-setMethod("right.mappedNames", "AnnDbMap",
+setMethod("right.mappedKeys", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
 )
-setMethod("count.right.mappedNames", "AnnDbMap",
+setMethod("count.right.mappedKeys", "AnnDbMap",
     function(x) dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
 )
 
-setMethod("left.mappedNames", "Go3AnnDbMap",
+setMethod("left.mappedKeys", "Go3AnnDbMap",
     function(x)
     {
-        getMappedNames <- function(ontology)
+        getMappedKeys <- function(ontology)
         {
             table <- right.table(x)[ontology]
             L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
             dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
         }
-        names1 <- getMappedNames("BP")
-        names2 <- getMappedNames("CC")
-        names3 <- getMappedNames("MF")
-        unique(c(names1, names2, names3))
+        keys1 <- getMappedKeys("BP")
+        keys2 <- getMappedKeys("CC")
+        keys3 <- getMappedKeys("MF")
+        unique(c(keys1, keys2, keys3))
     }
 )
-setMethod("count.left.mappedNames", "Go3AnnDbMap",
-    function(x) length(left.mappedNames(x))
+setMethod("count.left.mappedKeys", "Go3AnnDbMap",
+    function(x) length(left.mappedKeys(x))
 )
 
-setMethod("right.mappedNames", "Go3AnnDbMap",
+setMethod("right.mappedKeys", "Go3AnnDbMap",
     function(x)
     {
-        getMappedNames <- function(ontology)
+        getMappedKeys <- function(ontology)
         {
             table <- right.table(x)[ontology]
             L2Rpath <- x@L2Rpath
             L2Rpath[[length(L2Rpath)]]@table <- table
             dbUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
         }
-        names1 <- getMappedNames("BP")
-        names2 <- getMappedNames("CC")
-        names3 <- getMappedNames("MF")
+        keys1 <- getMappedKeys("BP")
+        keys2 <- getMappedKeys("CC")
+        keys3 <- getMappedKeys("MF")
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         ## (if not, then apply unique to this result)
-        c(names1, names2, names3)
+        c(keys1, keys2, keys3)
     }
 )
-setMethod("count.right.mappedNames", "Go3AnnDbMap",
+setMethod("count.right.mappedKeys", "Go3AnnDbMap",
     function(x)
     {
         countMappedNames <- function(ontology)
@@ -345,14 +345,14 @@ setMethod("count.right.mappedNames", "Go3AnnDbMap",
     }
 )
 
-setMethod("mappedNames", "AnnDbMap", function(x) left.mappedNames(x))
-setMethod("mappedNames", "RevAnnDbMap", function(x) right.mappedNames(x))
+setMethod("mappedKeys", "AnnDbMap", function(x) left.mappedKeys(x))
+setMethod("mappedKeys", "RevAnnDbMap", function(x) right.mappedKeys(x))
 
-setMethod("count.mappedNames", "AnnDbMap", function(x) count.left.mappedNames(x))
-setMethod("count.mappedNames", "RevAnnDbMap", function(x) count.right.mappedNames(x))
+setMethod("count.mappedKeys", "AnnDbMap", function(x) count.left.mappedKeys(x))
+setMethod("count.mappedKeys", "RevAnnDbMap", function(x) count.right.mappedKeys(x))
 
 ### and for environments...
-setMethod("mappedNames", "environment",
+setMethod("mappedKeys", "environment",
     function(x)
     {
         is_na <- eapply(x, function(x) length(x) == 1 && is.na(x), all.names=TRUE)
@@ -360,7 +360,7 @@ setMethod("mappedNames", "environment",
     }
 )
 
-setMethod("count.mappedNames", "environment", function(x) length(mappedNames(x)))
+setMethod("count.mappedKeys", "environment", function(x) length(mappedKeys(x)))
 
 
 
@@ -374,42 +374,42 @@ setMethod("count.mappedNames", "environment", function(x) length(mappedNames(x))
 ### orientation (direct/reverse) of the map which is a nice property
 ### (e.g. 'nrow(map) == nrow(revmap(map))').
 ###
-### The 'left.names' and 'right.names' args can be one of the following:
+### The 'left.keys' and 'right.keys' args can be one of the following:
 ###   - NULL: the arg is ignored.
-###   - A NA-free character vector: only the rows with a "left name" (1st
-###     field) matching one of the names in 'left.names' and a "right name"
-###     (2nd field) matching one of the names in 'right.names' are
+###   - A NA-free character vector: only the rows with a "left key" (1st
+###     field) matching one of the keys in 'left.keys' and a "right key"
+###     (2nd field) matching one of the keys in 'right.keys' are
 ###     retrieved.
-### Note that the 'left.names' and 'right.names' args are _not_ checked i.e.
+### Note that the 'left.keys' and 'right.keys' args are _not_ checked i.e.
 ### only NULL and NA-free character vectors are guaranted to work properly.
 ###
 
 ### CURRENTLY BROKEN!
 #setMethod("flatten", "AnnDbTable",
-#    function(x, left.names, verbose=FALSE)
+#    function(x, left.keys, verbose=FALSE)
 #    {
-#        dbRawAnnDbMapToTable(db(x), left.table(x), left.colname(x), left.names,
+#        dbRawAnnDbMapToTable(db(x), left.table(x), left.colname(x), left.keys,
 #                                    NULL, NULL, NULL,
 #                                    x@showCols, x@from, verbose)
 #    }
 #)
 
 setMethod("flatten", "AnnDbMap",
-    function(x, left.names, right.names, extra.colnames=NULL, verbose=FALSE)
+    function(x, left.keys, right.keys, extra.colnames=NULL, verbose=FALSE)
     {
-        if (missing(left.names))
-            left.names <- NULL
-        if (missing(right.names))
-            right.names <- NULL
+        if (missing(left.keys))
+            left.keys <- NULL
+        if (missing(right.keys))
+            right.keys <- NULL
         data0 <- dbSelectFromL2Rpath(db(x), x@L2Rpath,
-                                     left.names, right.names,
+                                     left.keys, right.keys,
                                      extra.colnames, verbose)
-        if (is.null(left.names))
-            left.names <- left.names(x)
-        if (is.null(right.names))
-            right.names <- right.names(x)
+        if (is.null(left.keys))
+            left.keys <- left.keys(x)
+        if (is.null(right.keys))
+            right.keys <- right.keys(x)
         new("FlatBimap", collabels=collabels(x), data=data0,
-                         left.names=left.names, right.names=right.names)
+                         left.keys=left.keys, right.keys=right.keys)
     }
 )
 
@@ -421,18 +421,18 @@ setMethod("flatten", "AnnDbMap",
 ###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
 ### Surprisingly the latter is almost twice faster than the former!
 setMethod("flatten", "Go3AnnDbMap",
-    function(x, left.names, right.names, extra.colnames=NULL, verbose=FALSE)
+    function(x, left.keys, right.keys, extra.colnames=NULL, verbose=FALSE)
     {
-        if (missing(left.names))
-            left.names <- NULL
-        if (missing(right.names))
-            right.names <- NULL
+        if (missing(left.keys))
+            left.keys <- NULL
+        if (missing(right.keys))
+            right.keys <- NULL
         getPartialSubmap <- function(ontology)
         {
             table <- right.table(x)[ontology]
             L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
             data <- dbSelectFromL2Rpath(db(x), L2Rpath,
-                                        left.names, right.names,
+                                        left.keys, right.keys,
                                         extra.colnames, verbose)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- ontology
@@ -441,12 +441,12 @@ setMethod("flatten", "Go3AnnDbMap",
         data0 <- rbind(getPartialSubmap("BP"),
                        getPartialSubmap("CC"),
                        getPartialSubmap("MF"))
-        if (is.null(left.names))
-            left.names <- left.names(x)
-        if (is.null(right.names))
-            right.names <- right.names(x)
+        if (is.null(left.keys))
+            left.keys <- left.keys(x)
+        if (is.null(right.keys))
+            right.keys <- right.keys(x)
         new("FlatBimap", collabels=collabels(x), data=data0,
-                         left.names=left.names, right.names=right.names)
+                         left.keys=left.keys, right.keys=right.keys)
     }
 )
 
@@ -488,7 +488,7 @@ setMethod("show", "AnnDbMap",
 ### For untagged Reverse/AtomicAnnDbMap obects only!
 ###
 
-### R doesn't let me add a 'names' arg here:
+### R doesn't let me add a 'keys' arg here:
 ###  Error in rematchDefinition(definition, fdef, mnames, fnames, signature) :
 ###          methods can add arguments to the generic only if '...' is an argument to the generic
 setMethod("as.character", "AtomicAnnDbMap",
@@ -496,7 +496,7 @@ setMethod("as.character", "AtomicAnnDbMap",
     {
         if (ncol(x) > 2)
             stop("AtomicAnnDbMap object with tags cannot be coerced to a character vector")
-        data <- flatten(x, left.names=NA, right.names=NA)@data
+        data <- flatten(x, left.keys=NA, right.keys=NA)@data
         ans <- data[[2]] # could also use [[right.colname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
@@ -512,7 +512,7 @@ setMethod("as.character", "RevAtomicAnnDbMap",
     {
         if (ncol(x) > 2)
             stop("cannot coerce to character an AtomicAnnDbMap object with tags")
-        data <- flatten(x, left.names=NA, right.names=NA)@data
+        data <- flatten(x, left.keys=NA, right.keys=NA)@data
         ans <- data[[1]] # could also use [[left.colname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
@@ -527,37 +527,37 @@ setMethod("as.character", "RevAtomicAnnDbMap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "toList" new generic.
 ###
-### The "toList" methods below have a 'names' arg.
-### The 'names' arg. can be one of the following:
+### The "toList" methods below have a 'keys' arg.
+### The 'keys' arg. can be one of the following:
 ###   - NULL: all map elements are extracted (equivalent to passing
-###           'names=names(x)' but more efficient).
+###           'keys=keys(x)' but more efficient).
 ###   - A NA-free character vector: the names of the returned list will
-###     be those passed in 'names' in the same order. Names that are not
+###     be those passed in 'keys' in the same order. Keys that are not
 ###     in the map are associated with NAs. Note that, unlike "mget",
-###     "toList" doesn't treat differently names that are not in the map
-###     from names that are in the map but associated with NAs.
+###     "toList" doesn't treat differently keys that are not in the map
+###     from keys that are in the map but associated with NAs.
 ###   - A NA-free numeric vector: for conveniency 'toList(x, 1:3)' is a
-###     shortcut for 'toList(x, names(x)[1:3])'. This is identical to
+###     shortcut for 'toList(x, keys(x)[1:3])'. This is identical to
 ###     'toList(x)[1:3]' but much faster.
-### Note that the 'names' arg. is _not_ checked i.e. only NULL, NA-free
+### Note that the 'keys' arg. is _not_ checked i.e. only NULL, NA-free
 ### character vectors and NA-free numeric vectors are guaranted to work.
 ###
 
-.checkNamesExist <- function(names, all.names)
+.checkKeysExist <- function(keys, all.keys)
 {
-    if (!is.null(names)) {
-        not_found <- which(!(names %in% all.names))
+    if (!is.null(keys)) {
+        not_found <- which(!(keys %in% all.keys))
         if (length(not_found) != 0)
-            stop("value for '", names[not_found[1]], "' not found")
+            stop("value for '", keys[not_found[1]], "' not found")
     }
 }
 
-alignAnnList <- function(x, names)
+alignAnnList <- function(x, keys)
 {
     y <- l2e(x)
-    name2val <- function(name)
+    key2val <- function(key)
     {
-        val <- y[[name]]
+        val <- y[[key]]
         if (is.null(val)) {
             val <- NA
         } else if (class(val) == "data.frame") {
@@ -565,16 +565,16 @@ alignAnnList <- function(x, names)
         }
         val
     }
-    names(names) <- names
-    lapply(names, name2val)
+    names(keys) <- keys
+    lapply(keys, key2val)
 }
 
 setMethod("toList", "AnnDbMap",
-    function(x, names=NULL)
+    function(x, keys=NULL)
     {
-        if (!is.null(names) && length(names) == 0)
+        if (!is.null(keys) && length(keys) == 0)
             return(list())
-        data0 <- flatten(x, left.names=names, right.names=NA)@data
+        data0 <- flatten(x, left.keys=keys, right.keys=NA)@data
         if (nrow(data0) == 0) {
             ann_list <- list()
         } else {
@@ -589,20 +589,20 @@ setMethod("toList", "AnnDbMap",
             }
             ann_list <- split(data1, data0[[1]])
         }
-        if (is.null(names))
-            names <- names(x)
-        alignAnnList(ann_list, names)
+        if (is.null(keys))
+            keys <- keys(x)
+        alignAnnList(ann_list, keys)
     }
 )
 
 setMethod("toList", "RevAnnDbMap",
-    function(x, names=NULL)
+    function(x, keys=NULL)
     {
-        if (!is.null(names) && length(names) == 0)
+        if (!is.null(keys) && length(keys) == 0)
             return(list())
-        data0 <- flatten(x, left.names=NA, right.names=names)@data
-        if (!is.null(names) && !all(names %in% data0[[2]])) # could also use [[right.colname(x)]]
-            .checkNamesExist(names, names(x))
+        data0 <- flatten(x, left.keys=NA, right.keys=keys)@data
+        if (!is.null(keys) && !all(keys %in% data0[[2]])) # could also use [[right.colname(x)]]
+            .checkKeysExist(keys, keys(x))
         if (nrow(data0) == 0) {
             ann_list <- list()
         } else {
@@ -612,9 +612,9 @@ setMethod("toList", "RevAnnDbMap",
             data2 <- data0[ , -2]
             ann_list <- split(data2, data0[[2]])
         }
-        if (is.null(names))
-            names <- names(x)
-        alignAnnList(ann_list, names)
+        if (is.null(keys))
+            keys <- keys(x)
+        alignAnnList(ann_list, keys)
     }
 )
 
@@ -622,18 +622,18 @@ setMethod("toList", "RevAnnDbMap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "is.na" generic.
 ###
-### 'is.na(x)' is a named logical vector that associates each name in the map
-### with TRUE except for those names that are actually mapped to something
+### 'is.na(x)' is a named logical vector that associates each key in the map
+### with TRUE except for those keys that are actually mapped to something
 ### (other than an NA).
 ###
 
 setMethod("is.na", "AnnDbMap",
     function(x)
     {
-        mapped_names <- mappedNames(x)
-        names <- names(x)
-        ans <- !(names %in% mapped_names)
-        names(ans) <- names
+        mapped_keys <- mappedKeys(x)
+        keys <- keys(x)
+        ans <- !(keys %in% mapped_keys)
+        names(ans) <- keys
         ans
     }
 )

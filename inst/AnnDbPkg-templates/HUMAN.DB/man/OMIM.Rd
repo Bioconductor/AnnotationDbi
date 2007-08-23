@@ -27,7 +27,7 @@
 \examples{
         x <- @ANNOBJPREFIX@OMIM
         # Get the entrez gene identifiers that are mapped to a OMIM ID
-        mapped_genes <- mappedNames(x)
+        mapped_genes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         if(length(xx) > 0) {
@@ -71,7 +71,7 @@
 \examples{
         x <- @ANNOBJPREFIX@OMIM2EG
         # Get the OMIM IDs that are mapped to the entrez gene IDs
-        mapped_OMIMs <- mappedNames(x)
+        mapped_OMIMs <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_OMIMs)
         if(length(xx) > 0) {

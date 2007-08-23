@@ -255,12 +255,12 @@ createAnnObjs.HUMANCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
-    left.names(ann_objs$GO)
-    #left.mappedNames(ann_objs$GO)
-    #right.names(ann_objs$GO2PROBE)
-    #right.mappedNames(ann_objs$GO2PROBE)
-    #right.names(ann_objs$GO2ALLPROBES)
-    #right.mappedNames(ann_objs$GO2ALLPROBES)
+    left.keys(ann_objs$GO)
+    #left.mappedKeys(ann_objs$GO)
+    #right.keys(ann_objs$GO2PROBE)
+    #right.mappedKeys(ann_objs$GO2PROBE)
+    #right.keys(ann_objs$GO2ALLPROBES)
+    #right.mappedKeys(ann_objs$GO2ALLPROBES)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

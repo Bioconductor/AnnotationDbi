@@ -28,7 +28,7 @@
 \examples{
 	        x <- @ANNOBJPREFIX@PROSITE
         # Get the probe identifiers that are mapped to any PROSITE ID
-        mapped_probes <- mappedNames(x)
+        mapped_probes <- mappedKeys(x)
         # Convert to a list
         xxx <- as.list(x, names=mapped_probes)
         # randomly display 10 probes

@@ -24,7 +24,7 @@
 \examples{
         x <- @ANNOBJPREFIX@CHRLOC
         # Get the probe identifiers that are mapped to chromosome locations
-        mapped_probes <- mappedNames(x)
+        mapped_probes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_probes)
         if(length(xx) > 0) {

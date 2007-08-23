@@ -28,7 +28,7 @@
 \examples{
         x <- @ANNOBJPREFIX@PFAM
         # Get the entrez gene identifiers that are mapped to any Pfam ID
-        mapped_genes <- mappedNames(x)
+        mapped_genes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         # randomly display 10 genes

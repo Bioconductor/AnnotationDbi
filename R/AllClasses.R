@@ -58,10 +58,10 @@ setClass("AnnDbTable",
 ###
 ### An "AnnDbMap" object is a mapping between left values and right values.
 ### For direct "AnnDbMap" objects, the mapping is "left-to-right". The left
-### values are the names (or symbols, or keys) of the map and are retrieved
-### with the "names" or "ls" methods. The type, format and location in the
-### DB of the right values depend on the particular subclass of the "AnnDbMap"
-### object. For reverse "AnnDbMap" objects, the mapping is "right-to-left".
+### values are the keys of the map and are retrieved with the "keys" or "ls"
+### methods. The type, format and location in the DB of the right values
+### depend on the particular subclass of the "AnnDbMap" object.
+### For reverse "AnnDbMap" objects, the mapping is "right-to-left".
 ###
 
 setClass("L2Rbrick",

@@ -21,20 +21,20 @@
 ### Helper functions.
 ###
 
-.checkNamesAreStrings <- function(names)
+.checkKeysAreStrings <- function(keys)
 {
-    if (is.null(names) || !is.character(names) || any(is.na(names)))
+    if (is.null(keys) || !is.character(keys) || any(is.na(keys)))
         stop("invalid first argument")
 }
 
 ### Re-order and format the list 'ann_list' as follow:
 ###   > ann_list <- list(aa=1, b=2, c=3)
-###   > names <- c("a", "c", "d")
-###   > .formatAnnList(ann_list, names)
+###   > keys <- c("a", "c", "d")
+###   > .formatAnnList(ann_list, keys)
 ### ... must return 'list(a=NA, c=3, d=NA)'
-### Note that the returned list must have exactly the names in 'names' (in the
+### Note that the returned list must have exactly the names in 'keys' (in the
 ### same order).
-.formatAnnList <- function(ann_list, names, replace.single=NULL, replace.multiple=NULL)
+.formatAnnList <- function(ann_list, keys, replace.single=NULL, replace.multiple=NULL)
 {
     if (length(ann_list))
         ann_list <- l2e(ann_list)
@@ -55,8 +55,8 @@
         }
         val
     }
-    names(names) <- names
-    lapply(names, formatVal)
+    names(keys) <- keys
+    lapply(keys, formatVal)
 }
 
 
@@ -65,7 +65,7 @@
 ###
 
 setMethod("ls", signature(name="AnnDbMap"),
-    function(name, pos, envir, all.names, pattern) names(name)
+    function(name, pos, envir, all.names, pattern) keys(name)
 )
 
 
@@ -74,11 +74,11 @@ setMethod("ls", signature(name="AnnDbMap"),
 ###
 
 setMethod("as.list", "AtomicAnnDbMap",
-    function(x, names=NULL)
+    function(x, keys=NULL)
     {
-        if (!is.null(names) && length(names) == 0)
+        if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(x, left.names=names, right.names=NA)
+        y <- flatten(x, left.keys=keys, right.keys=NA)
         if (nrow(y) == 0) {
             ann_list <- list()
         } else {
@@ -98,17 +98,17 @@ setMethod("as.list", "AtomicAnnDbMap",
                 names(right_col) <- y@data[[3]]
             ann_list <- split(right_col, y@data[[1]])
         }
-        .formatAnnList(ann_list, left.names(y),
+        .formatAnnList(ann_list, left.keys(y),
                        x@replace.single, x@replace.multiple)
     }
 )
 
 setMethod("as.list", "RevAtomicAnnDbMap",
-    function(x, names=NULL)
+    function(x, keys=NULL)
     {
-        if (!is.null(names) && length(names) == 0)
+        if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(x, left.names=NA, right.names=names)
+        y <- flatten(x, left.keys=NA, right.keys=keys)
         if (nrow(y) == 0) {
             ann_list <- list()
         } else {
@@ -117,17 +117,17 @@ setMethod("as.list", "RevAtomicAnnDbMap",
                 names(left_col) <- y@data[[3]]
             ann_list <- split(left_col, y@data[[2]])
         }
-        .formatAnnList(ann_list, right.names(y),
+        .formatAnnList(ann_list, right.keys(y),
                        x@replace.single, x@replace.multiple)
     }
 )
 
 setMethod("as.list", "IpiAnnDbMap",
-    function(x, names=NULL)
+    function(x, keys=NULL)
     {
-        if (!is.null(names) && length(names) == 0)
+        if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(x, left.names=names, right.names=NA)
+        y <- flatten(x, left.keys=keys, right.keys=NA)
         if (nrow(y) == 0) {
             ann_list <- list()
         } else {
@@ -135,7 +135,7 @@ setMethod("as.list", "IpiAnnDbMap",
             names(tag_col) <- y@data[[2]]
             ann_list <- split(tag_col, y@data[[1]])
         }
-        .formatAnnList(ann_list, left.names(y))
+        .formatAnnList(ann_list, left.keys(y))
     }
 )
 
@@ -153,14 +153,14 @@ setMethod("as.list", "IpiAnnDbMap",
 ###      user  system elapsed
 ###     4.456   0.228   4.953
 setMethod("as.list", "GoAnnDbMap",
-    function(x, names=NULL)
+    function(x, keys=NULL)
     {
-        if (!is.null(names) && length(names) == 0)
+        if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(x, left.names=names, right.names=NA)
-        names <- left.names(y)
-        ann_list <- as.list(rep(as.character(NA), length(names)))
-        names(ann_list) <- names
+        y <- flatten(x, left.keys=keys, right.keys=NA)
+        keys <- left.keys(y)
+        ann_list <- as.list(rep(as.character(NA), length(keys)))
+        names(ann_list) <- keys
         if (nrow(y) != 0) {
             makeGONodeList <- function(GOIDs, Evidences, Ontologies)
             {
@@ -173,11 +173,11 @@ setMethod("as.list", "GoAnnDbMap",
             Ontologies <- split(y@data[["Ontology"]], y@data[[1]])
             ## The 'GOIDs', 'Evidences' and 'Ontologies' lists have the same
             ## names in the same order.
-            mapped_names <- names(GOIDs)
-            ii <- match(mapped_names, names, nomatch=0L)
+            mapped_keys <- names(GOIDs)
+            ii <- match(mapped_keys, keys, nomatch=0L)
             for (i1 in seq_len(length(ii))) {
                 i2 <- ii[i1]
-                ## 'mapped_names' should always be a subset of 'names'
+                ## 'mapped_keys' should always be a subset of 'keys'
                 ## hence 'i2 == 0L' should never happen. So maybe we should
                 ## raise something like "AnnotationDbi internal error" instead
                 ## of just ignoring this...
@@ -190,26 +190,26 @@ setMethod("as.list", "GoAnnDbMap",
     }
 )
 
-.RevGoAsList <- function(x, names=NULL)
+.RevGoAsList <- function(x, keys=NULL)
 {
-    if (!is.null(names) && length(names) == 0)
+    if (!is.null(keys) && length(keys) == 0)
         return(list())
-    y <- flatten(x, left.names=NA, right.names=names)
-    if (!is.null(names) && !all(names %in% y@data[[2]]))
-        .checkNamesExist(names, names(x))
+    y <- flatten(x, left.keys=NA, right.keys=keys)
+    if (!is.null(keys) && !all(keys %in% y@data[[2]]))
+        .checkKeysExist(keys, keys(x))
     if (nrow(y) == 0)
         return(list())
     left_col <- y@data[[1]]
     names(left_col) <- y@data[["Evidence"]]
     ann_list <- split(left_col, y@data[["go_id"]])
-    .formatAnnList(ann_list, right.names(y))
+    .formatAnnList(ann_list, right.keys(y))
 }
     
 setMethod("as.list", "RevGoAnnDbMap",
-    function(x, names=NULL) .RevGoAsList(x, names)
+    function(x, keys=NULL) .RevGoAsList(x, keys)
 )
 setMethod("as.list", "RevGo3AnnDbMap",
-    function(x, names=NULL) .RevGoAsList(x, names)
+    function(x, keys=NULL) .RevGoAsList(x, keys)
 )
 
 ### Formatting the right objects with 'makeGONode' instead of just using the
@@ -224,11 +224,11 @@ setMethod("as.list", "RevGo3AnnDbMap",
 ###   20.893   0.072  21.066 
 ### Why is the S4 initialization mechanism so slow?
 setMethod("as.list", "GONodeAnnDbMap",
-    function(x, names=NULL)
+    function(x, keys=NULL)
     {
-        if (!is.null(names) && length(names) == 0)
+        if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(x, left.names=names, right.names=NA)
+        y <- flatten(x, left.keys=keys, right.keys=NA)
         makeGONode <- function(go_id, Term, Ontology, Definition, ...)
         {
             new("GONode", GOID=go_id[1],
@@ -245,36 +245,36 @@ setMethod("as.list", "GONodeAnnDbMap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "mget" new generic.
 ###
-### 'mget(x, map)' vs 'as.list(map, names=x)':
+### 'mget(x, map)' vs 'as.list(map, keys=x)':
 ###   1. mget checks its 'x' arg. and gracefully fails if it's not of
 ###      the expected type (i.e. NULL or NA-free character vector),
-###   2. mget will error on the first string in 'x' not in 'names(map)',
+###   2. mget will error on the first string in 'x' not in 'keys(map)',
 ###      as.list will accept those strings and map them to NAs.
-###   3. if 'x' is a subset of 'names(map)', then 'mget(x, map)'
-###      is identical to 'as.list(map, names=x)'.
-###   4. 'mget(names(map), map)' is identical to 'as.list(map)'.
+###   3. if 'x' is a subset of 'keys(map)', then 'mget(x, map)'
+###      is identical to 'as.list(map, keys=x)'.
+###   4. 'mget(keys(map), map)' is identical to 'as.list(map)'.
 ###      Note that for a real "environment", 'as.list(envir)' is not identical
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
-### NB: .checkNamesExist() is defined in the AnnDbObj-lowAPI.R file.
+### NB: .checkKeysExist() is defined in the AnnDbObj-lowAPI.R file.
 
 setMethod("mget", signature(envir="AnnDbMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
-        .checkNamesAreStrings(x)
+        .checkKeysAreStrings(x)
         if (missing(ifnotfound))
-            .checkNamesExist(x, names(envir))
+            .checkKeysExist(x, keys(envir))
         else if (!is.vector(ifnotfound) || length(ifnotfound) != 1 || !is.na(ifnotfound))
             stop("only NA is currently supported for 'ifnotfound'")
-        as.list(envir, names=x)
+        as.list(envir, keys=x)
     }
 )
 
 setMethod("mget", signature(envir="RevAnnDbMap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
-        .checkNamesAreStrings(x)
-        as.list(envir, names=x)
+        .checkKeysAreStrings(x)
+        as.list(envir, keys=x)
     }
 )
 
@@ -324,7 +324,7 @@ setMethod("get", signature(pos="AnnDbMap", envir="missing"),
 ### and this
 ###   exists("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'where' arg too.
-do_exists <- function(x, map) x %in% names(map)
+do_exists <- function(x, map) x %in% keys(map)
 
 setMethod("exists", signature(envir="AnnDbMap"),
     function(x, where, envir, frame, mode, inherits)
@@ -383,8 +383,8 @@ setMethod("$", "AnnDbMap", function(x, name) x[[name]])
 setMethod("sample", "AnnDbMap",
     function(x, size, replace=FALSE, prob=NULL)
     {
-        names <- ls(x)
-        as.list(x, names=names[sample(length(names), size, replace, prob)])
+        keys <- ls(x)
+        as.list(x, keys=keys[sample(length(keys), size, replace, prob)])
     }
 )
 

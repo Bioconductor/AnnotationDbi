@@ -16,7 +16,7 @@
 \examples{
         x <- @ANNOBJPREFIX@ACCNUM
         # Get the entrez gene identifiers that are mapped to an ACCNUM
-        mapped_genes <- mappedNames(x)
+        mapped_genes <- mappedKeys(x)
         # Convert to a list
         xx <- as.list(x, names=mapped_genes)
         if(length(xx) > 0) {

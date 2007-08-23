@@ -234,10 +234,10 @@ allKEGGIds <- names(revx)
 
 There are "unoriented" methods related to these methods:
 <<moreUnorientedMethods>>=
-junk <- left.names(x)    # same for all maps in hgu95av2.db (except pseudo-map
+junk <- left.keys(x)    # same for all maps in hgu95av2.db (except pseudo-map
                          # MAPCOUNTS)
 left.length(x)           # nb of left names
-junk <- right.names(x)   # KEGG ids for PATH/PATH2PROBE maps, GO ids for
+junk <- right.keys(x)   # KEGG ids for PATH/PATH2PROBE maps, GO ids for
                          # GO/GO2PROBE/GO2ALLPROBES maps, etc...
 right.length(x)          # nb of right names
 @ 
@@ -246,14 +246,14 @@ NB: they give the same result for x and revmap(x)
 
 This helps to understand the naming of Rfunction{toTable} args:
 <<naming, eval=FALSE>>=
-toTable(x, left.names, right.names)
+toTable(x, left.keys, right.keys)
 @ 
 
 Using revmap can be very efficient in some use cases:
 <<revmapUseCases>>=
 x <- hgu95av2CHR
-right.names(x)
-chroms <- right.names(x)[24:25]
+right.keys(x)
+chroms <- right.keys(x)[24:25]
 chroms
 toTable(x, , chroms)[1:10, ]
 @ 
