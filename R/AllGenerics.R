@@ -20,6 +20,7 @@ setGeneric("from.keys", function(x, direction) standardGeneric("from.keys"))
 setGeneric("to.keys", function(x, direction) standardGeneric("to.keys"))
 
 ### Others (do whatever you want with them ;-)
+setGeneric("keys", function(x) standardGeneric("keys"))
 setGeneric("count.mappedKeys", function(x) standardGeneric("count.mappedKeys"))
 setGeneric("db", function(object) standardGeneric("db"))
 setGeneric("flatten", function(x, left.keys, right.keys, ...) standardGeneric("flatten"))

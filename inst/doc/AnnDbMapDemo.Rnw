@@ -209,7 +209,7 @@ toTable(x)[1:6, ]
 toTable(revx)[1:6, ]
 @ 
 
-NB: the left names are always on the left (1st col), the right names
+NB: the left keys are always on the left (1st col), the right keys
 always in the 2nd col
 
 There can be more than 2 columns in the returned data frame:
@@ -220,26 +220,26 @@ toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
 as.list(hgu95av2PFAM, "1000_at")
 @ 
 
-But the right names are ALWAYS in the 2nd col.
+But the right keys are ALWAYS in the 2nd col.
 
-For length() and names(), the result does depend on the orientation
+For length() and keys(), the result does depend on the orientation
 ("oriented methods"):
 
 <<orientedMethods>>=
 length(x)
 length(revx)
-allProbeSetIds <- names(x)
-allKEGGIds <- names(revx)
+allProbeSetIds <- keys(x)
+allKEGGIds <- keys(revx)
 @ 
 
 There are "unoriented" methods related to these methods:
 <<moreUnorientedMethods>>=
 junk <- left.keys(x)    # same for all maps in hgu95av2.db (except pseudo-map
                          # MAPCOUNTS)
-left.length(x)           # nb of left names
+left.length(x)           # nb of left keys
 junk <- right.keys(x)   # KEGG ids for PATH/PATH2PROBE maps, GO ids for
                          # GO/GO2PROBE/GO2ALLPROBES maps, etc...
-right.length(x)          # nb of right names
+right.length(x)          # nb of right keys
 @ 
 
 NB: they give the same result for x and revmap(x)
