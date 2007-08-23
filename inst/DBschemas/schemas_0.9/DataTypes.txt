@@ -57,6 +57,12 @@ EC number (with "EC:" prefix)
   SQL type: VARCHAR(16)
   Examples: 'EC:1.1.4.1', 'EC:3.2.1.14', 'EC:1.14.99.36'
 
+EC name
+-------
+  SQL type: VARCHAR(255)
+  Examples: 'lipase', 'photosystem I', '6-phosphofructokinase'
+  Note: the maximum length observed so far is 99
+
 gene name
 ---------
   SQL type: VARCHAR(255)
@@ -147,6 +153,24 @@ SMART ID
 --------
   SQL type: CHAR(7)
   Examples: 'SM00055', 'SM00220', 'SM00717'
+
+AGI locus ID
+------------
+  SQL type: CHAR(9)
+  Examples: 'AT1G01010', 'ATCG00830', 'ATMG01410'
+
+AraCyc pathway name
+-------------------
+  SQL type: VARCHAR(255)
+  Examples: 'SAM cycle', 'trans,trans-farnesyl diphosphate biosynthesis'
+  Note: the maximum length observed so far is 77 but using VARCHAR(255)
+        is a safety precaution for longer AraCyc pathways that could appear
+        in the future
+
+Arabidopsis chromosome
+----------------------
+  SQL type: CHAR(1)
+  7 possible values: '1', '2', '3', '4', '5', 'C', 'M'
 
 GO ontology (short label)
 -------------------------
