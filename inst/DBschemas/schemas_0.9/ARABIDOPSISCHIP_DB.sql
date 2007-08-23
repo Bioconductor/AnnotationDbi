@@ -12,7 +12,7 @@ CREATE TABLE genes (
 -- Data linked to the "genes" table.
 CREATE TABLE probes (
   id INTEGER NULL,                              -- REFERENCES genes
-  probe_id VARCHAR(80) PRIMARY KEY,             -- manufacturer ID
+  probe_id VARCHAR(80) NOT NULL,                -- manufacturer ID
   is_multiple SMALLINT NOT NULL,                -- a silly and useless field
   FOREIGN KEY (id) REFERENCES genes (id)
 );
@@ -128,4 +128,7 @@ CREATE INDEX Fgo_mf ON go_mf (id);
 CREATE INDEX Fgo_mf_all ON go_mf_all (id);
 CREATE INDEX Fkegg ON kegg (id);
 CREATE INDEX Fpubmed ON pubmed (id);
+
+-- Other indexes.
+CREATE INDEX Lprobes ON probes (probe_id);
 
