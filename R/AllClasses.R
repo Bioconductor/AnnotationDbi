@@ -186,10 +186,15 @@ setClass("AnnDbBimap",
         L2Rpath="list",             # list of L2Rbrick objects
         direction="integer",        # 1L for left-to-right, -1L for right-to-left
                                     # and 0L for undirected
-        rightColType="character"    # needs to go away
+        left.keys="character",
+        right.keys="character",
+        ifnotfound="list"
     ),
     prototype(
-        direction=1L                # left-to-right by default
+        direction=1L,               # left-to-right by default
+        left.keys=as.character(NA),
+        right.keys=as.character(NA),
+        ifnotfound=list()           # empty list => raise an error on first key not found
     )
 )
 

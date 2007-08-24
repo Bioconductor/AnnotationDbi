@@ -31,7 +31,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ARACYC",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -43,7 +43,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -55,7 +55,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -67,7 +67,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -92,7 +92,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -104,7 +104,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -116,7 +116,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -156,11 +156,6 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     )
 )
 
-ARABIDOPSISCHIP_DB_default_leftTable <- "probes"
-ARABIDOPSISCHIP_DB_default_leftCol <- "probe_id"
-ARABIDOPSISCHIP_DB_default_rightColType <- character(0)
-ARABIDOPSISCHIP_DB_default_join <- "INNER JOIN probes USING (id)"
-
 createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
 {
     ## AnnDbMap objects
@@ -171,7 +166,7 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
     )
     ann_objs <- createAnnDbMaps(ARABIDOPSISCHIP_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAtomicAnnDbMap objects
+    ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")

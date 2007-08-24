@@ -19,7 +19,7 @@ HUMAN_DB_L2Rbrick1 <- list(table="genes", Lcolname="gene_id", Rcolname="id")
 HUMAN_DB_AnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -30,8 +30,21 @@ HUMAN_DB_AnnDbMap_seeds <- list(
         )
     ),
     list(
+        objName="ALIAS2EG",
+        Class="AtomicAnnDbBimap",
+        L2Rpath=list(
+            HUMAN_DB_L2Rbrick1,
+            list(
+                table="alias",
+                Lcolname="id",
+                Rcolname="alias_symbol"
+            )
+        ),
+        direction=-1L
+    ),
+    list(
         objName="CHR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -43,7 +56,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -55,7 +68,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -67,7 +80,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="MAP",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -79,7 +92,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="OMIM",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -91,7 +104,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -103,7 +116,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -115,7 +128,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="REFSEQ",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -127,7 +140,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -139,7 +152,7 @@ HUMAN_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="UNIGENE",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMAN_DB_L2Rbrick1,
             list(
@@ -215,21 +228,8 @@ createAnnObjs.HUMAN_DB <- function(prefix, objTarget, conn, datacache)
     )
     ann_objs <- createAnnDbMaps(HUMAN_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAtomicAnnDbMap objects
+    ## Reverse maps
     ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
-    ALIAS2EG_seed <- list(
-        objName="ALIAS2EG",
-        Class="RevAtomicAnnDbMap",
-        L2Rpath=list(
-            HUMAN_DB_L2Rbrick1,
-            list(
-                table="alias",
-                Lcolname="id",
-                Rcolname="alias_symbol"
-            )
-        )
-    )
-    ann_objs$ALIAS2EG <- createAnnDbMap(ALIAS2EG_seed, seed0)
     ann_objs$ENZYME2EG <- revmap(ann_objs$ENZYME, objName="ENZYME2EG")
     ann_objs$GENENAME2EG <- revmap(ann_objs$GENENAME, objName="GENENAME2EG")
     ann_objs$MAP2EG <- revmap(ann_objs$MAP, objName="MAP2EG")

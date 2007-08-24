@@ -254,6 +254,8 @@ setMethod("left.keys", "AnnDbMap",
 setMethod("left.keys", "AnnDbBimap",
     function(x)
     {
+        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
+            return(x@left.keys)
         dbUniqueVals(db(x), left.table(x), left.colname(x),
                             left.filter(x), x@datacache)
     }
@@ -269,6 +271,8 @@ setMethod("right.keys", "AnnDbMap",
 setMethod("right.keys", "AnnDbBimap",
     function(x)
     {
+        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
+            return(x@right.keys)
         dbUniqueVals(db(x), right.table(x), right.colname(x),
                             right.filter(x), x@datacache)
     }
@@ -310,6 +314,8 @@ setMethod("left.length", "AnnDbMap",
 setMethod("left.length", "AnnDbBimap",
     function(x)
     {
+        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
+            return(length(x@left.keys))
         dbCountUniqueVals(db(x), left.table(x), left.colname(x),
                                  left.filter(x), x@datacache)
     }
@@ -325,6 +331,8 @@ setMethod("right.length", "AnnDbMap",
 setMethod("right.length", "AnnDbBimap",
     function(x)
     {
+        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
+            return(length(x@right.keys))
         dbCountUniqueVals(db(x), right.table(x), right.colname(x),
                                  right.filter(x), x@datacache)
     }
@@ -365,26 +373,48 @@ setMethod("left.mappedKeys", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 setMethod("left.mappedKeys", "AnnDbBimap",
-    function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+    function(x)
+    {
+        keys <- dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
+            keys <- x@left.keys[x@left.keys %in% keys]
+        keys
+    }
 )
 setMethod("count.left.mappedKeys", "AnnDbMap",
     function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 setMethod("count.left.mappedKeys", "AnnDbBimap",
-    function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+    function(x)
+    {
+        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
+            return(length(left.mappedKeys(x)))
+        dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+    }
 )
 
 setMethod("right.mappedKeys", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
 )
 setMethod("right.mappedKeys", "AnnDbBimap",
-    function(x) dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+    function(x)
+    {
+        keys <- dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
+            keys <- x@right.keys[x@right.keys %in% keys]
+        keys
+    }
 )
 setMethod("count.right.mappedKeys", "AnnDbMap",
     function(x) dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
 )
 setMethod("count.right.mappedKeys", "AnnDbBimap",
-    function(x) dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+    function(x)
+    {
+        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
+            return(length(right.mappedKeys(x)))
+        dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+    }
 )
 
 setMethod("left.mappedKeys", "Go3AnnDbMap",
@@ -456,6 +486,30 @@ setMethod("mappedKeys", "environment",
 setMethod("count.mappedKeys", "environment", function(x) length(mappedKeys(x)))
 
 
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "subset" method.
+###
+
+setMethod("subset", "AnnDbBimap",
+    function(x, left.keys=NULL, right.keys=NULL, objName=NULL)
+    {
+        if (!is.null(left.keys)) {
+            .checkKeys(left.keys, left.keys(x), x@ifnotfound)
+            x@left.keys <- left.keys
+        }
+        if (!is.null(right.keys)) {
+            .checkKeys(right.keys, right.keys(x), x@ifnotfound)
+            x@right.keys <- right.keys
+        }
+        if (!is.null(objName))
+            x@objName <- toString(objName)
+        else if (!is.null(left.keys) || !is.null(right.keys))
+            x@objName <- paste("subset(", x@objName, ")", sep="")
+        x
+    }
+)
+
+
 
 ### =========================================================================
 ### The "flatten" methods
@@ -506,12 +560,13 @@ setMethod("flatten", "AnnDbMap",
     }
 )
 setMethod("flatten", "AnnDbBimap",
-    function(x, left.keys, right.keys, extra.colnames=NULL, verbose=FALSE)
+    function(x, extra.colnames=NULL, verbose=FALSE)
     {
-        if (missing(left.keys))
-            left.keys <- NULL
-        if (missing(right.keys))
-            right.keys <- NULL
+        left.keys <- right.keys <- NULL
+        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
+            left.keys <- x@left.keys
+        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
+            right.keys <- x@right.keys
         data0 <- dbSelectFromL2Rpath(db(x), x@L2Rpath,
                                      left.keys, right.keys,
                                      extra.colnames, verbose)
@@ -737,32 +792,25 @@ setMethod("toList", "RevAnnDbMap",
     }
 )
 
-setMethod("toList", "AnnDbBimap",
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "left.toList" and "right.toList" methods.
+###
+
+setMethod("left.toList", "AnnDbBimap",
     function(x, keys=NULL)
     {
-        if (!is.null(keys) && length(keys) == 0)
-            return(list())
-        data0 <- flatten(x, left.keys=keys, right.keys=NA)@data
-        if (nrow(data0) == 0) {
-            ann_list <- list()
-        } else {
-            ## Just to make sure that flatten() is not broken
-            if (!identical(names(data0)[1:2], c(left.colname(x), right.colname(x))))
-                stop("annotationDbi internal problem, please report to the maintainer")
-            data1 <- data0[ , -1]
-            if (length(x@rightColType) == 1
-             && typeof(data1[[1]]) != x@rightColType) {
-                converter <- get(paste("as.", x@rightColType, sep=""))
-                data1[[1]] <- converter(data1[[1]])
-            }
-            ann_list <- split(data1, data0[[1]])
-        }
-        if (is.null(keys))
-            keys <- keys(x)
-        alignAnnList(ann_list, keys)
+        x <- subset(x, left.keys=keys, right.keys=NULL)
+        left.toList(flatten(x))
     }
 )
-
+setMethod("right.toList", "AnnDbBimap",
+    function(x, keys=NULL)
+    {
+        x <- subset(x, left.keys=NULL, right.keys=keys)
+        right.toList(flatten(x))
+    }
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

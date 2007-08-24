@@ -19,7 +19,7 @@ YEASTCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id
 YEASTCHIP_DB_AnnDbMap_seeds <- list(
     list(
         objName="ALIAS",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
@@ -31,7 +31,7 @@ YEASTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
@@ -57,7 +57,7 @@ YEASTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="DESCRIPTION",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
@@ -69,7 +69,7 @@ YEASTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
@@ -81,7 +81,7 @@ YEASTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
@@ -93,7 +93,7 @@ YEASTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
@@ -105,7 +105,7 @@ YEASTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
@@ -131,7 +131,7 @@ YEASTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ORF",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
@@ -153,7 +153,7 @@ createAnnObjs.YEASTCHIP_DB <- function(prefix, objTarget, conn, datacache)
     )
     ann_objs <- createAnnDbMaps(YEASTCHIP_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAtomicAnnDbMap objects
+    ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")

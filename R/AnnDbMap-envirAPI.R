@@ -68,10 +68,18 @@ setMethod("ls", signature(name="AnnDbMap"),
     function(name, pos, envir, all.names, pattern) keys(name)
 )
 
+setMethod("ls", signature(name="AnnDbBimap"),
+    function(name, pos, envir, all.names, pattern) keys(name)
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "as.list" generic.
 ###
+
+setMethod("as.list", "AnnDbBimap",
+    function(x, keys=NULL) toList(x, keys)
+)
 
 setMethod("as.list", "AtomicAnnDbMap",
     function(x, keys=NULL)
@@ -278,12 +286,33 @@ setMethod("mget", signature(envir="RevAnnDbMap"),
     }
 )
 
+setMethod("mget", signature(envir="AnnDbBimap"),
+    function(x, envir, mode, ifnotfound, inherits)
+    {
+        if (missing(ifnotfound))
+            envir@ifnotfound <- list()
+        else {
+            if (!is.vector(ifnotfound) || length(ifnotfound) != 1 || !is.na(ifnotfound))
+                stop("only NA is currently supported for 'ifnotfound'")
+            envir@ifnotfound <- as.list(ifnotfound)
+        }
+        as.list(envir, keys=x)
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "eapply" new generic.
 ###
 
 setMethod("eapply", signature(env="AnnDbMap"),
+    function(env, FUN, ..., all.names)
+    {
+        lapply(as.list(env), FUN)
+    }
+)
+
+setMethod("eapply", signature(env="AnnDbBimap"),
     function(env, FUN, ..., all.names)
     {
         lapply(as.list(env), FUN)
@@ -315,6 +344,20 @@ setMethod("get", signature(pos="AnnDbMap", envir="missing"),
     }
 )
 
+setMethod("get", signature(envir="AnnDbBimap"),
+    function(x, pos, envir, mode, inherits)
+    {
+        do_get(x, envir)
+    }
+)
+
+setMethod("get", signature(pos="AnnDbBimap", envir="missing"),
+    function(x, pos, envir, mode, inherits)
+    {
+        do_get(x, pos)
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "exists" new generic.
@@ -334,6 +377,20 @@ setMethod("exists", signature(envir="AnnDbMap"),
 )
 
 setMethod("exists", signature(where="AnnDbMap", envir="missing"),
+    function(x, where, envir, frame, mode, inherits)
+    {
+        do_exists(x, where)
+    }
+)
+
+setMethod("exists", signature(envir="AnnDbBimap"),
+    function(x, where, envir, frame, mode, inherits)
+    {
+        do_exists(x, envir)
+    }
+)
+
+setMethod("exists", signature(where="AnnDbBimap", envir="missing"),
     function(x, where, envir, frame, mode, inherits)
     {
         do_exists(x, where)
@@ -373,7 +430,37 @@ setMethod("[[", "AnnDbMap",
     }
 )
 
+setMethod("[[", "AnnDbBimap",
+    function(x, i, j, ...)
+    {
+        # 'x' is guaranteed to be a "AnnDbMap" object (if it's not, then the
+        # method dispatch algo will not call this method in the first place),
+        # so nargs() is guaranteed to be >= 1
+        if (nargs() >= 3)
+            stop("too many subscripts")
+        subscripts <- list(...)
+        if (!missing(i))
+            subscripts$i <- i
+        if (!missing(j))
+            subscripts$j <- j
+        # At this point, 'subscripts' should be guaranteed
+        # to be of length <= 1
+        if (length(subscripts) == 0)
+            stop("no index specified")
+        i <- subscripts[[1]]
+        if (length(i) < 1)
+            stop("attempt to select less than one element")
+        if (length(i) > 1)
+            stop("attempt to select more than one element")
+        if (!is.character(i) || is.na(i))
+            stop("wrong argument for subsetting an object of class ", sQuote(class(x)))
+        get(i, envir=x)
+    }
+)
+
 setMethod("$", "AnnDbMap", function(x, name) x[[name]])
+
+setMethod("$", "AnnDbBimap", function(x, name) x[[name]])
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -381,6 +468,14 @@ setMethod("$", "AnnDbMap", function(x, name) x[[name]])
 ###
 
 setMethod("sample", "AnnDbMap",
+    function(x, size, replace=FALSE, prob=NULL)
+    {
+        keys <- ls(x)
+        as.list(x, keys=keys[sample(length(keys), size, replace, prob)])
+    }
+)
+
+setMethod("sample", "AnnDbBimap",
     function(x, size, replace=FALSE, prob=NULL)
     {
         keys <- ls(x)

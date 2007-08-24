@@ -54,19 +54,20 @@
 ### A AnnDbBimap object is a bimap whose data are stored in a data base.
 ### Conceptually, a FlatBimap and a AnnDbBimap object are the same (only
 ### their internal representation differ) so it's natural to try to define
-### a set of methods that make sense for the two types of bimaps so they can
-### be manipulated in a very similar way.
+### a set of methods that make sense for both (so they can be manipulated
+### in a similar way).
 ### However, there is an important asymetry between these two classes:
 ###   A AnnDbBimap object can be converted into a FlatBimap object
 ###   but a FlatBimap object can't be converted into an AnnDbBimap
 ###   object (well, in theory maybe it could be, but for now the data bases
 ###   we use to store the data of the AnnDbBimap objects are treated as
-###   read-only). The "flatten" methods (defined for AnnDbBimap objects only)
-###   does the conversion from AnnDbBimap to FlatBimap.
+###   read-only). This conversion from AnnDbBimap to FlatBimap is performed
+###   by the "flatten" generic function (with methods for AnnDbBimap objects
+###   only).
 ### The "BimapAPI0" interface is the common interface between FlatBimap and
-### AnnDbBimap objects. The "flatten" method (defined for AnnDbBimap objects
-### only) and the "subset" method (defined for AnnDbBimap and FlatBimap
-### objects) play the following central roles:
+### AnnDbBimap objects. The "flatten" generic (with methods for AnnDbBimap
+### objects only) and the "subset" generic (with methods for AnnDbBimap and
+### FlatBimap objects) play the following central roles:
 ###   1. When used with no extra argument, flatten(x) converts AnnDbBimap
 ###      object x into FlatBimap object y with no loss of information.
 ###   2. If x is an AnnDbBimap object and f a BimapAPI0 generic, then f is
@@ -79,7 +80,7 @@
 ### package.
 ### Both AnnDbBimap and FlatBimap objects have a read-only semantic: the user
 ### can subset them but cannot change their data.
-### More on "subset" later...
+### More about "subset" coming soon...
 ###
 
 
@@ -191,31 +192,36 @@ setMethod("keys", "BimapAPI0",
     function(x)
         switch(as.character(direction(x)),
                 "1"=left.keys(x),
-               "-1"=right.keys(x))
+               "-1"=right.keys(x),
+                    stop("keys() is undefined for an undirected bimap"))
 )
 setMethod("length", "BimapAPI0",
     function(x)
         switch(as.character(direction(x)),
                 "1"=left.length(x),
-               "-1"=right.length(x))
+               "-1"=right.length(x),
+                    stop("length() is undefined for an undirected bimap"))
 )
 setMethod("mappedKeys", "BimapAPI0",
     function(x)
         switch(as.character(direction(x)),
                 "1"=left.mappedKeys(x),
-               "-1"=right.mappedKeys(x))
+               "-1"=right.mappedKeys(x),
+                    stop("mappedKeys() is undefined for an undirected bimap"))
 )
 setMethod("count.mappedKeys", "BimapAPI0",
     function(x)
         switch(as.character(direction(x)),
                 "1"=count.left.mappedKeys(x),
-               "-1"=count.right.mappedKeys(x))
+               "-1"=count.right.mappedKeys(x),
+                    stop("count.mappedKeys() is undefined for an undirected bimap"))
 )
 setMethod("toList", "BimapAPI0",
     function(x, keys=NULL)
         switch(as.character(direction(x)),
                 "1"=left.toList(x, keys),
-               "-1"=right.toList(x, keys))
+               "-1"=right.toList(x, keys),
+                    stop("toList() is undefined for an undirected bimap"))
 )
 
 
@@ -233,16 +239,18 @@ setMethod("toList", "BimapAPI0",
 setClass("FlatBimap",
     contains="BimapAPI0",
     representation(
-        collabels="character",   # must have the same length as the 'data' slot
+        collabels="character",      # must have the same length as the 'data' slot
         direction="integer",
         data="data.frame",
         left.keys="character",
-        right.keys="character"
+        right.keys="character",
+        ifnotfound="list"
     ),
     prototype(
-        direction=1L,            # left-to-right by default
+        direction=1L,               # left-to-right by default
         left.keys=as.character(NA),
-        right.keys=as.character(NA)
+        right.keys=as.character(NA),
+        ifnotfound=list()           # empty list => raise an error on first key not found
     )
 )
 
@@ -341,7 +349,7 @@ setMethod("show", "FlatBimap",
         cat("\"", class(object), "\" object:\n\n", sep="")
         c2l <- data.frame(COLNAME=colnames(object), LABEL=object@collabels)
         show(c2l)
-        direction <- names(.DIRECTION_STR2INT)[.DIRECTION_STR2INT == direction]
+        direction <- names(.DIRECTION_STR2INT)[.DIRECTION_STR2INT == direction(object)]
         cat("\ndirection: ", direction, sep="")
         cat("\ndata:\n")
         if (nrow(object) <= 20) {
@@ -359,13 +367,15 @@ setMethod("show", "FlatBimap",
 ### The "subset" method.
 ###
 
-.checkKeys <- function(keys, all.keys)
+.checkKeys <- function(keys, valid.keys, ifnotfound)
 {
     if (!is.character(keys))
-        stop("keys must be character strings")
-    not_found <- which(!(keys %in% all.keys))
-    if (length(not_found) != 0)
-        stop("invalid key \"", keys[not_found[1]], "\"")
+        stop("the keys must be character strings")
+    if (length(ifnotfound) == 0) {
+        not_found <- which(!(keys %in% valid.keys))
+        if (length(not_found) != 0)
+            stop("key \"", keys[not_found[1]], "\" not found")
+    }
 }
 
 setMethod("subset", "FlatBimap",
@@ -373,12 +383,12 @@ setMethod("subset", "FlatBimap",
     {
         lii <- rii <- TRUE
         if (!is.null(left.keys)) {
-            .checkKeys(left.keys, left.keys(x))
+            .checkKeys(left.keys, left.keys(x), x@ifnotfound)
             x@left.keys <- left.keys
             lii <- x@data[[1]] %in% left.keys
         }
         if (!is.null(right.keys)) {
-            .checkKeys(right.keys, right.keys(x))
+            .checkKeys(right.keys, right.keys(x), x@ifnotfound)
             x@right.keys <- right.keys
             rii <- x@data[[2]] %in% right.keys
         }
@@ -394,16 +404,17 @@ setMethod("subset", "FlatBimap",
 ### The "left.toList" and "right.toList" methods.
 ###
 
-.alignAnnList <- function(x, keys)
+.alignAnnList <- function(ann_list, keys)
 {
-    y <- l2e(x)
+    y <- l2e(ann_list)
     key2val <- function(key)
     {
         val <- y[[key]]
         if (is.null(val)) {
             val <- NA
-        } else if (class(val) == "data.frame") {
-            row.names(val) <- NULL
+        } else {
+            if (class(val) == "data.frame")
+                row.names(val) <- NULL
         }
         val
     }
@@ -414,45 +425,26 @@ setMethod("subset", "FlatBimap",
 setMethod("left.toList", "FlatBimap",
     function(x, keys=NULL)
     {
-        if (!is.null(keys) && length(keys) == 0)
-            return(list())
-        if (nrow(x@data) == 0) {
+        if (!is.null(keys))
+            x <- subset(x, left.keys=keys, right.keys=NULL)
+        if (nrow(x@data) == 0)
             ann_list <- list()
-        } else {
-            data1 <- x@data[ , -1]
-            if (length(x@rightColType) == 1
-             && typeof(data1[[1]]) != x@rightColType) {
-                converter <- get(paste("as.", x@rightColType, sep=""))
-                data1[[1]] <- converter(data1[[1]])
-            }
-            ann_list <- split(data1, x@data[[1]])
-        }
-        if (is.null(keys))
-            keys <- keys(x)
-        .alignAnnList(ann_list, keys)
+        else
+            ann_list <- split(x@data[ , -1], x@data[[1]])
+        .alignAnnList(ann_list, left.keys(x))
     }
 )
 
 setMethod("right.toList", "FlatBimap",
     function(x, keys=NULL)
     {
-        if (!is.null(keys) && length(keys) == 0)
-            return(list())
-        data0 <- flatten(x, left.keys=NA, right.keys=keys)@data
-        if (!is.null(keys) && !all(keys %in% data0[[2]])) # could also use [[right.colname(x)]]
-            .checkKeysExist(keys, keys(x))
-        if (nrow(data0) == 0) {
+        if (!is.null(keys))
+            x <- subset(x, left.keys=NULL, right.keys=keys)
+        if (nrow(x@data) == 0)
             ann_list <- list()
-        } else {
-            ## Just to make sure that flatten() is not broken
-            if (!identical(names(data0)[1:2], c(left.colname(x), right.colname(x))))
-                stop("annotationDbi internal problem, please report to the maintainer")
-            data2 <- data0[ , -2]
-            ann_list <- split(data2, data0[[2]])
-        }
-        if (is.null(keys))
-            keys <- keys(x)
-        alignAnnList(ann_list, keys)
+        else
+            ann_list <- split(x@data[ , -2], x@data[[2]])
+        .alignAnnList(ann_list, right.keys(x))
     }
 )
 

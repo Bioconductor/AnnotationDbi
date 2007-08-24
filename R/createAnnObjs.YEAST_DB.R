@@ -19,7 +19,7 @@ YEAST_DB_L2Rbrick1 <- list(table="sgd", Lcolname="systematic_name", Rcolname="id
 YEAST_DB_AnnDbMap_seeds <- list(
     list(
         objName="ALIAS",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -31,7 +31,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -57,7 +57,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="DESCRIPTION",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -69,7 +69,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -81,7 +81,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="sgd",
@@ -92,7 +92,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -104,7 +104,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -130,7 +130,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="COMMON2SYSTEMATIC",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="gene2systematic",
@@ -141,7 +141,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="INTERPRO",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -153,7 +153,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PFAM",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -165,7 +165,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="SMART",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -187,7 +187,7 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
     )
     ann_objs <- createAnnDbMaps(YEAST_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAtomicAnnDbMap objects
+    ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")

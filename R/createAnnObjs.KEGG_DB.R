@@ -17,7 +17,7 @@
 KEGG_DB_AnnDbMap_seeds <- list(
     list(
         objName="PATHID2NAME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="pathway2name",
@@ -28,7 +28,7 @@ KEGG_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PATHID2EXTID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="pathway2gene",
@@ -39,7 +39,7 @@ KEGG_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ENZYMEID2GO",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="ec2go",
@@ -60,7 +60,7 @@ createAnnObjs.KEGG_DB <- function(prefix, objTarget, conn, datacache)
     )
     ann_objs <- createAnnDbMaps(KEGG_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAtomicAnnDbMap objects
+    ## Reverse maps
     ann_objs$PATHNAME2ID <- revmap(ann_objs$PATHID2NAME, objName="PATHNAME2ID")
     ann_objs$EXTID2PATHID <- revmap(ann_objs$PATHID2EXTID, objName="EXTID2PATHID")
     ann_objs$GO2ENZYMEID <- revmap(ann_objs$ENZYMEID2GO, objName="GO2ENZYMEID")

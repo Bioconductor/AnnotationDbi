@@ -29,7 +29,7 @@ setGeneric("toList", signature="x", function(x, keys=NULL) standardGeneric("toLi
 
 ### Others (do whatever you want with them ;-)
 setGeneric("db", function(object) standardGeneric("db"))
-setGeneric("flatten", signature="x", function(x, left.keys, right.keys, ...) standardGeneric("flatten"))
+setGeneric("flatten", function(x, ...) standardGeneric("flatten"))
 setGeneric("left.filter", function(x) standardGeneric("left.filter"))
 setGeneric("left.table", function(x) standardGeneric("left.table"))
 setGeneric("revmap", signature="x", function(x, objName=NULL) standardGeneric("revmap"))

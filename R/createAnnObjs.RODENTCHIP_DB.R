@@ -19,7 +19,7 @@ RODENTCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="i
 RODENTCHIP_DB_AnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="probes",
@@ -29,8 +29,21 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
         )
     ),
     list(
+        objName="ALIAS2PROBE",
+        Class="AtomicAnnDbBimap",
+        L2Rpath=list(
+            RODENTCHIP_DB_L2Rbrick1,
+            list(
+                table="alias",
+                Lcolname="id",
+                Rcolname="alias_symbol"
+            )
+        ),
+        direction=-1L
+    ),
+    list(
         objName="CHR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -42,7 +55,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ENTREZID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -51,11 +64,10 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
                 Rcolname="gene_id"
             )
         )
-        ##rightColType="integer"
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -67,7 +79,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -79,7 +91,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="MAP",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -91,7 +103,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -103,7 +115,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -115,7 +127,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="REFSEQ",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -127,7 +139,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -139,7 +151,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="UNIGENE",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -215,7 +227,7 @@ createAnnObjs.RODENTCHIP_DB <- function(prefix, objTarget, conn, datacache)
     )
     ann_objs <- createAnnDbMaps(RODENTCHIP_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAtomicAnnDbMap objects
+    ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
@@ -244,6 +256,7 @@ compareAnnDataIn2Pkgs.RODENTCHIP_DB <- function(pkgname1, pkgname2, prefix, quic
 {
     direct_maps <- sapply(RODENTCHIP_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
+        "ALIAS2PROBE",
         "ENZYME2PROBE",
         "PATH2PROBE",
         "PMID2PROBE",

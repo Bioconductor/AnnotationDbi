@@ -19,7 +19,7 @@ RODENT_DB_L2Rbrick1 <- list(table="genes", Lcolname="gene_id", Rcolname="id")
 RODENT_DB_AnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -30,8 +30,21 @@ RODENT_DB_AnnDbMap_seeds <- list(
         )
     ),
     list(
+        objName="ALIAS2EG",
+        Class="AtomicAnnDbBimap",
+        L2Rpath=list(
+            RODENT_DB_L2Rbrick1,
+            list(
+                table="alias",
+                Lcolname="id",
+                Rcolname="alias_symbol"
+            )
+        ),
+        direction=-1L
+    ),
+    list(
         objName="CHR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -43,7 +56,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -55,7 +68,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -67,7 +80,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="MAP",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -79,7 +92,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -91,7 +104,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -103,7 +116,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="REFSEQ",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -115,7 +128,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -127,7 +140,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="UNIGENE",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -203,7 +216,7 @@ createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
     )
     ann_objs <- createAnnDbMaps(RODENT_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAtomicAnnDbMap objects
+    ## Reverse maps
     ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
     ann_objs$ENZYME2EG <- revmap(ann_objs$ENZYME, objName="ENZYME2EG")
     ann_objs$GENENAME2EG <- revmap(ann_objs$GENENAME, objName="GENENAME2EG")
@@ -237,6 +250,7 @@ compareAnnDataIn2Pkgs.RODENT_DB <- function(pkgname1, pkgname2, prefix, quick=FA
     direct_maps <- sapply(RODENT_DB_AnnDbMap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ACCNUM2EG",
+        "ALIAS2EG",
         "ENZYME2EG",
         "GENENAME2EG",
         "MAP2EG",

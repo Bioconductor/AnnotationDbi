@@ -36,7 +36,7 @@ GO_DB_AnnDbMap_seeds <- list(
 #    ## TODO: Try to define the ENTREZID map as the reverse of ENTREZID2GO
 #    list(
 #        objName="ENTREZID",
-#        Class="AtomicAnnDbMap",
+#        Class="AtomicAnnDbBimap",
 #        L2Rpath=list(
 #            list(
 #                table="go_term",
@@ -53,7 +53,7 @@ GO_DB_AnnDbMap_seeds <- list(
 #    ),
 #    list(
 #        objName="ALLENTREZID",
-#        Class="AtomicAnnDbMap",
+#        Class="AtomicAnnDbBimap",
 #        L2Rpath=list(
 #            list(
 #                table="go_term",
@@ -70,7 +70,7 @@ GO_DB_AnnDbMap_seeds <- list(
 #    ),
     list(
         objName="BPPARENTS",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_term",
@@ -93,7 +93,7 @@ GO_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CCPARENTS",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_term",
@@ -116,7 +116,7 @@ GO_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="MFPARENTS",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_term",
@@ -139,7 +139,7 @@ GO_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="BPANCESTOR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_term",
@@ -161,7 +161,7 @@ GO_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CCANCESTOR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_term",
@@ -183,7 +183,7 @@ GO_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="MFANCESTOR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_term",
@@ -283,7 +283,7 @@ createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
     )
     ann_objs <- createAnnDbMaps(GO_DB_AnnDbMap_seeds, seed0)
 
-    ## RevAnnDbMap objects
+    ## Reverse maps
     revmap2 <- function(from, to)
     {
         map <- revmap(ann_objs[[from]], objName=to)
