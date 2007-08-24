@@ -16,7 +16,7 @@
 RODENT_DB_L2Rbrick1 <- list(table="genes", Lcolname="gene_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
-RODENT_DB_AnnDbMap_seeds <- list(
+RODENT_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
         Class="AtomicAnnDbBimap",
@@ -152,7 +152,7 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CHRLOC",
-        Class="AtomicAnnDbMap",
+        Class="AnnDbMap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
@@ -192,11 +192,11 @@ RODENT_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GO",
-        Class="Go3AnnDbMap",
+        Class="Go3AnnDbBimap",
         L2Rpath=list(
             RODENT_DB_L2Rbrick1,
             list(
-                #table="go_term", # no rightmost table for a Go3AnnDbMap
+                #table="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
                 Rcolname="go_id",
                 tagCols=c(Evidence="{evidence}", Ontology="NULL")
@@ -208,13 +208,13 @@ RODENT_DB_AnnDbMap_seeds <- list(
 
 createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AnnDbMap objects
+    ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(RODENT_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbBimaps(RODENT_DB_AnnDbBimap_seeds, seed0)
 
     ## Reverse maps
     ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
@@ -228,11 +228,9 @@ createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
     #ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
     #ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
-
-    ## RevGo3AnnDbMap objects
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
 
-    ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
+    ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
@@ -247,7 +245,7 @@ createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
 
 compareAnnDataIn2Pkgs.RODENT_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(RODENT_DB_AnnDbMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(RODENT_DB_AnnDbBimap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ACCNUM2EG",
         "ALIAS2EG",

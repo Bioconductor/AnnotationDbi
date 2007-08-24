@@ -8,7 +8,7 @@ make_eg_to_go_map <- function(chip) {
     L2Rpath <- list(new("L2Rbrick", table="genes",
                         Lcolname="gene_id", Rcolname="id"),
                     chip2GO@L2Rpath[[2]])
-    eg2go.map <- new("Go3AnnDbMap",
+    eg2go.map <- new("Go3AnnDbBimap",
                      rightTables=chipGO2PROBE@rightTables,
                      L2Rpath=L2Rpath,
                      conn=db_conn,
@@ -33,22 +33,12 @@ make_go_to_eg_map <- function(chip) {
 ##        new("L2Rbrick", table="genes", Lcolname="id", Rcolname="gene_id")
 ##      )
 
-## 2) Create a new AtomicAnnDbMap instance:
+## 2) Create a new AtomicAnnDbBimap instance:
 
-##      hgu95av2ENZYME2ENTREZID <- new("AtomicAnnDbMap",
+##      hgu95av2ENZYME2ENTREZID <- new("AtomicAnnDbBimap",
 ##        L2Rpath=L2Rpath,
 ##        conn=db_conn,
 ##        objName="ENZYME2ENTREZID",
 ##        objTarget="chip hgu95av2"
 ##      )
-
-## One thing that needs to happen before the plugin feature can be
-## implemented is a change in the current class hierarchy. More
-## precisely, the AtomicAnnDbMap/RevAtomicAnnDbMap classes need to be
-## replaced by a single AnnDbBimap class that will be like the
-## AtomicAnnDbMap but with an additional slot to indicate its direction
-## (left-to-right or right-to-left).  For now having RevAtomicAnnDbMap
-## being a subclass of AtomicAnnDbMap is a bad thing and leads to all
-## sort of problems. This change in the class hierarchy should happen
-## very soon (probably this week).
 

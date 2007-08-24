@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{AnnDbMap API Demo}
+%\VignetteIndexEntry{AnnDbBimap API Demo}
 %\VignetteDepends{hgu95av2.db}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
@@ -10,7 +10,7 @@
 \newcommand{\Rclass}[1]{{\textit{#1}}}
 
 
-\title{AnnDbMap API Demo}
+\title{AnnDbBimap API Demo}
 \author{Herve Pages, Nianhua Li, and Seth Falcon}
 
 \SweaveOpts{keep.source=TRUE}
@@ -24,10 +24,10 @@
 The \Rpackage{AnnotationDbi} package provides an interface to
 SQLite-based annotation packages.  Each SQLite-based annotation
 package (identified by a ``.db'' suffix in the package name) contains a
-number of \Rclass{AnnDbMap} objects in place of the \Rclass{environment}
+number of \Rclass{AnnDbBimap} objects in place of the \Rclass{environment}
 objects found in the old-style environment-based annotation packages.
 The API provided by \Rpackage{AnnotationDbi} allows you to treat the
-\Rclass{AnnDbMap} objects like \Rclass{environment} instances.  For
+\Rclass{AnnDbBimap} objects like \Rclass{environment} instances.  For
 example, the functions \verb+[[+, \Rfunction{get}, \Rfunction{mget},
 and \Rfunction{ls} all behave the same as with the old-style packages.
 In addition, we are experimenting with new generic functions
@@ -74,7 +74,7 @@ syms
 Many filtering operations on the annotation \Rclass{environment}
 objects require conversion of the \Rclass{environment} into a
 \Rclass{list}.  There is an \Rfunction{as.list} method for
-\Rclass{AnnDbMap} objects.  In general, converting to lists will not be
+\Rclass{AnnDbBimap} objects.  In general, converting to lists will not be
 the most efficient way to filter the annotation data when using a
 SQLite-based package.
 
@@ -234,10 +234,10 @@ allKEGGIds <- keys(revx)
 
 There are "undirected" methods related to these methods:
 <<moreUndirectedMethods>>=
-junk <- left.keys(x)    # same for all maps in hgu95av2.db (except pseudo-map
+junk <- left.keys(x)     # same for all maps in hgu95av2.db (except pseudo-map
                          # MAPCOUNTS)
 left.length(x)           # nb of left keys
-junk <- right.keys(x)   # KEGG ids for PATH/PATH2PROBE maps, GO ids for
+junk <- right.keys(x)    # KEGG ids for PATH/PATH2PROBE maps, GO ids for
                          # GO/GO2PROBE/GO2ALLPROBES maps, etc...
 right.length(x)          # nb of right keys
 @ 

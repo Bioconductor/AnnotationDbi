@@ -41,7 +41,7 @@ createAnnObjs <- function(class, seeds, seed0, envir=NULL)
     envir
 }
 
-createAnnDbMap <- function(seed, seed0)
+createAnnDbBimap <- function(seed, seed0)
 {
     for (slot in names(seed0)) {
         if (is.null(seed[slot][[1]]))
@@ -52,16 +52,16 @@ createAnnDbMap <- function(seed, seed0)
     do.call("new", seed)
 }
 
-createAnnDbMaps <- function(seeds, seed0, envir=NULL)
+createAnnDbBimaps <- function(seeds, seed0, envir=NULL)
 {
     if (is.null(envir))
         envir <- new.env(hash=TRUE, parent=emptyenv())
     for (seed in seeds)
-        envir[[seed$objName]] <- createAnnDbMap(seed, seed0)
+        envir[[seed$objName]] <- createAnnDbBimap(seed, seed0)
     envir
 }
 
-### 3 special maps that are not AnnDbMap objects (just named vectors).
+### 3 special maps that are not AnnDbBimap objects (just named vectors).
 
 createCHRLENGTHS <- function(conn)
 {

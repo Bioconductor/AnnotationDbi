@@ -16,7 +16,7 @@
 RODENTCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
-RODENTCHIP_DB_AnnDbMap_seeds <- list(
+RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
         Class="AtomicAnnDbBimap",
@@ -163,7 +163,7 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CHRLOC",
-        Class="AtomicAnnDbMap",
+        Class="AnnDbMap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
@@ -203,11 +203,11 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GO",
-        Class="Go3AnnDbMap",
+        Class="Go3AnnDbBimap",
         L2Rpath=list(
             RODENTCHIP_DB_L2Rbrick1,
             list(
-                #table="go_term", # no rightmost table for a Go3AnnDbMap
+                #table="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
                 Rcolname="go_id",
                 tagCols=c(Evidence="{evidence}", Ontology="NULL")
@@ -219,25 +219,23 @@ RODENTCHIP_DB_AnnDbMap_seeds <- list(
 
 createAnnObjs.RODENTCHIP_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AnnDbMap objects
+    ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(RODENTCHIP_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbBimap(RODENTCHIP_DB_AnnDbBimap_seeds, seed0)
 
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
-
-    ## RevGo3AnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
     map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
 
-    ## 2 special maps that are not AnnDbMap objects (just named integer vectors)
+    ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
@@ -254,7 +252,7 @@ createAnnObjs.RODENTCHIP_DB <- function(prefix, objTarget, conn, datacache)
 
 compareAnnDataIn2Pkgs.RODENTCHIP_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(RODENTCHIP_DB_AnnDbMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(RODENTCHIP_DB_AnnDbBimap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ALIAS2PROBE",
         "ENZYME2PROBE",

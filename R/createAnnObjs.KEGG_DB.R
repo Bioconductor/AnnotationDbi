@@ -14,7 +14,7 @@
 
 
 ### Mandatory fields: objName, Class and L2Rpath
-KEGG_DB_AnnDbMap_seeds <- list(
+KEGG_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PATHID2NAME",
         Class="AtomicAnnDbBimap",
@@ -52,20 +52,20 @@ KEGG_DB_AnnDbMap_seeds <- list(
 
 createAnnObjs.KEGG_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AnnDbMap objects
+    ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(KEGG_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbBimaps(KEGG_DB_AnnDbBimap_seeds, seed0)
 
     ## Reverse maps
     ann_objs$PATHNAME2ID <- revmap(ann_objs$PATHID2NAME, objName="PATHNAME2ID")
     ann_objs$EXTID2PATHID <- revmap(ann_objs$PATHID2EXTID, objName="EXTID2PATHID")
     ann_objs$GO2ENZYMEID <- revmap(ann_objs$ENZYMEID2GO, objName="GO2ENZYMEID")
 
-    ## 1 special map that is not an AnnDbMap object (just a named integer vector)
+    ## 1 special map that is not an AnnDbBimap object (just a named integer vector)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     prefixAnnObjNames(ann_objs, prefix)
@@ -73,7 +73,7 @@ createAnnObjs.KEGG_DB <- function(prefix, objTarget, conn, datacache)
 
 compareAnnDataIn2Pkgs.KEGG_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(KEGG_DB_AnnDbMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(KEGG_DB_AnnDbBimap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "PATHNAME2ID",
         "EXTID2PATHID",

@@ -14,10 +14,10 @@
 
 
 ### Mandatory fields: objName, Class and L2Rpath
-GO_DB_AnnDbMap_seeds <- list(
+GO_DB_AnnDbBimap_seeds <- list(
 #    list(
 #        objName="ENTREZID2GO",
-#        Class="GoAnnDbMap",
+#        Class="GoAnnDbBimap",
 #        L2Rpath=list(
 #            list(
 #                table="go_gene",
@@ -205,7 +205,7 @@ GO_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="TERM",
-        Class="GONodeAnnDbMap",
+        Class="GONodeAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_term",
@@ -224,7 +224,7 @@ GO_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="OBSOLETE",
-        Class="GONodeAnnDbMap",
+        Class="GONodeAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_obsolete",
@@ -248,7 +248,7 @@ GO_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="SYNONYM",
-        Class="GONodeAnnDbMap",
+        Class="GONodeAnnDbBimap",
         L2Rpath=list(
             list(
                 table="go_synonym",
@@ -275,13 +275,13 @@ GO_DB_AnnDbMap_seeds <- list(
 
 createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AnnDbMap objects
+    ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(GO_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbBimaps(GO_DB_AnnDbBimap_seeds, seed0)
 
     ## Reverse maps
     revmap2 <- function(from, to)
@@ -301,7 +301,7 @@ createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$CCOFFSPRING <- revmap2("CCANCESTOR", "CCOFFSPRING")
     ann_objs$MFOFFSPRING <- revmap2("MFANCESTOR", "MFOFFSPRING")
 
-    ## 1 special map that is not an AnnDbMap object (just a named integer vector)
+    ## 1 special map that is not an AnnDbBimap object (just a named integer vector)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     prefixAnnObjNames(ann_objs, prefix)

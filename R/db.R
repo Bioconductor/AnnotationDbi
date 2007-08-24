@@ -61,7 +61,7 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### L2Rbrick/L2Rpath manipulation.
 ###
-### AnnDbMap objects have an L2Rpath slot which must be a non-empty list of
+### AnnDbBimap objects have an L2Rpath slot which must be a non-empty list of
 ### L2Rbrick objects.
 ###
 

@@ -15,10 +15,10 @@
 ARABIDOPSISCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
-ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
+ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AtomicAnnDbMap",
+        Class="AgiAnnDbMap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -79,7 +79,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="MULTIHIT",
-        Class="AtomicAnnDbMap",
+        Class="AgiAnnDbMap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -128,7 +128,7 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CHRLOC",
-        Class="AtomicAnnDbMap",
+        Class="AnnDbMap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
@@ -142,11 +142,11 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GO",
-        Class="Go3AnnDbMap",
+        Class="Go3AnnDbBimap",
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                #table="go_term", # no rightmost table for a Go3AnnDbMap
+                #table="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
                 Rcolname="go_id",
                 tagCols=c(Evidence="{evidence}", Ontology="NULL")
@@ -158,28 +158,26 @@ ARABIDOPSISCHIP_DB_AnnDbMap_seeds <- list(
 
 createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AnnDbMap objects
+    ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(ARABIDOPSISCHIP_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbBimaps(ARABIDOPSISCHIP_DB_AnnDbBimap_seeds, seed0)
 
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
-
-    ## RevGo3AnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
     map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
 
-    ## Aliases for AnnDbMap objects
+    ## Some map aliases
     ann_objs$ENTREZID <- ann_objs$ACCNUM
 
-    ## 1 special map that is not an AnnDbMap object (just a named integer vector)
+    ## 1 special map that is not an AnnDbBimap object (just a named integer vector)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
@@ -190,7 +188,7 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
 
 compareAnnDataIn2Pkgs.ARABIDOPSISCHIP_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(ARABIDOPSISCHIP_DB_AnnDbMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(ARABIDOPSISCHIP_DB_AnnDbBimap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ENZYME2PROBE",
         "PATH2PROBE",

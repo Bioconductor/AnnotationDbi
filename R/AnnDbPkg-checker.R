@@ -18,7 +18,7 @@ checkProperty0 <- function(pkgname)
 {
     mths <- BimapAPI0_methods
     ## Temporary remove these 2 methods, they are not yet implemented
-    ## for AnnDbMap objects
+    ## for AnnDbBimap objects
     mths <- mths[!(mths %in% c("links", "count.links"))] # temporary removal
     ## First we check that there is a generic for all the expected BimapAPI0
     ## methods and that this generic has indeed a corresponding method for
@@ -38,7 +38,7 @@ checkProperty0 <- function(pkgname)
     pkgenv <- as.environment(paste("package", pkgname, sep=":"))
     for (objname in ls(pkgenv)) {
         x <- pkgenv[[objname]]
-        if (!is(x, "AnnDbMap"))
+        if (!is(x, "AnnDbBimap"))
             next
         cat("Testing BimapAPI0 methods on object '", objname, "':\n", sep="")
         for (FUN in mths) {

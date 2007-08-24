@@ -16,7 +16,7 @@
 YEAST_DB_L2Rbrick1 <- list(table="sgd", Lcolname="systematic_name", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
-YEAST_DB_AnnDbMap_seeds <- list(
+YEAST_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ALIAS",
         Class="AtomicAnnDbBimap",
@@ -43,7 +43,7 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CHRLOC",
-        Class="AtomicAnnDbMap",
+        Class="AnnDbMap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
@@ -116,11 +116,11 @@ YEAST_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="GO",
-        Class="Go3AnnDbMap",
+        Class="Go3AnnDbBimap",
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                #table="go_term", # no rightmost table for a Go3AnnDbMap
+                #table="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
                 Rcolname="go_id",
                 tagCols=c(Evidence="{evidence}", Ontology="NULL")
@@ -179,25 +179,23 @@ YEAST_DB_AnnDbMap_seeds <- list(
 
 createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
 {
-    ## AnnDbMap objects
+    ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbMaps(YEAST_DB_AnnDbMap_seeds, seed0)
+    ann_objs <- createAnnDbBimaps(YEAST_DB_AnnDbBimap_seeds, seed0)
 
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
-
-    ## RevGo3AnnDbMap objects
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
     map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
 
-    ## 3 special maps that are not AnnDbMap objects (just named vectors)
+    ## 3 special maps that are not AnnDbBimap objects (just named vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
     ann_objs$REJECTORF <- createREJECTORF(conn)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
@@ -210,7 +208,7 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
 
 compareAnnDataIn2Pkgs.YEAST_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
-    direct_maps <- sapply(YEAST_DB_AnnDbMap_seeds, function(x) x$objName)
+    direct_maps <- sapply(YEAST_DB_AnnDbBimap_seeds, function(x) x$objName)
     reverse_maps <- c(
         "ENZYME2PROBE",
         "PATH2PROBE",

@@ -35,5 +35,5 @@ setGeneric("left.table", function(x) standardGeneric("left.table"))
 setGeneric("revmap", signature="x", function(x, objName=NULL) standardGeneric("revmap"))
 setGeneric("right.filter", function(x) standardGeneric("right.filter"))
 setGeneric("right.table", function(x) standardGeneric("right.table"))
-setGeneric("toTable", function(x, ...) standardGeneric("toTable"))
+setGeneric("toTable", signature="x", function(x, left.keys=NULL, right.keys=NULL) standardGeneric("toTable"))
 

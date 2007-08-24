@@ -11,30 +11,17 @@ exportClasses(
     ## from R/AllClasses.R
     "BimapAPI0",
     "FlatBimap",
-    "L2Rbrick",
     "AnnDbObj",
     "AnnDbTable",
-
-    ## Old classes (should go away soon)
-    "AnnDbMap",
-    "RevAnnDbMap",
-    "AtomicAnnDbMap",
-    "RevAtomicAnnDbMap",
-    "IpiAnnDbMap",
-    "GoAnnDbMap",
-    "RevGoAnnDbMap",
-    "Go3AnnDbMap",
-    "RevGo3AnnDbMap",
-    "GONodeAnnDbMap",
-    "RevGONodeAnnDbMap",
-
-    ## New classes
+    "L2Rbrick",
     "AnnDbBimap",
     "AtomicAnnDbBimap",
-    "IpiAnnDbBimap",
     "GoAnnDbBimap",
     "Go3AnnDbBimap",
     "GONodeAnnDbBimap",
+    "AnnDbMap",
+    "IpiAnnDbMap",
+    "AgiAnnDbMap",
 
     ## from R/AnnDbPkg-maker.R
     "AnnDbPkgSeed"
