@@ -37,7 +37,7 @@
 ###      method and a right method.
 ###
 ### The environment-like API for AnnDbBimap objects (ls, mget, etc...) is defined
-### in the AnnDbMap-envirAPI.R file.
+### in the AnnDbBimap-envirAPI.R file.
 ###
 ### -------------------------------------------------------------------------
 

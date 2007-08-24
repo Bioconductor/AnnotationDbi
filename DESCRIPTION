@@ -16,7 +16,7 @@ Collate: 00RTobjs.R
          GONode.R
          db.R
          AnnDbObj-lowAPI.R
-         AnnDbMap-envirAPI.R
+         AnnDbBimap-envirAPI.R
          createAnnObjs-utils.R
          createAnnObjs.HUMANCHIP_DB.R
          createAnnObjs.RODENTCHIP_DB.R
