@@ -19,7 +19,7 @@ HUMANCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id
 HUMANCHIP_DB_AnnDbMap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
                 table="probes",
@@ -30,7 +30,7 @@ HUMANCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
@@ -42,7 +42,7 @@ HUMANCHIP_DB_AnnDbMap_seeds <- list(
     ),
     list(
         objName="ENTREZID",
-        Class="AtomicAnnDbMap",
+        Class="AtomicAnnDbBimap",
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(

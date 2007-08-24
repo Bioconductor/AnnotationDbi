@@ -202,9 +202,9 @@ as.list(revx, "00300")
 @ 
 
 Note that the order of the cols returned by \Rfunction{toTable} does
-not depend on the orientation of the map ("unoriented method"):
+not depend on the direction of the map ("undirected method"):
 
-<<unorientedMethod>>=
+<<undirectedMethod>>=
 toTable(x)[1:6, ]
 toTable(revx)[1:6, ]
 @ 
@@ -222,18 +222,18 @@ as.list(hgu95av2PFAM, "1000_at")
 
 But the right keys are ALWAYS in the 2nd col.
 
-For length() and keys(), the result does depend on the orientation
-("oriented methods"):
+For length() and keys(), the result does depend on the direction
+("directed methods"):
 
-<<orientedMethods>>=
+<<directedMethods>>=
 length(x)
 length(revx)
 allProbeSetIds <- keys(x)
 allKEGGIds <- keys(revx)
 @ 
 
-There are "unoriented" methods related to these methods:
-<<moreUnorientedMethods>>=
+There are "undirected" methods related to these methods:
+<<moreUndirectedMethods>>=
 junk <- left.keys(x)    # same for all maps in hgu95av2.db (except pseudo-map
                          # MAPCOUNTS)
 left.length(x)           # nb of left keys

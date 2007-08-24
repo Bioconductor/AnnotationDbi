@@ -14,6 +14,8 @@ exportClasses(
     "L2Rbrick",
     "AnnDbObj",
     "AnnDbTable",
+
+    ## Old classes (should go away soon)
     "AnnDbMap",
     "RevAnnDbMap",
     "AtomicAnnDbMap",
@@ -25,6 +27,14 @@ exportClasses(
     "RevGo3AnnDbMap",
     "GONodeAnnDbMap",
     "RevGONodeAnnDbMap",
+
+    ## New classes
+    "AnnDbBimap",
+    "AtomicAnnDbBimap",
+    "IpiAnnDbBimap",
+    "GoAnnDbBimap",
+    "Go3AnnDbBimap",
+    "GONodeAnnDbBimap",
 
     ## from R/AnnDbPkg-maker.R
     "AnnDbPkgSeed"
@@ -44,10 +54,14 @@ exportMethods(
     ## BimapAPI0 interface
     "collabels",
     "colnames",
+    "direction",
+    "direction<-",
     "left.keys", "right.keys",
     "left.mappedKeys", "right.mappedKeys",
     "nrow",
     "links",
+    "subset",
+    "left.toList", "right.toList",
     "left.length", "right.length",
     "count.left.mappedKeys", "count.right.mappedKeys",
     "count.links",
@@ -56,6 +70,11 @@ exportMethods(
     "from.colpos", "to.colpos", "tags.colpos",
     "from.keys", "to.keys",
     "dim",
+    "keys",
+    "length",
+    "mappedKeys",
+    "count.mappedKeys",
+    "toList",
 
     ## FlatBimap methods
     "head",
@@ -67,12 +86,7 @@ exportMethods(
     "left.table", "right.table",
     "left.filter", "right.filter",
     "flatten", "toTable",
-    "keys",
-    "length",
     "as.character",
-    "toList",
-    "mappedKeys",
-    "count.mappedKeys",
     "is.na",
 
     ## from R/AnnDbMap-envirAPI.R

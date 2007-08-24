@@ -175,3 +175,42 @@ setClass("GONodeAnnDbMap", contains="AnnDbMap")
 ### DON'T ADD ANY SLOT HERE! (Why? See "RevAtomicAnnDbMap" def above.)
 setClass("RevGONodeAnnDbMap", contains=c("RevAnnDbMap", "GONodeAnnDbMap"))
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "AnnDbBimap" class and subclasses.
+###
+
+setClass("AnnDbBimap",
+    contains=c("AnnDbObj", "BimapAPI0"),
+    representation(
+        L2Rpath="list",             # list of L2Rbrick objects
+        direction="integer",        # 1L for left-to-right, -1L for right-to-left
+                                    # and 0L for undirected
+        rightColType="character"    # needs to go away
+    ),
+    prototype(
+        direction=1L                # left-to-right by default
+    )
+)
+
+setClass("AtomicAnnDbBimap",
+    contains="AnnDbBimap",
+    representation(
+        replace.single="character",
+        replace.multiple="character"
+    )
+)
+
+setClass("IpiAnnDbBimap", contains="AnnDbBimap")
+
+setClass("GoAnnDbBimap", contains="AnnDbBimap")
+
+setClass("Go3AnnDbBimap",
+    contains="GoAnnDbBimap",
+    representation(
+        rightTables="character"
+    )
+)
+
+setClass("GONodeAnnDbBimap", contains="AnnDbBimap")
+

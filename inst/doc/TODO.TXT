@@ -76,12 +76,12 @@ table for a reverse map), then x1 and x2 are "pluggable".
 c(x1, x2), the result of the "plug" operation, is a map that goes from
 from.table(x1) to to.table(x2).
 But this would require to introduce a new class for representing
-"unoriented" maps because c(x1, x2) can't be considered oriented
-anymore (in general). An unoriented map would have from/to slots
+"undirected" maps because c(x1, x2) can't be considered directed
+anymore (in general). An undirected map would have from/to slots
 (fromTable, fromCol, toTable, toCol) instead of left/right slots
 (leftTable, leftCol, rightTable, rightCol). Also the L2Rjoin slot
 would need to be renamed to something like fromtoJoin.
-If x1 and x2 are 2 "unoriented" maps then all we need to do for
+If x1 and x2 are 2 "undirected" maps then all we need to do for
 x <- c(x1, x2) is:
     x@fromTable <- x1@fromTable
     x@toTable <- x2@toTable
@@ -89,15 +89,15 @@ x <- c(x1, x2) is:
 Note that this formula for combining the 2 fromtoJoin slots is really
 simple thanks to the new format of this slot (see "The 'join' slot" section).
 
-The class representing "unoriented" maps would not be part of the current
+The class representing "undirected" maps would not be part of the current
 AnnDbMap hierarchy. It could be called GenericMap or SimpleMap or something
 like that, would behave close to current AtomicAnnDbMap (hence could be called
-AtomicMap too) except that it's unoriented (of course), doesn't
+AtomicMap too) except that it's undirected (of course), doesn't
 have left/right methods but from/to methods instead, and... (?)
 Then we also need to be able to convert an AtomicAnnDbMap (or
 RevAtomicAnnDbMap) object to a GenericMap object (no conversion
 from GenericMap to AtomicAnnDbMap or RevAtomicAnnDbMap, once a map has lost
-its orientation, it's lost forever). Conversion from Go3AnnDbMap (or
+its direction, it's lost forever). Conversion from Go3AnnDbMap (or
 RevGo3AnnDbMap) to GenericMap seems hard to achieve because of the
 current DB schema where we have 3 right tables for those maps.
 

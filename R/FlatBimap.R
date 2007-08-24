@@ -49,41 +49,75 @@
 ### The "BimapAPI0" interface
 ### -------------------------
 ###
-### This is the common interface to FlatBimap and to AnnDbMap objects.
-### The "flatten" method defined in AnnDbObj-lowAPI.R plays a central role:
-### it transforms a AnnDbMap object into a FlatBimap.
-###
-### The BimapAPI0 interface must always satisfy Property0:
-###   if x is a AnnDbMap object, f1 a BimapAPI0 method for FlatBimap objects
-###   and f2 the corresponding method for AnnDbMap objects then f2(x) is
-###   expected to return _exactly_ the same thing as f1(flatten(x)).
-### 
+### A FlatBimap object is a bimap whose data (left keys, right keys and
+### links) are stored in memory (in a data frame for the links).
+### A AnnDbBimap object is a bimap whose data are stored in a data base.
+### Conceptually, a FlatBimap and a AnnDbBimap object are the same (only
+### their internal representation differ) so it's natural to try to define
+### a set of methods that make sense for the two types of bimaps so they can
+### be manipulated in a very similar way.
+### However, there is an important asymetry between these two classes:
+###   A AnnDbBimap object can be converted into a FlatBimap object
+###   but a FlatBimap object can't be converted into an AnnDbBimap
+###   object (well, in theory maybe it could be, but for now the data bases
+###   we use to store the data of the AnnDbBimap objects are treated as
+###   read-only). The "flatten" methods (defined for AnnDbBimap objects only)
+###   does the conversion from AnnDbBimap to FlatBimap.
+### The "BimapAPI0" interface is the common interface between FlatBimap and
+### AnnDbBimap objects. The "flatten" method (defined for AnnDbBimap objects
+### only) and the "subset" method (defined for AnnDbBimap and FlatBimap
+### objects) play the following central roles:
+###   1. When used with no extra argument, flatten(x) converts AnnDbBimap
+###      object x into FlatBimap object y with no loss of information.
+###   2. If x is an AnnDbBimap object and f a BimapAPI0 generic, then f is
+###      expected "to do the same thing" for AnnDbBimap and FlatBimap objects.
+###      More precisely, this means that for any AnnDbBimap object x, we
+###      expect f(x) to be identical to f(flatten(x)). We call this property
+###      Property0.
 ### The checkProperty0() function (AnnDbPkg-checker.R file) checks that
-### Property0 is satisfied on all the AnnDbMap objects of a given package.
+### Property0 is satisfied on all the AnnDbBimap objects defined in a given
+### package.
+### Both AnnDbBimap and FlatBimap objects have a read-only semantic: the user
+### can subset them but cannot change their data.
+### More on "subset" later...
 ###
 
 
 ### KEEP THIS IN SYNC WITH THE STATE OF AFFAIRS! Only methods of the first and
 ### second group go here.
 BimapAPI0_methods <- c(
-    ## GROUP 1: 8 methods that _must_ be defined for the FlatBimap objects and
-    ## the AnnDbMap objects (or extensions)
+    ## GROUP 1: 8 methods that _must_ be defined for FlatBimap objects
+    ## _and_ AnnDbBimap objects
     "collabels",
     "colnames",
+    "direction",
+    "direction<-",
     "left.keys", "right.keys",
     "left.mappedKeys", "right.mappedKeys",
     "nrow",
     "links",
-    ## GROUP 2: Methods for which a default is provided (below) but that are
-    ## redefined for the AnnDbMap objects to obtain better performance
+    "subset",
+    "left.toList", "right.toList",
+    ## GROUP 2: Methods for which a default is provided (in this file) but
+    ## some of them are redefined for AnnDbBimap objects to obtain better
+    ## performance
     "left.length", "right.length",
     "count.left.mappedKeys", "count.right.mappedKeys",
     "count.links",
-    "left.colname", "right.colname"
+    "left.colname", "right.colname",
+    ## GROUP 3: Directed methods (i.e. what they return depends on the
+    ## direction of the map). All what they do is to dispatch on the
+    ## corresponding undirected method according to the value of direction(x)
+    "keys",
+    "length",
+    "mappedKeys",
+    "count.mappedKeys",
+    "toList"
 )
- 
-setClass("BimapAPI0", representation("VIRTUAL"))
 
+### A virtual class with no slot (a kind of equivalent to what is called an
+### "interface" in Java)
+setClass("BimapAPI0", representation("VIRTUAL"))
 
 setMethod("left.length", "BimapAPI0",
     function(x) length(left.keys(x)))
@@ -119,9 +153,9 @@ setMethod("right.colname", "BimapAPI0",
     function(x) colnames(x)[from.colpos(x, -1)])
 
 ### FIXME
-### For now, tags and attributes are all mixed together which bad and will
+### For now, tags and attributes are all mixed together which is bad and will
 ### cause problems when reversing some maps or when plugging maps together.
-### We need to make the distinction between tags and attributes but this
+### We need to make a clear distinction between tags and attributes but this
 ### will require to change the current L2Rbrick class and make things more
 ### complicated...
 setMethod("tags.colpos", "BimapAPI0",
@@ -134,6 +168,55 @@ setMethod("to.keys", "BimapAPI0",
 
 setMethod("dim", "BimapAPI0",
     function(x) c(nrow(x), ncol(x)))
+
+### Directed methods
+
+.DIRECTION_STR2INT <- c("left-to-right"=1L, "right-to-left"=-1L, "undirected"=0L)
+
+.normalize.direction <- function(direction)
+{
+    if ((!is.numeric(direction) && !is.character(direction))
+     || length(direction) != 1 || is.na(direction))
+        stop("'direction' must be a single (non-NA) integer or string")
+    if (is.character(direction)) {
+        direction <- match.arg(tolower(direction), names(.DIRECTION_STR2INT))
+        return(do.call("switch", c(EXPR=direction, as.list(.DIRECTION_STR2INT))))
+    }
+    if (!(direction %in% .DIRECTION_STR2INT))
+        stop("when a numeric value, 'direction' should be one of 1, -1 or 0")
+    as.integer(direction)
+}
+
+setMethod("keys", "BimapAPI0",
+    function(x)
+        switch(as.character(direction(x)),
+                "1"=left.keys(x),
+               "-1"=right.keys(x))
+)
+setMethod("length", "BimapAPI0",
+    function(x)
+        switch(as.character(direction(x)),
+                "1"=left.length(x),
+               "-1"=right.length(x))
+)
+setMethod("mappedKeys", "BimapAPI0",
+    function(x)
+        switch(as.character(direction(x)),
+                "1"=left.mappedKeys(x),
+               "-1"=right.mappedKeys(x))
+)
+setMethod("count.mappedKeys", "BimapAPI0",
+    function(x)
+        switch(as.character(direction(x)),
+                "1"=count.left.mappedKeys(x),
+               "-1"=count.right.mappedKeys(x))
+)
+setMethod("toList", "BimapAPI0",
+    function(x, keys=NULL)
+        switch(as.character(direction(x)),
+                "1"=left.toList(x, keys),
+               "-1"=right.toList(x, keys))
+)
 
 
 
@@ -151,25 +234,29 @@ setClass("FlatBimap",
     contains="BimapAPI0",
     representation(
         collabels="character",   # must have the same length as the 'data' slot
+        direction="integer",
         data="data.frame",
         left.keys="character",
         right.keys="character"
     ),
     prototype(
+        direction=1L,            # left-to-right by default
         left.keys=as.character(NA),
         right.keys=as.character(NA)
     )
 )
 
 setMethod("initialize", "FlatBimap",
-    function(.Object, collabels, data, left.keys, right.keys)
+    function(.Object, collabels, direction, data, left.keys, right.keys)
     {
         if (missing(collabels)) {
-            collabels <- rep(NA, ncol(data))
+            collabels <- rep(as.character(NA), ncol(data))
             collabels[1] <- "left"
             collabels[2] <- "right"
         }
         .Object@collabels <- collabels
+        if (!missing(direction))
+            .Object@direction <- .normalize.direction(direction)
         .Object@data <- data
         if (length(left.keys) != 1 || !is.na(left.keys))
             .Object@left.keys <- left.keys
@@ -189,6 +276,16 @@ setMethod("collabels", "FlatBimap",
 
 setMethod("colnames", "FlatBimap",
     function(x, do.NULL=TRUE, prefix="col") colnames(x@data))
+
+setMethod("direction", "FlatBimap",
+    function(x) x@direction)
+setReplaceMethod("direction", "FlatBimap",
+    function(x, value)
+    {
+        x@direction <- .normalize.direction(value)
+        x
+    }
+)
 
 setMethod("left.keys", "FlatBimap",
     function(x) x@left.keys)
@@ -244,6 +341,8 @@ setMethod("show", "FlatBimap",
         cat("\"", class(object), "\" object:\n\n", sep="")
         c2l <- data.frame(COLNAME=colnames(object), LABEL=object@collabels)
         show(c2l)
+        direction <- names(.DIRECTION_STR2INT)[.DIRECTION_STR2INT == direction]
+        cat("\ndirection: ", direction, sep="")
         cat("\ndata:\n")
         if (nrow(object) <= 20) {
             show(object@data)
@@ -257,9 +356,110 @@ setMethod("show", "FlatBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### 2 functions for folding and formatting FlatBimap objects.
+### The "subset" method.
 ###
 
+.checkKeys <- function(keys, all.keys)
+{
+    if (!is.character(keys))
+        stop("keys must be character strings")
+    not_found <- which(!(keys %in% all.keys))
+    if (length(not_found) != 0)
+        stop("invalid key \"", keys[not_found[1]], "\"")
+}
+
+setMethod("subset", "FlatBimap",
+    function(x, left.keys=NULL, right.keys=NULL)
+    {
+        lii <- rii <- TRUE
+        if (!is.null(left.keys)) {
+            .checkKeys(left.keys, left.keys(x))
+            x@left.keys <- left.keys
+            lii <- x@data[[1]] %in% left.keys
+        }
+        if (!is.null(right.keys)) {
+            .checkKeys(right.keys, right.keys(x))
+            x@right.keys <- right.keys
+            rii <- x@data[[2]] %in% right.keys
+        }
+        cn <- colnames(x@data)
+        x@data <- x@data[lii & rii, ]
+        colnames(x@data) <- cn
+        x
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "left.toList" and "right.toList" methods.
+###
+
+.alignAnnList <- function(x, keys)
+{
+    y <- l2e(x)
+    key2val <- function(key)
+    {
+        val <- y[[key]]
+        if (is.null(val)) {
+            val <- NA
+        } else if (class(val) == "data.frame") {
+            row.names(val) <- NULL
+        }
+        val
+    }
+    names(keys) <- keys
+    lapply(keys, key2val)
+}
+
+setMethod("left.toList", "FlatBimap",
+    function(x, keys=NULL)
+    {
+        if (!is.null(keys) && length(keys) == 0)
+            return(list())
+        if (nrow(x@data) == 0) {
+            ann_list <- list()
+        } else {
+            data1 <- x@data[ , -1]
+            if (length(x@rightColType) == 1
+             && typeof(data1[[1]]) != x@rightColType) {
+                converter <- get(paste("as.", x@rightColType, sep=""))
+                data1[[1]] <- converter(data1[[1]])
+            }
+            ann_list <- split(data1, x@data[[1]])
+        }
+        if (is.null(keys))
+            keys <- keys(x)
+        .alignAnnList(ann_list, keys)
+    }
+)
+
+setMethod("right.toList", "FlatBimap",
+    function(x, keys=NULL)
+    {
+        if (!is.null(keys) && length(keys) == 0)
+            return(list())
+        data0 <- flatten(x, left.keys=NA, right.keys=keys)@data
+        if (!is.null(keys) && !all(keys %in% data0[[2]])) # could also use [[right.colname(x)]]
+            .checkKeysExist(keys, keys(x))
+        if (nrow(data0) == 0) {
+            ann_list <- list()
+        } else {
+            ## Just to make sure that flatten() is not broken
+            if (!identical(names(data0)[1:2], c(left.colname(x), right.colname(x))))
+                stop("annotationDbi internal problem, please report to the maintainer")
+            data2 <- data0[ , -2]
+            ann_list <- split(data2, data0[[2]])
+        }
+        if (is.null(keys))
+            keys <- keys(x)
+        alignAnnList(ann_list, keys)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### 2 functions for folding and formatting FlatBimap objects.
+###
 
 ### The "foldListOfAtomicVectors" function.
 foldListOfAtomicVectors <- function(x, direction, FUN)
@@ -297,7 +497,7 @@ foldListOfAtomicVectors <- function(x, direction, FUN)
 ###
 ### Arguments:
 ###
-### 'direction': 1 for left-to-right and 2 for right-to-left
+### 'direction': 1 for left-to-right and -1 for right-to-left
 ###
 ### 'mode': 3 modes are supported:
 ###         mode 1: mono-valued map

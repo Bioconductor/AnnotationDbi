@@ -29,9 +29,9 @@
 ###        count.left.mappedKeys, count.right.mappedKeys, count.mappedKeys,
 ###        is.na
 ###      NB: "keys", "length", "mappedKeys" and "count.mappedKeys" are
-###      "oriented" methods i.e. they give a different result on a map and its
-###      "reverse" map (this result depends on the orientation of the map).
-###      For each of these methods, there are 2 "unoriented" methods: a left
+###      "directed" methods i.e. they give a different result on a map and its
+###      "reverse" map (this result depends on the direction of the map).
+###      For each of these methods, there are 2 "undirected" methods: a left
 ###      method and a right method.
 ###
 ### The environment-like API for AnnDbMap objects (ls, mget, etc...) is defined
@@ -114,13 +114,21 @@ setMethod("db", "AnnDbObj", function(object) object@conn)
 
 setMethod("left.table", "AnnDbMap",
     function(x) L2Rpath.leftmostTable(x@L2Rpath))
+setMethod("left.table", "AnnDbBimap",
+    function(x) L2Rpath.leftmostTable(x@L2Rpath))
 setMethod("right.table", "AnnDbMap",
+    function(x) L2Rpath.rightmostTable(x@L2Rpath))
+setMethod("right.table", "AnnDbBimap",
     function(x) L2Rpath.rightmostTable(x@L2Rpath))
 setMethod("right.table", "Go3AnnDbMap", function(x) x@rightTables)
 
 setMethod("left.filter", "AnnDbMap",
     function(x) L2Rpath.leftmostFilter(x@L2Rpath))
+setMethod("left.filter", "AnnDbBimap",
+    function(x) L2Rpath.leftmostFilter(x@L2Rpath))
 setMethod("right.filter", "AnnDbMap",
+    function(x) L2Rpath.rightmostFilter(x@L2Rpath))
+setMethod("right.filter", "AnnDbBimap",
     function(x) L2Rpath.rightmostFilter(x@L2Rpath))
 
 
@@ -137,6 +145,7 @@ setMethod("right.filter", "AnnDbMap",
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "collabels" and "colnames" methods.
+### FIXME: All methods for AnnDbMap objects should go away soon!
 
 setMethod("collabels", "AnnDbMap",
     function(x) L2Rpath.collabels(x@L2Rpath))
@@ -144,6 +153,46 @@ setMethod("collabels", "AnnDbMap",
 setMethod("colnames", "AnnDbMap",
     function(x, do.NULL=TRUE, prefix="col")
         L2Rpath.colnames(x@L2Rpath))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "collabels", "colnames", "direction" and "revmap" methods.
+###
+
+setMethod("collabels", "AnnDbBimap",
+    function(x) L2Rpath.collabels(x@L2Rpath))
+
+setMethod("colnames", "AnnDbBimap",
+    function(x, do.NULL=TRUE, prefix="col")
+        L2Rpath.colnames(x@L2Rpath))
+
+setMethod("direction", "AnnDbBimap",
+    function(x) x@direction)
+setReplaceMethod("direction", "AnnDbBimap",
+    function(x, value)
+    {
+        if (is(x, "IpiAnnDbBimap"))
+            stop("changing the direction of an IpiAnnDbBimap object is not supported")
+        direction <- .normalize.direction(value)
+        if (direction == 0)
+            stop("undirected AnnDbBimap objects are not supported")
+        if (direction != x@direction) {
+            x@objName <- paste("revmap(", x@objName, ")", sep="")
+            x@direction <- direction
+        }
+        x
+    }
+)
+
+setMethod("revmap", "AnnDbBimap",
+    function(x, objName=NULL)
+    {
+        direction(x) <- - direction(x)
+        if (!is.null(objName))
+            x@objName <- toString(objName)
+        x
+    }
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -172,6 +221,10 @@ setMethod("nrow", "AnnDbTable",
 setMethod("nrow", "AnnDbMap",
     function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
 )
+setMethod("nrow", "AnnDbBimap",
+    function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
+)
+
 
 setMethod("nrow", "Go3AnnDbMap",
     function(x)
@@ -198,8 +251,22 @@ setMethod("left.keys", "AnnDbMap",
                             left.filter(x), x@datacache)
     }
 )
+setMethod("left.keys", "AnnDbBimap",
+    function(x)
+    {
+        dbUniqueVals(db(x), left.table(x), left.colname(x),
+                            left.filter(x), x@datacache)
+    }
+)
 
 setMethod("right.keys", "AnnDbMap",
+    function(x)
+    {
+        dbUniqueVals(db(x), right.table(x), right.colname(x),
+                            right.filter(x), x@datacache)
+    }
+)
+setMethod("right.keys", "AnnDbBimap",
     function(x)
     {
         dbUniqueVals(db(x), right.table(x), right.colname(x),
@@ -240,8 +307,22 @@ setMethod("left.length", "AnnDbMap",
                                  left.filter(x), x@datacache)
     }
 )
+setMethod("left.length", "AnnDbBimap",
+    function(x)
+    {
+        dbCountUniqueVals(db(x), left.table(x), left.colname(x),
+                                 left.filter(x), x@datacache)
+    }
+)
 
 setMethod("right.length", "AnnDbMap",
+    function(x)
+    {
+        dbCountUniqueVals(db(x), right.table(x), right.colname(x),
+                                 right.filter(x), x@datacache)
+    }
+)
+setMethod("right.length", "AnnDbBimap",
     function(x)
     {
         dbCountUniqueVals(db(x), right.table(x), right.colname(x),
@@ -283,14 +364,26 @@ setMethod("length", "RevAnnDbMap", function(x) right.length(x))
 setMethod("left.mappedKeys", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
+setMethod("left.mappedKeys", "AnnDbBimap",
+    function(x) dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+)
 setMethod("count.left.mappedKeys", "AnnDbMap",
+    function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+)
+setMethod("count.left.mappedKeys", "AnnDbBimap",
     function(x) dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
 )
 
 setMethod("right.mappedKeys", "AnnDbMap",
     function(x) dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
 )
+setMethod("right.mappedKeys", "AnnDbBimap",
+    function(x) dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+)
 setMethod("count.right.mappedKeys", "AnnDbMap",
+    function(x) dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+)
+setMethod("count.right.mappedKeys", "AnnDbBimap",
     function(x) dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
 )
 
@@ -371,7 +464,7 @@ setMethod("count.mappedKeys", "environment", function(x) length(mappedKeys(x)))
 ### Note that because we use the same JOIN for a map and its corresponding
 ### "reverse" map (this is made possible thanks to the use of INNER joins),
 ### then the result returned by "flatten" or "nrow" does not depend on the
-### orientation (direct/reverse) of the map which is a nice property
+### direction (direct/reverse) of the map which is a nice property
 ### (e.g. 'nrow(map) == nrow(revmap(map))').
 ###
 ### The 'left.keys' and 'right.keys' args can be one of the following:
@@ -408,8 +501,26 @@ setMethod("flatten", "AnnDbMap",
             left.keys <- left.keys(x)
         if (is.null(right.keys))
             right.keys <- right.keys(x)
-        new("FlatBimap", collabels=collabels(x), data=data0,
-                         left.keys=left.keys, right.keys=right.keys)
+        new("FlatBimap", collabels=collabels(x), direction=0,
+                         data=data0, left.keys=left.keys, right.keys=right.keys)
+    }
+)
+setMethod("flatten", "AnnDbBimap",
+    function(x, left.keys, right.keys, extra.colnames=NULL, verbose=FALSE)
+    {
+        if (missing(left.keys))
+            left.keys <- NULL
+        if (missing(right.keys))
+            right.keys <- NULL
+        data0 <- dbSelectFromL2Rpath(db(x), x@L2Rpath,
+                                     left.keys, right.keys,
+                                     extra.colnames, verbose)
+        if (is.null(left.keys))
+            left.keys <- left.keys(x)
+        if (is.null(right.keys))
+            right.keys <- right.keys(x)
+        new("FlatBimap", collabels=collabels(x), direction=direction(x),
+                         data=data0, left.keys=left.keys, right.keys=right.keys)
     }
 )
 
@@ -445,8 +556,8 @@ setMethod("flatten", "Go3AnnDbMap",
             left.keys <- left.keys(x)
         if (is.null(right.keys))
             right.keys <- right.keys(x)
-        new("FlatBimap", collabels=collabels(x), data=data0,
-                         left.keys=left.keys, right.keys=right.keys)
+        new("FlatBimap", collabels=collabels(x), direction=0,
+                         data=data0, left.keys=left.keys, right.keys=right.keys)
     }
 )
 
@@ -474,6 +585,14 @@ setMethod("show", "AnnDbTable",
 )
 
 setMethod("show", "AnnDbMap",
+    function(object)
+    {
+        cat(object@objName, " map for ", object@objTarget,
+            " (object of class \"", class(object), "\")\n", sep="")
+    }
+)
+
+setMethod("show", "AnnDbBimap",
     function(object)
     {
         cat(object@objName, " map for ", object@objTarget,
@@ -617,6 +736,33 @@ setMethod("toList", "RevAnnDbMap",
         alignAnnList(ann_list, keys)
     }
 )
+
+setMethod("toList", "AnnDbBimap",
+    function(x, keys=NULL)
+    {
+        if (!is.null(keys) && length(keys) == 0)
+            return(list())
+        data0 <- flatten(x, left.keys=keys, right.keys=NA)@data
+        if (nrow(data0) == 0) {
+            ann_list <- list()
+        } else {
+            ## Just to make sure that flatten() is not broken
+            if (!identical(names(data0)[1:2], c(left.colname(x), right.colname(x))))
+                stop("annotationDbi internal problem, please report to the maintainer")
+            data1 <- data0[ , -1]
+            if (length(x@rightColType) == 1
+             && typeof(data1[[1]]) != x@rightColType) {
+                converter <- get(paste("as.", x@rightColType, sep=""))
+                data1[[1]] <- converter(data1[[1]])
+            }
+            ann_list <- split(data1, data0[[1]])
+        }
+        if (is.null(keys))
+            keys <- keys(x)
+        alignAnnList(ann_list, keys)
+    }
+)
+
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
