@@ -253,14 +253,17 @@ Using revmap can be very efficient in some use cases:
 <<revmapUseCases>>=
 x <- hgu95av2CHR
 right.keys(x)
-chroms <- right.keys(x)[24:25]
+chroms <- c("19", "Y")
+chroms <- right.keys(x)[23:24]
 chroms
 toTable(x, , chroms)[1:10, ]
 @ 
 
 To get this in the classic named-list format:
 <<easy>>=
-as.list(revmap(x), chroms)
+z <- as.list(revmap(x), chroms)
+names(z)
+z[["Y"]][1:5]
 @ 
 
 Compare to what you need to do this with the current envir-based package:
