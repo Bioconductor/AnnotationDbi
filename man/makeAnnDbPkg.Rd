@@ -24,14 +24,17 @@
   }
   \item{db_file}{
     The path to the SQLite containing the annotation data for the package
-    to be built.
+    to build.
   }
   \item{dest_dir}{
     The directory where the package will be created.
   }
   \item{file}{
-    The path to a DCF file containing the list of annotation package
+    The path to a DCF file containing the list of annotation packages
     to build.
+  }
+  \item{no.man}{
+    If \code{TRUE} then no man page is included in the package.
   }
   \item{...}{
     Extra args used for extra filtering.
