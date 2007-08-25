@@ -87,7 +87,7 @@ L2Rbrick <- function(...) new("L2Rbrick", ...)
 setMethod("toString", "L2Rbrick",
     function(x)
     {
-        paste("{", x@Lcolname, "}", x@table, "{", x@Rcolname, "}", sep="")
+        paste("{", x@Lcolname, "}", x@tablename, "{", x@Rcolname, "}", sep="")
     }
 )
 
@@ -123,13 +123,13 @@ L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
 
 .L2Rpath.toString <- function(L2Rpath) paste(sapply(L2Rpath, toString), collapse="-")
 
-L2Rpath.leftmostTable <- function(L2Rpath) L2Rpath[[1]]@table
-L2Rpath.rightmostTable <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@table
+L2Rpath.Ltablename <- function(L2Rpath) L2Rpath[[1]]@tablename
+L2Rpath.Rtablename <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@tablename
 
-L2Rpath.leftmostColname <- function(L2Rpath) L2Rpath[[1]]@Lcolname
-L2Rpath.rightmostColname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@Rcolname
+L2Rpath.Lcolname <- function(L2Rpath) L2Rpath[[1]]@Lcolname
+L2Rpath.Rcolname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@Rcolname
 
-L2Rpath.leftmostFilter <- function(L2Rpath)
+L2Rpath.Lfilter <- function(L2Rpath)
 {
     filter <- L2Rpath[[1]]@filter
     if (filter == "1")
@@ -137,7 +137,7 @@ L2Rpath.leftmostFilter <- function(L2Rpath)
     paste("(", .contextualizeColnames(filter), ")", sep="")
 }
 
-L2Rpath.rightmostFilter <- function(L2Rpath)
+L2Rpath.Rfilter <- function(L2Rpath)
 {
     filter <- L2Rpath[[length(L2Rpath)]]@filter
     if (filter == "1")
@@ -169,8 +169,8 @@ L2Rpath.collabels <- function(L2Rpath)
     c("left", "right", rep("tag", length(L2Rpath.tagnames(L2Rpath))))
 
 L2Rpath.colnames <- function(L2Rpath)
-    c(L2Rpath.leftmostColname(L2Rpath),
-      L2Rpath.rightmostColname(L2Rpath),
+    c(L2Rpath.Lcolname(L2Rpath),
+      L2Rpath.Rcolname(L2Rpath),
       L2Rpath.tagnames(L2Rpath))
 
 ### Return a named list of 5 elements. Those elements are pieces of an SQL
@@ -182,9 +182,9 @@ L2Rpath.colnames <- function(L2Rpath)
 ### hence the 5 elements returned by .makeSQLchunks() are divided in
 ### 3 groups:
 ###   1) The "what" group:
-###      - what_leftCol: single string containing the "contextualized" name of
+###      - what_Lcol: single string containing the "contextualized" name of
 ###        the leftmost col of 'L2Rpath'.
-###      - what_rightCol: same but for the rightmost col.
+###      - what_Rcol: same but for the rightmost col.
 ###      - what_tagCols: character vector of length the total number of
 ###        tag cols contained in 'L2Rpath' (could be 0). Each element
 ###        has been "contextualized" and right-pasted with " AS tag-name".
@@ -201,28 +201,28 @@ L2Rpath.colnames <- function(L2Rpath)
     pathlen <- length(L2Rpath)
     for (i in seq_len(pathlen)) {
         L2Rbrick <- L2Rpath[[i]]
-        table <- L2Rbrick@table
+        tablename <- L2Rbrick@tablename
         Lcolname <- L2Rbrick@Lcolname
         Rcolname <- L2Rbrick@Rcolname
         if (pathlen == 1) {
-            context <- from <- table
-            what_leftCol <- paste(context, Lcolname, sep=".")
-            what_rightCol <- paste(context, Rcolname, sep=".")
+            context <- from <- tablename
+            what_Lcol <- paste(context, Lcolname, sep=".")
+            what_Rcol <- paste(context, Rcolname, sep=".")
         } else {
             if (i == 1) {
                 context <- "_left"
-                what_leftCol <- paste(context, Lcolname, sep=".")
-                from <- paste(table, "AS", context)
+                what_Lcol <- paste(context, Lcolname, sep=".")
+                from <- paste(tablename, "AS", context)
             } else {
                 if (i == pathlen) {
                     context <- "_right"
-                    what_rightCol <- paste(context, Rcolname, sep=".")
+                    what_Rcol <- paste(context, Rcolname, sep=".")
                 } else {
                     context <- paste("_", i, sep="")
                 }
                 on <- paste(prev_context, ".", prev_Rcolname, "=",
                             context, ".", Lcolname, sep="")
-                from <- paste(from, "INNER JOIN", table, "AS", context, "ON", on)
+                from <- paste(from, "INNER JOIN", tablename, "AS", context, "ON", on)
             }
             prev_context <- context
             prev_Rcolname <- Rcolname
@@ -248,8 +248,8 @@ L2Rpath.colnames <- function(L2Rpath)
     else
         where <- paste(paste("(", where, ")", sep=""), collapse=" AND ")
     list(
-        what_leftCol=what_leftCol,
-        what_rightCol=what_rightCol,
+        what_Lcol=what_Lcol,
+        what_Rcol=what_Rcol,
         what_tagCols=what_tagCols,
         from=from,
         where=where
@@ -293,37 +293,37 @@ debug.sql <- function()
         data0[[j0]]
 }
 
-dbGetTable <- function(conn, table, extra.SQL=NULL)
+dbGetTable <- function(conn, tablename, extra.SQL=NULL)
 {
-    SQL <- paste("SELECT * FROM ", table, sep="")
+    SQL <- paste("SELECT * FROM ", tablename, sep="")
     if (!is.null(extra.SQL))
         SQL <- paste(SQL, extra.SQL)
     .dbGetQuery(conn, SQL)
 }
 
 ### CURRENTLY BROKEN!
-dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.keys,
-                                       right.db_table, right.colname, right.keys,
+dbRawAnnDbMapToTable <- function(conn, Ltablename, Lcolname, Lkeys,
+                                       Rtablename, Rcolname, Rkeys,
                                        show.colnames, from)
 {
-#    if (!is.null(right.db_table))
-#        right.colname <- paste(right.db_table, right.colname, sep=".")
-#    left.colname <- paste(left.db_table, left.colname, sep=".")
+#    if (!is.null(Rtablename))
+#        Rcolname <- paste(Rtablename, Rcolname, sep=".")
+#    Lcolname <- paste(Ltablename, Lcolname, sep=".")
     SQL <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", from)
-    SQL <- paste(SQL, "WHERE", .toSQLWhere(left.colname, left.keys))
-    if (!is.null(right.db_table))
-        SQL <- paste(SQL, "AND", .toSQLWhere(right.colname, right.keys))
+    SQL <- paste(SQL, "WHERE", .toSQLWhere(Lcolname, Lkeys))
+    if (!is.null(Rtablename))
+        SQL <- paste(SQL, "AND", .toSQLWhere(Rcolname, Rkeys))
     .dbGetQuery(conn, SQL)
 }
 
 ### CURRENTLY BROKEN!
-dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname, 
-                                         right.db_table, right.colname, from)
+dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lcolname, 
+                                         Rtablename, Rcolname, from)
 {
     SQL <- paste("SELECT COUNT(*) FROM", from)
-    SQL <- paste(SQL, "WHERE", .toSQLWhere(left.colname, NA))
-    if (!is.null(right.db_table))
-        SQL <- paste(SQL, "AND", .toSQLWhere(right.colname, NA))
+    SQL <- paste(SQL, "WHERE", .toSQLWhere(Lcolname, NA))
+    if (!is.null(Rtablename))
+        SQL <- paste(SQL, "AND", .toSQLWhere(Rcolname, NA))
     .dbGetQuery(conn, SQL, 1)
 }
 
@@ -337,35 +337,35 @@ dbCountMapLinks <- function(conn, L2Rpath)
     stop("COMING SOON, SORRY!")
 }
 
-.makeSQL <- function(SQLchunks, SQLwhat, left.keys, right.keys)
+.makeSQL <- function(SQLchunks, SQLwhat, Lkeys, Rkeys)
 {
     where <- c(
-        .toSQLWhere(SQLchunks$what_leftCol, left.keys),
+        .toSQLWhere(SQLchunks$what_Lcol, Lkeys),
         SQLchunks$where,
-        .toSQLWhere(SQLchunks$what_rightCol, right.keys)
+        .toSQLWhere(SQLchunks$what_Rcol, Rkeys)
     )
     where <- paste(where, collapse=" AND ")
     paste("SELECT", SQLwhat, "FROM", SQLchunks$from, "WHERE", where)
 }
 
-dbSelectFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys)
+dbSelectFromL2Rpath <- function(conn, L2Rpath, Lkeys, Rkeys)
 {
     SQLchunks <- .makeSQLchunks(L2Rpath)
-    what_leftCol <- SQLchunks$what_leftCol
-    what_rightCol <- SQLchunks$what_rightCol
+    what_Lcol <- SQLchunks$what_Lcol
+    what_Rcol <- SQLchunks$what_Rcol
     what_tagCols <- SQLchunks$what_tagCols
-    SQLwhat <- paste(c(what_leftCol, what_rightCol, what_tagCols), collapse=",")
-    SQL <- .makeSQL(SQLchunks, SQLwhat, left.keys, right.keys)
+    SQLwhat <- paste(c(what_Lcol, what_Rcol, what_tagCols), collapse=",")
+    SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL)
 }
 
-dbCountRowsFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys)
+dbCountRowsFromL2Rpath <- function(conn, L2Rpath, Lkeys, Rkeys)
 {
     SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
-    what_leftCol <- SQLchunks$what_leftCol
-    what_rightCol <- SQLchunks$what_rightCol
+    what_Lcol <- SQLchunks$what_Lcol
+    what_Rcol <- SQLchunks$what_Rcol
     SQLwhat <- "COUNT(*)"
-    SQL <- .makeSQL(SQLchunks, SQLwhat, left.keys, right.keys)
+    SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL, 1)
 }
 
@@ -376,18 +376,18 @@ dbCountRowsFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys)
 ### IMPORTANT: Use shared cached symbols!
 ###
 
-.dbUniqueVals.cached.symbol <- function(datacache, table, colname, filter)
+.dbUniqueVals.cached.symbol <- function(datacache, tablename, colname, filter)
 {
     if (is.null(datacache) || filter != "1")
         return(NULL)
-    full.colname <- paste(table, colname, sep=".")
+    full.colname <- paste(tablename, colname, sep=".")
     paste("dbUniqueVals", full.colname, sep="-")
 }
 
-dbUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
+dbUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
 {
     cached_symbol <- .dbUniqueVals.cached.symbol(datacache,
-                         table, colname, filter)
+                         tablename, colname, filter)
     if (!is.null(cached_symbol)) {
         if (exists(cached_symbol, envir=datacache)) {
             vals <- get(cached_symbol, envir=datacache)
@@ -396,7 +396,7 @@ dbUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
     }
     what <- paste("DISTINCT", colname)
     where <- .toSQLWhere(colname, NA)
-    SQL <- paste("SELECT", what, "FROM", table, "WHERE", where)
+    SQL <- paste("SELECT", what, "FROM", tablename, "WHERE", where)
     if (filter != "1")
         SQL <- paste(SQL, "AND", filter)
     vals <- .dbGetQuery(conn, SQL, 1)
@@ -408,10 +408,10 @@ dbUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
 }
 
 ### Read-only caching!
-dbCountUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
+dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
 {
     cached_symbol <- .dbUniqueVals.cached.symbol(datacache,
-                         table, colname, filter)
+                         tablename, colname, filter)
     if (!is.null(cached_symbol)) {
         if (exists(cached_symbol, envir=datacache)) {
             count <- length(get(cached_symbol, envir=datacache))
@@ -419,7 +419,7 @@ dbCountUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
         }
     }
     what <- paste("COUNT(DISTINCT ", colname, ")", sep="")
-    SQL <- paste("SELECT", what, "FROM", table)
+    SQL <- paste("SELECT", what, "FROM", tablename)
     if (filter != "1")
         SQL <- paste(SQL, "WHERE", filter)
     .dbGetQuery(conn, SQL, 1)
@@ -433,10 +433,10 @@ dbCountUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
 ###
 
 .dbUniqueMappedKeys.cached.symbol <- function(datacache,
-                                              L2Rpath, left.keys, right.keys,
+                                              L2Rpath, Lkeys, Rkeys,
                                               where, direction)
 {
-    if (is.null(datacache) || !is.na(left.keys) || !is.na(right.keys) || where != "1")
+    if (is.null(datacache) || !is.na(Lkeys) || !is.na(Rkeys) || where != "1")
         return(NULL)
     if (direction == 1)
         symbol <- "uniqueLeftMappedKeys"
@@ -445,12 +445,12 @@ dbCountUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
     paste(symbol, .L2Rpath.toString(L2Rpath), sep="-")
 }
 
-dbUniqueMappedKeys <- function(conn, L2Rpath, left.keys, right.keys,
+dbUniqueMappedKeys <- function(conn, L2Rpath, Lkeys, Rkeys,
                                      direction, datacache=NULL)
 {
     SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
     cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
-                         L2Rpath, left.keys, right.keys,
+                         L2Rpath, Lkeys, Rkeys,
                          SQLchunks$where, direction)
     if (!is.null(cached_symbol)) {
         if (exists(cached_symbol, envir=datacache)) {
@@ -458,14 +458,14 @@ dbUniqueMappedKeys <- function(conn, L2Rpath, left.keys, right.keys,
             return(vals)
         }
     }
-    what_leftCol <- SQLchunks$what_leftCol
-    what_rightCol <- SQLchunks$what_rightCol
+    what_Lcol <- SQLchunks$what_Lcol
+    what_Rcol <- SQLchunks$what_Rcol
     if (direction == 1)
-        distinct_col <- what_leftCol
+        distinct_col <- what_Lcol
     else
-        distinct_col <- what_rightCol
+        distinct_col <- what_Rcol
     what <- paste("DISTINCT", distinct_col)
-    SQL <- .makeSQL(SQLchunks, what, left.keys, right.keys)
+    SQL <- .makeSQL(SQLchunks, what, Lkeys, Rkeys)
     vals <- .dbGetQuery(conn, SQL, 1)
     if (!is.null(cached_symbol))
         assign(cached_symbol, vals, envir=datacache)
@@ -473,12 +473,12 @@ dbUniqueMappedKeys <- function(conn, L2Rpath, left.keys, right.keys,
 }
 
 ### Read-only caching!
-dbCountUniqueMappedKeys <- function(conn, L2Rpath, left.keys, right.keys,
+dbCountUniqueMappedKeys <- function(conn, L2Rpath, Lkeys, Rkeys,
                                           direction, datacache=NULL)
 {
     SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
     cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
-                         L2Rpath, left.keys, right.keys,
+                         L2Rpath, Lkeys, Rkeys,
                          SQLchunks$where, direction)
     if (!is.null(cached_symbol)) {
         if (exists(cached_symbol, envir=datacache)) {
@@ -486,14 +486,14 @@ dbCountUniqueMappedKeys <- function(conn, L2Rpath, left.keys, right.keys,
             return(count)
         }
     }
-    what_leftCol <- SQLchunks$what_leftCol
-    what_rightCol <- SQLchunks$what_rightCol
+    what_Lcol <- SQLchunks$what_Lcol
+    what_Rcol <- SQLchunks$what_Rcol
     if (direction == 1)
-        distinct_col <- what_leftCol
+        distinct_col <- what_Lcol
     else
-        distinct_col <- what_rightCol
+        distinct_col <- what_Rcol
     SQLwhat <- paste("COUNT(DISTINCT ", distinct_col, ")", sep="")
-    SQL <- .makeSQL(SQLchunks, SQLwhat, left.keys, right.keys)
+    SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL, 1)
 }
 

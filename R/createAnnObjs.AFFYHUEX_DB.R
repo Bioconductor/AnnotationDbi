@@ -66,8 +66,8 @@ createAnnObjs.AFFYHUEX_DB <- function(prefix, objTarget, conn, datacache)
     createAnnObjs("RawAnnDbMap", AFFYHUEX_DB_RawAnnDbMap_seeds, seed0, ann_objs)
 
     ## Some pre-caching
-    left.keys(ann_objs$TRANSCRIPT)
-    left.keys(ann_objs$PROBESET)
+    Lkeys(ann_objs$TRANSCRIPT)
+    Lkeys(ann_objs$PROBESET)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

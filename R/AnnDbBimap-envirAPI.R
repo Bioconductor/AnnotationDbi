@@ -73,29 +73,29 @@ setMethod("as.list", "AtomicAnnDbBimap",
         if (!is.null(keys) && length(keys) == 0)
             return(list())
         if (direction(x) == 1)
-            x <- subset(x, left.keys=keys, right.keys=NULL)
+            x <- subset(x, Lkeys=keys, Rkeys=NULL)
         else
-            x <- subset(x, left.keys=NULL, right.keys=keys)
+            x <- subset(x, Lkeys=NULL, Rkeys=keys)
         y <- flatten(x, fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
             ann_list <- list()
         } else {
             if (direction(x) == 1) {
-                ## We temporary use 'y@data[[2]]' instead of 'y@data[[right.colname(y)]]'
+                ## We temporary use 'y@data[[2]]' instead of 'y@data[[Rcolname(y)]]'
                 ## because 'y' colnames are not necessarily unique e.g.:
                 ##   > head(flatten(subset(GOBPPARENTS, "GO:0000001")), 2)
                 ##          go_id      go_id Evidence
                 ##   1 GO:0000001 GO:0048308      isa
                 ##   2 GO:0000001 GO:0048311      isa
-                right_col <- y@data[[2]]
+                Rcol <- y@data[[2]]
                 if (ncol(y) == 3)
-                    names(right_col) <- y@data[[3]]
-                ann_list <- split(right_col, y@data[[1]])
+                    names(Rcol) <- y@data[[3]]
+                ann_list <- split(Rcol, y@data[[1]])
             } else {
-                left_col <- y@data[[1]]
+                Lcol <- y@data[[1]]
                 if (ncol(y) == 3)
-                    names(left_col) <- y@data[[3]]
-                ann_list <- split(left_col, y@data[[2]])
+                    names(Lcol) <- y@data[[3]]
+                ann_list <- split(Lcol, y@data[[2]])
             }
         }
         .formatAnnList(ann_list, keys(y))
@@ -107,7 +107,7 @@ setMethod("as.list", "IpiAnnDbMap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, left.keys=keys, right.keys=NULL), fromKeys.only=TRUE)
+        y <- flatten(subset(x, Lkeys=keys, Rkeys=NULL), fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
             ann_list <- list()
         } else {
@@ -115,7 +115,7 @@ setMethod("as.list", "IpiAnnDbMap",
             names(tag_col) <- y@data[[2]]
             ann_list <- split(tag_col, y@data[[1]])
         }
-        .formatAnnList(ann_list, left.keys(y))
+        .formatAnnList(ann_list, Lkeys(y))
     }
 )
 
@@ -124,7 +124,7 @@ setMethod("as.list", "AgiAnnDbMap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, left.keys=keys, right.keys=NULL), fromKeys.only=TRUE)
+        y <- flatten(subset(x, Lkeys=keys, Rkeys=NULL), fromKeys.only=TRUE)
         if (nrow(y@data) == 0)
             ann_list <- list()
         else
@@ -152,9 +152,9 @@ setMethod("as.list", "GoAnnDbBimap",
         if (!is.null(keys) && length(keys) == 0)
             return(list())
         if (direction(x) == 1)
-            x <- subset(x, left.keys=keys, right.keys=NULL)
+            x <- subset(x, Lkeys=keys, Rkeys=NULL)
         else
-            x <- subset(x, left.keys=NULL, right.keys=keys)
+            x <- subset(x, Lkeys=NULL, Rkeys=keys)
         y <- flatten(x, fromKeys.only=TRUE)
         keys <- keys(y)
         if (direction(x) == 1) {
@@ -186,9 +186,9 @@ setMethod("as.list", "GoAnnDbBimap",
                 }
             }
         } else {
-            left_col <- y@data[[1]]
-            names(left_col) <- y@data[["Evidence"]]
-            ann_list <- split(left_col, y@data[["go_id"]])
+            Lcol <- y@data[[1]]
+            names(Lcol) <- y@data[["Evidence"]]
+            ann_list <- split(Lcol, y@data[["go_id"]])
             ann_list <- .formatAnnList(ann_list, keys)
         }
         ann_list
@@ -211,7 +211,7 @@ setMethod("as.list", "GONodeAnnDbBimap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, left.keys=keys, right.keys=NULL), fromKeys.only=TRUE)
+        y <- flatten(subset(x, Lkeys=keys, Rkeys=NULL), fromKeys.only=TRUE)
         makeGONode <- function(go_id, Term, Ontology, Definition, ...)
         {
             new("GONode", GOID=go_id[1],

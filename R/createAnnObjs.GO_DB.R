@@ -20,13 +20,13 @@ GO_DB_AnnDbBimap_seeds <- list(
 #        Class="GoAnnDbBimap",
 #        L2Rpath=list(
 #            list(
-#                table="go_gene",
+#                tablename="go_gene",
 #                Lcolname="gene_id",
 #                Rcolname="term_id",
 #                tagCols=c(Evidence="{evidence}")
 #            ),
 #            list(
-#                table="go_term",
+#                tablename="go_term",
 #                Lcolname="term_id",
 #                Rcolname="go_id",
 #                tagCols=c(Ontology="{ontology}")
@@ -39,12 +39,12 @@ GO_DB_AnnDbBimap_seeds <- list(
 #        Class="AtomicAnnDbBimap",
 #        L2Rpath=list(
 #            list(
-#                table="go_term",
+#                tablename="go_term",
 #                Lcolname="go_id",
 #                Rcolname="term_id"
 #            ),
 #            list(
-#                table="go_gene",
+#                tablename="go_gene",
 #                Lcolname="term_id",
 #                Rcolname="gene_id",
 #                tagCols=c(Evidence="{evidence}")
@@ -56,12 +56,12 @@ GO_DB_AnnDbBimap_seeds <- list(
 #        Class="AtomicAnnDbBimap",
 #        L2Rpath=list(
 #            list(
-#                table="go_term",
+#                tablename="go_term",
 #                Lcolname="go_id",
 #                Rcolname="term_id"
 #            ),
 #            list(
-#                table="go_all_gene",
+#                tablename="go_all_gene",
 #                Lcolname="term_id",
 #                Rcolname="gene_id",
 #                tagCols=c(Evidence="{evidence}")
@@ -73,19 +73,19 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="go_id",
                 Rcolname="term_id",
                 filter="{ontology}='BP'"
             ),
             list(
-                table="go_bp_parents",
+                tablename="go_bp_parents",
                 Lcolname="term_id",
                 Rcolname="parent_id",
                 tagCols=c(Evidence="{evidence}")
             ),
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id"
             )
@@ -96,19 +96,19 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="go_id",
                 Rcolname="term_id",
                 filter="{ontology}='CC'"
             ),
             list(
-                table="go_cc_parents",
+                tablename="go_cc_parents",
                 Lcolname="term_id",
                 Rcolname="parent_id",
                 tagCols=c(Evidence="{evidence}")
             ),
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id"
             )
@@ -119,19 +119,19 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="go_id",
                 Rcolname="term_id",
                 filter="{ontology}='MF'"
             ),
             list(
-                table="go_mf_parents",
+                tablename="go_mf_parents",
                 Lcolname="term_id",
                 Rcolname="parent_id",
                 tagCols=c(Evidence="{evidence}")
             ),
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id"
             )
@@ -142,18 +142,18 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="go_id",
                 Rcolname="term_id",
                 filter="{ontology}='BP'"
             ),
             list(
-                table="go_bp_offspring",
+                tablename="go_bp_offspring",
                 Lcolname="offspring_id",
                 Rcolname="term_id"
             ),
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id"
             )
@@ -164,18 +164,18 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="go_id",
                 Rcolname="term_id",
                 filter="{ontology}='CC'"
             ),
             list(
-                table="go_cc_offspring",
+                tablename="go_cc_offspring",
                 Lcolname="offspring_id",
                 Rcolname="term_id"
             ),
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id"
             )
@@ -186,18 +186,18 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="go_id",
                 Rcolname="term_id",
                 filter="{ontology}='MF'"
             ),
             list(
-                table="go_mf_offspring",
+                tablename="go_mf_offspring",
                 Lcolname="offspring_id",
                 Rcolname="term_id"
             ),
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id"
             )
@@ -208,7 +208,7 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="GONodeAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="go_id",
                 Rcolname="go_id",
                 tagJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
@@ -227,7 +227,7 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="GONodeAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_obsolete",
+                tablename="go_obsolete",
                 Lcolname="go_id",
                 Rcolname="go_id",
                 tagCols=c(
@@ -251,13 +251,13 @@ GO_DB_AnnDbBimap_seeds <- list(
         Class="GONodeAnnDbBimap",
         L2Rpath=list(
             list(
-                table="go_synonym",
+                tablename="go_synonym",
                 Lcolname="synonym",
                 Rcolname="term_id",
                 filter="{like_go_id}=1"
             ),
             list(
-                table="go_term",
+                tablename="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id",
                 tagJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",

@@ -14,20 +14,20 @@ setClass("FlatBimap",
         collabels="character",      # must have the same length as the 'data' slot
         direction="integer",
         data="data.frame",
-        left.keys="character",
-        right.keys="character",
+        Lkeys="character",
+        Rkeys="character",
         ifnotfound="list"
     ),
     prototype(
         direction=1L,               # left-to-right by default
-        left.keys=as.character(NA),
-        right.keys=as.character(NA),
+        Lkeys=as.character(NA),
+        Rkeys=as.character(NA),
         ifnotfound=list()           # empty list => raise an error on first key not found
     )
 )
 
 setMethod("initialize", "FlatBimap",
-    function(.Object, collabels, direction, data, left.keys, right.keys)
+    function(.Object, collabels, direction, data, Lkeys, Rkeys)
     {
         if (missing(collabels)) {
             collabels <- rep(as.character(NA), ncol(data))
@@ -38,10 +38,10 @@ setMethod("initialize", "FlatBimap",
         if (!missing(direction))
             .Object@direction <- .normalize.direction(direction)
         .Object@data <- data
-        if (length(left.keys) != 1 || !is.na(left.keys))
-            .Object@left.keys <- left.keys
-        if (length(right.keys) != 1 || !is.na(right.keys))
-            .Object@right.keys <- right.keys
+        if (length(Lkeys) != 1 || !is.na(Lkeys))
+            .Object@Lkeys <- Lkeys
+        if (length(Rkeys) != 1 || !is.na(Rkeys))
+            .Object@Rkeys <- Rkeys
         .Object
     }
 )
@@ -67,10 +67,10 @@ setReplaceMethod("direction", "FlatBimap",
     }
 )
 
-setMethod("left.keys", "FlatBimap",
-    function(x) x@left.keys)
-setMethod("right.keys", "FlatBimap",
-    function(x) x@right.keys)
+setMethod("Lkeys", "FlatBimap",
+    function(x) x@Lkeys)
+setMethod("Rkeys", "FlatBimap",
+    function(x) x@Rkeys)
 
 .checkKeys <- function(keys, valid.keys, ifnotfound)
 {
@@ -83,38 +83,38 @@ setMethod("right.keys", "FlatBimap",
     }
 }
 
-setReplaceMethod("left.keys", "FlatBimap",
+setReplaceMethod("Lkeys", "FlatBimap",
     function(x, value)
     {
         if (!is.null(value)) {
-            .checkKeys(value, left.keys(x), x@ifnotfound)
-            x@left.keys <- value
+            .checkKeys(value, Lkeys(x), x@ifnotfound)
+            x@Lkeys <- value
         }
         x
     }
 )
 
-setReplaceMethod("right.keys", "FlatBimap",
+setReplaceMethod("Rkeys", "FlatBimap",
     function(x, value)
     {
         if (!is.null(value)) {
-            .checkKeys(value, right.keys(x), x@ifnotfound)
-            x@right.keys <- value
+            .checkKeys(value, Rkeys(x), x@ifnotfound)
+            x@Rkeys <- value
         }
         x
     }
 )
 
 setMethod("subset", "FlatBimap",
-    function(x, left.keys=NULL, right.keys=NULL, ...)
+    function(x, Lkeys=NULL, Rkeys=NULL, ...)
     {
         lii <- rii <- TRUE
-        left.keys(x) <- left.keys
-        right.keys(x) <- right.keys
-        if (!is.null(left.keys))
-            lii <- x@data[[1]] %in% left.keys
-        if (!is.null(right.keys))
-            rii <- x@data[[2]] %in% right.keys
+        Lkeys(x) <- Lkeys
+        Rkeys(x) <- Rkeys
+        if (!is.null(Lkeys))
+            lii <- x@data[[1]] %in% Lkeys
+        if (!is.null(Rkeys))
+            rii <- x@data[[2]] %in% Rkeys
         cn <- colnames(x@data)
         x@data <- x@data[lii & rii, ]
         colnames(x@data) <- cn
@@ -122,10 +122,10 @@ setMethod("subset", "FlatBimap",
     }
 )
 
-setMethod("left.mappedKeys", "FlatBimap",
+setMethod("mappedLkeys", "FlatBimap",
     function(x) unique(x@data[[match("left", x@collabels)]]))
 
-setMethod("right.mappedKeys", "FlatBimap",
+setMethod("mappedRkeys", "FlatBimap",
     function(x) unique(x@data[[match("right", x@collabels)]]))
 
 setMethod("nrow", "FlatBimap",
@@ -187,7 +187,7 @@ setMethod("show", "FlatBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.toList" and "right.toList" methods (Bimap interface).
+### The "toLList" and "toRList" methods (Bimap interface).
 ###
 
 .alignAnnList <- function(ann_list, keys)
@@ -208,29 +208,29 @@ setMethod("show", "FlatBimap",
     lapply(keys, key2val)
 }
 
-setMethod("left.toList", "FlatBimap",
+setMethod("toLList", "FlatBimap",
     function(x, keys=NULL)
     {
         if (!is.null(keys))
-            x <- subset(x, left.keys=keys, right.keys=NULL)
+            x <- subset(x, Lkeys=keys, Rkeys=NULL)
         if (nrow(x@data) == 0)
             ann_list <- list()
         else
             ann_list <- split(x@data[ , -1], x@data[[1]])
-        .alignAnnList(ann_list, left.keys(x))
+        .alignAnnList(ann_list, Lkeys(x))
     }
 )
 
-setMethod("right.toList", "FlatBimap",
+setMethod("toRList", "FlatBimap",
     function(x, keys=NULL)
     {
         if (!is.null(keys))
-            x <- subset(x, left.keys=NULL, right.keys=keys)
+            x <- subset(x, Lkeys=NULL, Rkeys=keys)
         if (nrow(x@data) == 0)
             ann_list <- list()
         else
             ann_list <- split(x@data[ , -2], x@data[[2]])
-        .alignAnnList(ann_list, right.keys(x))
+        .alignAnnList(ann_list, Rkeys(x))
     }
 )
 

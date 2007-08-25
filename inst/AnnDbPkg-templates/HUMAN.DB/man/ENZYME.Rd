@@ -50,7 +50,7 @@
 \examples{
         x <- @ANNOBJPREFIX@ENZYME
         # Get the entrez gene identifiers that are mapped to an EC number 
-        mapped_genes <- mappedKeys(x)
+        mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {

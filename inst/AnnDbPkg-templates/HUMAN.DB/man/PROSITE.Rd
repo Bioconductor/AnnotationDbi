@@ -28,7 +28,7 @@
 \examples{
 	        x <- @ANNOBJPREFIX@PROSITE
         # Get the entrez gene identifiers that are mapped to any PROSITE ID
-        mapped_genes <- mappedKeys(x)
+        mapped_genes <- mappedkeys(x)
         # Convert to a list
         xxx <- as.list(x, keys=mapped_genes)
         # randomly display 10 genes

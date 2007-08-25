@@ -56,7 +56,7 @@ not depend on the orientation of the map ("unoriented method"):
   as.data.frame(x)[1:6, ]
   as.data.frame(revx)[1:6, ]
 
-  --> the left keys are always on the left (1st col), the right
+  --> the Lkeys are always on the left (1st col), the right
       keys always in the 2nd col
 
 There can be more than 2 columns in the returned data frame:
@@ -69,7 +69,7 @@ There can be more than 2 columns in the returned data frame:
     as.data.frame(hgu95av2GO)[1:6, ]    
     as.list(hgu95av2GO, "1000_at")
 
-But the right keys are ALWAYS in the 2nd col.
+But the Rkeys are ALWAYS in the 2nd col.
 
 For length() and keys(), the result does depend on the orientation
 ("oriented methods"):
@@ -81,24 +81,24 @@ For length() and keys(), the result does depend on the orientation
 
 There are "unoriented" methods related to these methods:
 
-  left.keys(x)    # same for all maps in hgu95av2db (except pseudo-map
+  Lkeys(x)    # same for all maps in hgu95av2db (except pseudo-map
                    # MAPCOUNTS)
-  left.length(x)   # nb of left keys
-  right.keys(x)   # KEGG ids for PATH/PATH2PROBE maps, GO ids for
+  Llength(x)   # nb of Lkeys
+  Rkeys(x)   # KEGG ids for PATH/PATH2PROBE maps, GO ids for
                    # GO/GO2PROBE/GO2ALLPROBES maps, etc...
-  right.length(x)  # nb of right keys
+  Rlength(x)  # nb of Rkeys
 
   --> they give the same result for x and revmap(x)
 
 This helps to understand the naming of the as.data.frame args:
 
-  as.data.frame(x, left.keys, right.keys)
+  as.data.frame(x, Lkeys, Rkeys)
 
 Using revmap can be very efficient in some use cases:
 
   x <- hgu95av2CHR
-  right.keys(x)
-  chroms <- right.keys(x)[24:25]
+  Rkeys(x)
+  chroms <- Rkeys(x)[23:24]
   chroms
   as.data.frame(x, , chroms)
 

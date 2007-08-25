@@ -20,7 +20,7 @@
 \examples{
         x <- @ANNOBJPREFIX@ORF
         # Get the probe identifiers that are mapped to ORF identifiers
-        mapped_probes <- mappedKeys(x)
+        mapped_probes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_probes)
         if(length(xx) > 0) {

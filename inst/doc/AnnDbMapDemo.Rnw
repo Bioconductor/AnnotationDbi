@@ -209,7 +209,7 @@ toTable(x)[1:6, ]
 toTable(revx)[1:6, ]
 @ 
 
-NB: the left keys are always on the left (1st col), the right keys
+NB: the Lkeys are always on the left (1st col), the Rkeys
 always in the 2nd col
 
 There can be more than 2 columns in the returned data frame:
@@ -220,7 +220,7 @@ toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
 as.list(hgu95av2PFAM, "1000_at")
 @ 
 
-But the right keys are ALWAYS in the 2nd col.
+But the Rkeys are ALWAYS in the 2nd col.
 
 For length() and keys(), the result does depend on the direction
 ("directed methods"):
@@ -234,27 +234,27 @@ allKEGGIds <- keys(revx)
 
 There are "undirected" methods related to these methods:
 <<moreUndirectedMethods>>=
-junk <- left.keys(x)     # same for all maps in hgu95av2.db (except pseudo-map
+junk <- Lkeys(x)     # same for all maps in hgu95av2.db (except pseudo-map
                          # MAPCOUNTS)
-left.length(x)           # nb of left keys
-junk <- right.keys(x)    # KEGG ids for PATH/PATH2PROBE maps, GO ids for
+Llength(x)           # nb of Lkeys
+junk <- Rkeys(x)    # KEGG ids for PATH/PATH2PROBE maps, GO ids for
                          # GO/GO2PROBE/GO2ALLPROBES maps, etc...
-right.length(x)          # nb of right keys
+Rlength(x)          # nb of Rkeys
 @ 
 
 NB: they give the same result for x and revmap(x)
 
 This helps to understand the naming of Rfunction{toTable} args:
 <<naming, eval=FALSE>>=
-toTable(x, left.keys, right.keys)
+toTable(x, Lkeys, Rkeys)
 @ 
 
 Using revmap can be very efficient in some use cases:
 <<revmapUseCases>>=
 x <- hgu95av2CHR
-right.keys(x)
+Rkeys(x)
 chroms <- c("19", "Y")
-chroms <- right.keys(x)[23:24]
+chroms <- Rkeys(x)[23:24]
 chroms
 toTable(x, , chroms)[1:10, ]
 @ 

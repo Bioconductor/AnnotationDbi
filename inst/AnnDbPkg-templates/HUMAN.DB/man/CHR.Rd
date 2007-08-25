@@ -14,7 +14,7 @@
 \examples{
         x <- @ANNOBJPREFIX@CHR
         # Get the entrez gene identifiers that are mapped to a chromosome
-        mapped_genes <- mappedKeys(x)
+        mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {

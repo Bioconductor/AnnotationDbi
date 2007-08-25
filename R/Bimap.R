@@ -9,8 +9,8 @@
 ###
 ### Example of a bimap M:
 ###
-###   4 objects on the left (left keys): a, b, c, d
-###   2 objects on the right (right keys): A, B, C
+###   4 objects on the left (Lkeys): a, b, c, d
+###   2 objects on the right (Rkeys): A, B, C
 ###
 ###   Links:
 ###      a <--> A
@@ -53,7 +53,7 @@
 ### The "Bimap" interface
 ### ---------------------
 ###
-### A FlatBimap object is a bimap whose data (left keys, right keys and
+### A FlatBimap object is a bimap whose data (Lkeys, Rkeys and
 ### links) are stored in memory (in a data frame for the links).
 ### A AnnDbBimap object is a bimap whose data are stored in a data base.
 ### Conceptually, a FlatBimap and a AnnDbBimap object are the same (only
@@ -99,28 +99,28 @@ Bimap_methods <- c(
     "colnames",
     "direction",
     "direction<-",
-    "left.keys", "right.keys",
-    "left.keys<-", "right.keys<-",
+    "Lkeys", "Rkeys",
+    "Lkeys<-", "Rkeys<-",
     "subset",
-    "left.mappedKeys", "right.mappedKeys",
+    "mappedLkeys", "mappedRkeys",
     "nrow",
     "links",
-    "left.toList", "right.toList",
+    "toLList", "toRList",
     ## GROUP 2: Methods for which a default is provided (in this file) but
     ## some of them are redefined for AnnDbBimap objects to obtain better
     ## performance
     "revmap",
-    "left.length", "right.length",
-    "count.left.mappedKeys", "count.right.mappedKeys",
+    "Llength", "Rlength",
+    "count.mappedLkeys", "count.mappedRkeys",
     "count.links",
-    "left.colname", "right.colname",
+    "Lcolname", "Rcolname",
     ## GROUP 3: Directed methods (i.e. what they return depends on the
     ## direction of the map). All what they do is to dispatch on the
     ## corresponding undirected method according to the value of direction(x)
     "keys",
     "length",
-    "mappedKeys",
-    "count.mappedKeys",
+    "mappedkeys",
+    "count.mappedkeys",
     "toList"
 )
 
@@ -131,15 +131,15 @@ setMethod("revmap", "Bimap",
     function(x, ...) { direction(x) <- - direction(x); x }
 )
 
-setMethod("left.length", "Bimap",
-    function(x) length(left.keys(x)))
-setMethod("right.length", "Bimap",
-    function(x) length(right.keys(x)))
+setMethod("Llength", "Bimap",
+    function(x) length(Lkeys(x)))
+setMethod("Rlength", "Bimap",
+    function(x) length(Rkeys(x)))
 
-setMethod("count.left.mappedKeys", "Bimap",
-    function(x) length(left.mappedKeys(x)))
-setMethod("count.right.mappedKeys", "Bimap",
-    function(x) length(right.mappedKeys(x)))
+setMethod("count.mappedLkeys", "Bimap",
+    function(x) length(mappedLkeys(x)))
+setMethod("count.mappedRkeys", "Bimap",
+    function(x) length(mappedRkeys(x)))
 
 setMethod("count.links", "Bimap",
     function(x) nrow(links(x)))
@@ -159,9 +159,9 @@ setMethod("from.colpos", "Bimap",
 setMethod("to.colpos", "Bimap",
     function(x, direction) from.colpos(x, - direction))
 
-setMethod("left.colname", "Bimap",
+setMethod("Lcolname", "Bimap",
     function(x) colnames(x)[from.colpos(x,  1)])
-setMethod("right.colname", "Bimap",
+setMethod("Rcolname", "Bimap",
     function(x) colnames(x)[from.colpos(x, -1)])
 
 ### FIXME
@@ -174,7 +174,7 @@ setMethod("tags.colpos", "Bimap",
     function(x) seq_len(ncol(x))[-c(from.colpos(x, 1), from.colpos(x, -1))])
 
 setMethod("from.keys", "Bimap",
-    function(x, direction) if (direction == 1) left.keys(x) else right.keys(x))
+    function(x, direction) if (direction == 1) Lkeys(x) else Rkeys(x))
 setMethod("to.keys", "Bimap",
     function(x, direction) from.keys(x, - direction))
 
@@ -202,45 +202,45 @@ setMethod("dim", "Bimap",
 setMethod("keys", "Bimap",
     function(x)
         switch(as.character(direction(x)),
-                "1"=left.keys(x),
-               "-1"=right.keys(x),
+                "1"=Lkeys(x),
+               "-1"=Rkeys(x),
                     stop("keys() is undefined for an undirected bimap"))
 )
 setReplaceMethod("keys", "Bimap",
     function(x, value)
     {
         switch(as.character(direction(x)),
-                "1"=`left.keys<-`(x, value),
-               "-1"=`right.keys<-`(x, value),
+                "1"=`Lkeys<-`(x, value),
+               "-1"=`Rkeys<-`(x, value),
                     stop("keys<- is undefined for an undirected bimap"))
     }
 )
 setMethod("length", "Bimap",
     function(x)
         switch(as.character(direction(x)),
-                "1"=left.length(x),
-               "-1"=right.length(x),
+                "1"=Llength(x),
+               "-1"=Rlength(x),
                     stop("length() is undefined for an undirected bimap"))
 )
-setMethod("mappedKeys", "Bimap",
+setMethod("mappedkeys", "Bimap",
     function(x)
         switch(as.character(direction(x)),
-                "1"=left.mappedKeys(x),
-               "-1"=right.mappedKeys(x),
-                    stop("mappedKeys() is undefined for an undirected bimap"))
+                "1"=mappedLkeys(x),
+               "-1"=mappedRkeys(x),
+                    stop("mappedkeys() is undefined for an undirected bimap"))
 )
-setMethod("count.mappedKeys", "ANY",
+setMethod("count.mappedkeys", "ANY",
     function(x)
         switch(as.character(direction(x)),
-                "1"=count.left.mappedKeys(x),
-               "-1"=count.right.mappedKeys(x),
-                    stop("count.mappedKeys() is undefined for an undirected bimap"))
+                "1"=count.mappedLkeys(x),
+               "-1"=count.mappedRkeys(x),
+                    stop("count.mappedkeys() is undefined for an undirected bimap"))
 )
 setMethod("toList", "Bimap",
     function(x, keys=NULL)
         switch(as.character(direction(x)),
-                "1"=left.toList(x, keys),
-               "-1"=right.toList(x, keys),
+                "1"=toLList(x, keys),
+               "-1"=toRList(x, keys),
                     stop("toList() is undefined for an undirected bimap"))
 )
 

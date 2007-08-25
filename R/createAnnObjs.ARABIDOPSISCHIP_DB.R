@@ -12,7 +12,7 @@
 ### this file: it is called by any ARABIDOPSISCHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
-ARABIDOPSISCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
+ARABIDOPSISCHIP_DB_L2Rbrick1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
 ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
@@ -22,7 +22,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="genes",
+                tablename="genes",
                 Lcolname="id",
                 Rcolname="gene_id"
             )
@@ -35,7 +35,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="aracyc",
+                tablename="aracyc",
                 Lcolname="id",
                 Rcolname="pathway_name"
             )
@@ -47,7 +47,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="gene_info",
+                tablename="gene_info",
                 Lcolname="id",
                 Rcolname="chromosome"
             )
@@ -59,7 +59,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="enzyme",
+                tablename="enzyme",
                 Lcolname="id",
                 Rcolname="ec_name"
             )
@@ -71,7 +71,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="gene_info",
+                tablename="gene_info",
                 Lcolname="id",
                 Rcolname="gene_name"
             )
@@ -83,7 +83,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="genes",
+                tablename="genes",
                 Lcolname="id",
                 Rcolname="gene_id"
             )
@@ -96,7 +96,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="kegg",
+                tablename="kegg",
                 Lcolname="id",
                 Rcolname="kegg_id"
             )
@@ -108,7 +108,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="pubmed",
+                tablename="pubmed",
                 Lcolname="id",
                 Rcolname="pubmed_id"
             )
@@ -120,7 +120,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="gene_info",
+                tablename="gene_info",
                 Lcolname="id",
                 Rcolname="symbol"
             )
@@ -132,7 +132,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                table="chromosome_locations",
+                tablename="chromosome_locations",
                 Lcolname="id",
                 Rcolname="start_location",
                 tagCols=c(Chromosome="{chromosome}")
@@ -146,13 +146,13 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             ARABIDOPSISCHIP_DB_L2Rbrick1,
             list(
-                #table="go_term", # no rightmost table for a Go3AnnDbBimap
+                #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
                 Rcolname="go_id",
                 tagCols=c(Evidence="{evidence}", Ontology="NULL")
             )
         ),
-        rightTables=Go3tables()
+        rightTables=Go3tablenames()
     )
 )
 
@@ -171,7 +171,7 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
+    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tablenames(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
 
     ## Some map aliases
@@ -181,7 +181,7 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
-    left.keys(ann_objs$GO)
+    Lkeys(ann_objs$GO)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

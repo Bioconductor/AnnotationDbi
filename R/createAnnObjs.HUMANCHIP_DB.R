@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-HUMANCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
+HUMANCHIP_DB_L2Rbrick1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
 HUMANCHIP_DB_AnnDbBimap_seeds <- list(
@@ -22,7 +22,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="probes",
+                tablename="probes",
                 Lcolname="probe_id",
                 Rcolname="accession"
             )
@@ -34,7 +34,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="alias",
+                tablename="alias",
                 Lcolname="id",
                 Rcolname="alias_symbol"
             )
@@ -47,7 +47,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="chromosomes",
+                tablename="chromosomes",
                 Lcolname="id",
                 Rcolname="chromosome"
             )
@@ -59,7 +59,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="genes",
+                tablename="genes",
                 Lcolname="id",
                 Rcolname="gene_id"
             )
@@ -71,7 +71,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="ec",
+                tablename="ec",
                 Lcolname="id",
                 Rcolname="ec_number"
             )
@@ -83,7 +83,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="gene_info",
+                tablename="gene_info",
                 Lcolname="id",
                 Rcolname="gene_name"
             )
@@ -95,7 +95,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="cytogenetic_locations",
+                tablename="cytogenetic_locations",
                 Lcolname="id",
                 Rcolname="cytogenetic_location"
             )
@@ -107,7 +107,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="omim",
+                tablename="omim",
                 Lcolname="id",
                 Rcolname="omim_id"
             )
@@ -119,7 +119,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="kegg",
+                tablename="kegg",
                 Lcolname="id",
                 Rcolname="kegg_id"
             )
@@ -131,7 +131,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="pubmed",
+                tablename="pubmed",
                 Lcolname="id",
                 Rcolname="pubmed_id"
             )
@@ -143,7 +143,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="refseq",
+                tablename="refseq",
                 Lcolname="id",
                 Rcolname="accession"
             )
@@ -155,7 +155,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="gene_info",
+                tablename="gene_info",
                 Lcolname="id",
                 Rcolname="symbol"
             )
@@ -167,7 +167,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="unigene",
+                tablename="unigene",
                 Lcolname="id",
                 Rcolname="unigene_id"
             )
@@ -179,7 +179,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="chromosome_locations",
+                tablename="chromosome_locations",
                 Lcolname="id",
                 Rcolname="start_location",
                 tagCols=c(Chromosome="{chromosome}")
@@ -193,7 +193,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="pfam",
+                tablename="pfam",
                 Lcolname="id",
                 Rcolname="ipi_id",
                 tagCols=c(PfamId="{pfam_id}")
@@ -206,7 +206,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                table="prosite",
+                tablename="prosite",
                 Lcolname="id",
                 Rcolname="ipi_id",
                 tagCols=c(PrositeId="{prosite_id}")
@@ -219,13 +219,13 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             HUMANCHIP_DB_L2Rbrick1,
             list(
-                #table="go_term", # no rightmost table for a Go3AnnDbBimap
+                #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
                 Rcolname="go_id",
                 tagCols=c(Evidence="{evidence}", Ontology="NULL")
             )
         ),
-        rightTables=Go3tables()
+        rightTables=Go3tablenames()
     )
 )
 
@@ -244,7 +244,7 @@ createAnnObjs.HUMANCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
+    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tablenames(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
@@ -252,12 +252,12 @@ createAnnObjs.HUMANCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
-    left.keys(ann_objs$GO)
-    #left.mappedKeys(ann_objs$GO)
-    #right.keys(ann_objs$GO2PROBE)
-    #right.mappedKeys(ann_objs$GO2PROBE)
-    #right.keys(ann_objs$GO2ALLPROBES)
-    #right.mappedKeys(ann_objs$GO2ALLPROBES)
+    Lkeys(ann_objs$GO)
+    #mappedLkeys(ann_objs$GO)
+    #Rkeys(ann_objs$GO2PROBE)
+    #mappedRkeys(ann_objs$GO2PROBE)
+    #Rkeys(ann_objs$GO2ALLPROBES)
+    #mappedRkeys(ann_objs$GO2ALLPROBES)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-YEAST_DB_L2Rbrick1 <- list(table="sgd", Lcolname="systematic_name", Rcolname="id")
+YEAST_DB_L2Rbrick1 <- list(tablename="sgd", Lcolname="systematic_name", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
 YEAST_DB_AnnDbBimap_seeds <- list(
@@ -23,7 +23,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="gene2alias",
+                tablename="gene2alias",
                 Lcolname="id",
                 Rcolname="alias"
             )
@@ -35,7 +35,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="chromosome_features",
+                tablename="chromosome_features",
                 Lcolname="id",
                 Rcolname="chromosome"
             )
@@ -47,7 +47,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="chromosome_features",
+                tablename="chromosome_features",
                 Lcolname="id",
                 Rcolname="start",
                 tagCols=c(Chromosome="{chromosome}")
@@ -61,7 +61,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="chromosome_features",
+                tablename="chromosome_features",
                 Lcolname="id",
                 Rcolname="feature_description"
             )
@@ -73,7 +73,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="ec",
+                tablename="ec",
                 Lcolname="id",
                 Rcolname="ec_number"
             )
@@ -84,7 +84,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="sgd",
+                tablename="sgd",
                 Lcolname="systematic_name",
                 Rcolname="gene_name"
             )
@@ -96,7 +96,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="kegg",
+                tablename="kegg",
                 Lcolname="id",
                 Rcolname="kegg_id"
             )
@@ -108,7 +108,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="pubmed",
+                tablename="pubmed",
                 Lcolname="id",
                 Rcolname="pubmed_id"
             )
@@ -120,20 +120,20 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                #table="go_term", # no rightmost table for a Go3AnnDbBimap
+                #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
                 Rcolname="go_id",
                 tagCols=c(Evidence="{evidence}", Ontology="NULL")
             )
         ),
-        rightTables=Go3tables()
+        rightTables=Go3tablenames()
     ),
     list(
         objName="COMMON2SYSTEMATIC",
         Class="AtomicAnnDbBimap",
         L2Rpath=list(
             list(
-                table="gene2systematic",
+                tablename="gene2systematic",
                 Lcolname="gene_name",
                 Rcolname="systematic_name"
             )
@@ -145,7 +145,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="interpro",
+                tablename="interpro",
                 Lcolname="id",
                 Rcolname="interpro_id"
             )
@@ -157,7 +157,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="pfam",
+                tablename="pfam",
                 Lcolname="id",
                 Rcolname="pfam_id"
             )
@@ -169,7 +169,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEAST_DB_L2Rbrick1,
             list(
-                table="smart",
+                tablename="smart",
                 Lcolname="id",
                 Rcolname="smart_id"
             )
@@ -192,7 +192,7 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
+    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tablenames(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
 
     ## 3 special maps that are not AnnDbBimap objects (just named vectors)
@@ -201,7 +201,7 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
-    left.keys(ann_objs$GO)
+    Lkeys(ann_objs$GO)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

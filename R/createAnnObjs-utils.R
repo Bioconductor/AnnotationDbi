@@ -2,19 +2,19 @@
 ### 
 ###
 
-Go3tables <- function(all=FALSE)
+Go3tablenames <- function(all=FALSE)
 {
-    tables <- c("go_bp", "go_cc", "go_mf")
+    tablenames <- c("go_bp", "go_cc", "go_mf")
     if (all)
-        tables <- paste(tables, "_all", sep="")
-    names(tables) <- c("BP", "CC", "MF")
-    tables
+        tablenames <- paste(tablenames, "_all", sep="")
+    names(tablenames) <- c("BP", "CC", "MF")
+    tablenames
 }
 
-makeGo3L2Rpath <- function(L2Rpath, table, ontology)
+makeGo3L2Rpath <- function(L2Rpath, tablename, ontology)
 {
     l <- length(L2Rpath)
-    L2Rpath[[l]]@table <- table
+    L2Rpath[[l]]@tablename <- tablename
     L2Rpath[[l]]@tagCols[2] <- paste("'", ontology, "'", sep="")
     L2Rpath
 }

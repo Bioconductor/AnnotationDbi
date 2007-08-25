@@ -11,8 +11,8 @@
 ###
 ###   1) Generics that do _not_ access the database:
 ###        db,
-###        left.table, right.table,
-###        left.filter, right.filter,
+###        Ltablename, Rtablename,
+###        Lfilter, Rfilter,
 ###        collabels,
 ###        colnames,
 ###        direction, revmap,
@@ -21,16 +21,16 @@
 ###   2) Generics that access the database:
 ###        links, count.links,
 ###        nrow,
-###        left.keys, right.keys,
-###        left.length, right.length, 
-###        left.mappedKeys, right.mappedKeys,
-###        count.left.mappedKeys, count.right.mappedKeys,
+###        Lkeys, Rkeys,
+###        Llength, Rlength, 
+###        mappedLkeys, mappedRkeys,
+###        count.mappedLkeys, count.mappedRkeys,
 ###        subset,
 ###        flatten, toTable, dim,
 ###        as.character,
-###        left.toList, right.toList,
+###        toLList, toRList,
 ###        is.na
-###      NB: "keys", "length", "mappedKeys" and "count.mappedKeys" are
+###      NB: "keys", "length", "mappedkeys" and "count.mappedkeys" are
 ###      "directed" methods i.e. they give a different result on a map and its
 ###      "reverse" map (this result depends on the direction of the map).
 ###      For each of these methods, there are 2 "undirected" methods: a left
@@ -45,26 +45,26 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Generics that return meta information about a given map:
 ###     db,
-###     left.table, right.table,
-###     left.colname, right.colname,
+###     Ltablename, Rtablename,
+###     Lcolname, Rcolname,
 ###     colnames,
-###     left.filter, right.filter
+###     Lfilter, Rfilter
 ###
 ### Note that these generics do _not_ query the database!
 ###
 
 setMethod("db", "AnnDbObj", function(object) object@conn)
 
-setMethod("left.table", "AnnDbBimap",
-    function(x) L2Rpath.leftmostTable(x@L2Rpath))
-setMethod("right.table", "AnnDbBimap",
-    function(x) L2Rpath.rightmostTable(x@L2Rpath))
-setMethod("right.table", "Go3AnnDbBimap", function(x) x@rightTables)
+setMethod("Ltablename", "AnnDbBimap",
+    function(x) L2Rpath.Ltablename(x@L2Rpath))
+setMethod("Rtablename", "AnnDbBimap",
+    function(x) L2Rpath.Rtablename(x@L2Rpath))
+setMethod("Rtablename", "Go3AnnDbBimap", function(x) x@rightTables)
 
-setMethod("left.filter", "AnnDbBimap",
-    function(x) L2Rpath.leftmostFilter(x@L2Rpath))
-setMethod("right.filter", "AnnDbBimap",
-    function(x) L2Rpath.rightmostFilter(x@L2Rpath))
+setMethod("Lfilter", "AnnDbBimap",
+    function(x) L2Rpath.Lfilter(x@L2Rpath))
+setMethod("Rfilter", "AnnDbBimap",
+    function(x) L2Rpath.Rfilter(x@L2Rpath))
 
 
 
@@ -173,14 +173,14 @@ setMethod("count.links", "AnnDbBimap",
 setMethod("nrow", "AnnDbTable",
     function(x)
     {
-        dbCountRawAnnDbMapRows(db(x), left.table(x), left.colname(x), NULL, NULL, x@from)
+        dbCountRawAnnDbMapRows(db(x), Ltablename(x), Lcolname(x), NULL, NULL, x@from)
     }
 )
 
 setMethod("nrow", "AnnDbBimap",
     function(x)
     {
-        dbCountRowsFromL2Rpath(db(x), x@L2Rpath, x@left.keys, x@right.keys)
+        dbCountRowsFromL2Rpath(db(x), x@L2Rpath, x@Lkeys, x@Rkeys)
     }
 )
 
@@ -190,9 +190,9 @@ setMethod("nrow", "Go3AnnDbBimap",
     {
         countRows <- function(ontology)
         {
-            table <- right.table(x)[ontology]
-            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
-            dbCountRowsFromL2Rpath(db(x), L2Rpath, x@left.keys, x@right.keys)
+            tablename <- Rtablename(x)[ontology]
+            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, tablename, ontology)
+            dbCountRowsFromL2Rpath(db(x), L2Rpath, x@Lkeys, x@Rkeys)
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
@@ -200,49 +200,49 @@ setMethod("nrow", "Go3AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.keys", "right.keys",  "left.keys<-", "right.keys<-"
+### The "Lkeys", "Rkeys",  "Lkeys<-", "Rkeys<-"
 ### and "subset" generics.
 ###
 
-.inslot.left.keys <- function(x)
+.inslot.Lkeys <- function(x)
 {
-    length(x@left.keys) != 1 || !is.na(x@left.keys)
+    length(x@Lkeys) != 1 || !is.na(x@Lkeys)
 }
-.inslot.right.keys <- function(x)
+.inslot.Rkeys <- function(x)
 {
-    length(x@right.keys) != 1 || !is.na(x@right.keys)
+    length(x@Rkeys) != 1 || !is.na(x@Rkeys)
 }
 
-setMethod("left.keys", "AnnDbBimap",
+setMethod("Lkeys", "AnnDbBimap",
     function(x)
     {
-        if (.inslot.left.keys(x))
-            return(x@left.keys)
-        dbUniqueVals(db(x), left.table(x), left.colname(x),
-                            left.filter(x), x@datacache)
+        if (.inslot.Lkeys(x))
+            return(x@Lkeys)
+        dbUniqueVals(db(x), Ltablename(x), Lcolname(x),
+                            Lfilter(x), x@datacache)
     }
 )
 
-setMethod("right.keys", "AnnDbBimap",
+setMethod("Rkeys", "AnnDbBimap",
     function(x)
     {
-        if (.inslot.right.keys(x))
-            return(x@right.keys)
-        dbUniqueVals(db(x), right.table(x), right.colname(x),
-                            right.filter(x), x@datacache)
+        if (.inslot.Rkeys(x))
+            return(x@Rkeys)
+        dbUniqueVals(db(x), Rtablename(x), Rcolname(x),
+                            Rfilter(x), x@datacache)
     }
 )
 
-setMethod("right.keys", "Go3AnnDbBimap",
+setMethod("Rkeys", "Go3AnnDbBimap",
     function(x)
     {
-        if (.inslot.right.keys(x))
-            return(x@right.keys)
+        if (.inslot.Rkeys(x))
+            return(x@Rkeys)
         getNames <- function(ontology)
         {
-            table <- right.table(x)[ontology]
-            dbUniqueVals(db(x), table, "go_id",
-                                right.filter(x), x@datacache)
+            tablename <- Rtablename(x)[ontology]
+            dbUniqueVals(db(x), tablename, "go_id",
+                                Rfilter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         ## (if not, then apply unique to this result)
@@ -250,109 +250,109 @@ setMethod("right.keys", "Go3AnnDbBimap",
     }
 )
 
-setMethod("right.keys", "AnnDbMap",
+setMethod("Rkeys", "AnnDbMap",
     function(x)
     {
-        stop("right.keys() is not supported for an \"", class(x), "\" object")
+        stop("Rkeys() is not supported for an \"", class(x), "\" object")
     }
 )
 
-setReplaceMethod("left.keys", "AnnDbBimap",
+setReplaceMethod("Lkeys", "AnnDbBimap",
     function(x, value)
     {
         if (!is.null(value)) {
-            .checkKeys(value, left.keys(x), x@ifnotfound)
+            .checkKeys(value, Lkeys(x), x@ifnotfound)
             if (!is.null(names(value)))
                 names(value) <- NULL
-            x@left.keys <- value
+            x@Lkeys <- value
         }
         x
     }
 )
 
-setReplaceMethod("right.keys", "AnnDbBimap",
+setReplaceMethod("Rkeys", "AnnDbBimap",
     function(x, value)
     {
         if (!is.null(value)) {
-            .checkKeys(value, right.keys(x), x@ifnotfound)
+            .checkKeys(value, Rkeys(x), x@ifnotfound)
             if (!is.null(names(value)))
                 names(value) <- NULL
-            x@right.keys <- value
+            x@Rkeys <- value
         }
         x
     }
 )
 
 setMethod("subset", "AnnDbBimap",
-    function(x, left.keys=NULL, right.keys=NULL, objName=NULL, ...)
+    function(x, Lkeys=NULL, Rkeys=NULL, objName=NULL, ...)
     {
         if (!is.null(objName))
             x@objName <- toString(objName)
-        left.keys(x) <- left.keys
-        right.keys(x) <- right.keys
+        Lkeys(x) <- Lkeys
+        Rkeys(x) <- Rkeys
         x
     }
 )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.length", "right.length" and "length" generic.
+### The "Llength", "Rlength" and "length" generic.
 ###
 ### Conceptual definitions (for AnnDbBimap object x):
-###     left.length(x) :== length(left.keys(x))
-###     right.length(x) :== length(right.keys(x))
+###     Llength(x) :== length(Lkeys(x))
+###     Rlength(x) :== length(Rkeys(x))
 ###
 
-setMethod("left.length", "AnnDbBimap",
+setMethod("Llength", "AnnDbBimap",
     function(x)
     {
-        if (.inslot.left.keys(x))
-            return(length(x@left.keys))
-        dbCountUniqueVals(db(x), left.table(x), left.colname(x),
-                                 left.filter(x), x@datacache)
+        if (.inslot.Lkeys(x))
+            return(length(x@Lkeys))
+        dbCountUniqueVals(db(x), Ltablename(x), Lcolname(x),
+                                 Lfilter(x), x@datacache)
     }
 )
 
-setMethod("right.length", "AnnDbBimap",
+setMethod("Rlength", "AnnDbBimap",
     function(x)
     {
-        if (.inslot.right.keys(x))
-            return(length(x@right.keys))
-        dbCountUniqueVals(db(x), right.table(x), right.colname(x),
-                                 right.filter(x), x@datacache)
+        if (.inslot.Rkeys(x))
+            return(length(x@Rkeys))
+        dbCountUniqueVals(db(x), Rtablename(x), Rcolname(x),
+                                 Rfilter(x), x@datacache)
     }
 )
 
-setMethod("right.length", "Go3AnnDbBimap",
+setMethod("Rlength", "Go3AnnDbBimap",
     function(x)
     {
-        if (.inslot.right.keys(x))
-            return(length(x@right.keys))
+        if (.inslot.Rkeys(x))
+            return(length(x@Rkeys))
         countNames <- function(ontology)
         {
-            table <- right.table(x)[ontology]
-            dbCountUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
+            tablename <- Rtablename(x)[ontology]
+            dbCountUniqueVals(db(x), tablename, "go_id", Rfilter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countNames("BP") + countNames("CC") + countNames("MF")
     }
 )
 
-setMethod("right.length", "AnnDbMap",
+setMethod("Rlength", "AnnDbMap",
     function(x)
     {
-        stop("right.length() is not supported for an \"", class(x), "\" object")
+        stop("Rlength() is not supported for an \"", class(x), "\" object")
     }
 )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "*mappedKeys" methods.
+### The "[count.]mapped[L|R]keys" methods.
 ###
 ### Note that for some DB schemas like the HUMANCHIP_DB schema, all the "right
 ### objects" are expected to be mapped to a "left object" (and this is true
 ### for all the maps in the HUMANCHIP_DB-based ann package) hence
-### right.mappedKeys(x) should be the same as right.keys(x) (maybe
+### mappedRkeys(x) should be the same as Rkeys(x) (maybe
 ### something worth checking in a test unit).
 ###
 
@@ -360,44 +360,44 @@ setMethod("right.length", "AnnDbMap",
 ### ignored, hence will give wrong results if one of those 2 fields has a
 ### non-default value like silly maps ENTREZID and MULTIHIT in ARABIDOPSISCHIP_DB
 ### schema. But who cares, those maps are silly anyway...
-setMethod("left.mappedKeys", "AnnDbBimap",
+setMethod("mappedLkeys", "AnnDbBimap",
     function(x)
     {
-        dbUniqueMappedKeys(db(x), x@L2Rpath, x@left.keys, x@right.keys,
+        dbUniqueMappedKeys(db(x), x@L2Rpath, x@Lkeys, x@Rkeys,
                                   1, x@datacache)
     }
 )
-setMethod("count.left.mappedKeys", "AnnDbBimap",
+setMethod("count.mappedLkeys", "AnnDbBimap",
     function(x)
     {
-        dbCountUniqueMappedKeys(db(x), x@L2Rpath, x@left.keys, x@right.keys,
+        dbCountUniqueMappedKeys(db(x), x@L2Rpath, x@Lkeys, x@Rkeys,
                                        1, x@datacache)
     }
 )
 
-setMethod("right.mappedKeys", "AnnDbBimap",
+setMethod("mappedRkeys", "AnnDbBimap",
     function(x)
     {
-        dbUniqueMappedKeys(db(x), x@L2Rpath, x@left.keys, x@right.keys,
+        dbUniqueMappedKeys(db(x), x@L2Rpath, x@Lkeys, x@Rkeys,
                                   -1, x@datacache)
     }
 )
-setMethod("count.right.mappedKeys", "AnnDbBimap",
+setMethod("count.mappedRkeys", "AnnDbBimap",
     function(x)
     {
-        dbCountUniqueMappedKeys(db(x), x@L2Rpath, x@left.keys, x@right.keys,
+        dbCountUniqueMappedKeys(db(x), x@L2Rpath, x@Lkeys, x@Rkeys,
                                        -1, x@datacache)
     }
 )
 
-setMethod("left.mappedKeys", "Go3AnnDbBimap",
+setMethod("mappedLkeys", "Go3AnnDbBimap",
     function(x)
     {
         getMappedKeys <- function(ontology)
         {
-            table <- right.table(x)[ontology]
-            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
-            dbUniqueMappedKeys(db(x), L2Rpath, x@left.keys, x@right.keys,
+            tablename <- Rtablename(x)[ontology]
+            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, tablename, ontology)
+            dbUniqueMappedKeys(db(x), L2Rpath, x@Lkeys, x@Rkeys,
                                       1, x@datacache)
         }
         keys1 <- getMappedKeys("BP")
@@ -406,19 +406,19 @@ setMethod("left.mappedKeys", "Go3AnnDbBimap",
         unique(c(keys1, keys2, keys3))
     }
 )
-setMethod("count.left.mappedKeys", "Go3AnnDbBimap",
-    function(x) length(left.mappedKeys(x))
+setMethod("count.mappedLkeys", "Go3AnnDbBimap",
+    function(x) length(mappedLkeys(x))
 )
 
-setMethod("right.mappedKeys", "Go3AnnDbBimap",
+setMethod("mappedRkeys", "Go3AnnDbBimap",
     function(x)
     {
         getMappedKeys <- function(ontology)
         {
-            table <- right.table(x)[ontology]
+            tablename <- Rtablename(x)[ontology]
             L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@table <- table
-            dbUniqueMappedKeys(db(x), L2Rpath, x@left.keys, x@right.keys,
+            L2Rpath[[length(L2Rpath)]]@tablename <- tablename
+            dbUniqueMappedKeys(db(x), L2Rpath, x@Lkeys, x@Rkeys,
                                       -1, x@datacache)
         }
         keys1 <- getMappedKeys("BP")
@@ -429,14 +429,14 @@ setMethod("right.mappedKeys", "Go3AnnDbBimap",
         c(keys1, keys2, keys3)
     }
 )
-setMethod("count.right.mappedKeys", "Go3AnnDbBimap",
+setMethod("count.mappedRkeys", "Go3AnnDbBimap",
     function(x)
     {
         countMappedNames <- function(ontology)
         {
-            table <- right.table(x)[ontology]
-            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
-            dbCountUniqueMappedKeys(db(x), L2Rpath, x@left.keys, x@right.keys,
+            tablename <- Rtablename(x)[ontology]
+            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, tablename, ontology)
+            dbCountUniqueMappedKeys(db(x), L2Rpath, x@Lkeys, x@Rkeys,
                                            -1, x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -444,36 +444,36 @@ setMethod("count.right.mappedKeys", "Go3AnnDbBimap",
     }
 )
 
-setMethod("right.mappedKeys", "AnnDbMap",
+setMethod("mappedRkeys", "AnnDbMap",
     function(x)
     {
-        stop("right.mappedKeys() is not supported for an \"", class(x), "\" object")
+        stop("mappedRkeys() is not supported for an \"", class(x), "\" object")
     }
 )
 
-setMethod("count.right.mappedKeys", "AnnDbMap",
+setMethod("count.mappedRkeys", "AnnDbMap",
     function(x)
     {
-        stop("count.right.mappedKeys() is not supported for an \"", class(x), "\" object")
+        stop("count.mappedRkeys() is not supported for an \"", class(x), "\" object")
     }
 )
 
 ### And for an environment or a list...
-setMethod("mappedKeys", "environment",
+setMethod("mappedkeys", "environment",
     function(x)
     {
         is_na <- eapply(x, function(x) length(x) == 1 && is.na(x), all.names=TRUE)
         names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
     }
 )
-setMethod("mappedKeys", "list",
+setMethod("mappedkeys", "list",
     function(x)
     {
         is_na <- lapply(x, function(x) length(x) == 1 && is.na(x))
         names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
     }
 )
-setMethod("count.mappedKeys", "ANY", function(x) length(mappedKeys(x)))
+setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 
 
 
@@ -487,13 +487,13 @@ setMethod("count.mappedKeys", "ANY", function(x) length(mappedKeys(x)))
 ### direction (direct/reverse) of the map which is a nice property
 ### (e.g. 'nrow(map) == nrow(revmap(map))').
 ###
-### The 'left.keys' and 'right.keys' args can be one of the following:
+### The 'Lkeys' and 'Rkeys' args can be one of the following:
 ###   - NULL: the arg is ignored.
 ###   - A NA-free character vector: only the rows with a "left key" (1st
-###     field) matching one of the keys in 'left.keys' and a "right key"
-###     (2nd field) matching one of the keys in 'right.keys' are
+###     field) matching one of the keys in 'Lkeys' and a "right key"
+###     (2nd field) matching one of the keys in 'Rkeys' are
 ###     retrieved.
-### Note that the 'left.keys' and 'right.keys' args are _not_ checked i.e.
+### Note that the 'Lkeys' and 'Rkeys' args are _not_ checked i.e.
 ### only NULL and NA-free character vectors are guaranted to work properly.
 ###
 
@@ -501,7 +501,7 @@ setMethod("count.mappedKeys", "ANY", function(x) length(mappedKeys(x)))
 #setMethod("flatten", "AnnDbTable",
 #    function(x)
 #    {
-#        dbRawAnnDbMapToTable(db(x), left.table(x), left.colname(x), left.keys,
+#        dbRawAnnDbMapToTable(db(x), Ltablename(x), Lcolname(x), Lkeys,
 #                                    NULL, NULL, NULL,
 #                                    x@showCols, x@from)
 #    }
@@ -511,14 +511,14 @@ setMethod("flatten", "AnnDbBimap",
     function(x, fromKeys.only=FALSE)
     {
         data0 <- dbSelectFromL2Rpath(db(x), x@L2Rpath,
-                                     x@left.keys, x@right.keys)
-        left.keys <- right.keys <- as.character(NA)
+                                     x@Lkeys, x@Rkeys)
+        Lkeys <- Rkeys <- as.character(NA)
         if ((direction(x) != 1) != fromKeys.only)
-            left.keys <- left.keys(x)
+            Lkeys <- Lkeys(x)
         if ((direction(x) == 1) != fromKeys.only)
-            right.keys <- right.keys(x)
+            Rkeys <- Rkeys(x)
         new("FlatBimap", collabels=collabels(x), direction=direction(x),
-                         data=data0, left.keys=left.keys, right.keys=right.keys)
+                         data=data0, Lkeys=Lkeys, Rkeys=Rkeys)
     }
 )
 
@@ -534,10 +534,10 @@ setMethod("flatten", "Go3AnnDbBimap",
     {
         getPartialSubmap <- function(ontology)
         {
-            table <- right.table(x)[ontology]
-            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
+            tablename <- Rtablename(x)[ontology]
+            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, tablename, ontology)
             data <- dbSelectFromL2Rpath(db(x), L2Rpath,
-                                        x@left.keys, x@right.keys)
+                                        x@Lkeys, x@Rkeys)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- ontology
             data
@@ -545,20 +545,20 @@ setMethod("flatten", "Go3AnnDbBimap",
         data0 <- rbind(getPartialSubmap("BP"),
                        getPartialSubmap("CC"),
                        getPartialSubmap("MF"))
-        left.keys <- right.keys <- as.character(NA)
+        Lkeys <- Rkeys <- as.character(NA)
         if ((direction(x) != 1) != fromKeys.only)
-            left.keys <- left.keys(x)
+            Lkeys <- Lkeys(x)
         if ((direction(x) == 1) != fromKeys.only)
-            right.keys <- right.keys(x)
+            Rkeys <- Rkeys(x)
         new("FlatBimap", collabels=collabels(x), direction=direction(x),
-                         data=data0, left.keys=left.keys, right.keys=right.keys)
+                         data=data0, Lkeys=Lkeys, Rkeys=Rkeys)
     }
 )
 
 setMethod("toTable", "AnnDbBimap",
-    function(x, left.keys=NULL, right.keys=NULL)
+    function(x, Lkeys=NULL, Rkeys=NULL)
     {
-        x <- subset(x, left.keys, right.keys)
+        x <- subset(x, Lkeys, Rkeys)
         flatten(x, fromKeys.only=TRUE)@data
     }
 )
@@ -578,7 +578,7 @@ setMethod("toTable", "AnnDbBimap",
 
 .is.submap <- function(x)
 {
-    !is.na(x@left.keys) || !is.na(x@right.keys)
+    .inslot.Lkeys(x) || .inslot.Rkeys(x)
 }
 
 setMethod("show", "AnnDbTable",
@@ -617,15 +617,15 @@ setMethod("as.character", "AtomicAnnDbBimap",
             stop("AtomicAnnDbBimap object with tags cannot be coerced to a character vector")
         data <- flatten(x, fromKeys.only=TRUE)@data
         if (direction(x) == 1)
-            ans <- data[[2]] # could also use [[right.colname(x)]]
+            ans <- data[[2]] # could also use [[Rcolname(x)]]
         else
-            ans <- data[[1]] # could also use [[left.colname(x)]]
+            ans <- data[[1]] # could also use [[Lcolname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
         if (direction(x) == 1)
-            names(ans) <- data[[1]] # could also use [[left.colname(x)]]
+            names(ans) <- data[[1]] # could also use [[Lcolname(x)]]
         else
-            names(ans) <- data[[2]] # could also use [[right.colname(x)]]
+            names(ans) <- data[[2]] # could also use [[Rcolname(x)]]
         if (any(duplicated(names(ans))))
             warning("returned vector has duplicated names")
         ans
@@ -634,9 +634,9 @@ setMethod("as.character", "AtomicAnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.toList" and "right.toList" methods.
+### The "toLList" and "toRList" methods.
 ###
-### Like the "toList" methods, the "left.toList" and "right.toList" methods
+### Like the "toList" methods, the "toLList" and "toRList" methods
 ### have a 'keys' arg.
 ### The 'keys' arg. can be one of the following:
 ###   - NULL: all map elements are extracted (equivalent to passing
@@ -653,40 +653,40 @@ setMethod("as.character", "AtomicAnnDbBimap",
 ### character vectors and NA-free numeric vectors are guaranted to work.
 ###
 
-setMethod("left.toList", "AnnDbBimap",
+setMethod("toLList", "AnnDbBimap",
     function(x, keys=NULL)
     {
-        x <- subset(x, left.keys=keys, right.keys=NULL)
-        left.toList(flatten(x, fromKeys.only=TRUE))
+        x <- subset(x, Lkeys=keys, Rkeys=NULL)
+        toLList(flatten(x, fromKeys.only=TRUE))
     }
 )
 
-setMethod("left.toList", "AnnDbMap",
+setMethod("toLList", "AnnDbMap",
     function(x, keys=NULL)
     {
-        x <- subset(x, left.keys=keys, right.keys=NULL)
+        x <- subset(x, Lkeys=keys, Rkeys=NULL)
         y <- flatten(x, fromKeys.only=TRUE)
         if (length(x@rightColType) == 1
          && typeof(y@data[[2]]) != x@rightColType) {
                 converter <- get(paste("as.", x@rightColType, sep=""))
                 y@data[[2]] <- converter(y@data[[2]])
         }
-        left.toList(y)
+        toLList(y)
     }
 )
 
-setMethod("right.toList", "AnnDbBimap",
+setMethod("toRList", "AnnDbBimap",
     function(x, keys=NULL)
     {
-        x <- subset(x, left.keys=NULL, right.keys=keys)
-        right.toList(flatten(x, fromKeys.only=TRUE))
+        x <- subset(x, Lkeys=NULL, Rkeys=keys)
+        toRList(flatten(x, fromKeys.only=TRUE))
     }
 )
 
-setMethod("right.toList", "AnnDbMap",
+setMethod("toRList", "AnnDbMap",
     function(x, keys=NULL)
     {
-        stop("right.toList() is not supported for an \"", class(x), "\" object")
+        stop("toRList() is not supported for an \"", class(x), "\" object")
     }
 )
 
@@ -702,7 +702,7 @@ setMethod("right.toList", "AnnDbMap",
 setMethod("is.na", "AnnDbBimap",
     function(x)
     {
-        mapped_keys <- mappedKeys(x)
+        mapped_keys <- mappedkeys(x)
         keys <- keys(x)
         ans <- !(keys %in% mapped_keys)
         names(ans) <- keys

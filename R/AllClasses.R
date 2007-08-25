@@ -55,7 +55,7 @@ setClass("AnnDbTable",
 
 setClass("L2Rbrick",
     representation(
-        table="character",
+        tablename="character",
         Lcolname="character",
         Rcolname="character",
         tagJoin="character",
@@ -88,14 +88,14 @@ setClass("AnnDbBimap",
         L2Rpath="list",             # list of L2Rbrick objects
         direction="integer",        # 1L for left-to-right, -1L for right-to-left
                                     # and 0L for undirected
-        left.keys="character",
-        right.keys="character",
+        Lkeys="character",
+        Rkeys="character",
         ifnotfound="list"
     ),
     prototype(
         direction=1L,               # left-to-right by default
-        left.keys=as.character(NA),
-        right.keys=as.character(NA),
+        Lkeys=as.character(NA),
+        Rkeys=as.character(NA),
         ifnotfound=list()           # empty list => raise an error on first key not found
     )
 )

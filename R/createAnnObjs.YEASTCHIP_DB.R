@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-YEASTCHIP_DB_L2Rbrick1 <- list(table="probes", Lcolname="probe_id", Rcolname="id")
+YEASTCHIP_DB_L2Rbrick1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rpath
 YEASTCHIP_DB_AnnDbBimap_seeds <- list(
@@ -23,7 +23,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="gene2alias",
+                tablename="gene2alias",
                 Lcolname="id",
                 Rcolname="alias"
             )
@@ -35,7 +35,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="chromosome_features",
+                tablename="chromosome_features",
                 Lcolname="id",
                 Rcolname="chromosome"
             )
@@ -47,7 +47,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="chromosome_features",
+                tablename="chromosome_features",
                 Lcolname="id",
                 Rcolname="start",
                 tagCols=c(Chromosome="{chromosome}")
@@ -61,7 +61,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="chromosome_features",
+                tablename="chromosome_features",
                 Lcolname="id",
                 Rcolname="feature_description"
             )
@@ -73,7 +73,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="ec",
+                tablename="ec",
                 Lcolname="id",
                 Rcolname="ec_number"
             )
@@ -85,7 +85,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="sgd",
+                tablename="sgd",
                 Lcolname="id",
                 Rcolname="gene_name"
             )
@@ -97,7 +97,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="kegg",
+                tablename="kegg",
                 Lcolname="id",
                 Rcolname="kegg_id"
             )
@@ -109,7 +109,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="pubmed",
+                tablename="pubmed",
                 Lcolname="id",
                 Rcolname="pubmed_id"
             )
@@ -121,13 +121,13 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                #table="go_term", # no rightmost table for a Go3AnnDbBimap
+                #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
                 Rcolname="go_id",
                 tagCols=c(Evidence="{evidence}", Ontology="NULL")
             )
         ),
-        rightTables=Go3tables()
+        rightTables=Go3tablenames()
     ),
     list(
         objName="ORF",
@@ -135,7 +135,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rpath=list(
             YEASTCHIP_DB_L2Rbrick1,
             list(
-                table="sgd",
+                tablename="sgd",
                 Lcolname="id",
                 Rcolname="systematic_name"
             )
@@ -158,7 +158,7 @@ createAnnObjs.YEASTCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tables(all=TRUE)
+    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tablenames(all=TRUE)
     ann_objs$GO2ALLPROBES <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
@@ -166,7 +166,7 @@ createAnnObjs.YEASTCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
 
     ## Some pre-caching
-    left.keys(ann_objs$GO)
+    Lkeys(ann_objs$GO)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

@@ -5,7 +5,7 @@ make_eg_to_go_map <- function(chip) {
     chip2GO <- get(paste(chip, "GO", sep=""), chipNS)
     chipGO2PROBE <- get(paste(chip, "GO2PROBE", sep=""), chipNS)
     db_conn <- get("db_conn", chipNS)
-    L2Rpath <- list(new("L2Rbrick", table="genes",
+    L2Rpath <- list(new("L2Rbrick", tablename="genes",
                         Lcolname="gene_id", Rcolname="id"),
                     chip2GO@L2Rpath[[2]])
     eg2go.map <- new("Go3AnnDbBimap",
@@ -29,8 +29,8 @@ make_go_to_eg_map <- function(chip) {
 ##    the schemas definitions in AnnotationDbi:
 
 ##      L2Rpath <- list(
-##        new("L2Rbrick", table="ec", Lcolname="ec_number", Rcolname="id"),
-##        new("L2Rbrick", table="genes", Lcolname="id", Rcolname="gene_id")
+##        new("L2Rbrick", tablename="ec", Lcolname="ec_number", Rcolname="id"),
+##        new("L2Rbrick", tablename="genes", Lcolname="id", Rcolname="gene_id")
 ##      )
 
 ## 2) Create a new AtomicAnnDbBimap instance:

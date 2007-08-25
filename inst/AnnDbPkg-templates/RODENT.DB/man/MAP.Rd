@@ -32,7 +32,7 @@
 \examples{
         x <- @ANNOBJPREFIX@MAP
         # Get the entrez gene identifiers that are mapped to any cytoband
-        mapped_genes <- mappedKeys(x)
+        mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {
@@ -82,7 +82,7 @@
 \examples{
         x <- @ANNOBJPREFIX@MAP2EG
         # Get the cytobands that are mapped to any entrez gene id
-        mapped_bands <- mappedKeys(x)
+        mapped_bands <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_bands)
         if(length(xx) > 0) {

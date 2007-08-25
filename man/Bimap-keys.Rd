@@ -4,66 +4,66 @@
 \alias{keys,Bimap-method}
 \alias{length}
 \alias{length,Bimap-method}
-\alias{mappedKeys}
-\alias{mappedKeys,Bimap-method}
-\alias{mappedKeys,environment-method}
-\alias{mappedKeys,list-method}
-\alias{count.mappedKeys}
-\alias{count.mappedKeys,Bimap-method}
-\alias{count.mappedKeys,ANY-method}
+\alias{mappedkeys}
+\alias{mappedkeys,Bimap-method}
+\alias{mappedkeys,environment-method}
+\alias{mappedkeys,list-method}
+\alias{count.mappedkeys}
+\alias{count.mappedkeys,Bimap-method}
+\alias{count.mappedkeys,ANY-method}
 
-\alias{left.keys}
-\alias{left.keys,FlatBimap-method}
-\alias{left.keys,AnnDbBimap-method}
+\alias{Lkeys}
+\alias{Lkeys,FlatBimap-method}
+\alias{Lkeys,AnnDbBimap-method}
 
-\alias{right.keys}
-\alias{right.keys,FlatBimap-method}
-\alias{right.keys,AnnDbBimap-method}
-\alias{right.keys,Go3AnnDbBimap-method}
-\alias{right.keys,AnnDbMap-method}
+\alias{Rkeys}
+\alias{Rkeys,FlatBimap-method}
+\alias{Rkeys,AnnDbBimap-method}
+\alias{Rkeys,Go3AnnDbBimap-method}
+\alias{Rkeys,AnnDbMap-method}
 
-\alias{left.length}
-\alias{left.length,Bimap-method}
-\alias{left.length,AnnDbBimap-method}
+\alias{Llength}
+\alias{Llength,Bimap-method}
+\alias{Llength,AnnDbBimap-method}
 
-\alias{right.length}
-\alias{right.length,Bimap-method}
-\alias{right.length,AnnDbBimap-method}
-\alias{right.length,Go3AnnDbBimap-method}
-\alias{right.length,AnnDbMap-method}
+\alias{Rlength}
+\alias{Rlength,Bimap-method}
+\alias{Rlength,AnnDbBimap-method}
+\alias{Rlength,Go3AnnDbBimap-method}
+\alias{Rlength,AnnDbMap-method}
 
-\alias{left.mappedKeys}
-\alias{left.mappedKeys,FlatBimap-method}
-\alias{left.mappedKeys,AnnDbBimap-method}
-\alias{left.mappedKeys,Go3AnnDbBimap-method}
+\alias{mappedLkeys}
+\alias{mappedLkeys,FlatBimap-method}
+\alias{mappedLkeys,AnnDbBimap-method}
+\alias{mappedLkeys,Go3AnnDbBimap-method}
 
-\alias{right.mappedKeys}
-\alias{right.mappedKeys,FlatBimap-method}
-\alias{right.mappedKeys,AnnDbBimap-method}
-\alias{right.mappedKeys,Go3AnnDbBimap-method}
-\alias{right.mappedKeys,AnnDbMap-method}
+\alias{mappedRkeys}
+\alias{mappedRkeys,FlatBimap-method}
+\alias{mappedRkeys,AnnDbBimap-method}
+\alias{mappedRkeys,Go3AnnDbBimap-method}
+\alias{mappedRkeys,AnnDbMap-method}
 
-\alias{count.left.mappedKeys}
-\alias{count.left.mappedKeys,Bimap-method}
-\alias{count.left.mappedKeys,AnnDbBimap-method}
-\alias{count.left.mappedKeys,Go3AnnDbBimap-method}
+\alias{count.mappedLkeys}
+\alias{count.mappedLkeys,Bimap-method}
+\alias{count.mappedLkeys,AnnDbBimap-method}
+\alias{count.mappedLkeys,Go3AnnDbBimap-method}
 
-\alias{count.right.mappedKeys}
-\alias{count.right.mappedKeys,Bimap-method}
-\alias{count.right.mappedKeys,AnnDbBimap-method}
-\alias{count.right.mappedKeys,Go3AnnDbBimap-method}
-\alias{count.right.mappedKeys,AnnDbMap-method}
+\alias{count.mappedRkeys}
+\alias{count.mappedRkeys,Bimap-method}
+\alias{count.mappedRkeys,AnnDbBimap-method}
+\alias{count.mappedRkeys,Go3AnnDbBimap-method}
+\alias{count.mappedRkeys,AnnDbMap-method}
 
 \alias{keys<-}
 \alias{keys<-,Bimap-method}
 
-\alias{left.keys<-}
-\alias{left.keys<-,FlatBimap-method}
-\alias{left.keys<-,AnnDbBimap-method}
+\alias{Lkeys<-}
+\alias{Lkeys<-,FlatBimap-method}
+\alias{Lkeys<-,AnnDbBimap-method}
 
-\alias{right.keys<-}
-\alias{right.keys<-,FlatBimap-method}
-\alias{right.keys<-,AnnDbBimap-method}
+\alias{Rkeys<-}
+\alias{Rkeys<-,FlatBimap-method}
+\alias{Rkeys<-,AnnDbBimap-method}
 
 \alias{subset}
 \alias{subset,FlatBimap-method}
@@ -85,23 +85,23 @@
   ## Directed methods
   keys(x)
   length(x)
-  mappedKeys(x)
-  count.mappedKeys(x)
+  mappedkeys(x)
+  count.mappedkeys(x)
 
   ## Undirected methods
-  left.keys(x)
-  right.keys(x)
-  left.length(x)
-  right.length(x)
-  left.mappedKeys(x)
-  right.mappedKeys(x)
-  count.left.mappedKeys(x)
-  count.right.mappedKeys(x)
+  Lkeys(x)
+  Rkeys(x)
+  Llength(x)
+  Rlength(x)
+  mappedLkeys(x)
+  mappedRkeys(x)
+  count.mappedLkeys(x)
+  count.mappedRkeys(x)
 
   ## Subsetting methods
   keys(x) <- value
-  left.keys(x) <- value
-  right.keys(x) <- value
+  Lkeys(x) <- value
+  Rkeys(x) <- value
   subset(x, ...)
 }
 
@@ -116,11 +116,11 @@
   \item{...}{
     Extra arguments can be:
     \describe{
-      \item{\code{left.keys}}{
-        The new left keys (must be a subset of the current left keys).
+      \item{\code{Lkeys}}{
+        The new Lkeys (must be a subset of the current Lkeys).
       }
-      \item{\code{right.keys}}{
-        The new right keys (must be a subset of the current right keys).
+      \item{\code{Rkeys}}{
+        The new Rkeys (must be a subset of the current Rkeys).
       }
       \item{\code{objName}}{
         The name to give to the submap (only supported if \code{x} is an
@@ -144,19 +144,19 @@
   x <- hgu95av2GO
   x
   length(x)
-  count.mappedKeys(x)
+  count.mappedkeys(x)
 
   ## Keep only mapped keys
-  keys(x) <- mappedKeys(x)
+  keys(x) <- mappedkeys(x)
   length(x)
-  count.mappedKeys(x)
+  count.mappedkeys(x)
   x # now it is a submap
 
-  ## mappedKeys and count.mappedKeys also work with an environment
+  ## mappedkeys and count.mappedkeys also work with an environment
   ## or a list
   z <- list(k1=NA, k2=letters[1:4], k3="x")
-  mappedKeys(z)
-  count.mappedKeys(z)
+  mappedkeys(z)
+  count.mappedkeys(z)
   
 }
 

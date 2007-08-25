@@ -22,7 +22,7 @@
 \examples{
         x <- @ANNOBJPREFIX@UNIGENE
         # Get the Unigene identifiers that are mapped to an entrez gene id
-        mapped_genes <- mappedKeys(x)
+        mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {
@@ -63,7 +63,7 @@
 \examples{
         x <- @ANNOBJPREFIX@UNIGENE2EG
         # Get the entrez gene identifiers that are mapped to a Unigene id
-        mapped_genes <- mappedKeys(x)
+        mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {

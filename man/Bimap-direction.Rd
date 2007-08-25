@@ -58,14 +58,14 @@
   x <- hgu95av2GO
   x
   length(x)
-  left.length(x)
-  right.length(x)
+  Llength(x)
+  Rlength(x)
 
   y <- revmap(x)
   y
   length(y)
-  left.length(y)
-  right.length(y)
+  Llength(y)
+  Rlength(y)
 }
 
 \keyword{methods}
