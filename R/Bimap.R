@@ -53,39 +53,58 @@
 ### The "Bimap" interface
 ### ---------------------
 ###
-### A FlatBimap object is a bimap whose data (Lkeys, Rkeys and
-### links) are stored in memory (in a data frame for the links).
-### A AnnDbBimap object is a bimap whose data are stored in a data base.
-### Conceptually, a FlatBimap and a AnnDbBimap object are the same (only
-### their internal representation differ) so it's natural to try to define
-### a set of methods that make sense for both (so they can be manipulated
-### in a similar way). This common interface is the "Bimap" interface.
+### AnnDbBimap and FlatBimap objects:
 ###
-### Note that there is an important asymetry between these two classes:
-###   A AnnDbBimap object can be converted into a FlatBimap object
-###   but a FlatBimap object can't be converted into an AnnDbBimap
-###   object (well, in theory maybe it could be, but for now the data bases
-###   we use to store the data of the AnnDbBimap objects are treated as
-###   read-only). This conversion from AnnDbBimap to FlatBimap is performed
-###   by the "flatten" generic function (with methods for AnnDbBimap objects
-###   only).
-### The "flatten" generic (with methods for AnnDbBimap objects only) and the
-### "subset" generic (with methods for AnnDbBimap and FlatBimap objects) play
-### the following central roles:
-###   1. flatten(x) converts AnnDbBimap object x into FlatBimap object y with
-###      no loss of information.
-###   2. If x is an AnnDbBimap object and f a Bimap generic, then f is
-###      expected "to do the same thing" for AnnDbBimap and FlatBimap objects.
-###      More precisely, this means that for any AnnDbBimap object x, we
-###      expect f(x) to be identical to f(flatten(x)). We call this property
-###      Property0.
-### The checkProperty0() function (AnnDbPkg-checker.R file) checks that
-### Property0 is satisfied on all the AnnDbBimap objects defined in a given
-### package.
+###    A AnnDbBimap object is a bimap whose data are stored in a data base.
+###    A FlatBimap object is a bimap whose data (left keys, right keys and
+###    links) are stored in memory (in a data frame for the links).
+###    Conceptually, an AnnDbBimap and a FlatBimap object are the same (only
+###    their internal representation differ) so it's natural to try to define
+###    a set of methods that make sense for both (so they can be manipulated
+###    in a similar way). This common interface is the "Bimap" interface.
 ###
-### Both AnnDbBimap and FlatBimap objects have a read-only semantic: the user
-### can subset them but cannot change their data.
-### More about "subset" soon...
+### The "flatten" generic:
+###
+###      flatten(x) converts AnnDbBimap object x into FlatBimap object y
+###      with no loss of information
+###
+###    Note that a FlatBimap object can't be converted into an AnnDbBimap
+###    object (well, in theory maybe it could be, but for now the data bases
+###    we use to store the data of the AnnDbBimap objects are treated as
+###    read-only). This conversion from AnnDbBimap to FlatBimap is performed
+###    by the "flatten" generic function (with methods for AnnDbBimap objects
+###    only). 
+###    The "flatten" generic (defined for AnnDbBimap objects only) converts
+###    an AnnDbBimap object into a FlatBimap object .
+###
+### Property0:
+###
+###    The "flatten" generic plays a very useful role when we need to
+###    understand or explain exactly what a given Bimap method f will do when
+###    applied to an AnnDbBimap object. It's generally easier to explain what
+###    it does on a FlatBimap object and then to just say "and it does the
+###    same thing on a AnnDbBimap object". This is exactly what Property0
+###    says:
+###
+###      for any AnnDbBimap object x, f(x) is expected to be indentical
+###      to f(flatten(x))
+###
+###    Of course, this implies that the f method for AnnDbBimap objects must
+###    return the same type of object than the f method for FlatBimap objects.
+###    In this sense, the "revmap" and "subset" Bimap methods are particular
+###    because they are expected to return an object of the same class as
+###    their argument x, so f(x) can't be identical to f(flatten(x)). For
+###    these methods, Property0 says:
+###
+###      for any AnnDbBimap object x, flatten(subset(x)) is expected to
+###      be identical to subset(flatten(x)
+###
+###    The checkProperty0() function (AnnDbPkg-checker.R file) checks that
+###    Property0 is satisfied on all the AnnDbBimap objects defined in a given
+###    package (FIXME: checkProperty0 is currently broken).
+###
+### Finally, note that both AnnDbBimap and FlatBimap objects have a read-only
+### semantic: the user can subset them but cannot change their data.
 ###
 ### -------------------------------------------------------------------------
 
@@ -183,7 +202,7 @@ setMethod("dim", "Bimap",
 
 ### Directed methods
 
-.DIRECTION_STR2INT <- c("left-to-right"=1L, "right-to-left"=-1L, "undirected"=0L)
+.DIRECTION_STR2INT <- c("L2R (left-to-right)"=1L, "R2L (right-to-left)"=-1L, "undirected"=0L)
 
 .normalize.direction <- function(direction)
 {
