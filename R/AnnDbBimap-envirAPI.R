@@ -76,7 +76,7 @@ setMethod("as.list", "AtomicAnnDbBimap",
             x <- subset(x, left.keys=keys, right.keys=NULL)
         else
             x <- subset(x, left.keys=NULL, right.keys=keys)
-        y <- flatten(x)
+        y <- flatten(x, fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
             ann_list <- list()
         } else {
@@ -107,7 +107,7 @@ setMethod("as.list", "IpiAnnDbMap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, left.keys=keys, right.keys=NULL))
+        y <- flatten(subset(x, left.keys=keys, right.keys=NULL), fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
             ann_list <- list()
         } else {
@@ -124,7 +124,7 @@ setMethod("as.list", "AgiAnnDbMap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, left.keys=keys, right.keys=NULL))
+        y <- flatten(subset(x, left.keys=keys, right.keys=NULL), fromKeys.only=TRUE)
         if (nrow(y@data) == 0)
             ann_list <- list()
         else
@@ -155,7 +155,7 @@ setMethod("as.list", "GoAnnDbBimap",
             x <- subset(x, left.keys=keys, right.keys=NULL)
         else
             x <- subset(x, left.keys=NULL, right.keys=keys)
-        y <- flatten(x)
+        y <- flatten(x, fromKeys.only=TRUE)
         keys <- keys(y)
         if (direction(x) == 1) {
             ann_list <- as.list(rep(as.character(NA), length(keys)))
@@ -211,7 +211,7 @@ setMethod("as.list", "GONodeAnnDbBimap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, left.keys=keys, right.keys=NULL))
+        y <- flatten(subset(x, left.keys=keys, right.keys=NULL), fromKeys.only=TRUE)
         makeGONode <- function(go_id, Term, Ontology, Definition, ...)
         {
             new("GONode", GOID=go_id[1],

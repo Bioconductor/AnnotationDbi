@@ -348,14 +348,13 @@ dbCountMapLinks <- function(conn, L2Rpath)
     paste("SELECT", SQLwhat, "FROM", SQLchunks$from, "WHERE", where)
 }
 
-dbSelectFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys,
-                                      extra.colnames)
+dbSelectFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys)
 {
     SQLchunks <- .makeSQLchunks(L2Rpath)
     what_leftCol <- SQLchunks$what_leftCol
     what_rightCol <- SQLchunks$what_rightCol
     what_tagCols <- SQLchunks$what_tagCols
-    SQLwhat <- paste(c(what_leftCol, what_rightCol, what_tagCols, extra.colnames), collapse=",")
+    SQLwhat <- paste(c(what_leftCol, what_rightCol, what_tagCols), collapse=",")
     SQL <- .makeSQL(SQLchunks, SQLwhat, left.keys, right.keys)
     .dbGetQuery(conn, SQL)
 }

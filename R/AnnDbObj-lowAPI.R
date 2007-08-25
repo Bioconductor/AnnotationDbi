@@ -138,17 +138,19 @@ setReplaceMethod("direction", "AnnDbMap",
 )
 
 setMethod("revmap", "AnnDbBimap",
-    function(x, objName=NULL)
+    function(x, objName=NULL, ...)
     {
-        direction(x) <- - direction(x)
         if (!is.null(objName))
             x@objName <- toString(objName)
-        x
+        callNextMethod() # calls the method for Bimap
     }
 )
 
 setMethod("revmap", "environment",
-    function(x, objName=NULL) l2e(reverseSplit(as.list(x)))
+    function(x, ...) l2e(reverseSplit(as.list(x)))
+)
+setMethod("revmap", "list",
+    function(x, ...) reverseSplit(x)
 )
 
 
@@ -260,6 +262,8 @@ setReplaceMethod("left.keys", "AnnDbBimap",
     {
         if (!is.null(value)) {
             .checkKeys(value, left.keys(x), x@ifnotfound)
+            if (!is.null(names(value)))
+                names(value) <- NULL
             x@left.keys <- value
         }
         x
@@ -271,6 +275,8 @@ setReplaceMethod("right.keys", "AnnDbBimap",
     {
         if (!is.null(value)) {
             .checkKeys(value, right.keys(x), x@ifnotfound)
+            if (!is.null(names(value)))
+                names(value) <- NULL
             x@right.keys <- value
         }
         x
@@ -278,12 +284,12 @@ setReplaceMethod("right.keys", "AnnDbBimap",
 )
 
 setMethod("subset", "AnnDbBimap",
-    function(x, left.keys=NULL, right.keys=NULL, objName=NULL)
+    function(x, left.keys=NULL, right.keys=NULL, objName=NULL, ...)
     {
-        left.keys(x) <- left.keys
-        right.keys(x) <- right.keys
         if (!is.null(objName))
             x@objName <- toString(objName)
+        left.keys(x) <- left.keys
+        right.keys(x) <- right.keys
         x
     }
 )
@@ -452,7 +458,7 @@ setMethod("count.right.mappedKeys", "AnnDbMap",
     }
 )
 
-### and for environments...
+### And for an environment or a list...
 setMethod("mappedKeys", "environment",
     function(x)
     {
@@ -460,8 +466,15 @@ setMethod("mappedKeys", "environment",
         names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
     }
 )
+setMethod("mappedKeys", "list",
+    function(x)
+    {
+        is_na <- lapply(x, function(x) length(x) == 1 && is.na(x))
+        names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
+    }
+)
+setMethod("count.mappedKeys", "ANY", function(x) length(mappedKeys(x)))
 
-setMethod("count.mappedKeys", "environment", function(x) length(mappedKeys(x)))
 
 
 ### =========================================================================
@@ -486,7 +499,7 @@ setMethod("count.mappedKeys", "environment", function(x) length(mappedKeys(x)))
 
 ### CURRENTLY BROKEN!
 #setMethod("flatten", "AnnDbTable",
-#    function(x, left.keys, verbose=FALSE)
+#    function(x)
 #    {
 #        dbRawAnnDbMapToTable(db(x), left.table(x), left.colname(x), left.keys,
 #                                    NULL, NULL, NULL,
@@ -495,20 +508,15 @@ setMethod("count.mappedKeys", "environment", function(x) length(mappedKeys(x)))
 #)
 
 setMethod("flatten", "AnnDbBimap",
-    function(x, extra.colnames=NULL, verbose=FALSE)
+    function(x, fromKeys.only=FALSE)
     {
         data0 <- dbSelectFromL2Rpath(db(x), x@L2Rpath,
-                                     x@left.keys, x@right.keys,
-                                     extra.colnames)
-        left.keys <- left.keys(x)
-        if (!.inslot.right.keys(x)) {
-            if (is(x, "AnnDbMap"))
-                ## Temporary hack needed because right.keys() doesn't work
-                ## on AnnDbMap objects
-                right.keys <- as.character(NA)
-            else
-                right.keys <- right.keys(x)
-        }
+                                     x@left.keys, x@right.keys)
+        left.keys <- right.keys <- as.character(NA)
+        if ((direction(x) != 1) != fromKeys.only)
+            left.keys <- left.keys(x)
+        if ((direction(x) == 1) != fromKeys.only)
+            right.keys <- right.keys(x)
         new("FlatBimap", collabels=collabels(x), direction=direction(x),
                          data=data0, left.keys=left.keys, right.keys=right.keys)
     }
@@ -522,15 +530,14 @@ setMethod("flatten", "AnnDbBimap",
 ###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
 ### Surprisingly the latter is almost twice faster than the former!
 setMethod("flatten", "Go3AnnDbBimap",
-    function(x, extra.colnames=NULL, verbose=FALSE)
+    function(x, fromKeys.only=FALSE)
     {
         getPartialSubmap <- function(ontology)
         {
             table <- right.table(x)[ontology]
             L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
             data <- dbSelectFromL2Rpath(db(x), L2Rpath,
-                                        x@left.keys, x@right.keys,
-                                        extra.colnames)
+                                        x@left.keys, x@right.keys)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- ontology
             data
@@ -538,8 +545,11 @@ setMethod("flatten", "Go3AnnDbBimap",
         data0 <- rbind(getPartialSubmap("BP"),
                        getPartialSubmap("CC"),
                        getPartialSubmap("MF"))
-        left.keys <- left.keys(x)
-        right.keys <- right.keys(x)
+        left.keys <- right.keys <- as.character(NA)
+        if ((direction(x) != 1) != fromKeys.only)
+            left.keys <- left.keys(x)
+        if ((direction(x) == 1) != fromKeys.only)
+            right.keys <- right.keys(x)
         new("FlatBimap", collabels=collabels(x), direction=direction(x),
                          data=data0, left.keys=left.keys, right.keys=right.keys)
     }
@@ -549,7 +559,7 @@ setMethod("toTable", "AnnDbBimap",
     function(x, left.keys=NULL, right.keys=NULL)
     {
         x <- subset(x, left.keys, right.keys)
-        flatten(x)@data
+        flatten(x, fromKeys.only=TRUE)@data
     }
 )
 
@@ -605,7 +615,7 @@ setMethod("as.character", "AtomicAnnDbBimap",
     {
         if (ncol(x) > 2)
             stop("AtomicAnnDbBimap object with tags cannot be coerced to a character vector")
-        data <- flatten(x)@data
+        data <- flatten(x, fromKeys.only=TRUE)@data
         if (direction(x) == 1)
             ans <- data[[2]] # could also use [[right.colname(x)]]
         else
@@ -647,7 +657,7 @@ setMethod("left.toList", "AnnDbBimap",
     function(x, keys=NULL)
     {
         x <- subset(x, left.keys=keys, right.keys=NULL)
-        left.toList(flatten(x))
+        left.toList(flatten(x, fromKeys.only=TRUE))
     }
 )
 
@@ -655,7 +665,7 @@ setMethod("left.toList", "AnnDbMap",
     function(x, keys=NULL)
     {
         x <- subset(x, left.keys=keys, right.keys=NULL)
-        y <- flatten(x)
+        y <- flatten(x, fromKeys.only=TRUE)
         if (length(x@rightColType) == 1
          && typeof(y@data[[2]]) != x@rightColType) {
                 converter <- get(paste("as.", x@rightColType, sep=""))
@@ -669,7 +679,7 @@ setMethod("right.toList", "AnnDbBimap",
     function(x, keys=NULL)
     {
         x <- subset(x, left.keys=NULL, right.keys=keys)
-        right.toList(flatten(x))
+        right.toList(flatten(x, fromKeys.only=TRUE))
     }
 )
 

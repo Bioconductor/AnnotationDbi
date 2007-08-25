@@ -109,6 +109,7 @@ Bimap_methods <- c(
     ## GROUP 2: Methods for which a default is provided (in this file) but
     ## some of them are redefined for AnnDbBimap objects to obtain better
     ## performance
+    "revmap",
     "left.length", "right.length",
     "count.left.mappedKeys", "count.right.mappedKeys",
     "count.links",
@@ -125,6 +126,10 @@ Bimap_methods <- c(
 
 ### A virtual class with no slot (a kind of equivalent to a Java "interface")
 setClass("Bimap", representation("VIRTUAL"))
+
+setMethod("revmap", "Bimap",
+    function(x, ...) { direction(x) <- - direction(x); x }
+)
 
 setMethod("left.length", "Bimap",
     function(x) length(left.keys(x)))
@@ -224,7 +229,7 @@ setMethod("mappedKeys", "Bimap",
                "-1"=right.mappedKeys(x),
                     stop("mappedKeys() is undefined for an undirected bimap"))
 )
-setMethod("count.mappedKeys", "Bimap",
+setMethod("count.mappedKeys", "ANY",
     function(x)
         switch(as.character(direction(x)),
                 "1"=count.left.mappedKeys(x),

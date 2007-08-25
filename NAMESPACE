@@ -43,6 +43,7 @@ exportMethods(
     "colnames",
     "direction",
     "direction<-",
+    "revmap",
     "left.keys", "right.keys",
     "left.keys<-", "right.keys<-",
     "subset",
@@ -69,7 +70,6 @@ exportMethods(
     "tail",
     
     ## AnnDbObj lowAPI
-    "revmap",
     "db",
     "left.table", "right.table",
     "left.filter", "right.filter",

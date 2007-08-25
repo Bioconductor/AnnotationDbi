@@ -106,7 +106,7 @@ setReplaceMethod("right.keys", "FlatBimap",
 )
 
 setMethod("subset", "FlatBimap",
-    function(x, left.keys=NULL, right.keys=NULL)
+    function(x, left.keys=NULL, right.keys=NULL, ...)
     {
         lii <- rii <- TRUE
         left.keys(x) <- left.keys

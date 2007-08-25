@@ -1,4 +1,4 @@
-\name{subset}
+\name{keys}
 
 \alias{keys}
 \alias{keys,Bimap-method}
@@ -6,8 +6,11 @@
 \alias{length,Bimap-method}
 \alias{mappedKeys}
 \alias{mappedKeys,Bimap-method}
+\alias{mappedKeys,environment-method}
+\alias{mappedKeys,list-method}
 \alias{count.mappedKeys}
 \alias{count.mappedKeys,Bimap-method}
+\alias{count.mappedKeys,ANY-method}
 
 \alias{left.keys}
 \alias{left.keys,FlatBimap-method}
@@ -99,7 +102,32 @@
   keys(x) <- value
   left.keys(x) <- value
   right.keys(x) <- value
-  subset(x, left.keys=NULL, right.keys=NULL, objName=NULL)
+  subset(x, ...)
+}
+
+\arguments{
+  \item{x}{
+    A \link{Bimap} object.
+  }
+  \item{value}{
+    A character vector containing the new keys (must be a subset of the
+    current keys).
+  }
+  \item{...}{
+    Extra arguments can be:
+    \describe{
+      \item{\code{left.keys}}{
+        The new left keys (must be a subset of the current left keys).
+      }
+      \item{\code{right.keys}}{
+        The new right keys (must be a subset of the current right keys).
+      }
+      \item{\code{objName}}{
+        The name to give to the submap (only supported if \code{x} is an
+        AnnDbBimap object).
+      }
+    }
+  }
 }
 
 \value{
@@ -122,7 +150,14 @@
   keys(x) <- mappedKeys(x)
   length(x)
   count.mappedKeys(x)
-  x                     # note the difference?
+  x # now it is a submap
+
+  ## mappedKeys and count.mappedKeys also work with an environment
+  ## or a list
+  z <- list(k1=NA, k2=letters[1:4], k3="x")
+  mappedKeys(z)
+  count.mappedKeys(z)
+  
 }
 
 \keyword{methods}
