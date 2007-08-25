@@ -10,6 +10,7 @@ Imports: methods, Biobase, DBI, RSQLite
 Suggests: GO, hgu95av2.db, hgu95av2
 Collate: 00RTobjs.R
          AllGenerics.R
+         Bimap.R
          FlatBimap.R
          flatten.R
          AllClasses.R

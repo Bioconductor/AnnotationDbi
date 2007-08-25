@@ -16,22 +16,22 @@
 
 checkProperty0 <- function(pkgname)
 {
-    mths <- BimapAPI0_methods
+    mths <- Bimap_methods
     ## Temporary remove these 2 methods, they are not yet implemented
     ## for AnnDbBimap objects
     mths <- mths[!(mths %in% c("links", "count.links"))] # temporary removal
-    ## First we check that there is a generic for all the expected BimapAPI0
+    ## First we check that there is a generic for all the expected Bimap
     ## methods and that this generic has indeed a corresponding method for
-    ## BimapAPI0 objects.
+    ## Bimap objects.
     for (FUN in mths) {
         if (!isGeneric(FUN))
             stop("AnnotationDbi problem: \"",
                  FUN, "\" should be a generic")
         fdef <- getGeneric(FUN)
         classes <- ls(get(".MTable", envir = environment(fdef)), all.names=TRUE)
-        if (!any(sapply(classes, function(class) extends(class, "BimapAPI0"))))
+        if (!any(sapply(classes, function(class) extends(class, "Bimap"))))
             stop("AnnotationDbi problem: can't find a \"",
-                 FUN, "\" method for BimapAPI0 objects")
+                 FUN, "\" method for Bimap objects")
     }
     ## Then we check  
     #pkgenv <- asNamespace(pkgname) # so it works also if the pkg has no NAMESPACE
@@ -40,7 +40,7 @@ checkProperty0 <- function(pkgname)
         x <- pkgenv[[objname]]
         if (!is(x, "AnnDbBimap"))
             next
-        cat("Testing BimapAPI0 methods on object '", objname, "':\n", sep="")
+        cat("Testing Bimap methods on object '", objname, "':\n", sep="")
         for (FUN in mths) {
             cat(" - method: \"", FUN, "\"... ", sep="")
             fdef <- get(FUN)

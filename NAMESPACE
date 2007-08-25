@@ -9,7 +9,7 @@ exportClasses(
     "GONode",
 
     ## from R/AllClasses.R
-    "BimapAPI0",
+    "Bimap",
     "FlatBimap",
     "AnnDbObj",
     "AnnDbTable",
@@ -38,7 +38,7 @@ exportMethods(
     "Secondary",
     "Definition",
 
-    ## BimapAPI0 interface
+    ## The Bimap interface
     "collabels",
     "colnames",
     "direction",
@@ -58,7 +58,7 @@ exportMethods(
     "from.colpos", "to.colpos", "tags.colpos",
     "from.keys", "to.keys",
     "dim",
-    "keys",
+    "keys", "keys<-",
     "length",
     "mappedKeys",
     "count.mappedKeys",

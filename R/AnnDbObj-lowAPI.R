@@ -69,10 +69,10 @@ setMethod("right.filter", "AnnDbBimap",
 
 
 ### =========================================================================
-### BimapAPI0 methods for AnnDbBimap objects
-### ----------------------------------------
+### Bimap methods for AnnDbBimap objects
+### ------------------------------------
 ###
-### Key property (Property0): if x is a AnnDbBimap object, f1 a BimapAPI0
+### Key property (Property0): if x is a AnnDbBimap object, f1 a Bimap
 ### method for FlatBimap objects and f2 the corresponding method for
 ### AnnDbBimap objects then f2(x) is expected to return exactly the same
 ### thing as f1(flatten(x)).

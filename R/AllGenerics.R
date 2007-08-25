@@ -1,4 +1,4 @@
-### BimapAPI0 interface
+### Bimap interface
 ### (Please don't sort this section in alphabetical order)
 setGeneric("collabels", function(x) standardGeneric("collabels"))
 setGeneric("direction", function(x) standardGeneric("direction"))
@@ -25,6 +25,7 @@ setGeneric("tags.colpos", function(x) standardGeneric("tags.colpos"))
 setGeneric("from.keys", signature="x", function(x, direction) standardGeneric("from.keys"))
 setGeneric("to.keys", signature="x", function(x, direction) standardGeneric("to.keys"))
 setGeneric("keys", function(x) standardGeneric("keys"))
+setGeneric("keys<-", signature="x", function(x, value) standardGeneric("keys<-"))
 setGeneric("mappedKeys", function(x) standardGeneric("mappedKeys"))
 setGeneric("count.mappedKeys", function(x) standardGeneric("count.mappedKeys"))
 setGeneric("toList", signature="x", function(x, keys=NULL) standardGeneric("toList"))

@@ -83,7 +83,7 @@ setClass("L2Rbrick",
 ###
 
 setClass("AnnDbBimap",
-    contains=c("AnnDbObj", "BimapAPI0"),
+    contains=c("AnnDbObj", "Bimap"),
     representation(
         L2Rpath="list",             # list of L2Rbrick objects
         direction="integer",        # 1L for left-to-right, -1L for right-to-left
