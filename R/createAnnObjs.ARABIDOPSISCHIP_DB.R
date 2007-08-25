@@ -12,15 +12,15 @@
 ### this file: it is called by any ARABIDOPSISCHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
-ARABIDOPSISCHIP_DB_L2Rbrick1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
+ARABIDOPSISCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
 
-### Mandatory fields: objName, Class and L2Rpath
+### Mandatory fields: objName, Class and L2Rchain
 ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
         Class="AgiAnnDbMap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="genes",
                 Lcolname="id",
@@ -32,8 +32,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ARACYC",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="aracyc",
                 Lcolname="id",
@@ -44,8 +44,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="CHR",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
                 Lcolname="id",
@@ -56,8 +56,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ENZYME",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="enzyme",
                 Lcolname="id",
@@ -68,8 +68,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="GENENAME",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
                 Lcolname="id",
@@ -80,8 +80,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="MULTIHIT",
         Class="AgiAnnDbMap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="genes",
                 Lcolname="id",
@@ -93,8 +93,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PATH",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="kegg",
                 Lcolname="id",
@@ -105,8 +105,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PMID",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="pubmed",
                 Lcolname="id",
@@ -117,8 +117,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="SYMBOL",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
                 Lcolname="id",
@@ -129,8 +129,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="CHRLOC",
         Class="AnnDbMap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
                 Lcolname="id",
@@ -143,8 +143,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="GO",
         Class="Go3AnnDbBimap",
-        L2Rpath=list(
-            ARABIDOPSISCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",

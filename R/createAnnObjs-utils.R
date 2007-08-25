@@ -11,12 +11,12 @@ Go3tablenames <- function(all=FALSE)
     tablenames
 }
 
-makeGo3L2Rpath <- function(L2Rpath, tablename, ontology)
+makeGo3L2Rchain <- function(L2Rchain, tablename, ontology)
 {
-    l <- length(L2Rpath)
-    L2Rpath[[l]]@tablename <- tablename
-    L2Rpath[[l]]@tagCols[2] <- paste("'", ontology, "'", sep="")
-    L2Rpath
+    l <- length(L2Rchain)
+    L2Rchain[[l]]@tablename <- tablename
+    L2Rchain[[l]]@tagCols[2] <- paste("'", ontology, "'", sep="")
+    L2Rchain
 }
 
 
@@ -47,8 +47,8 @@ createAnnDbBimap <- function(seed, seed0)
         if (is.null(seed[slot][[1]]))
             seed[[slot]] <- seed0[[slot]]
     }
-    L2Rpath <- seed$L2Rpath
-    seed$L2Rpath <- lapply(L2Rpath, function(brick) do.call("L2Rbrick", brick))
+    L2Rchain <- seed$L2Rchain
+    seed$L2Rchain <- lapply(L2Rchain, function(brick) do.call("L2Rlink", brick))
     do.call("new", seed)
 }
 

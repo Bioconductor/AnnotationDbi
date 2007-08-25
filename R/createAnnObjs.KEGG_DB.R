@@ -13,12 +13,12 @@
 ### -------------------------------------------------------------------------
 
 
-### Mandatory fields: objName, Class and L2Rpath
+### Mandatory fields: objName, Class and L2Rchain
 KEGG_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PATHID2NAME",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="pathway2name",
                 Lcolname="path_id",
@@ -29,7 +29,7 @@ KEGG_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PATHID2EXTID",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="pathway2gene",
                 Lcolname="pathway_id",
@@ -40,7 +40,7 @@ KEGG_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ENZYMEID2GO",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="ec2go",
                 Lcolname="ec_no",

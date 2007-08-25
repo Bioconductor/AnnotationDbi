@@ -13,14 +13,14 @@
 ### -------------------------------------------------------------------------
 
 
-RODENTCHIP_DB_L2Rbrick1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
+RODENTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
 
-### Mandatory fields: objName, Class and L2Rpath
+### Mandatory fields: objName, Class and L2Rchain
 RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="probes",
                 Lcolname="probe_id",
@@ -31,8 +31,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ALIAS2PROBE",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="alias",
                 Lcolname="id",
@@ -44,8 +44,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="CHR",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosomes",
                 Lcolname="id",
@@ -56,8 +56,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ENTREZID",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="genes",
                 Lcolname="id",
@@ -68,8 +68,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ENZYME",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="ec",
                 Lcolname="id",
@@ -80,8 +80,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="GENENAME",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
                 Lcolname="id",
@@ -92,8 +92,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="MAP",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="cytogenetic_locations",
                 Lcolname="id",
@@ -104,8 +104,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PATH",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="kegg",
                 Lcolname="id",
@@ -116,8 +116,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PMID",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="pubmed",
                 Lcolname="id",
@@ -128,8 +128,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="REFSEQ",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="refseq",
                 Lcolname="id",
@@ -140,8 +140,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="SYMBOL",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
                 Lcolname="id",
@@ -152,8 +152,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="UNIGENE",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="unigene",
                 Lcolname="id",
@@ -164,8 +164,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="CHRLOC",
         Class="AnnDbMap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
                 Lcolname="id",
@@ -178,8 +178,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PFAM",
         Class="IpiAnnDbMap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="pfam",
                 Lcolname="id",
@@ -191,8 +191,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PROSITE",
         Class="IpiAnnDbMap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 tablename="prosite",
                 Lcolname="id",
@@ -204,8 +204,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="GO",
         Class="Go3AnnDbBimap",
-        L2Rpath=list(
-            RODENTCHIP_DB_L2Rbrick1,
+        L2Rchain=list(
+            RODENTCHIP_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",

@@ -56,15 +56,15 @@
 setMethod("db", "AnnDbObj", function(object) object@conn)
 
 setMethod("Ltablename", "AnnDbBimap",
-    function(x) L2Rpath.Ltablename(x@L2Rpath))
+    function(x) L2Rchain.Ltablename(x@L2Rchain))
 setMethod("Rtablename", "AnnDbBimap",
-    function(x) L2Rpath.Rtablename(x@L2Rpath))
+    function(x) L2Rchain.Rtablename(x@L2Rchain))
 setMethod("Rtablename", "Go3AnnDbBimap", function(x) x@rightTables)
 
 setMethod("Lfilter", "AnnDbBimap",
-    function(x) L2Rpath.Lfilter(x@L2Rpath))
+    function(x) L2Rchain.Lfilter(x@L2Rchain))
 setMethod("Rfilter", "AnnDbBimap",
-    function(x) L2Rpath.Rfilter(x@L2Rpath))
+    function(x) L2Rchain.Rfilter(x@L2Rchain))
 
 
 
@@ -84,11 +84,11 @@ setMethod("Rfilter", "AnnDbBimap",
 ###
 
 setMethod("collabels", "AnnDbBimap",
-    function(x) L2Rpath.collabels(x@L2Rpath))
+    function(x) L2Rchain.collabels(x@L2Rchain))
 
 setMethod("colnames", "AnnDbBimap",
     function(x, do.NULL=TRUE, prefix="col")
-        L2Rpath.colnames(x@L2Rpath))
+        L2Rchain.colnames(x@L2Rchain))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -159,10 +159,10 @@ setMethod("revmap", "list",
 ###
 
 setMethod("links", "AnnDbBimap",
-    function(x) dbGetMapLinks(db(x), x@L2Rpath))
+    function(x) dbGetMapLinks(db(x), x@L2Rchain))
 
 setMethod("count.links", "AnnDbBimap",
-    function(x) dbCountMapLinks(db(x), x@L2Rpath))
+    function(x) dbCountMapLinks(db(x), x@L2Rchain))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -180,7 +180,7 @@ setMethod("nrow", "AnnDbTable",
 setMethod("nrow", "AnnDbBimap",
     function(x)
     {
-        dbCountRowsFromL2Rpath(db(x), x@L2Rpath, x@Lkeys, x@Rkeys)
+        dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys)
     }
 )
 
@@ -191,8 +191,8 @@ setMethod("nrow", "Go3AnnDbBimap",
         countRows <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
-            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, tablename, ontology)
-            dbCountRowsFromL2Rpath(db(x), L2Rpath, x@Lkeys, x@Rkeys)
+            L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
+            dbCountRowsFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys)
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
@@ -363,14 +363,14 @@ setMethod("Rlength", "AnnDbMap",
 setMethod("mappedLkeys", "AnnDbBimap",
     function(x)
     {
-        dbUniqueMappedKeys(db(x), x@L2Rpath, x@Lkeys, x@Rkeys,
+        dbUniqueMappedKeys(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
                                   1, x@datacache)
     }
 )
 setMethod("count.mappedLkeys", "AnnDbBimap",
     function(x)
     {
-        dbCountUniqueMappedKeys(db(x), x@L2Rpath, x@Lkeys, x@Rkeys,
+        dbCountUniqueMappedKeys(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
                                        1, x@datacache)
     }
 )
@@ -378,14 +378,14 @@ setMethod("count.mappedLkeys", "AnnDbBimap",
 setMethod("mappedRkeys", "AnnDbBimap",
     function(x)
     {
-        dbUniqueMappedKeys(db(x), x@L2Rpath, x@Lkeys, x@Rkeys,
+        dbUniqueMappedKeys(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
                                   -1, x@datacache)
     }
 )
 setMethod("count.mappedRkeys", "AnnDbBimap",
     function(x)
     {
-        dbCountUniqueMappedKeys(db(x), x@L2Rpath, x@Lkeys, x@Rkeys,
+        dbCountUniqueMappedKeys(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
                                        -1, x@datacache)
     }
 )
@@ -396,8 +396,8 @@ setMethod("mappedLkeys", "Go3AnnDbBimap",
         getMappedKeys <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
-            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, tablename, ontology)
-            dbUniqueMappedKeys(db(x), L2Rpath, x@Lkeys, x@Rkeys,
+            L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
+            dbUniqueMappedKeys(db(x), L2Rchain, x@Lkeys, x@Rkeys,
                                       1, x@datacache)
         }
         keys1 <- getMappedKeys("BP")
@@ -416,9 +416,9 @@ setMethod("mappedRkeys", "Go3AnnDbBimap",
         getMappedKeys <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
-            L2Rpath <- x@L2Rpath
-            L2Rpath[[length(L2Rpath)]]@tablename <- tablename
-            dbUniqueMappedKeys(db(x), L2Rpath, x@Lkeys, x@Rkeys,
+            L2Rchain <- x@L2Rchain
+            L2Rchain[[length(L2Rchain)]]@tablename <- tablename
+            dbUniqueMappedKeys(db(x), L2Rchain, x@Lkeys, x@Rkeys,
                                       -1, x@datacache)
         }
         keys1 <- getMappedKeys("BP")
@@ -435,8 +435,8 @@ setMethod("count.mappedRkeys", "Go3AnnDbBimap",
         countMappedNames <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
-            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, tablename, ontology)
-            dbCountUniqueMappedKeys(db(x), L2Rpath, x@Lkeys, x@Rkeys,
+            L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
+            dbCountUniqueMappedKeys(db(x), L2Rchain, x@Lkeys, x@Rkeys,
                                            -1, x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
@@ -510,7 +510,7 @@ setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 setMethod("flatten", "AnnDbBimap",
     function(x, fromKeys.only=FALSE)
     {
-        data0 <- dbSelectFromL2Rpath(db(x), x@L2Rpath,
+        data0 <- dbSelectFromL2Rchain(db(x), x@L2Rchain,
                                      x@Lkeys, x@Rkeys)
         Lkeys <- Rkeys <- as.character(NA)
         if ((direction(x) != 1) != fromKeys.only)
@@ -535,8 +535,8 @@ setMethod("flatten", "Go3AnnDbBimap",
         getPartialSubmap <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
-            L2Rpath <- makeGo3L2Rpath(x@L2Rpath, tablename, ontology)
-            data <- dbSelectFromL2Rpath(db(x), L2Rpath,
+            L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
+            data <- dbSelectFromL2Rchain(db(x), L2Rchain,
                                         x@Lkeys, x@Rkeys)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- ontology

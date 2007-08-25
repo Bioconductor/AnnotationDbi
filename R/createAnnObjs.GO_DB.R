@@ -13,12 +13,12 @@
 ### -------------------------------------------------------------------------
 
 
-### Mandatory fields: objName, Class and L2Rpath
+### Mandatory fields: objName, Class and L2Rchain
 GO_DB_AnnDbBimap_seeds <- list(
 #    list(
 #        objName="ENTREZID2GO",
 #        Class="GoAnnDbBimap",
-#        L2Rpath=list(
+#        L2Rchain=list(
 #            list(
 #                tablename="go_gene",
 #                Lcolname="gene_id",
@@ -37,7 +37,7 @@ GO_DB_AnnDbBimap_seeds <- list(
 #    list(
 #        objName="ENTREZID",
 #        Class="AtomicAnnDbBimap",
-#        L2Rpath=list(
+#        L2Rchain=list(
 #            list(
 #                tablename="go_term",
 #                Lcolname="go_id",
@@ -54,7 +54,7 @@ GO_DB_AnnDbBimap_seeds <- list(
 #    list(
 #        objName="ALLENTREZID",
 #        Class="AtomicAnnDbBimap",
-#        L2Rpath=list(
+#        L2Rchain=list(
 #            list(
 #                tablename="go_term",
 #                Lcolname="go_id",
@@ -71,7 +71,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="BPPARENTS",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_term",
                 Lcolname="go_id",
@@ -94,7 +94,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="CCPARENTS",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_term",
                 Lcolname="go_id",
@@ -117,7 +117,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="MFPARENTS",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_term",
                 Lcolname="go_id",
@@ -140,7 +140,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="BPANCESTOR",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_term",
                 Lcolname="go_id",
@@ -162,7 +162,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="CCANCESTOR",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_term",
                 Lcolname="go_id",
@@ -184,7 +184,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="MFANCESTOR",
         Class="AtomicAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_term",
                 Lcolname="go_id",
@@ -206,7 +206,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="TERM",
         Class="GONodeAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_term",
                 Lcolname="go_id",
@@ -225,7 +225,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="OBSOLETE",
         Class="GONodeAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_obsolete",
                 Lcolname="go_id",
@@ -249,7 +249,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     list(
         objName="SYNONYM",
         Class="GONodeAnnDbBimap",
-        L2Rpath=list(
+        L2Rchain=list(
             list(
                 tablename="go_synonym",
                 Lcolname="synonym",
@@ -287,11 +287,11 @@ createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
     revmap2 <- function(from, to)
     {
         map <- revmap(ann_objs[[from]], objName=to)
-        L2Rpath <- map@L2Rpath
-        tmp <- L2Rpath[[1]]@filter
-        L2Rpath[[1]]@filter <- L2Rpath[[length(L2Rpath)]]@filter
-        L2Rpath[[length(L2Rpath)]]@filter <- tmp
-        map@L2Rpath <- L2Rpath
+        L2Rchain <- map@L2Rchain
+        tmp <- L2Rchain[[1]]@filter
+        L2Rchain[[1]]@filter <- L2Rchain[[length(L2Rchain)]]@filter
+        L2Rchain[[length(L2Rchain)]]@filter <- tmp
+        map@L2Rchain <- L2Rchain
         map
     }
     ann_objs$BPCHILDREN <- revmap2("BPPARENTS", "BPCHILDREN")

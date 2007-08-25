@@ -89,15 +89,15 @@
 ###      for any AnnDbBimap object x, f(x) is expected to be indentical
 ###      to f(flatten(x))
 ###
-###    Of course, this implies that the f method for AnnDbBimap objects must
+###    Of course, this implies that the f method for AnnDbBimap objects
 ###    return the same type of object than the f method for FlatBimap objects.
 ###    In this sense, the "revmap" and "subset" Bimap methods are particular
 ###    because they are expected to return an object of the same class as
 ###    their argument x, so f(x) can't be identical to f(flatten(x)). For
 ###    these methods, Property0 says:
 ###
-###      for any AnnDbBimap object x, flatten(subset(x)) is expected to
-###      be identical to subset(flatten(x)
+###      for any AnnDbBimap object x, flatten(f(x)) is expected to
+###      be identical to f(flatten(x))
 ###
 ###    The checkProperty0() function (AnnDbPkg-checker.R file) checks that
 ###    Property0 is satisfied on all the AnnDbBimap objects defined in a given
@@ -112,7 +112,7 @@
 ### KEEP THIS IN SYNC WITH THE STATE OF AFFAIRS! Only methods of the first and
 ### second group go here.
 Bimap_methods <- c(
-    ## GROUP 1: 8 methods that _must_ be defined for FlatBimap objects
+    ## GROUP 1: 15 methods that _must_ be defined for FlatBimap objects
     ## _and_ AnnDbBimap objects
     "collabels",
     "colnames",
@@ -143,7 +143,7 @@ Bimap_methods <- c(
     "toList"
 )
 
-### A virtual class with no slot (a kind of equivalent to a Java "interface")
+### A virtual class with no slot (a kind of Java "interface")
 setClass("Bimap", representation("VIRTUAL"))
 
 setMethod("revmap", "Bimap",
@@ -187,7 +187,7 @@ setMethod("Rcolname", "Bimap",
 ### For now, tags and attributes are all mixed together which is bad and will
 ### cause problems when reversing some maps or when plugging maps together.
 ### We need to make a clear distinction between tags and attributes but this
-### will require to change the current L2Rbrick class and make things more
+### will require to change the current L2Rlink class and make things more
 ### complicated...
 setMethod("tags.colpos", "Bimap",
     function(x) seq_len(ncol(x))[-c(from.colpos(x, 1), from.colpos(x, -1))])

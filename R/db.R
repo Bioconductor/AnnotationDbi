@@ -59,14 +59,14 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### L2Rbrick/L2Rpath manipulation.
+### L2Rlink/L2Rchain manipulation.
 ###
-### AnnDbBimap objects have an L2Rpath slot which must be a non-empty list of
-### L2Rbrick objects.
+### AnnDbBimap objects have an L2Rchain slot which must be a non-empty list of
+### L2Rlink objects.
 ###
 
 ### Unlike the default "initialize" method, ours allows partial matching.
-setMethod("initialize", "L2Rbrick",
+setMethod("initialize", "L2Rlink",
     function(.Object, ...)
     {
         args <- list(...)
@@ -82,16 +82,16 @@ setMethod("initialize", "L2Rbrick",
     }
 )
 
-L2Rbrick <- function(...) new("L2Rbrick", ...)
+L2Rlink <- function(...) new("L2Rlink", ...)
 
-setMethod("toString", "L2Rbrick",
+setMethod("toString", "L2Rlink",
     function(x)
     {
         paste("{", x@Lcolname, "}", x@tablename, "{", x@Rcolname, "}", sep="")
     }
 )
 
-setMethod("show", "L2Rbrick",
+setMethod("show", "L2Rlink",
     function(object)
     {
         s <- paste("{Lcolname}table{Rcolname}:", toString(object))
@@ -109,7 +109,7 @@ setMethod("show", "L2Rbrick",
     }
 )
 
-setMethod("rev", "L2Rbrick",
+setMethod("rev", "L2Rlink",
     function(x)
     {
         tmp <- x@Lcolname
@@ -119,39 +119,39 @@ setMethod("rev", "L2Rbrick",
     }
 )
 
-L2Rpath.rev <- function(L2Rpath) rev(lapply(L2Rpath, rev))
+L2Rchain.rev <- function(L2Rchain) rev(lapply(L2Rchain, rev))
 
-.L2Rpath.toString <- function(L2Rpath) paste(sapply(L2Rpath, toString), collapse="-")
+.L2Rchain.toString <- function(L2Rchain) paste(sapply(L2Rchain, toString), collapse="-")
 
-L2Rpath.Ltablename <- function(L2Rpath) L2Rpath[[1]]@tablename
-L2Rpath.Rtablename <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@tablename
+L2Rchain.Ltablename <- function(L2Rchain) L2Rchain[[1]]@tablename
+L2Rchain.Rtablename <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@tablename
 
-L2Rpath.Lcolname <- function(L2Rpath) L2Rpath[[1]]@Lcolname
-L2Rpath.Rcolname <- function(L2Rpath) L2Rpath[[length(L2Rpath)]]@Rcolname
+L2Rchain.Lcolname <- function(L2Rchain) L2Rchain[[1]]@Lcolname
+L2Rchain.Rcolname <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@Rcolname
 
-L2Rpath.Lfilter <- function(L2Rpath)
+L2Rchain.Lfilter <- function(L2Rchain)
 {
-    filter <- L2Rpath[[1]]@filter
+    filter <- L2Rchain[[1]]@filter
     if (filter == "1")
         return(filter)
     paste("(", .contextualizeColnames(filter), ")", sep="")
 }
 
-L2Rpath.Rfilter <- function(L2Rpath)
+L2Rchain.Rfilter <- function(L2Rchain)
 {
-    filter <- L2Rpath[[length(L2Rpath)]]@filter
+    filter <- L2Rchain[[length(L2Rchain)]]@filter
     if (filter == "1")
         return(filter)
     paste("(", .contextualizeColnames(filter), ")", sep="")
 }
 
 
-L2Rpath.tagnames <- function(L2Rpath)
+L2Rchain.tagnames <- function(L2Rchain)
 {
     tag_names <- NULL
-    pathlen <- length(L2Rpath)
+    pathlen <- length(L2Rchain)
     for (i in seq_len(pathlen)) {
-        tagCols <- L2Rpath[[i]]@tagCols
+        tagCols <- L2Rchain[[i]]@tagCols
         if (is.na(tagCols[1]))
             next
         cols <- names(tagCols)
@@ -165,13 +165,13 @@ L2Rpath.tagnames <- function(L2Rpath)
 ### THIS IS THE CURRENT DESIGN: the left col is the 1st col, the right col is
 ### the 2nd col and then we have all the tags,  IT MUST BE KEPT CONSISTENT
 ### THROUGH ALL THE REST OF THIS FILE... FOR NOW.
-L2Rpath.collabels <- function(L2Rpath)
-    c("left", "right", rep("tag", length(L2Rpath.tagnames(L2Rpath))))
+L2Rchain.collabels <- function(L2Rchain)
+    c("left", "right", rep("tag", length(L2Rchain.tagnames(L2Rchain))))
 
-L2Rpath.colnames <- function(L2Rpath)
-    c(L2Rpath.Lcolname(L2Rpath),
-      L2Rpath.Rcolname(L2Rpath),
-      L2Rpath.tagnames(L2Rpath))
+L2Rchain.colnames <- function(L2Rchain)
+    c(L2Rchain.Lcolname(L2Rchain),
+      L2Rchain.Rcolname(L2Rchain),
+      L2Rchain.tagnames(L2Rchain))
 
 ### Return a named list of 5 elements. Those elements are pieces of an SQL
 ### SELECT statement used by some of the DB functions in this file to build
@@ -183,27 +183,27 @@ L2Rpath.colnames <- function(L2Rpath)
 ### 3 groups:
 ###   1) The "what" group:
 ###      - what_Lcol: single string containing the "contextualized" name of
-###        the leftmost col of 'L2Rpath'.
+###        the leftmost col of 'L2Rchain'.
 ###      - what_Rcol: same but for the rightmost col.
 ###      - what_tagCols: character vector of length the total number of
-###        tag cols contained in 'L2Rpath' (could be 0). Each element
+###        tag cols contained in 'L2Rchain' (could be 0). Each element
 ###        has been "contextualized" and right-pasted with " AS tag-name".
 ###   2) The "from" group:
 ###      - from: single string containing the "from" part of the SELECT.
 ###   3) The "where" group:
 ###      - where: single string obtained by "contextualizing" all filters
-###        contained in 'L2Rpath', putting them in parenthezis and pasting
+###        contained in 'L2Rchain', putting them in parenthezis and pasting
 ###        them together with the " AND " separator.
-###        If 'L2Rpath' contains no filters then 'where' is the string "1".
-.makeSQLchunks <- function(L2Rpath, with.tags=TRUE)
+###        If 'L2Rchain' contains no filters then 'where' is the string "1".
+.makeSQLchunks <- function(L2Rchain, with.tags=TRUE)
 {
     what_tagCols <- where <- character(0)
-    pathlen <- length(L2Rpath)
+    pathlen <- length(L2Rchain)
     for (i in seq_len(pathlen)) {
-        L2Rbrick <- L2Rpath[[i]]
-        tablename <- L2Rbrick@tablename
-        Lcolname <- L2Rbrick@Lcolname
-        Rcolname <- L2Rbrick@Rcolname
+        L2Rlink <- L2Rchain[[i]]
+        tablename <- L2Rlink@tablename
+        Lcolname <- L2Rlink@Lcolname
+        Rcolname <- L2Rlink@Rcolname
         if (pathlen == 1) {
             context <- from <- tablename
             what_Lcol <- paste(context, Lcolname, sep=".")
@@ -228,8 +228,8 @@ L2Rpath.colnames <- function(L2Rpath)
             prev_Rcolname <- Rcolname
         }
         if (with.tags) {
-            tagJoin <- L2Rbrick@tagJoin
-            tagCols <- L2Rbrick@tagCols
+            tagJoin <- L2Rlink@tagJoin
+            tagCols <- L2Rlink@tagCols
             if (!is.na(tagJoin))
                 from <- paste(from, .contextualizeColnames(tagJoin, context))
             if (!is.na(tagCols[1])) {
@@ -239,7 +239,7 @@ L2Rpath.colnames <- function(L2Rpath)
                 what_tagCols <- c(what_tagCols, tmp)
             }
         }
-        filter <- L2Rbrick@filter
+        filter <- L2Rlink@filter
         if (filter != "1")
             where <- c(where, .contextualizeColnames(filter, context))
     }
@@ -327,12 +327,12 @@ dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lcolname,
     .dbGetQuery(conn, SQL, 1)
 }
 
-dbGetMapLinks <- function(conn, L2Rpath)
+dbGetMapLinks <- function(conn, L2Rchain)
 {
     stop("COMING SOON, SORRY!")
 }
 
-dbCountMapLinks <- function(conn, L2Rpath)
+dbCountMapLinks <- function(conn, L2Rchain)
 {
     stop("COMING SOON, SORRY!")
 }
@@ -348,9 +348,9 @@ dbCountMapLinks <- function(conn, L2Rpath)
     paste("SELECT", SQLwhat, "FROM", SQLchunks$from, "WHERE", where)
 }
 
-dbSelectFromL2Rpath <- function(conn, L2Rpath, Lkeys, Rkeys)
+dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 {
-    SQLchunks <- .makeSQLchunks(L2Rpath)
+    SQLchunks <- .makeSQLchunks(L2Rchain)
     what_Lcol <- SQLchunks$what_Lcol
     what_Rcol <- SQLchunks$what_Rcol
     what_tagCols <- SQLchunks$what_tagCols
@@ -359,9 +359,9 @@ dbSelectFromL2Rpath <- function(conn, L2Rpath, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL)
 }
 
-dbCountRowsFromL2Rpath <- function(conn, L2Rpath, Lkeys, Rkeys)
+dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 {
-    SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
+    SQLchunks <- .makeSQLchunks(L2Rchain, with.tags=FALSE)
     what_Lcol <- SQLchunks$what_Lcol
     what_Rcol <- SQLchunks$what_Rcol
     SQLwhat <- "COUNT(*)"
@@ -433,7 +433,7 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
 ###
 
 .dbUniqueMappedKeys.cached.symbol <- function(datacache,
-                                              L2Rpath, Lkeys, Rkeys,
+                                              L2Rchain, Lkeys, Rkeys,
                                               where, direction)
 {
     if (is.null(datacache) || !is.na(Lkeys) || !is.na(Rkeys) || where != "1")
@@ -442,15 +442,15 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
         symbol <- "uniqueLeftMappedKeys"
     else
         symbol <- "uniqueRightMappedKeys"
-    paste(symbol, .L2Rpath.toString(L2Rpath), sep="-")
+    paste(symbol, .L2Rchain.toString(L2Rchain), sep="-")
 }
 
-dbUniqueMappedKeys <- function(conn, L2Rpath, Lkeys, Rkeys,
+dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                                      direction, datacache=NULL)
 {
-    SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
+    SQLchunks <- .makeSQLchunks(L2Rchain, with.tags=FALSE)
     cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
-                         L2Rpath, Lkeys, Rkeys,
+                         L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
     if (!is.null(cached_symbol)) {
         if (exists(cached_symbol, envir=datacache)) {
@@ -473,12 +473,12 @@ dbUniqueMappedKeys <- function(conn, L2Rpath, Lkeys, Rkeys,
 }
 
 ### Read-only caching!
-dbCountUniqueMappedKeys <- function(conn, L2Rpath, Lkeys, Rkeys,
+dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                                           direction, datacache=NULL)
 {
-    SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
+    SQLchunks <- .makeSQLchunks(L2Rchain, with.tags=FALSE)
     cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
-                         L2Rpath, Lkeys, Rkeys,
+                         L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
     if (!is.null(cached_symbol)) {
         if (exists(cached_symbol, envir=datacache)) {

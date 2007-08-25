@@ -53,7 +53,7 @@ setClass("AnnDbTable",
 ### -------------------------------------------------------------------------
 
 
-setClass("L2Rbrick",
+setClass("L2Rlink",
     representation(
         tablename="character",
         Lcolname="character",
@@ -85,7 +85,7 @@ setClass("L2Rbrick",
 setClass("AnnDbBimap",
     contains=c("AnnDbObj", "Bimap"),
     representation(
-        L2Rpath="list",             # list of L2Rbrick objects
+        L2Rchain="list",            # list of L2Rlink objects
         direction="integer",        # 1L for left-to-right, -1L for right-to-left
                                     # and 0L for undirected
         Lkeys="character",
