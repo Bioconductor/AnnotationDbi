@@ -24,7 +24,7 @@
         # Get the Unigene identifiers that are mapped to an entrez gene id
         mapped_genes <- mappedKeys(x)
         # Convert to a list
-        xx <- as.list(x, names=mapped_genes)
+        xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {
           # Get the UNIGENE for the first five genes
           xx[1:5]
@@ -65,7 +65,7 @@
         # Get the entrez gene identifiers that are mapped to a Unigene id
         mapped_genes <- mappedKeys(x)
         # Convert to a list
-        xx <- as.list(x, names=mapped_genes)
+        xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {
           # Get the entrez gene for the first five genes
           xx[1:5]

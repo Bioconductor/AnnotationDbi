@@ -30,7 +30,7 @@
         # Get the entrez gene identifiers that are mapped to any PROSITE ID
         mapped_genes <- mappedKeys(x)
         # Convert to a list
-        xxx <- as.list(x, names=mapped_genes)
+        xxx <- as.list(x, keys=mapped_genes)
         # randomly display 10 genes
         xxx[sample(1:length(xxx), 10)]
 }

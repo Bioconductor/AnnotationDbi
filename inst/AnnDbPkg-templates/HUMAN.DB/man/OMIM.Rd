@@ -29,7 +29,7 @@
         # Get the entrez gene identifiers that are mapped to a OMIM ID
         mapped_genes <- mappedKeys(x)
         # Convert to a list
-        xx <- as.list(x, names=mapped_genes)
+        xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {
           # Get the OMIM for the first five genes
           xx[1:5]
@@ -73,7 +73,7 @@
         # Get the OMIM IDs that are mapped to the entrez gene IDs
         mapped_OMIMs <- mappedKeys(x)
         # Convert to a list
-        xx <- as.list(x, names=mapped_OMIMs)
+        xx <- as.list(x, keys=mapped_OMIMs)
         if(length(xx) > 0) {
           # Get the entrez gene ID for the first five genes
           xx[1:5]

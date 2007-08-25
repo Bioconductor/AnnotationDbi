@@ -12,7 +12,7 @@ Short AnnDbMap API demo
 
 Pick up some probeset ids:
 
-  pbids <- names(x)[1:4]   # names() is the same as ls()
+  pbids <- keys(x)[1:4]   # keys() is the same as ls()
   as.data.frame(x, pbids)
   as.list(x, pbids)
 
@@ -25,7 +25,7 @@ too long... With another KEGG id:
  
   as.data.frame(x, , "00300")
 
-This doesn't work (only 2 args to as.list, x and names):
+This doesn't work (only 2 args to as.list, x and keys):
 
   as.list(x, , "00300")
   as.list(x, "00300")
@@ -56,8 +56,8 @@ not depend on the orientation of the map ("unoriented method"):
   as.data.frame(x)[1:6, ]
   as.data.frame(revx)[1:6, ]
 
-  --> the left names are always on the left (1st col), the right
-      names always in the 2nd col
+  --> the left keys are always on the left (1st col), the right
+      keys always in the 2nd col
 
 There can be more than 2 columns in the returned data frame:
 
@@ -69,24 +69,24 @@ There can be more than 2 columns in the returned data frame:
     as.data.frame(hgu95av2GO)[1:6, ]    
     as.list(hgu95av2GO, "1000_at")
 
-But the right names are ALWAYS in the 2nd col.
+But the right keys are ALWAYS in the 2nd col.
 
-For length() and names(), the result does depend on the orientation
+For length() and keys(), the result does depend on the orientation
 ("oriented methods"):
 
   length(x)
   length(revx)
-  names(x)   # all probeset ids
-  names(revx)   # all KEGG ids mapped to a probeset id
+  keys(x)   # all probeset ids
+  keys(revx)   # all KEGG ids mapped to a probeset id
 
 There are "unoriented" methods related to these methods:
 
   left.keys(x)    # same for all maps in hgu95av2db (except pseudo-map
                    # MAPCOUNTS)
-  left.length(x)   # nb of left names
+  left.length(x)   # nb of left keys
   right.keys(x)   # KEGG ids for PATH/PATH2PROBE maps, GO ids for
                    # GO/GO2PROBE/GO2ALLPROBES maps, etc...
-  right.length(x)  # nb of right names
+  right.length(x)  # nb of right keys
 
   --> they give the same result for x and revmap(x)
 

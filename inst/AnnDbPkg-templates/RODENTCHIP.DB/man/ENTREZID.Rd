@@ -26,7 +26,7 @@
         # Get the probe identifiers that are mapped to an ENTREZ Gene ID
         mapped_probes <- mappedKeys(x)
         # Convert to a list
-        xx <- as.list(x, names=mapped_probes)
+        xx <- as.list(x, keys=mapped_probes)
         if(length(xx) > 0) {
           # Get the ENTREZID for the first five probes
           xx[1:5]

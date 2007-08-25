@@ -225,7 +225,7 @@ createAnnObjs.RODENTCHIP_DB <- function(prefix, objTarget, conn, datacache)
         datacache=datacache,
         conn=conn
     )
-    ann_objs <- createAnnDbBimap(RODENTCHIP_DB_AnnDbBimap_seeds, seed0)
+    ann_objs <- createAnnDbBimaps(RODENTCHIP_DB_AnnDbBimap_seeds, seed0)
 
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")

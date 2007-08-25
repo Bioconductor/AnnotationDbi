@@ -60,7 +60,7 @@
         # Get the entrez gene identifiers that are mapped to a GO ID
         mapped_genes <- mappedKeys(x)
         # Convert to a list
-        xx <- as.list(x, names=mapped_genes)
+        xx <- as.list(x, keys=mapped_genes)
         if(length(xx) > 0) {
             # Try the first one
             got <- xx[[1]]           

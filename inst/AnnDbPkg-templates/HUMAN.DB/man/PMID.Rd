@@ -27,7 +27,7 @@
         # Get the entrez gene identifiers that are mapped to any PubMed ID
         mapped_genes <- mappedKeys(x)
         # Convert to a list
-        xx <- as.list(x, names=mapped_genes)
+        xx <- as.list(x, keys=mapped_genes)
     if(length(xx) > 0){
         # The entrez gene identifiers for the first two elements of XX
         xx[1:2]

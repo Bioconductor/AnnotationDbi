@@ -666,6 +666,51 @@ manufacturer: FHCRC Genomics Shared Resource
 
 
 ### =========================================================================
+### FLYCHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: FLYCHIP.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+Package: drosgenome1.db
+Version: 1.17.3
+PkgTemplate: FLYCHIP.DB
+DBfile: /home/mcarlson/sanctionedSqlite/drosgenome1.sqlite
+AnnObjPrefix: drosgenome1
+species: Fly
+manufacturer: Affymetrix
+
+Package: drosophila2.db
+Version: 1.17.3
+PkgTemplate: FLYCHIP.DB
+DBfile: /home/mcarlson/sanctionedSqlite/drosophila2.sqlite
+AnnObjPrefix: drosophila2
+species: Fly
+manufacturer: Affymetrix
+
+Package: indac.db
+Version: 1.17.3
+PkgTemplate: FLYCHIP.DB
+DBfile: /home/mcarlson/sanctionedSqlite/indac.sqlite
+AnnObjPrefix: indac
+species: Fly
+manufacturer: INDAC
+
+
+### =========================================================================
 ### YEASTCHIP_DB schema
 ### -------------------
 ###   Fields:
