@@ -51,7 +51,7 @@
 
 .toSQLWhere <- function(colname, names)
 {
-    if (is.null(names) || length(names) == 1 && is.na(names))
+    if (length(names) == 1 && is.na(names))
         paste(colname, "IS NOT NULL")
     else
         paste(colname, " IN (", .toSQLStringSet(names), ")", sep="")
@@ -179,7 +179,7 @@ L2Rpath.colnames <- function(L2Rpath)
 ### Those code chunks correspond to the following parts of the SELECT
 ### statement:
 ###   SELECT what FROM from WHERE where
-### hence the 5 elements returned by .getSelectChunks() are divided in
+### hence the 5 elements returned by .makeSQLchunks() are divided in
 ### 3 groups:
 ###   1) The "what" group:
 ###      - what_leftCol: single string containing the "contextualized" name of
@@ -195,7 +195,7 @@ L2Rpath.colnames <- function(L2Rpath)
 ###        contained in 'L2Rpath', putting them in parenthezis and pasting
 ###        them together with the " AND " separator.
 ###        If 'L2Rpath' contains no filters then 'where' is the string "1".
-.getSelectChunks <- function(L2Rpath, with.tags=TRUE)
+.makeSQLchunks <- function(L2Rpath, with.tags=TRUE)
 {
     what_tagCols <- where <- character(0)
     pathlen <- length(L2Rpath)
@@ -270,53 +270,61 @@ debug.sql <- function()
     debugSQL
 }
 
-.dbGetQuery <- function(conn, sql)
+### Use .dbGetQuery(conn, SQL, 1) instead of .dbGetQuery(conn, SQL)[[1]],
+### it's much safer!
+.dbGetQuery <- function(conn, SQL, j0=NA)
 {
     if (get("debugSQL", envir=RTobjs)) {
-        if (!is.character(sql) || length(sql) != 1 || is.na(sql))
-            stop("'sql' must be a single string")
-        cat("SQL query: ", sql, "\n", sep="")
-        st <- system.time(data <- dbGetQuery(conn, sql))
+        if (!is.character(SQL) || length(SQL) != 1 || is.na(SQL))
+            stop("'SQL' must be a single string")
+        cat("SQL query: ", SQL, "\n", sep="")
+        st <- system.time(data0 <- dbGetQuery(conn, SQL))
         cat("     time: ", st["user.self"], " seconds\n", sep="")
-        return(data)
-    } 
-    dbGetQuery(conn, sql)
+    } else {
+        data0 <- dbGetQuery(conn, SQL)
+    }
+    if (is.na(j0))
+        return(data0)
+    ## Work around pb with the SQLite driver returning a data frame with
+    ## 0 columns when the number of rows is 0
+    if (nrow(data0) == 0)
+        character(0)
+    else
+        data0[[j0]]
 }
 
-dbGetTable <- function(conn, table, extra.sql=NULL)
+dbGetTable <- function(conn, table, extra.SQL=NULL)
 {
-    sql <- paste("SELECT * FROM ", table, sep="")
-    if (!is.null(extra.sql))
-        sql <- paste(sql, extra.sql)
-    .dbGetQuery(conn, sql)
+    SQL <- paste("SELECT * FROM ", table, sep="")
+    if (!is.null(extra.SQL))
+        SQL <- paste(SQL, extra.SQL)
+    .dbGetQuery(conn, SQL)
 }
 
 ### CURRENTLY BROKEN!
 dbRawAnnDbMapToTable <- function(conn, left.db_table, left.colname, left.keys,
                                        right.db_table, right.colname, right.keys,
-                                       show.colnames, from, verbose=FALSE)
+                                       show.colnames, from)
 {
 #    if (!is.null(right.db_table))
 #        right.colname <- paste(right.db_table, right.colname, sep=".")
 #    left.colname <- paste(left.db_table, left.colname, sep=".")
-    sql <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", from)
-    sql <- paste(sql, "WHERE", .toSQLWhere(left.colname, left.keys))
+    SQL <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", from)
+    SQL <- paste(SQL, "WHERE", .toSQLWhere(left.colname, left.keys))
     if (!is.null(right.db_table))
-        sql <- paste(sql, "AND", .toSQLWhere(right.colname, right.keys))
-    if (verbose)
-        cat(sql, "\n", sep="")
-    .dbGetQuery(conn, sql)
+        SQL <- paste(SQL, "AND", .toSQLWhere(right.colname, right.keys))
+    .dbGetQuery(conn, SQL)
 }
 
 ### CURRENTLY BROKEN!
 dbCountRawAnnDbMapRows <- function(conn, left.db_table, left.colname, 
                                          right.db_table, right.colname, from)
 {
-    sql <- paste("SELECT COUNT(*) FROM", from)
-    sql <- paste(sql, "WHERE", .toSQLWhere(left.colname, NULL))
+    SQL <- paste("SELECT COUNT(*) FROM", from)
+    SQL <- paste(SQL, "WHERE", .toSQLWhere(left.colname, NA))
     if (!is.null(right.db_table))
-        sql <- paste(sql, "AND", .toSQLWhere(right.colname, NULL))
-    .dbGetQuery(conn, sql)[[1]]
+        SQL <- paste(SQL, "AND", .toSQLWhere(right.colname, NA))
+    .dbGetQuery(conn, SQL, 1)
 }
 
 dbGetMapLinks <- function(conn, L2Rpath)
@@ -329,143 +337,164 @@ dbCountMapLinks <- function(conn, L2Rpath)
     stop("COMING SOON, SORRY!")
 }
 
-dbSelectFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys,
-                                      extra.colnames, verbose=FALSE)
+.makeSQL <- function(SQLchunks, SQLwhat, left.keys, right.keys)
 {
-    chunks <- .getSelectChunks(L2Rpath)
-    what_leftCol <- chunks$what_leftCol
-    what_rightCol <- chunks$what_rightCol
-    what_tagCols <- chunks$what_tagCols
-    what <- paste(c(what_leftCol, what_rightCol, what_tagCols, extra.colnames), collapse=",")
     where <- c(
-        .toSQLWhere(what_leftCol, left.keys),
-        chunks$where,
-        .toSQLWhere(what_rightCol, right.keys)
+        .toSQLWhere(SQLchunks$what_leftCol, left.keys),
+        SQLchunks$where,
+        .toSQLWhere(SQLchunks$what_rightCol, right.keys)
     )
     where <- paste(where, collapse=" AND ")
-    sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
-    if (verbose)
-        cat(sql, "\n", sep="")
-    .dbGetQuery(conn, sql)
+    paste("SELECT", SQLwhat, "FROM", SQLchunks$from, "WHERE", where)
 }
 
-dbCountRowsFromL2Rpath <- function(conn, L2Rpath, verbose=FALSE)
+dbSelectFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys,
+                                      extra.colnames)
 {
-    chunks <- .getSelectChunks(L2Rpath, with.tags=FALSE)
-    what_leftCol <- chunks$what_leftCol
-    what_rightCol <- chunks$what_rightCol
-    what <- "COUNT(*)"
-    where <- c(
-        .toSQLWhere(what_leftCol, NULL),
-        chunks$where,
-        .toSQLWhere(what_rightCol, NULL)
-    )
-    where <- paste(where, collapse=" AND ")
-    sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
-    if (verbose)
-        cat(sql, "\n", sep="")
-    .dbGetQuery(conn, sql)[[1]]
+    SQLchunks <- .makeSQLchunks(L2Rpath)
+    what_leftCol <- SQLchunks$what_leftCol
+    what_rightCol <- SQLchunks$what_rightCol
+    what_tagCols <- SQLchunks$what_tagCols
+    SQLwhat <- paste(c(what_leftCol, what_rightCol, what_tagCols, extra.colnames), collapse=",")
+    SQL <- .makeSQL(SQLchunks, SQLwhat, left.keys, right.keys)
+    .dbGetQuery(conn, SQL)
+}
+
+dbCountRowsFromL2Rpath <- function(conn, L2Rpath, left.keys, right.keys)
+{
+    SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
+    what_leftCol <- SQLchunks$what_leftCol
+    what_rightCol <- SQLchunks$what_rightCol
+    SQLwhat <- "COUNT(*)"
+    SQL <- .makeSQL(SQLchunks, SQLwhat, left.keys, right.keys)
+    .dbGetQuery(conn, SQL, 1)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### DB functions with caching mechanism.
+### dbUniqueVals() and dbCountUniqueVals()
 ###
+### IMPORTANT: Use shared cached symbols!
+###
+
+.dbUniqueVals.cached.symbol <- function(datacache, table, colname, filter)
+{
+    if (is.null(datacache) || filter != "1")
+        return(NULL)
+    full.colname <- paste(table, colname, sep=".")
+    paste("dbUniqueVals", full.colname, sep="-")
+}
 
 dbUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
 {
-    use_cache <- !is.null(datacache) && filter == "1"
-    if (use_cache) {
-        full.colname <- paste(table, colname, sep=".")
-        objname <- paste("dbUniqueVals", full.colname, sep="-")
-        if (exists(objname, envir=datacache)) {
-            vals <- get(objname, envir=datacache)
+    cached_symbol <- .dbUniqueVals.cached.symbol(datacache,
+                         table, colname, filter)
+    if (!is.null(cached_symbol)) {
+        if (exists(cached_symbol, envir=datacache)) {
+            vals <- get(cached_symbol, envir=datacache)
             return(vals)
         }
     }
     what <- paste("DISTINCT", colname)
-    where <- .toSQLWhere(colname, NULL)
-    sql <- paste("SELECT", what, "FROM", table, "WHERE", where)
+    where <- .toSQLWhere(colname, NA)
+    SQL <- paste("SELECT", what, "FROM", table, "WHERE", where)
     if (filter != "1")
-        sql <- paste(sql, "AND", filter)
-    vals <- .dbGetQuery(conn, sql)[[1]]
+        SQL <- paste(SQL, "AND", filter)
+    vals <- .dbGetQuery(conn, SQL, 1)
     if (!is.character(vals))
         vals <- as.character(vals)
-    if (use_cache) {
-        assign(objname, vals, envir=datacache)
-    }
+    if (!is.null(cached_symbol))
+        assign(cached_symbol, vals, envir=datacache)
     vals
 }
 
 ### Read-only caching!
 dbCountUniqueVals <- function(conn, table, colname, filter, datacache=NULL)
 {
-    use_cache <- !is.null(datacache) && filter == "1"
-    if (use_cache) {
-        full.colname <- paste(table, colname, sep=".")
-        objname <- paste("dbUniqueVals", full.colname, sep="-")
-        if (exists(objname, envir=datacache)) {
-            count <- length(get(objname, envir=datacache))
+    cached_symbol <- .dbUniqueVals.cached.symbol(datacache,
+                         table, colname, filter)
+    if (!is.null(cached_symbol)) {
+        if (exists(cached_symbol, envir=datacache)) {
+            count <- length(get(cached_symbol, envir=datacache))
             return(count)
         }
     }
     what <- paste("COUNT(DISTINCT ", colname, ")", sep="")
-    sql <- paste("SELECT", what, "FROM", table)
+    SQL <- paste("SELECT", what, "FROM", table)
     if (filter != "1")
-        sql <- paste(sql, "WHERE", filter)
-    .dbGetQuery(conn, sql)[[1]]
+        SQL <- paste(SQL, "WHERE", filter)
+    .dbGetQuery(conn, SQL, 1)
 }
 
-dbUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### dbUniqueMappedKeys() and dbCountUniqueMappedKeys()
+###
+### IMPORTANT: Use shared cached symbols!
+###
+
+.dbUniqueMappedKeys.cached.symbol <- function(datacache,
+                                              L2Rpath, left.keys, right.keys,
+                                              where, direction)
 {
-    chunks <- .getSelectChunks(L2Rpath, with.tags=FALSE)
-    use_cache <- !is.null(datacache) && chunks$where == "1"
-    if (use_cache) {
-        objname <- paste("dbUniqueMappedVals", .L2Rpath.toString(L2Rpath), sep="-")
-        if (exists(objname, envir=datacache)) {
-            vals <- get(objname, envir=datacache)
+    if (is.null(datacache) || !is.na(left.keys) || !is.na(right.keys) || where != "1")
+        return(NULL)
+    if (direction == 1)
+        symbol <- "uniqueLeftMappedKeys"
+    else
+        symbol <- "uniqueRightMappedKeys"
+    paste(symbol, .L2Rpath.toString(L2Rpath), sep="-")
+}
+
+dbUniqueMappedKeys <- function(conn, L2Rpath, left.keys, right.keys,
+                                     direction, datacache=NULL)
+{
+    SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
+    cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
+                         L2Rpath, left.keys, right.keys,
+                         SQLchunks$where, direction)
+    if (!is.null(cached_symbol)) {
+        if (exists(cached_symbol, envir=datacache)) {
+            vals <- get(cached_symbol, envir=datacache)
             return(vals)
         }
     }
-    what_leftCol <- chunks$what_leftCol
-    what_rightCol <- chunks$what_rightCol
-    what <- paste("DISTINCT", what_leftCol)
-    where <- c(
-        .toSQLWhere(what_leftCol, NULL),
-        chunks$where,
-        .toSQLWhere(what_rightCol, NULL)
-    )
-    where <- paste(where, collapse=" AND ")
-    sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
-    vals <- .dbGetQuery(conn, sql)[[1]]
-    if (use_cache) {
-        assign(objname, vals, envir=datacache)
-    }
+    what_leftCol <- SQLchunks$what_leftCol
+    what_rightCol <- SQLchunks$what_rightCol
+    if (direction == 1)
+        distinct_col <- what_leftCol
+    else
+        distinct_col <- what_rightCol
+    what <- paste("DISTINCT", distinct_col)
+    SQL <- .makeSQL(SQLchunks, what, left.keys, right.keys)
+    vals <- .dbGetQuery(conn, SQL, 1)
+    if (!is.null(cached_symbol))
+        assign(cached_symbol, vals, envir=datacache)
     vals
 }
 
 ### Read-only caching!
-dbCountUniqueMappedVals <- function(conn, L2Rpath, datacache=NULL)
+dbCountUniqueMappedKeys <- function(conn, L2Rpath, left.keys, right.keys,
+                                          direction, datacache=NULL)
 {
-    chunks <- .getSelectChunks(L2Rpath, with.tags=FALSE)
-    use_cache <- !is.null(datacache) && chunks$where == "1"
-    if (use_cache) {
-        objname <- paste("dbUniqueMappedVals", .L2Rpath.toString(L2Rpath), sep="-")
-        if (exists(objname, envir=datacache)) {
-            count <- length(get(objname, envir=datacache))
+    SQLchunks <- .makeSQLchunks(L2Rpath, with.tags=FALSE)
+    cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
+                         L2Rpath, left.keys, right.keys,
+                         SQLchunks$where, direction)
+    if (!is.null(cached_symbol)) {
+        if (exists(cached_symbol, envir=datacache)) {
+            count <- length(get(cached_symbol, envir=datacache))
             return(count)
         }
     }
-    what_leftCol <- chunks$what_leftCol
-    what_rightCol <- chunks$what_rightCol
-    what <- paste("COUNT(DISTINCT ", what_leftCol, ")", sep="")
-    where <- c(
-        #.toSQLWhere(what_leftCol, NULL), # not needed, COUNT(DISTINCT ...) ignores NULLs
-        chunks$where,
-        .toSQLWhere(what_rightCol, NULL)
-    )
-    where <- paste(where, collapse=" AND ")
-    sql <- paste("SELECT", what, "FROM", chunks$from, "WHERE", where)
-    .dbGetQuery(conn, sql)[[1]]
+    what_leftCol <- SQLchunks$what_leftCol
+    what_rightCol <- SQLchunks$what_rightCol
+    if (direction == 1)
+        distinct_col <- what_leftCol
+    else
+        distinct_col <- what_rightCol
+    SQLwhat <- paste("COUNT(DISTINCT ", distinct_col, ")", sep="")
+    SQL <- .makeSQL(SQLchunks, SQLwhat, left.keys, right.keys)
+    .dbGetQuery(conn, SQL, 1)
 }
 

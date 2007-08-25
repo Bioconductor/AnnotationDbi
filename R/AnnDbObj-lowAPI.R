@@ -176,7 +176,10 @@ setMethod("nrow", "AnnDbTable",
 )
 
 setMethod("nrow", "AnnDbBimap",
-    function(x) dbCountRowsFromL2Rpath(db(x), x@L2Rpath)
+    function(x)
+    {
+        dbCountRowsFromL2Rpath(db(x), x@L2Rpath, x@left.keys, x@right.keys)
+    }
 )
 
 
@@ -187,7 +190,7 @@ setMethod("nrow", "Go3AnnDbBimap",
         {
             table <- right.table(x)[ontology]
             L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
-            dbCountRowsFromL2Rpath(db(x), L2Rpath)
+            dbCountRowsFromL2Rpath(db(x), L2Rpath, x@left.keys, x@right.keys)
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }
@@ -195,13 +198,23 @@ setMethod("nrow", "Go3AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "left.keys", "right.keys" and "keys" generics.
+### The "left.keys", "right.keys",  "left.keys<-", "right.keys<-"
+### and "subset" generics.
 ###
+
+.inslot.left.keys <- function(x)
+{
+    length(x@left.keys) != 1 || !is.na(x@left.keys)
+}
+.inslot.right.keys <- function(x)
+{
+    length(x@right.keys) != 1 || !is.na(x@right.keys)
+}
 
 setMethod("left.keys", "AnnDbBimap",
     function(x)
     {
-        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
+        if (.inslot.left.keys(x))
             return(x@left.keys)
         dbUniqueVals(db(x), left.table(x), left.colname(x),
                             left.filter(x), x@datacache)
@@ -211,7 +224,7 @@ setMethod("left.keys", "AnnDbBimap",
 setMethod("right.keys", "AnnDbBimap",
     function(x)
     {
-        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
+        if (.inslot.right.keys(x))
             return(x@right.keys)
         dbUniqueVals(db(x), right.table(x), right.colname(x),
                             right.filter(x), x@datacache)
@@ -221,10 +234,13 @@ setMethod("right.keys", "AnnDbBimap",
 setMethod("right.keys", "Go3AnnDbBimap",
     function(x)
     {
+        if (.inslot.right.keys(x))
+            return(x@right.keys)
         getNames <- function(ontology)
         {
             table <- right.table(x)[ontology]
-            dbUniqueVals(db(x), table, "go_id", right.filter(x), x@datacache)
+            dbUniqueVals(db(x), table, "go_id",
+                                right.filter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         ## (if not, then apply unique to this result)
@@ -236,6 +252,39 @@ setMethod("right.keys", "AnnDbMap",
     function(x)
     {
         stop("right.keys() is not supported for an \"", class(x), "\" object")
+    }
+)
+
+setReplaceMethod("left.keys", "AnnDbBimap",
+    function(x, value)
+    {
+        if (!is.null(value)) {
+            .checkKeys(value, left.keys(x), x@ifnotfound)
+            x@left.keys <- value
+        }
+        x
+    }
+)
+
+setReplaceMethod("right.keys", "AnnDbBimap",
+    function(x, value)
+    {
+        if (!is.null(value)) {
+            .checkKeys(value, right.keys(x), x@ifnotfound)
+            x@right.keys <- value
+        }
+        x
+    }
+)
+
+setMethod("subset", "AnnDbBimap",
+    function(x, left.keys=NULL, right.keys=NULL, objName=NULL)
+    {
+        left.keys(x) <- left.keys
+        right.keys(x) <- right.keys
+        if (!is.null(objName))
+            x@objName <- toString(objName)
+        x
     }
 )
 
@@ -251,7 +300,7 @@ setMethod("right.keys", "AnnDbMap",
 setMethod("left.length", "AnnDbBimap",
     function(x)
     {
-        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
+        if (.inslot.left.keys(x))
             return(length(x@left.keys))
         dbCountUniqueVals(db(x), left.table(x), left.colname(x),
                                  left.filter(x), x@datacache)
@@ -261,7 +310,7 @@ setMethod("left.length", "AnnDbBimap",
 setMethod("right.length", "AnnDbBimap",
     function(x)
     {
-        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
+        if (.inslot.right.keys(x))
             return(length(x@right.keys))
         dbCountUniqueVals(db(x), right.table(x), right.colname(x),
                                  right.filter(x), x@datacache)
@@ -271,6 +320,8 @@ setMethod("right.length", "AnnDbBimap",
 setMethod("right.length", "Go3AnnDbBimap",
     function(x)
     {
+        if (.inslot.right.keys(x))
+            return(length(x@right.keys))
         countNames <- function(ontology)
         {
             table <- right.table(x)[ontology]
@@ -306,36 +357,30 @@ setMethod("right.length", "AnnDbMap",
 setMethod("left.mappedKeys", "AnnDbBimap",
     function(x)
     {
-        keys <- dbUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
-        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
-            keys <- x@left.keys[x@left.keys %in% keys]
-        keys
+        dbUniqueMappedKeys(db(x), x@L2Rpath, x@left.keys, x@right.keys,
+                                  1, x@datacache)
     }
 )
 setMethod("count.left.mappedKeys", "AnnDbBimap",
     function(x)
     {
-        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
-            return(length(left.mappedKeys(x)))
-        dbCountUniqueMappedVals(db(x), x@L2Rpath, x@datacache)
+        dbCountUniqueMappedKeys(db(x), x@L2Rpath, x@left.keys, x@right.keys,
+                                       1, x@datacache)
     }
 )
 
 setMethod("right.mappedKeys", "AnnDbBimap",
     function(x)
     {
-        keys <- dbUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
-        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
-            keys <- x@right.keys[x@right.keys %in% keys]
-        keys
+        dbUniqueMappedKeys(db(x), x@L2Rpath, x@left.keys, x@right.keys,
+                                  -1, x@datacache)
     }
 )
 setMethod("count.right.mappedKeys", "AnnDbBimap",
     function(x)
     {
-        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
-            return(length(right.mappedKeys(x)))
-        dbCountUniqueMappedVals(db(x), L2Rpath.rev(x@L2Rpath), x@datacache)
+        dbCountUniqueMappedKeys(db(x), x@L2Rpath, x@left.keys, x@right.keys,
+                                       -1, x@datacache)
     }
 )
 
@@ -346,7 +391,8 @@ setMethod("left.mappedKeys", "Go3AnnDbBimap",
         {
             table <- right.table(x)[ontology]
             L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
-            dbUniqueMappedVals(db(x), L2Rpath, x@datacache)
+            dbUniqueMappedKeys(db(x), L2Rpath, x@left.keys, x@right.keys,
+                                      1, x@datacache)
         }
         keys1 <- getMappedKeys("BP")
         keys2 <- getMappedKeys("CC")
@@ -366,7 +412,8 @@ setMethod("right.mappedKeys", "Go3AnnDbBimap",
             table <- right.table(x)[ontology]
             L2Rpath <- x@L2Rpath
             L2Rpath[[length(L2Rpath)]]@table <- table
-            dbUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
+            dbUniqueMappedKeys(db(x), L2Rpath, x@left.keys, x@right.keys,
+                                      -1, x@datacache)
         }
         keys1 <- getMappedKeys("BP")
         keys2 <- getMappedKeys("CC")
@@ -383,7 +430,8 @@ setMethod("count.right.mappedKeys", "Go3AnnDbBimap",
         {
             table <- right.table(x)[ontology]
             L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
-            dbCountUniqueMappedVals(db(x), L2Rpath.rev(L2Rpath), x@datacache)
+            dbCountUniqueMappedKeys(db(x), L2Rpath, x@left.keys, x@right.keys,
+                                           -1, x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")
@@ -416,31 +464,6 @@ setMethod("mappedKeys", "environment",
 setMethod("count.mappedKeys", "environment", function(x) length(mappedKeys(x)))
 
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "subset" method.
-###
-
-setMethod("subset", "AnnDbBimap",
-    function(x, left.keys=NULL, right.keys=NULL, objName=NULL)
-    {
-        if (!is.null(left.keys)) {
-            .checkKeys(left.keys, left.keys(x), x@ifnotfound)
-            x@left.keys <- left.keys
-        }
-        if (!is.null(right.keys)) {
-            .checkKeys(right.keys, right.keys(x), x@ifnotfound)
-            x@right.keys <- right.keys
-        }
-        if (!is.null(objName))
-            x@objName <- toString(objName)
-        else if (!is.null(left.keys) || !is.null(right.keys))
-            x@objName <- paste("subset(", x@objName, ")", sep="")
-        x
-    }
-)
-
-
-
 ### =========================================================================
 ### The "flatten" methods
 ### ---------------------
@@ -467,24 +490,18 @@ setMethod("subset", "AnnDbBimap",
 #    {
 #        dbRawAnnDbMapToTable(db(x), left.table(x), left.colname(x), left.keys,
 #                                    NULL, NULL, NULL,
-#                                    x@showCols, x@from, verbose)
+#                                    x@showCols, x@from)
 #    }
 #)
 
 setMethod("flatten", "AnnDbBimap",
     function(x, extra.colnames=NULL, verbose=FALSE)
     {
-        left.keys <- right.keys <- NULL
-        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
-            left.keys <- x@left.keys
-        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
-            right.keys <- x@right.keys
         data0 <- dbSelectFromL2Rpath(db(x), x@L2Rpath,
-                                     left.keys, right.keys,
-                                     extra.colnames, verbose)
-        if (is.null(left.keys))
-            left.keys <- left.keys(x)
-        if (is.null(right.keys)) {
+                                     x@left.keys, x@right.keys,
+                                     extra.colnames)
+        left.keys <- left.keys(x)
+        if (!.inslot.right.keys(x)) {
             if (is(x, "AnnDbMap"))
                 ## Temporary hack needed because right.keys() doesn't work
                 ## on AnnDbMap objects
@@ -507,18 +524,13 @@ setMethod("flatten", "AnnDbBimap",
 setMethod("flatten", "Go3AnnDbBimap",
     function(x, extra.colnames=NULL, verbose=FALSE)
     {
-        left.keys <- right.keys <- NULL
-        if (length(x@left.keys) != 1 || !is.na(x@left.keys))
-            left.keys <- x@left.keys
-        if (length(x@right.keys) != 1 || !is.na(x@right.keys))
-            right.keys <- x@right.keys
         getPartialSubmap <- function(ontology)
         {
             table <- right.table(x)[ontology]
             L2Rpath <- makeGo3L2Rpath(x@L2Rpath, table, ontology)
             data <- dbSelectFromL2Rpath(db(x), L2Rpath,
-                                        left.keys, right.keys,
-                                        extra.colnames, verbose)
+                                        x@left.keys, x@right.keys,
+                                        extra.colnames)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- ontology
             data
@@ -526,10 +538,8 @@ setMethod("flatten", "Go3AnnDbBimap",
         data0 <- rbind(getPartialSubmap("BP"),
                        getPartialSubmap("CC"),
                        getPartialSubmap("MF"))
-        if (is.null(left.keys))
-            left.keys <- left.keys(x)
-        if (is.null(right.keys))
-            right.keys <- right.keys(x)
+        left.keys <- left.keys(x)
+        right.keys <- right.keys(x)
         new("FlatBimap", collabels=collabels(x), direction=direction(x),
                          data=data0, left.keys=left.keys, right.keys=right.keys)
     }
@@ -556,6 +566,11 @@ setMethod("toTable", "AnnDbBimap",
 ### Note that this generic does _not_ query the database!
 ###
 
+.is.submap <- function(x)
+{
+    !is.na(x@left.keys) || !is.na(x@right.keys)
+}
+
 setMethod("show", "AnnDbTable",
     function(object)
     {
@@ -567,7 +582,10 @@ setMethod("show", "AnnDbTable",
 setMethod("show", "AnnDbBimap",
     function(object)
     {
-        cat(object@objName, " map for ", object@objTarget,
+        map <- "map"
+        if (.is.submap(object))
+            map <- "submap"
+        cat(object@objName, " ", map, " for ", object@objTarget,
             " (object of class \"", class(object), "\")\n", sep="")
     }
 )

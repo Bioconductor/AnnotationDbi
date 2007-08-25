@@ -17,16 +17,6 @@
 ### -------------------------------------------------------------------------
 
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Helper functions.
-###
-
-.checkKeysAreStrings <- function(keys)
-{
-    if (is.null(keys) || !is.character(keys) || any(is.na(keys)))
-        stop("invalid first argument")
-}
-
 ### Re-order and format the list 'ann_list' as follow:
 ###   > ann_list <- list(aa=1, b=2, c=3)
 ###   > keys <- c("a", "c", "d")
@@ -249,7 +239,6 @@ setMethod("as.list", "GONodeAnnDbBimap",
 ###      Note that for a real "environment", 'as.list(envir)' is not identical
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
-### NB: .checkKeysExist() is defined in the AnnDbObj-lowAPI.R file.
 
 setMethod("mget", signature(envir="AnnDbBimap"),
     function(x, envir, mode, ifnotfound, inherits)

@@ -94,10 +94,11 @@ BimapAPI0_methods <- c(
     "direction",
     "direction<-",
     "left.keys", "right.keys",
+    "left.keys<-", "right.keys<-",
+    "subset",
     "left.mappedKeys", "right.mappedKeys",
     "nrow",
     "links",
-    "subset",
     "left.toList", "right.toList",
     ## GROUP 2: Methods for which a default is provided (in this file) but
     ## some of them are redefined for AnnDbBimap objects to obtain better
@@ -300,8 +301,59 @@ setMethod("left.keys", "FlatBimap",
 setMethod("right.keys", "FlatBimap",
     function(x) x@right.keys)
 
+.checkKeys <- function(keys, valid.keys, ifnotfound)
+{
+    if (!is.character(keys))
+        stop("the keys must be character strings")
+    if (length(ifnotfound) == 0) {
+        not_found <- which(!(keys %in% valid.keys))
+        if (length(not_found) != 0)
+            stop("invalid key \"", keys[not_found[1]], "\"")
+    }
+}
+
+setReplaceMethod("left.keys", "FlatBimap",
+    function(x, value)
+    {
+        if (!is.null(value)) {
+            .checkKeys(value, left.keys(x), x@ifnotfound)
+            x@left.keys <- value
+        }
+        x
+    }
+)
+
+setReplaceMethod("right.keys", "FlatBimap",
+    function(x, value)
+    {
+        if (!is.null(value)) {
+            .checkKeys(value, right.keys(x), x@ifnotfound)
+            x@right.keys <- value
+        }
+        x
+    }
+)
+
+setMethod("subset", "FlatBimap",
+    function(x, left.keys=NULL, right.keys=NULL)
+    {
+        lii <- rii <- TRUE
+        left.keys(x) <- left.keys
+        right.keys(x) <- right.keys
+        if (!is.null(left.keys))
+            lii <- x@data[[1]] %in% left.keys
+        if (!is.null(right.keys))
+            rii <- x@data[[2]] %in% right.keys
+        cn <- colnames(x@data)
+        x@data <- x@data[lii & rii, ]
+        colnames(x@data) <- cn
+        x
+    }
+)
+
 setMethod("left.mappedKeys", "FlatBimap",
     function(x) unique(x@data[[match("left", x@collabels)]]))
+
 setMethod("right.mappedKeys", "FlatBimap",
     function(x) unique(x@data[[match("right", x@collabels)]]))
 
@@ -359,43 +411,6 @@ setMethod("show", "FlatBimap",
             cat("...\n")
             cat("(", nrow(object), " rows)\n", sep="")
         }
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "subset" method.
-###
-
-.checkKeys <- function(keys, valid.keys, ifnotfound)
-{
-    if (!is.character(keys))
-        stop("the keys must be character strings")
-    if (length(ifnotfound) == 0) {
-        not_found <- which(!(keys %in% valid.keys))
-        if (length(not_found) != 0)
-            stop("key \"", keys[not_found[1]], "\" not found")
-    }
-}
-
-setMethod("subset", "FlatBimap",
-    function(x, left.keys=NULL, right.keys=NULL)
-    {
-        lii <- rii <- TRUE
-        if (!is.null(left.keys)) {
-            .checkKeys(left.keys, left.keys(x), x@ifnotfound)
-            x@left.keys <- left.keys
-            lii <- x@data[[1]] %in% left.keys
-        }
-        if (!is.null(right.keys)) {
-            .checkKeys(right.keys, right.keys(x), x@ifnotfound)
-            x@right.keys <- right.keys
-            rii <- x@data[[2]] %in% right.keys
-        }
-        cn <- colnames(x@data)
-        x@data <- x@data[lii & rii, ]
-        colnames(x@data) <- cn
-        x
     }
 )
 
