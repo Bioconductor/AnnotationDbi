@@ -1,6 +1,6 @@
 ### Bimap interface
 ### (Please don't sort this section in alphabetical order)
-setGeneric("collabels", function(x) standardGeneric("collabels"))
+setGeneric("colmetanames", function(x) standardGeneric("colmetanames"))
 setGeneric("Lkeyname", function(x) standardGeneric("Lkeyname"))
 setGeneric("Rkeyname", function(x) standardGeneric("Rkeyname"))
 setGeneric("tagname", function(x) standardGeneric("tagname"))

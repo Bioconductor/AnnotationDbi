@@ -5,14 +5,14 @@
 
 
 ### Possible col labels are: "Lkeyname", "Rkeyname", "tagname",
-### "Rattrib_colname"
+### "Rattribname"
 ### There must be exactly 1 "Lkeyname" and 1 "Rkeyname" col.
 ### There can be 0 or 1 "tagname" col.
-### There can be 0 or any number of "Rattrib_colname" cols.
+### There can be 0 or any number of "Rattribname" cols.
 setClass("FlatBimap",
     contains="Bimap",
     representation(
-        collabels="character",      # must have the same length as the 'data' slot
+        colmetanames="character",      # must have the same length as the 'data' slot
         direction="integer",
         data="data.frame",
         Lkeys="character",
@@ -28,11 +28,11 @@ setClass("FlatBimap",
 )
 
 setMethod("initialize", "FlatBimap",
-    function(.Object, collabels, direction, data, Lkeys, Rkeys)
+    function(.Object, colmetanames, direction, data, Lkeys, Rkeys)
     {
-        if (length(collabels) != ncol(data))
+        if (length(colmetanames) != ncol(data))
             stop("number of column labels doesn't match number of columns")
-        .Object@collabels <- collabels
+        .Object@colmetanames <- colmetanames
         if (!missing(direction))
             .Object@direction <- .normalize.direction(direction)
         .Object@data <- data
@@ -47,8 +47,8 @@ setMethod("initialize", "FlatBimap",
 ### Implementation of the Bimap interface.
 ###
 
-setMethod("collabels", "FlatBimap",
-    function(x) x@collabels)
+setMethod("colmetanames", "FlatBimap",
+    function(x) x@colmetanames)
 
 setMethod("colnames", "FlatBimap",
     function(x, do.NULL=TRUE, prefix="col") colnames(x@data))
@@ -64,10 +64,10 @@ setReplaceMethod("direction", "FlatBimap",
 )
 
 setMethod("mappedLkeys", "FlatBimap",
-    function(x) unique(x@data[[match("Lkeyname", x@collabels)]]))
+    function(x) unique(x@data[[match("Lkeyname", x@colmetanames)]]))
 
 setMethod("mappedRkeys", "FlatBimap",
-    function(x) unique(x@data[[match("Rkeyname", x@collabels)]]))
+    function(x) unique(x@data[[match("Rkeyname", x@colmetanames)]]))
 
 setMethod("Lkeys", "FlatBimap",
     function(x)
@@ -143,7 +143,7 @@ setMethod("nrow", "FlatBimap",
 setMethod("links", "FlatBimap",
     function(x)
     {
-        j <- c(match("Lkeyname", x@collabels), match("Rkeyname", x@collabels))
+        j <- c(match("Lkeyname", x@colmetanames), match("Rkeyname", x@colmetanames))
         unique(x@data[ , j])
     }
 )

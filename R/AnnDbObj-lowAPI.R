@@ -13,7 +13,7 @@
 ###        db,
 ###        Ltablename, Rtablename,
 ###        Lfilter, Rfilter,
-###        colnames, collabels,
+###        colnames, colmetanames,
 ###        Lkeyname, Rkeyname, tagname, Rattribnames,
 ###        direction, revmap,
 ###        show
@@ -46,7 +46,7 @@
 ### Generics that return meta information about a given map:
 ###     db,
 ###     Ltablename, Rtablename,
-###     colnames, collabels,
+###     colnames, colmetanames,
 ###     Lkeyname, Rkeyname, tagname, Rattribnames,
 ###     Lfilter, Rfilter
 ###
@@ -80,7 +80,7 @@ setMethod("Rfilter", "AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "colnames", "collabels", "Lkeyname", "Rkeyname", "tagname" and
+### The "colnames", "colmetanames", "Lkeyname", "Rkeyname", "tagname" and
 ### "Rattribnames" methods.
 ###
 
@@ -88,8 +88,8 @@ setMethod("colnames", "AnnDbBimap",
     function(x, do.NULL=TRUE, prefix="col")
         L2Rchain.colnames(x@L2Rchain))
 
-setMethod("collabels", "AnnDbBimap",
-    function(x) L2Rchain.collabels(x@L2Rchain))
+setMethod("colmetanames", "AnnDbBimap",
+    function(x) L2Rchain.colmetanames(x@L2Rchain))
 
 setMethod("Lkeyname", "AnnDbBimap",
     function(x) L2Rchain.Lkeyname(x@L2Rchain))
@@ -531,7 +531,7 @@ setMethod("flatten", "AnnDbBimap",
             Lkeys <- Lkeys(x)
         if (!fromKeys.only || direction(x) == -1)
             Rkeys <- Rkeys(x)
-        new("FlatBimap", collabels=collabels(x), direction=direction(x),
+        new("FlatBimap", colmetanames=colmetanames(x), direction=direction(x),
                          data=data0, Lkeys=Lkeys, Rkeys=Rkeys)
     }
 )
@@ -564,7 +564,7 @@ setMethod("flatten", "Go3AnnDbBimap",
             Lkeys <- Lkeys(x)
         if (!fromKeys.only || direction(x) == -1)
             Rkeys <- Rkeys(x)
-        new("FlatBimap", collabels=collabels(x), direction=direction(x),
+        new("FlatBimap", colmetanames=colmetanames(x), direction=direction(x),
                          data=data0, Lkeys=Lkeys, Rkeys=Rkeys)
     }
 )

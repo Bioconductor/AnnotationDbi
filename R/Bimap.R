@@ -114,7 +114,7 @@
 Bimap_methods <- c(
     ## GROUP 1: 15 methods that _must_ be defined for FlatBimap objects
     ## _and_ AnnDbBimap objects
-    "collabels",
+    "colmetanames",
     "colnames",
     "direction",
     "direction<-",
@@ -150,7 +150,7 @@ setMethod("Lkeyname", "Bimap",
     function(x)
     {
         colnames <- colnames(x)
-        names(colnames) <- collabels(x)
+        names(colnames) <- colmetanames(x)
         colnames["Lkeyname"]
     }
 )
@@ -158,7 +158,7 @@ setMethod("Rkeyname", "Bimap",
     function(x)
     {
         colnames <- colnames(x)
-        names(colnames) <- collabels(x)
+        names(colnames) <- colmetanames(x)
         colnames["Rkeyname"]
     }
 )
@@ -166,14 +166,14 @@ setMethod("tagname", "Bimap",
     function(x)
     {
         colnames <- colnames(x)
-        names(colnames) <- collabels(x)
+        names(colnames) <- colmetanames(x)
         colnames["tagname"]
     }
 )
 setMethod("Rattribnames", "Bimap",
     function(x)
     {
-        colnames(x)[collabels(x) == "Rattrib_colname"]
+        colnames(x)[colmetanames(x) == "Rattribname"]
     }
 )
 
@@ -203,7 +203,7 @@ setMethod("from.colpos", "Bimap",
     function(x, direction)
     {
         if (direction == 1) side = "Lkeyname" else side = "Rkeyname"
-        match(side, collabels(x))
+        match(side, colmetanames(x))
     }
 )
 setMethod("to.colpos", "Bimap",

@@ -172,7 +172,7 @@ L2Rchain.Rattribnames <- function(L2Rchain)
 ### THIS IS THE CURRENT DESIGN: the left col is the 1st col, the right col is
 ### the 2nd col and then we have all the tags,  IT MUST BE KEPT CONSISTENT
 ### THROUGH ALL THE REST OF THIS FILE... FOR NOW.
-L2Rchain.collabels <- function(L2Rchain)
+L2Rchain.colmetanames <- function(L2Rchain)
 {
     tagname <- L2Rchain.tagname(L2Rchain)
     Rattribnames <- L2Rchain.Rattribnames(L2Rchain)
@@ -180,7 +180,7 @@ L2Rchain.collabels <- function(L2Rchain)
         "Lkeyname",
         "Rkeyname",
         if (!is.na(tagname)) "tagname",
-        rep("Rattrib_colname", length(Rattribnames))
+        rep("Rattribname", length(Rattribnames))
     )
 }
 
