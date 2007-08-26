@@ -14,7 +14,7 @@
 ###        Ltablename, Rtablename,
 ###        Lfilter, Rfilter,
 ###        colnames, collabels,
-###        Lcolname, Rcolname, Tcolname, Rattrib_colnames,
+###        Lkeyname, Rkeyname, tagname, Rattribnames,
 ###        direction, revmap,
 ###        show
 ###
@@ -47,7 +47,7 @@
 ###     db,
 ###     Ltablename, Rtablename,
 ###     colnames, collabels,
-###     Lcolname, Rcolname, Tcolname, Rattrib_colnames,
+###     Lkeyname, Rkeyname, tagname, Rattribnames,
 ###     Lfilter, Rfilter
 ###
 ### Note that these generics do _not_ query the database!
@@ -80,8 +80,8 @@ setMethod("Rfilter", "AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "colnames", "collabels", "Lcolname", "Rcolname", "Tcolname" and
-### "Rattrib_colnames" methods.
+### The "colnames", "collabels", "Lkeyname", "Rkeyname", "tagname" and
+### "Rattribnames" methods.
 ###
 
 setMethod("colnames", "AnnDbBimap",
@@ -91,17 +91,17 @@ setMethod("colnames", "AnnDbBimap",
 setMethod("collabels", "AnnDbBimap",
     function(x) L2Rchain.collabels(x@L2Rchain))
 
-setMethod("Lcolname", "AnnDbBimap",
-    function(x) L2Rchain.Lcolname(x@L2Rchain))
+setMethod("Lkeyname", "AnnDbBimap",
+    function(x) L2Rchain.Lkeyname(x@L2Rchain))
 
-setMethod("Rcolname", "AnnDbBimap",
-    function(x) L2Rchain.Rcolname(x@L2Rchain))
+setMethod("Rkeyname", "AnnDbBimap",
+    function(x) L2Rchain.Rkeyname(x@L2Rchain))
 
-setMethod("Tcolname", "AnnDbBimap",
-    function(x) L2Rchain.Tcolname(x@L2Rchain))
+setMethod("tagname", "AnnDbBimap",
+    function(x) L2Rchain.tagname(x@L2Rchain))
 
-setMethod("Rattrib_colnames", "AnnDbBimap",
-    function(x) L2Rchain.Rattrib_colnames(x@L2Rchain))
+setMethod("Rattribnames", "AnnDbBimap",
+    function(x) L2Rchain.Rattribnames(x@L2Rchain))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -187,7 +187,7 @@ setMethod("count.links", "AnnDbBimap",
 setMethod("nrow", "AnnDbTable",
     function(x)
     {
-        dbCountRawAnnDbMapRows(db(x), Ltablename(x), Lcolname(x), NULL, NULL, x@from)
+        dbCountRawAnnDbMapRows(db(x), Ltablename(x), Lkeyname(x), NULL, NULL, x@from)
     }
 )
 
@@ -232,7 +232,7 @@ setMethod("Lkeys", "AnnDbBimap",
     {
         if (.inslot.Lkeys(x))
             return(x@Lkeys)
-        dbUniqueVals(db(x), Ltablename(x), Lcolname(x),
+        dbUniqueVals(db(x), Ltablename(x), Lkeyname(x),
                             Lfilter(x), x@datacache)
     }
 )
@@ -242,7 +242,7 @@ setMethod("Rkeys", "AnnDbBimap",
     {
         if (.inslot.Rkeys(x))
             return(x@Rkeys)
-        dbUniqueVals(db(x), Rtablename(x), Rcolname(x),
+        dbUniqueVals(db(x), Rtablename(x), Rkeyname(x),
                             Rfilter(x), x@datacache)
     }
 )
@@ -322,7 +322,7 @@ setMethod("Llength", "AnnDbBimap",
     {
         if (.inslot.Lkeys(x))
             return(length(x@Lkeys))
-        dbCountUniqueVals(db(x), Ltablename(x), Lcolname(x),
+        dbCountUniqueVals(db(x), Ltablename(x), Lkeyname(x),
                                  Lfilter(x), x@datacache)
     }
 )
@@ -332,7 +332,7 @@ setMethod("Rlength", "AnnDbBimap",
     {
         if (.inslot.Rkeys(x))
             return(length(x@Rkeys))
-        dbCountUniqueVals(db(x), Rtablename(x), Rcolname(x),
+        dbCountUniqueVals(db(x), Rtablename(x), Rkeyname(x),
                                  Rfilter(x), x@datacache)
     }
 )
@@ -515,7 +515,7 @@ setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 #setMethod("flatten", "AnnDbTable",
 #    function(x)
 #    {
-#        dbRawAnnDbMapToTable(db(x), Ltablename(x), Lcolname(x), Lkeys,
+#        dbRawAnnDbMapToTable(db(x), Ltablename(x), Lkeyname(x), Lkeys,
 #                                    NULL, NULL, NULL,
 #                                    x@showCols, x@from)
 #    }
@@ -527,9 +527,9 @@ setMethod("flatten", "AnnDbBimap",
         data0 <- dbSelectFromL2Rchain(db(x), x@L2Rchain,
                                      x@Lkeys, x@Rkeys)
         Lkeys <- Rkeys <- as.character(NA)
-        if ((direction(x) != 1) != fromKeys.only)
+        if (!fromKeys.only || direction(x) ==  1)
             Lkeys <- Lkeys(x)
-        if ((direction(x) == 1) != fromKeys.only)
+        if (!fromKeys.only || direction(x) == -1)
             Rkeys <- Rkeys(x)
         new("FlatBimap", collabels=collabels(x), direction=direction(x),
                          data=data0, Lkeys=Lkeys, Rkeys=Rkeys)
@@ -560,9 +560,9 @@ setMethod("flatten", "Go3AnnDbBimap",
                        getPartialSubmap("CC"),
                        getPartialSubmap("MF"))
         Lkeys <- Rkeys <- as.character(NA)
-        if ((direction(x) != 1) != fromKeys.only)
+        if (!fromKeys.only || direction(x) ==  1)
             Lkeys <- Lkeys(x)
-        if ((direction(x) == 1) != fromKeys.only)
+        if (!fromKeys.only || direction(x) == -1)
             Rkeys <- Rkeys(x)
         new("FlatBimap", collabels=collabels(x), direction=direction(x),
                          data=data0, Lkeys=Lkeys, Rkeys=Rkeys)
@@ -632,15 +632,15 @@ setMethod("as.character", "AtomicAnnDbBimap",
             stop("AtomicAnnDbBimap object with tags cannot be coerced to a character vector")
         data <- flatten(x, fromKeys.only=TRUE)@data
         if (direction(x) == 1)
-            ans <- data[[2]] # could also use [[Rcolname(x)]]
+            ans <- data[[2]] # could also use [[Rkeyname(x)]]
         else
-            ans <- data[[1]] # could also use [[Lcolname(x)]]
+            ans <- data[[1]] # could also use [[Lkeyname(x)]]
         if (!is.character(ans))
             ans <- as.character(ans)
         if (direction(x) == 1)
-            names(ans) <- data[[1]] # could also use [[Lcolname(x)]]
+            names(ans) <- data[[1]] # could also use [[Lkeyname(x)]]
         else
-            names(ans) <- data[[2]] # could also use [[Rcolname(x)]]
+            names(ans) <- data[[2]] # could also use [[Rkeyname(x)]]
         if (any(duplicated(names(ans))))
             warning("returned vector has duplicated names")
         ans

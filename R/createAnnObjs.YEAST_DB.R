@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-YEAST_DB_L2Rlink1 <- list(tablename="sgd", Lcolname="systematic_name", Rcolname="id")
+YEAST_DB_L2Rlink1 <- list(tablename="sgd", Lkeyname="systematic_name", Rkeyname="id")
 
 ### Mandatory fields: objName, Class and L2Rchain
 YEAST_DB_AnnDbBimap_seeds <- list(
@@ -24,8 +24,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="gene2alias",
-                Lcolname="id",
-                Rcolname="alias"
+                Lkeyname="id",
+                Rkeyname="alias"
             )
         )
     ),
@@ -36,8 +36,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="chromosome_features",
-                Lcolname="id",
-                Rcolname="chromosome"
+                Lkeyname="id",
+                Rkeyname="chromosome"
             )
         )
     ),
@@ -48,9 +48,9 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="chromosome_features",
-                Lcolname="id",
-                Tcolname=c(Chromosome="{chromosome}"),
-                Rcolname="start"
+                Lkeyname="id",
+                tagname=c(Chromosome="{chromosome}"),
+                Rkeyname="start"
             )
         ),
         rightColType="integer"
@@ -62,8 +62,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="chromosome_features",
-                Lcolname="id",
-                Rcolname="feature_description"
+                Lkeyname="id",
+                Rkeyname="feature_description"
             )
         )
     ),
@@ -74,8 +74,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="ec",
-                Lcolname="id",
-                Rcolname="ec_number"
+                Lkeyname="id",
+                Rkeyname="ec_number"
             )
         )
     ),
@@ -85,8 +85,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="sgd",
-                Lcolname="systematic_name",
-                Rcolname="gene_name"
+                Lkeyname="systematic_name",
+                Rkeyname="gene_name"
             )
         )
     ),
@@ -97,8 +97,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="kegg",
-                Lcolname="id",
-                Rcolname="kegg_id"
+                Lkeyname="id",
+                Rkeyname="kegg_id"
             )
         )
     ),
@@ -109,8 +109,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="pubmed",
-                Lcolname="id",
-                Rcolname="pubmed_id"
+                Lkeyname="id",
+                Rkeyname="pubmed_id"
             )
         )
     ),
@@ -121,10 +121,10 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lcolname="id",
-                Tcolname=c(Evidence="{evidence}"),
-                Rcolname="go_id",
-                Rattrib_colnames=c(Ontology="NULL")
+                Lkeyname="id",
+                tagname=c(Evidence="{evidence}"),
+                Rkeyname="go_id",
+                Rattribnames=c(Ontology="NULL")
             )
         ),
         rightTables=Go3tablenames()
@@ -135,8 +135,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="gene2systematic",
-                Lcolname="gene_name",
-                Rcolname="systematic_name"
+                Lkeyname="gene_name",
+                Rkeyname="systematic_name"
             )
         )
     ),
@@ -147,8 +147,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="interpro",
-                Lcolname="id",
-                Rcolname="interpro_id"
+                Lkeyname="id",
+                Rkeyname="interpro_id"
             )
         )
     ),
@@ -159,8 +159,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="pfam",
-                Lcolname="id",
-                Rcolname="pfam_id"
+                Lkeyname="id",
+                Rkeyname="pfam_id"
             )
         )
     ),
@@ -171,8 +171,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
             YEAST_DB_L2Rlink1,
             list(
                 tablename="smart",
-                Lcolname="id",
-                Rcolname="smart_id"
+                Lkeyname="id",
+                Rkeyname="smart_id"
             )
         )
     )

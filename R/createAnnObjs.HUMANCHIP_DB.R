@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-HUMANCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
+HUMANCHIP_DB_L2Rlink1 <- list(tablename="probes", Lkeyname="probe_id", Rkeyname="id")
 
 ### Mandatory fields: objName, Class and L2Rchain
 HUMANCHIP_DB_AnnDbBimap_seeds <- list(
@@ -23,8 +23,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="probes",
-                Lcolname="probe_id",
-                Rcolname="accession"
+                Lkeyname="probe_id",
+                Rkeyname="accession"
             )
         )
     ),
@@ -35,8 +35,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="alias",
-                Lcolname="id",
-                Rcolname="alias_symbol"
+                Lkeyname="id",
+                Rkeyname="alias_symbol"
             )
         ),
         direction=-1L
@@ -48,8 +48,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosomes",
-                Lcolname="id",
-                Rcolname="chromosome"
+                Lkeyname="id",
+                Rkeyname="chromosome"
             )
         )
     ),
@@ -60,8 +60,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="genes",
-                Lcolname="id",
-                Rcolname="gene_id"
+                Lkeyname="id",
+                Rkeyname="gene_id"
             )
         )
     ),
@@ -72,8 +72,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="ec",
-                Lcolname="id",
-                Rcolname="ec_number"
+                Lkeyname="id",
+                Rkeyname="ec_number"
             )
         )
     ),
@@ -84,8 +84,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
-                Rcolname="gene_name"
+                Lkeyname="id",
+                Rkeyname="gene_name"
             )
         )
     ),
@@ -96,8 +96,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="cytogenetic_locations",
-                Lcolname="id",
-                Rcolname="cytogenetic_location"
+                Lkeyname="id",
+                Rkeyname="cytogenetic_location"
             )
         )
     ),
@@ -108,8 +108,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="omim",
-                Lcolname="id",
-                Rcolname="omim_id"
+                Lkeyname="id",
+                Rkeyname="omim_id"
             )
         )
     ),
@@ -120,8 +120,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="kegg",
-                Lcolname="id",
-                Rcolname="kegg_id"
+                Lkeyname="id",
+                Rkeyname="kegg_id"
             )
         )
     ),
@@ -132,8 +132,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="pubmed",
-                Lcolname="id",
-                Rcolname="pubmed_id"
+                Lkeyname="id",
+                Rkeyname="pubmed_id"
             )
         )
     ),
@@ -144,8 +144,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="refseq",
-                Lcolname="id",
-                Rcolname="accession"
+                Lkeyname="id",
+                Rkeyname="accession"
             )
         )
     ),
@@ -156,8 +156,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
-                Rcolname="symbol"
+                Lkeyname="id",
+                Rkeyname="symbol"
             )
         )
     ),
@@ -168,8 +168,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="unigene",
-                Lcolname="id",
-                Rcolname="unigene_id"
+                Lkeyname="id",
+                Rkeyname="unigene_id"
             )
         )
     ),
@@ -180,9 +180,9 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
-                Lcolname="id",
-                Tcolname=c(Chromosome="{chromosome}"),
-                Rcolname="start_location"
+                Lkeyname="id",
+                tagname=c(Chromosome="{chromosome}"),
+                Rkeyname="start_location"
             )
         ),
         rightColType="integer"
@@ -194,9 +194,9 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="pfam",
-                Lcolname="id",
-                Rcolname="ipi_id",
-                Rattrib_colnames=c(PfamId="{pfam_id}")
+                Lkeyname="id",
+                Rkeyname="ipi_id",
+                Rattribnames=c(PfamId="{pfam_id}")
             )
         )
     ),
@@ -207,9 +207,9 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 tablename="prosite",
-                Lcolname="id",
-                Rcolname="ipi_id",
-                Rattrib_colnames=c(PrositeId="{prosite_id}")
+                Lkeyname="id",
+                Rkeyname="ipi_id",
+                Rattribnames=c(PrositeId="{prosite_id}")
             )
         )
     ),
@@ -220,10 +220,10 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             HUMANCHIP_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lcolname="id",
-                Tcolname=c(Evidence="{evidence}"),
-                Rcolname="go_id",
-                Rattrib_colnames=c(Ontology="NULL")
+                Lkeyname="id",
+                tagname=c(Evidence="{evidence}"),
+                Rkeyname="go_id",
+                Rattribnames=c(Ontology="NULL")
             )
         ),
         rightTables=Go3tablenames()

@@ -81,7 +81,7 @@ setMethod("as.list", "AtomicAnnDbBimap",
             ann_list <- list()
         } else {
             if (direction(x) == 1) {
-                ## We temporary use 'y@data[[2]]' instead of 'y@data[[Rcolname(y)]]'
+                ## We temporary use 'y@data[[2]]' instead of 'y@data[[Rkeyname(y)]]'
                 ## because 'y' colnames are not necessarily unique e.g.:
                 ##   > head(flatten(subset(GOBPPARENTS, "GO:0000001")), 2)
                 ##          go_id      go_id Evidence
@@ -199,10 +199,10 @@ setMethod("as.list", "GoAnnDbBimap",
 ### default formatting provided by foldListOfLists() (the default is to create
 ### a list for each object) makes things _much_ slower:
 ###  > x <- flatten(GOTERM)
-###  > system.time(y <- foldListOfLists(x, "Lcolname", mode=1))
+###  > system.time(y <- foldListOfLists(x, "Lkeyname", mode=1))
 ###     user  system elapsed 
 ###    1.888   0.016   1.905 
-###  > system.time(y <- foldListOfLists(x, "Lcolname", mode=1, FUN=makeGONode))
+###  > system.time(y <- foldListOfLists(x, "Lkeyname", mode=1, FUN=makeGONode))
 ###     user  system elapsed 
 ###   20.893   0.072  21.066 
 ### Why is the S4 initialization mechanism so slow?

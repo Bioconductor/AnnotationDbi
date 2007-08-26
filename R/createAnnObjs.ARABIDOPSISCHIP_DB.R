@@ -12,7 +12,7 @@
 ### this file: it is called by any ARABIDOPSISCHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
-ARABIDOPSISCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
+ARABIDOPSISCHIP_DB_L2Rlink1 <- list(tablename="probes", Lkeyname="probe_id", Rkeyname="id")
 
 ### Mandatory fields: objName, Class and L2Rchain
 ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
@@ -23,8 +23,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="genes",
-                Lcolname="id",
-                Rcolname="gene_id"
+                Lkeyname="id",
+                Rkeyname="gene_id"
             )
         ),
         replace.multiple="multiple"
@@ -36,8 +36,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="aracyc",
-                Lcolname="id",
-                Rcolname="pathway_name"
+                Lkeyname="id",
+                Rkeyname="pathway_name"
             )
         )
     ),
@@ -48,8 +48,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
-                Rcolname="chromosome"
+                Lkeyname="id",
+                Rkeyname="chromosome"
             )
         )
     ),
@@ -60,8 +60,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="enzyme",
-                Lcolname="id",
-                Rcolname="ec_name"
+                Lkeyname="id",
+                Rkeyname="ec_name"
             )
         )
     ),
@@ -72,8 +72,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
-                Rcolname="gene_name"
+                Lkeyname="id",
+                Rkeyname="gene_name"
             )
         )
     ),
@@ -84,8 +84,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="genes",
-                Lcolname="id",
-                Rcolname="gene_id"
+                Lkeyname="id",
+                Rkeyname="gene_id"
             )
         ),
         replace.single=as.character(NA)
@@ -97,8 +97,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="kegg",
-                Lcolname="id",
-                Rcolname="kegg_id"
+                Lkeyname="id",
+                Rkeyname="kegg_id"
             )
         )
     ),
@@ -109,8 +109,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="pubmed",
-                Lcolname="id",
-                Rcolname="pubmed_id"
+                Lkeyname="id",
+                Rkeyname="pubmed_id"
             )
         )
     ),
@@ -121,8 +121,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
-                Rcolname="symbol"
+                Lkeyname="id",
+                Rkeyname="symbol"
             )
         )
     ),
@@ -133,9 +133,9 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
-                Lcolname="id",
-                Tcolname=c(Chromosome="{chromosome}"),
-                Rcolname="start_location"
+                Lkeyname="id",
+                tagname=c(Chromosome="{chromosome}"),
+                Rkeyname="start_location"
             )
         ),
         rightColType="integer"
@@ -147,10 +147,10 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lcolname="id",
-                Tcolname=c(Evidence="{evidence}"),
-                Rcolname="go_id",
-                Rattrib_colnames=c(Ontology="NULL")
+                Lkeyname="id",
+                tagname=c(Evidence="{evidence}"),
+                Rkeyname="go_id",
+                Rattribnames=c(Ontology="NULL")
             )
         ),
         rightTables=Go3tablenames()

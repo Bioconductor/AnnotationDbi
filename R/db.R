@@ -87,17 +87,17 @@ L2Rlink <- function(...) new("L2Rlink", ...)
 setMethod("toString", "L2Rlink",
     function(x)
     {
-        paste("{", x@Lcolname, "}", x@tablename, "{", x@Rcolname, "}", sep="")
+        paste("{", x@Lkeyname, "}", x@tablename, "{", x@Rkeyname, "}", sep="")
     }
 )
 
 setMethod("show", "L2Rlink",
     function(object)
     {
-        s <- paste("{Lcolname}table{Rcolname}:", toString(object))
+        s <- paste("{Lkeyname}table{Rkeyname}:", toString(object))
         extracols <- c(
-            if (!is.na(L2Rlink@Tcolname)) L2Rlink@Tcolname,
-            L2Rlink@Rattrib_colnames
+            if (!is.na(L2Rlink@tagname)) L2Rlink@tagname,
+            L2Rlink@Rattribnames
         )
         if (length(extracols) != 0) {
             if (!is.null(names(extracols)))
@@ -115,9 +115,9 @@ setMethod("show", "L2Rlink",
 setMethod("rev", "L2Rlink",
     function(x)
     {
-        tmp <- x@Lcolname
-        x@Lcolname <- x@Rcolname
-        x@Rcolname <- tmp
+        tmp <- x@Lkeyname
+        x@Lkeyname <- x@Rkeyname
+        x@Rkeyname <- tmp
         x
     }
 )
@@ -129,8 +129,8 @@ L2Rchain.rev <- function(L2Rchain) rev(lapply(L2Rchain, rev))
 L2Rchain.Ltablename <- function(L2Rchain) L2Rchain[[1]]@tablename
 L2Rchain.Rtablename <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@tablename
 
-L2Rchain.Lcolname <- function(L2Rchain) L2Rchain[[1]]@Lcolname
-L2Rchain.Rcolname <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@Rcolname
+L2Rchain.Lkeyname <- function(L2Rchain) L2Rchain[[1]]@Lkeyname
+L2Rchain.Rkeyname <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@Rkeyname
 
 L2Rchain.Lfilter <- function(L2Rchain)
 {
@@ -150,9 +150,9 @@ L2Rchain.Rfilter <- function(L2Rchain)
 
 ### Return the first tag colname found (from left to right) or NA if the
 ### L2Rchain chain has no tag.
-L2Rchain.Tcolname <- function(L2Rchain)
+L2Rchain.tagname <- function(L2Rchain)
 {
-    colname <- sapply(L2Rchain, function(L2Rlink) L2Rlink@Tcolname)
+    colname <- sapply(L2Rchain, function(L2Rlink) L2Rlink@tagname)
     colname <- colname[!is.na(colname)][1]
     if (is.na(colname))
         return(colname)
@@ -161,9 +161,9 @@ L2Rchain.Tcolname <- function(L2Rchain)
     .contextualizeColnames(colname)
 }
 
-L2Rchain.Rattrib_colnames <- function(L2Rchain)
+L2Rchain.Rattribnames <- function(L2Rchain)
 {
-    colnames <- L2Rchain[[length(L2Rchain)]]@Rattrib_colnames
+    colnames <- L2Rchain[[length(L2Rchain)]]@Rattribnames
     if (!is.null(names(colnames)))
         return(names(colnames))
     .contextualizeColnames(colnames)
@@ -174,25 +174,25 @@ L2Rchain.Rattrib_colnames <- function(L2Rchain)
 ### THROUGH ALL THE REST OF THIS FILE... FOR NOW.
 L2Rchain.collabels <- function(L2Rchain)
 {
-    Tcolname <- L2Rchain.Tcolname(L2Rchain)
-    Rattrib_colnames <- L2Rchain.Rattrib_colnames(L2Rchain)
+    tagname <- L2Rchain.tagname(L2Rchain)
+    Rattribnames <- L2Rchain.Rattribnames(L2Rchain)
     c(
-        "Lcolname",
-        "Rcolname",
-        if (!is.na(Tcolname)) "Tcolname",
-        rep("Rattrib_colname", length(Rattrib_colnames))
+        "Lkeyname",
+        "Rkeyname",
+        if (!is.na(tagname)) "tagname",
+        rep("Rattrib_colname", length(Rattribnames))
     )
 }
 
 L2Rchain.colnames <- function(L2Rchain)
 {
-    Tcolname <- L2Rchain.Tcolname(L2Rchain)
-    Rattrib_colnames <- L2Rchain.Rattrib_colnames(L2Rchain)
+    tagname <- L2Rchain.tagname(L2Rchain)
+    Rattribnames <- L2Rchain.Rattribnames(L2Rchain)
     c(
-        L2Rchain.Lcolname(L2Rchain),
-        L2Rchain.Rcolname(L2Rchain),
-        if (!is.na(Tcolname)) Tcolname,
-        Rattrib_colnames
+        L2Rchain.Lkeyname(L2Rchain),
+        L2Rchain.Rkeyname(L2Rchain),
+        if (!is.na(tagname)) tagname,
+        Rattribnames
     )
 }
 
@@ -225,35 +225,35 @@ L2Rchain.colnames <- function(L2Rchain)
     for (i in seq_len(chainlen)) {
         L2Rlink <- L2Rchain[[i]]
         tablename <- L2Rlink@tablename
-        Lcolname <- L2Rlink@Lcolname
-        Rcolname <- L2Rlink@Rcolname
+        Lkeyname <- L2Rlink@Lkeyname
+        Rkeyname <- L2Rlink@Rkeyname
         if (chainlen == 1) {
             context <- from <- tablename
-            what_Lcol <- paste(context, Lcolname, sep=".")
-            what_Rcol <- paste(context, Rcolname, sep=".")
+            what_Lcol <- paste(context, Lkeyname, sep=".")
+            what_Rcol <- paste(context, Rkeyname, sep=".")
         } else {
             if (i == 1) {
                 context <- "_left"
-                what_Lcol <- paste(context, Lcolname, sep=".")
+                what_Lcol <- paste(context, Lkeyname, sep=".")
                 from <- paste(tablename, "AS", context)
             } else {
                 if (i == chainlen) {
                     context <- "_right"
-                    what_Rcol <- paste(context, Rcolname, sep=".")
+                    what_Rcol <- paste(context, Rkeyname, sep=".")
                 } else {
                     context <- paste("_", i, sep="")
                 }
-                on <- paste(prev_context, ".", prev_Rcolname, "=",
-                            context, ".", Lcolname, sep="")
+                on <- paste(prev_context, ".", prev_Rkeyname, "=",
+                            context, ".", Lkeyname, sep="")
                 from <- paste(from, "INNER JOIN", tablename, "AS", context, "ON", on)
             }
             prev_context <- context
-            prev_Rcolname <- Rcolname
+            prev_Rkeyname <- Rkeyname
         }
         if (with.extracols) {
             extracols <- c(
-                if (!is.na(L2Rlink@Tcolname)) L2Rlink@Tcolname,
-                L2Rlink@Rattrib_colnames
+                if (!is.na(L2Rlink@tagname)) L2Rlink@tagname,
+                L2Rlink@Rattribnames
             )
             if (length(extracols) != 0) {
                 tmp <- .contextualizeColnames(extracols, context)
@@ -328,28 +328,28 @@ dbGetTable <- function(conn, tablename, extra.SQL=NULL)
 }
 
 ### CURRENTLY BROKEN!
-dbRawAnnDbMapToTable <- function(conn, Ltablename, Lcolname, Lkeys,
-                                       Rtablename, Rcolname, Rkeys,
+dbRawAnnDbMapToTable <- function(conn, Ltablename, Lkeyname, Lkeys,
+                                       Rtablename, Rkeyname, Rkeys,
                                        show.colnames, from)
 {
 #    if (!is.null(Rtablename))
-#        Rcolname <- paste(Rtablename, Rcolname, sep=".")
-#    Lcolname <- paste(Ltablename, Lcolname, sep=".")
+#        Rkeyname <- paste(Rtablename, Rkeyname, sep=".")
+#    Lkeyname <- paste(Ltablename, Lkeyname, sep=".")
     SQL <- paste("SELECT", paste(show.colnames, collapse=","), "FROM", from)
-    SQL <- paste(SQL, "WHERE", .toSQLWhere(Lcolname, Lkeys))
+    SQL <- paste(SQL, "WHERE", .toSQLWhere(Lkeyname, Lkeys))
     if (!is.null(Rtablename))
-        SQL <- paste(SQL, "AND", .toSQLWhere(Rcolname, Rkeys))
+        SQL <- paste(SQL, "AND", .toSQLWhere(Rkeyname, Rkeys))
     .dbGetQuery(conn, SQL)
 }
 
 ### CURRENTLY BROKEN!
-dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lcolname, 
-                                         Rtablename, Rcolname, from)
+dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lkeyname, 
+                                         Rtablename, Rkeyname, from)
 {
     SQL <- paste("SELECT COUNT(*) FROM", from)
-    SQL <- paste(SQL, "WHERE", .toSQLWhere(Lcolname, NA))
+    SQL <- paste(SQL, "WHERE", .toSQLWhere(Lkeyname, NA))
     if (!is.null(Rtablename))
-        SQL <- paste(SQL, "AND", .toSQLWhere(Rcolname, NA))
+        SQL <- paste(SQL, "AND", .toSQLWhere(Rkeyname, NA))
     .dbGetQuery(conn, SQL, 1)
 }
 

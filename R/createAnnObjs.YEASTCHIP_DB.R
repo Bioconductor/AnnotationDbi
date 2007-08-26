@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
+YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lkeyname="probe_id", Rkeyname="id")
 
 ### Mandatory fields: objName, Class and L2Rchain
 YEASTCHIP_DB_AnnDbBimap_seeds <- list(
@@ -24,8 +24,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="gene2alias",
-                Lcolname="id",
-                Rcolname="alias"
+                Lkeyname="id",
+                Rkeyname="alias"
             )
         )
     ),
@@ -36,8 +36,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosome_features",
-                Lcolname="id",
-                Rcolname="chromosome"
+                Lkeyname="id",
+                Rkeyname="chromosome"
             )
         )
     ),
@@ -48,9 +48,9 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosome_features",
-                Lcolname="id",
-                Tcolname=c(Chromosome="{chromosome}"),
-                Rcolname="start"
+                Lkeyname="id",
+                tagname=c(Chromosome="{chromosome}"),
+                Rkeyname="start"
             )
         ),
         rightColType="integer"
@@ -62,8 +62,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosome_features",
-                Lcolname="id",
-                Rcolname="feature_description"
+                Lkeyname="id",
+                Rkeyname="feature_description"
             )
         )
     ),
@@ -74,8 +74,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="ec",
-                Lcolname="id",
-                Rcolname="ec_number"
+                Lkeyname="id",
+                Rkeyname="ec_number"
             )
         )
     ),
@@ -86,8 +86,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="sgd",
-                Lcolname="id",
-                Rcolname="gene_name"
+                Lkeyname="id",
+                Rkeyname="gene_name"
             )
         )
     ),
@@ -98,8 +98,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="kegg",
-                Lcolname="id",
-                Rcolname="kegg_id"
+                Lkeyname="id",
+                Rkeyname="kegg_id"
             )
         )
     ),
@@ -110,8 +110,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="pubmed",
-                Lcolname="id",
-                Rcolname="pubmed_id"
+                Lkeyname="id",
+                Rkeyname="pubmed_id"
             )
         )
     ),
@@ -122,10 +122,10 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lcolname="id",
-                Tcolname=c(Evidence="{evidence}"),
-                Rcolname="go_id",
-                Rattrib_colnames=c(Ontology="NULL")
+                Lkeyname="id",
+                tagname=c(Evidence="{evidence}"),
+                Rkeyname="go_id",
+                Rattribnames=c(Ontology="NULL")
             )
         ),
         rightTables=Go3tablenames()
@@ -137,8 +137,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
             YEASTCHIP_DB_L2Rlink1,
             list(
                 tablename="sgd",
-                Lcolname="id",
-                Rcolname="systematic_name"
+                Lkeyname="id",
+                Rkeyname="systematic_name"
             )
         )
     )

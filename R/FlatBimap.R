@@ -4,10 +4,10 @@
 ###
 
 
-### Possible col labels are: "Lcolname", "Rcolname", "Tcolname",
+### Possible col labels are: "Lkeyname", "Rkeyname", "tagname",
 ### "Rattrib_colname"
-### There must be exactly 1 "Lcolname" and 1 "Rcolname" col.
-### There can be 0 or 1 "Tcolname" col.
+### There must be exactly 1 "Lkeyname" and 1 "Rkeyname" col.
+### There can be 0 or 1 "tagname" col.
 ### There can be 0 or any number of "Rattrib_colname" cols.
 setClass("FlatBimap",
     contains="Bimap",
@@ -36,6 +36,8 @@ setMethod("initialize", "FlatBimap",
         if (!missing(direction))
             .Object@direction <- .normalize.direction(direction)
         .Object@data <- data
+        .Object@Lkeys <- Lkeys
+        .Object@Rkeys <- Rkeys
         .Object
     }
 )
@@ -61,10 +63,29 @@ setReplaceMethod("direction", "FlatBimap",
     }
 )
 
+setMethod("mappedLkeys", "FlatBimap",
+    function(x) unique(x@data[[match("Lkeyname", x@collabels)]]))
+
+setMethod("mappedRkeys", "FlatBimap",
+    function(x) unique(x@data[[match("Rkeyname", x@collabels)]]))
+
 setMethod("Lkeys", "FlatBimap",
-    function(x) x@Lkeys)
+    function(x)
+    {
+        if (length(x@Lkeys) == 1 && is.na(x@Lkeys))
+            return(mappedLkeys(x))
+        x@Lkeys
+    }
+)
+
 setMethod("Rkeys", "FlatBimap",
-    function(x) x@Rkeys)
+    function(x)
+    {
+        if (length(x@Rkeys) == 1 && is.na(x@Rkeys))
+            return(mappedRkeys(x))
+        x@Rkeys
+    }
+)
 
 .checkKeys <- function(keys, valid.keys, ifnotfound)
 {
@@ -116,19 +137,13 @@ setMethod("subset", "FlatBimap",
     }
 )
 
-setMethod("mappedLkeys", "FlatBimap",
-    function(x) unique(x@data[[match("Lcolname", x@collabels)]]))
-
-setMethod("mappedRkeys", "FlatBimap",
-    function(x) unique(x@data[[match("Rcolname", x@collabels)]]))
-
 setMethod("nrow", "FlatBimap",
     function(x) nrow(x@data))
 
 setMethod("links", "FlatBimap",
     function(x)
     {
-        j <- c(match("Lcolname", x@collabels), match("Rcolname", x@collabels))
+        j <- c(match("Lkeyname", x@collabels), match("Rkeyname", x@collabels))
         unique(x@data[ , j])
     }
 )
@@ -296,7 +311,7 @@ foldListOfAtomicVectors <- function(x, direction, FUN)
 ###        but the latter will be faster.
 ###
 ### WARNING: only folding in direction 1 is currently working.
-### TODO: make it work with from="Rcolname"!
+### TODO: make it work with from="Rkeyname"!
 foldListOfLists <- function(x, direction, mode, FUN)
 {
     keys <- from.keys(x, direction)

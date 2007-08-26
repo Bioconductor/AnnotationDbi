@@ -56,15 +56,15 @@ setClass("AnnDbTable",
 setClass("L2Rlink",
     representation(
         tablename="character",              # length 1
-        Lcolname="character",               # left col (length 1)
-        Tcolname="character",               # tag col (length 1 + name)
-        Rcolname="character",               # right col (length 1)
-        Rattrib_colnames="character",       # right attrib cols (length n + names)
+        Lkeyname="character",               # left col (length 1)
+        tagname="character",               # tag col (length 1 + name)
+        Rkeyname="character",               # right col (length 1)
+        Rattribnames="character",       # right attrib cols (length n + names)
         Rattrib_join="character",           # right attrib join (length 1, SQL string)
         filter="character"                  # filter (length 1, SQL string)
     ),
     prototype(
-        Tcolname=as.character(NA),
+        tagname=as.character(NA),
         Rattrib_join=as.character(NA),
         filter="1"
     )

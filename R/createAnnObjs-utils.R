@@ -15,7 +15,7 @@ makeGo3L2Rchain <- function(L2Rchain, tablename, ontology)
 {
     l <- length(L2Rchain)
     L2Rchain[[l]]@tablename <- tablename
-    L2Rchain[[l]]@Tcolname[2] <- paste("'", ontology, "'", sep="")
+    L2Rchain[[l]]@tagname[2] <- paste("'", ontology, "'", sep="")
     L2Rchain
 }
 

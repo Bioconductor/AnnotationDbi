@@ -40,7 +40,7 @@ exportMethods(
 
     ## The Bimap interface
     "colnames", "collabels",
-    "Lcolname", "Rcolname", "Tcolname", "Rattrib_colnames",
+    "Lkeyname", "Rkeyname", "tagname", "Rattribnames",
     "direction",
     "direction<-",
     "revmap",

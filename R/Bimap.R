@@ -128,7 +128,7 @@ Bimap_methods <- c(
     ## GROUP 2: Methods for which a default is provided (in this file) but
     ## some of them are redefined for AnnDbBimap objects to obtain better
     ## performance
-    "Lcolname", "Rcolname", "Tcolname", "Rattrib_colnames",
+    "Lkeyname", "Rkeyname", "tagname", "Rattribnames",
     "revmap",
     "Llength", "Rlength",
     "count.mappedLkeys", "count.mappedRkeys",
@@ -146,31 +146,31 @@ Bimap_methods <- c(
 ### A virtual class with no slot (a kind of Java "interface")
 setClass("Bimap", representation("VIRTUAL"))
 
-setMethod("Lcolname", "Bimap",
+setMethod("Lkeyname", "Bimap",
     function(x)
     {
         colnames <- colnames(x)
         names(colnames) <- collabels(x)
-        colnames["Lcolname"]
+        colnames["Lkeyname"]
     }
 )
-setMethod("Rcolname", "Bimap",
+setMethod("Rkeyname", "Bimap",
     function(x)
     {
         colnames <- colnames(x)
         names(colnames) <- collabels(x)
-        colnames["Rcolname"]
+        colnames["Rkeyname"]
     }
 )
-setMethod("Tcolname", "Bimap",
+setMethod("tagname", "Bimap",
     function(x)
     {
         colnames <- colnames(x)
         names(colnames) <- collabels(x)
-        colnames["Tcolname"]
+        colnames["tagname"]
     }
 )
-setMethod("Rattrib_colnames", "Bimap",
+setMethod("Rattribnames", "Bimap",
     function(x)
     {
         colnames(x)[collabels(x) == "Rattrib_colname"]
@@ -202,7 +202,7 @@ setMethod("ncol", "Bimap",
 setMethod("from.colpos", "Bimap",
     function(x, direction)
     {
-        if (direction == 1) side = "Lcolname" else side = "Rcolname"
+        if (direction == 1) side = "Lkeyname" else side = "Rkeyname"
         match(side, collabels(x))
     }
 )
@@ -294,14 +294,14 @@ setMethod("toList", "Bimap",
 ### Used by the show methods for FlatBimap and AnnDbBimap objects.
 ###
 
-.key.summary <- function(keys, mapped)
+.key.summary <- function(keys, nmapped)
 {
     len0 <- length(keys)
     if (len0 > 2)
         keys <- keys[1:2]
     string <- paste(paste("\"", keys, "\"", sep=""), collapse=", ")
     if (len0 > 2) {
-        string <- paste(string, ", ... (total=", len0, "/mapped=", mapped, ")", sep="")
+        string <- paste(string, ", ... (total=", len0, "/mapped=", nmapped, ")", sep="")
     }
     string
 }
@@ -309,7 +309,7 @@ setMethod("toList", "Bimap",
 Bimap.summary <- function(x)
 {
     ## Left keys
-    cat("| Lcolname: ", Lcolname(x), sep="")
+    cat("| Lkeyname: ", Lkeyname(x), sep="")
     if (is(x, "AnnDbBimap"))
         cat(" (Ltablename: ", Ltablename(x), ")", sep="")
     cat("\n")
@@ -319,7 +319,7 @@ Bimap.summary <- function(x)
 
     if (!is(x, "AnnDbMap")) {
         ## Right keys
-        cat("| Rcolname: ", Rcolname(x), sep="")
+        cat("| Rkeyname: ", Rkeyname(x), sep="")
         if (is(x, "AnnDbBimap"))
             cat(" (Rtablename: ", Rtablename(x), ")", sep="")
         cat("\n")
@@ -329,8 +329,8 @@ Bimap.summary <- function(x)
     }
 
     ## Tag
-    if (!is.na(Tcolname(x)))
-        cat("| Tcolname: ", Tcolname(x), "\n|\n", sep="")
+    if (!is.na(tagname(x)))
+        cat("| tagname: ", tagname(x), "\n|\n", sep="")
 
     ## direction
     direction <- names(.DIRECTION_STR2INT)[.DIRECTION_STR2INT == direction(x)]
