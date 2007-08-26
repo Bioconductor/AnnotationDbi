@@ -4,10 +4,11 @@
 ###
 
 
-### Possible col labels are: "left", "right", "tag", "Lattrib", "Rattrib"
-### There must be exactly 1 "left" and 1 "right" col.
-### There can be 0 or 1 "tag" col.
-### There can be any number of "Lattrib", "Rattrib" or unlabelled (NA) cols.
+### Possible col labels are: "Lcolname", "Rcolname", "Tcolname",
+### "Rattrib_colname"
+### There must be exactly 1 "Lcolname" and 1 "Rcolname" col.
+### There can be 0 or 1 "Tcolname" col.
+### There can be 0 or any number of "Rattrib_colname" cols.
 setClass("FlatBimap",
     contains="Bimap",
     representation(
@@ -29,19 +30,12 @@ setClass("FlatBimap",
 setMethod("initialize", "FlatBimap",
     function(.Object, collabels, direction, data, Lkeys, Rkeys)
     {
-        if (missing(collabels)) {
-            collabels <- rep(as.character(NA), ncol(data))
-            collabels[1] <- "left"
-            collabels[2] <- "right"
-        }
+        if (length(collabels) != ncol(data))
+            stop("number of column labels doesn't match number of columns")
         .Object@collabels <- collabels
         if (!missing(direction))
             .Object@direction <- .normalize.direction(direction)
         .Object@data <- data
-        if (length(Lkeys) != 1 || !is.na(Lkeys))
-            .Object@Lkeys <- Lkeys
-        if (length(Rkeys) != 1 || !is.na(Rkeys))
-            .Object@Rkeys <- Rkeys
         .Object
     }
 )
@@ -123,10 +117,10 @@ setMethod("subset", "FlatBimap",
 )
 
 setMethod("mappedLkeys", "FlatBimap",
-    function(x) unique(x@data[[match("left", x@collabels)]]))
+    function(x) unique(x@data[[match("Lcolname", x@collabels)]]))
 
 setMethod("mappedRkeys", "FlatBimap",
-    function(x) unique(x@data[[match("right", x@collabels)]]))
+    function(x) unique(x@data[[match("Rcolname", x@collabels)]]))
 
 setMethod("nrow", "FlatBimap",
     function(x) nrow(x@data))
@@ -134,7 +128,7 @@ setMethod("nrow", "FlatBimap",
 setMethod("links", "FlatBimap",
     function(x)
     {
-        j <- c(match("left", x@collabels), match("right", x@collabels))
+        j <- c(match("Lcolname", x@collabels), match("Rcolname", x@collabels))
         unique(x@data[ , j])
     }
 )
@@ -169,11 +163,8 @@ setMethod("tail", "FlatBimap",
 setMethod("show", "FlatBimap",
     function(object)
     {
-        cat("\"", class(object), "\" object:\n\n", sep="")
-        c2l <- data.frame(COLNAME=colnames(object), LABEL=object@collabels)
-        show(c2l)
-        direction <- names(.DIRECTION_STR2INT)[.DIRECTION_STR2INT == direction(object)]
-        cat("\ndirection: ", direction, sep="")
+        cat("\"", class(object), "\" object:\n|\n", sep="")
+        Bimap.summary(object)
         cat("\ndata:\n")
         if (nrow(object) <= 20) {
             show(object@data)
@@ -305,7 +296,7 @@ foldListOfAtomicVectors <- function(x, direction, FUN)
 ###        but the latter will be faster.
 ###
 ### WARNING: only folding in direction 1 is currently working.
-### TODO: make it work with from="right"!
+### TODO: make it work with from="Rcolname"!
 foldListOfLists <- function(x, direction, mode, FUN)
 {
     keys <- from.keys(x, direction)

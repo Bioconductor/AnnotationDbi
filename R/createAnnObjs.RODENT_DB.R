@@ -158,8 +158,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             list(
                 tablename="chromosome_locations",
                 Lcolname="id",
-                Rcolname="start_location",
-                tagCols=c(Chromosome="{chromosome}")
+                Tcolname=c(Chromosome="{chromosome}"),
+                Rcolname="start_location"
             )
         ),
         rightColType="integer"
@@ -173,7 +173,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
                 tablename="pfam",
                 Lcolname="id",
                 Rcolname="ipi_id",
-                tagCols=c(PfamId="{pfam_id}")
+                Rattrib_colnames=c(PfamId="{pfam_id}")
             )
         )
     ),
@@ -186,7 +186,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
                 tablename="prosite",
                 Lcolname="id",
                 Rcolname="ipi_id",
-                tagCols=c(PrositeId="{prosite_id}")
+                Rattrib_colnames=c(PrositeId="{prosite_id}")
             )
         )
     ),
@@ -198,8 +198,9 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
+                Tcolname=c(Evidence="{evidence}"),
                 Rcolname="go_id",
-                tagCols=c(Evidence="{evidence}", Ontology="NULL")
+                Rattrib_colnames=c(Ontology="NULL")
             )
         ),
         rightTables=Go3tablenames()

@@ -15,7 +15,7 @@ makeGo3L2Rchain <- function(L2Rchain, tablename, ontology)
 {
     l <- length(L2Rchain)
     L2Rchain[[l]]@tablename <- tablename
-    L2Rchain[[l]]@tagCols[2] <- paste("'", ontology, "'", sep="")
+    L2Rchain[[l]]@Tcolname[2] <- paste("'", ontology, "'", sep="")
     L2Rchain
 }
 
@@ -48,7 +48,7 @@ createAnnDbBimap <- function(seed, seed0)
             seed[[slot]] <- seed0[[slot]]
     }
     L2Rchain <- seed$L2Rchain
-    seed$L2Rchain <- lapply(L2Rchain, function(brick) do.call("L2Rlink", brick))
+    seed$L2Rchain <- lapply(L2Rchain, function(L2Rlink) do.call("L2Rlink", L2Rlink))
     do.call("new", seed)
 }
 

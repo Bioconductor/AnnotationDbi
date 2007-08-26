@@ -22,14 +22,14 @@ GO_DB_AnnDbBimap_seeds <- list(
 #            list(
 #                tablename="go_gene",
 #                Lcolname="gene_id",
-#                Rcolname="term_id",
-#                tagCols=c(Evidence="{evidence}")
+#                Tcolname=c(Evidence="{evidence}"),
+#                Rcolname="term_id"
 #            ),
 #            list(
 #                tablename="go_term",
 #                Lcolname="term_id",
 #                Rcolname="go_id",
-#                tagCols=c(Ontology="{ontology}")
+#                Rattrib_colnames=c(Ontology="{ontology}")
 #            )
 #        )
 #    ),
@@ -46,8 +46,8 @@ GO_DB_AnnDbBimap_seeds <- list(
 #            list(
 #                tablename="go_gene",
 #                Lcolname="term_id",
-#                Rcolname="gene_id",
-#                tagCols=c(Evidence="{evidence}")
+#                Tcolname=c(Evidence="{evidence}"),
+#                Rcolname="gene_id"
 #            )
 #        )
 #    ),
@@ -63,8 +63,8 @@ GO_DB_AnnDbBimap_seeds <- list(
 #            list(
 #                tablename="go_all_gene",
 #                Lcolname="term_id",
-#                Rcolname="gene_id",
-#                tagCols=c(Evidence="{evidence}")
+#                Tcolname=c(Evidence="{evidence}"),
+#                Rcolname="gene_id"
 #            )
 #        )
 #    ),
@@ -81,8 +81,8 @@ GO_DB_AnnDbBimap_seeds <- list(
             list(
                 tablename="go_bp_parents",
                 Lcolname="term_id",
-                Rcolname="parent_id",
-                tagCols=c(Evidence="{evidence}")
+                Tcolname=c(RelationshipType="{evidence}"),
+                Rcolname="parent_id"
             ),
             list(
                 tablename="go_term",
@@ -104,8 +104,8 @@ GO_DB_AnnDbBimap_seeds <- list(
             list(
                 tablename="go_cc_parents",
                 Lcolname="term_id",
-                Rcolname="parent_id",
-                tagCols=c(Evidence="{evidence}")
+                Tcolname=c(RelationshipType="{evidence}"),
+                Rcolname="parent_id"
             ),
             list(
                 tablename="go_term",
@@ -127,8 +127,8 @@ GO_DB_AnnDbBimap_seeds <- list(
             list(
                 tablename="go_mf_parents",
                 Lcolname="term_id",
-                Rcolname="parent_id",
-                tagCols=c(Evidence="{evidence}")
+                Tcolname=c(RelationshipType="{evidence}"),
+                Rcolname="parent_id"
             ),
             list(
                 tablename="go_term",
@@ -211,14 +211,14 @@ GO_DB_AnnDbBimap_seeds <- list(
                 tablename="go_term",
                 Lcolname="go_id",
                 Rcolname="go_id",
-                tagJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
-                tagCols=c(
+                Rattrib_colnames=c(
                     Term="{term}",
                     Ontology="{ontology}",
                     Definition="{definition}",
                     Synonym="go_synonym.synonym",
                     Secondary="go_synonym.secondary"
-                )
+                ),
+                Rattrib_join="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id"
             )
         )
     ),
@@ -230,7 +230,7 @@ GO_DB_AnnDbBimap_seeds <- list(
                 tablename="go_obsolete",
                 Lcolname="go_id",
                 Rcolname="go_id",
-                tagCols=c(
+                Rattrib_colnames=c(
                     Term="{term}",
                     Ontology="{ontology}",
                     Definition="{definition}",
@@ -260,14 +260,14 @@ GO_DB_AnnDbBimap_seeds <- list(
                 tablename="go_term",
                 Lcolname="term_id",
                 Rcolname="go_id",
-                tagJoin="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id",
-                tagCols=c(
+                Rattrib_colnames=c(
                     Term="{term}",
                     Ontology="{ontology}",
                     Definition="{definition}",
                     Synonym="go_synonym.synonym",
                     Secondary="go_synonym.secondary"
-                )
+                ),
+                Rattrib_join="LEFT JOIN go_synonym ON {term_id}=go_synonym.term_id"
             )
         )
     )

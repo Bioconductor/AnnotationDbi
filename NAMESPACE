@@ -39,8 +39,8 @@ exportMethods(
     "Definition",
 
     ## The Bimap interface
-    "collabels",
-    "colnames",
+    "colnames", "collabels",
+    "Lcolname", "Rcolname", "Tcolname", "Rattrib_colnames",
     "direction",
     "direction<-",
     "revmap",
@@ -54,7 +54,6 @@ exportMethods(
     "Llength", "Rlength",
     "count.mappedLkeys", "count.mappedRkeys",
     "count.links",
-    "Lcolname", "Rcolname",
     "ncol",
     "from.colpos", "to.colpos", "tags.colpos",
     "from.keys", "to.keys",

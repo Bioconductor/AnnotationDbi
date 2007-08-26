@@ -95,15 +95,18 @@ setMethod("show", "L2Rlink",
     function(object)
     {
         s <- paste("{Lcolname}table{Rcolname}:", toString(object))
-        if (!is.na(object@tagJoin[1]))
-            s <- c(s, paste("tagJoin:", object@tagJoin))
-        if (!is.na(object@tagCols[1])) {
-            tagCols <- object@tagCols
-            if (!is.null(names(tagCols)))
-                tagCols <- paste(tagCols, "AS", names(tagCols))
-            tagCols <- paste(tagCols, collapse=", ")
-            s <- c(s, paste("tagCols:", tagCols))
+        extracols <- c(
+            if (!is.na(L2Rlink@Tcolname)) L2Rlink@Tcolname,
+            L2Rlink@Rattrib_colnames
+        )
+        if (length(extracols) != 0) {
+            if (!is.null(names(extracols)))
+                extracols <- paste(extracols, "AS", names(extracols))
+            extracols <- paste(extracols, collapse=", ")
+            s <- c(s, paste("extracols:", extracols))
         }
+        if (!is.na(object@Rattrib_join[1]))
+            s <- c(s, paste("Rattrib_join:", object@Rattrib_join))
         s <- c(s, paste("filter:", object@filter))
         cat(strwrap(s, exdent=4), sep="\n")
     }
@@ -145,33 +148,53 @@ L2Rchain.Rfilter <- function(L2Rchain)
     paste("(", .contextualizeColnames(filter), ")", sep="")
 }
 
-
-L2Rchain.tagnames <- function(L2Rchain)
+### Return the first tag colname found (from left to right) or NA if the
+### L2Rchain chain has no tag.
+L2Rchain.Tcolname <- function(L2Rchain)
 {
-    tag_names <- NULL
-    pathlen <- length(L2Rchain)
-    for (i in seq_len(pathlen)) {
-        tagCols <- L2Rchain[[i]]@tagCols
-        if (is.na(tagCols[1]))
-            next
-        cols <- names(tagCols)
-        if (is.null(cols))
-            cols <- .contextualizeColnames(tagCols)
-        tag_names <- c(tag_names, cols)
-    }
-    tag_names
+    colname <- sapply(L2Rchain, function(L2Rlink) L2Rlink@Tcolname)
+    colname <- colname[!is.na(colname)][1]
+    if (is.na(colname))
+        return(colname)
+    if (!is.null(names(colname)))
+        return(names(colname))
+    .contextualizeColnames(colname)
+}
+
+L2Rchain.Rattrib_colnames <- function(L2Rchain)
+{
+    colnames <- L2Rchain[[length(L2Rchain)]]@Rattrib_colnames
+    if (!is.null(names(colnames)))
+        return(names(colnames))
+    .contextualizeColnames(colnames)
 }
 
 ### THIS IS THE CURRENT DESIGN: the left col is the 1st col, the right col is
 ### the 2nd col and then we have all the tags,  IT MUST BE KEPT CONSISTENT
 ### THROUGH ALL THE REST OF THIS FILE... FOR NOW.
 L2Rchain.collabels <- function(L2Rchain)
-    c("left", "right", rep("tag", length(L2Rchain.tagnames(L2Rchain))))
+{
+    Tcolname <- L2Rchain.Tcolname(L2Rchain)
+    Rattrib_colnames <- L2Rchain.Rattrib_colnames(L2Rchain)
+    c(
+        "Lcolname",
+        "Rcolname",
+        if (!is.na(Tcolname)) "Tcolname",
+        rep("Rattrib_colname", length(Rattrib_colnames))
+    )
+}
 
 L2Rchain.colnames <- function(L2Rchain)
-    c(L2Rchain.Lcolname(L2Rchain),
-      L2Rchain.Rcolname(L2Rchain),
-      L2Rchain.tagnames(L2Rchain))
+{
+    Tcolname <- L2Rchain.Tcolname(L2Rchain)
+    Rattrib_colnames <- L2Rchain.Rattrib_colnames(L2Rchain)
+    c(
+        L2Rchain.Lcolname(L2Rchain),
+        L2Rchain.Rcolname(L2Rchain),
+        if (!is.na(Tcolname)) Tcolname,
+        Rattrib_colnames
+    )
+}
 
 ### Return a named list of 5 elements. Those elements are pieces of an SQL
 ### SELECT statement used by some of the DB functions in this file to build
@@ -185,7 +208,7 @@ L2Rchain.colnames <- function(L2Rchain)
 ###      - what_Lcol: single string containing the "contextualized" name of
 ###        the leftmost col of 'L2Rchain'.
 ###      - what_Rcol: same but for the rightmost col.
-###      - what_tagCols: character vector of length the total number of
+###      - what_extracols: character vector of length the total number of
 ###        tag cols contained in 'L2Rchain' (could be 0). Each element
 ###        has been "contextualized" and right-pasted with " AS tag-name".
 ###   2) The "from" group:
@@ -195,16 +218,16 @@ L2Rchain.colnames <- function(L2Rchain)
 ###        contained in 'L2Rchain', putting them in parenthezis and pasting
 ###        them together with the " AND " separator.
 ###        If 'L2Rchain' contains no filters then 'where' is the string "1".
-.makeSQLchunks <- function(L2Rchain, with.tags=TRUE)
+.makeSQLchunks <- function(L2Rchain, with.extracols=TRUE)
 {
-    what_tagCols <- where <- character(0)
-    pathlen <- length(L2Rchain)
-    for (i in seq_len(pathlen)) {
+    what_extracols <- where <- character(0)
+    chainlen <- length(L2Rchain)
+    for (i in seq_len(chainlen)) {
         L2Rlink <- L2Rchain[[i]]
         tablename <- L2Rlink@tablename
         Lcolname <- L2Rlink@Lcolname
         Rcolname <- L2Rlink@Rcolname
-        if (pathlen == 1) {
+        if (chainlen == 1) {
             context <- from <- tablename
             what_Lcol <- paste(context, Lcolname, sep=".")
             what_Rcol <- paste(context, Rcolname, sep=".")
@@ -214,7 +237,7 @@ L2Rchain.colnames <- function(L2Rchain)
                 what_Lcol <- paste(context, Lcolname, sep=".")
                 from <- paste(tablename, "AS", context)
             } else {
-                if (i == pathlen) {
+                if (i == chainlen) {
                     context <- "_right"
                     what_Rcol <- paste(context, Rcolname, sep=".")
                 } else {
@@ -227,17 +250,20 @@ L2Rchain.colnames <- function(L2Rchain)
             prev_context <- context
             prev_Rcolname <- Rcolname
         }
-        if (with.tags) {
-            tagJoin <- L2Rlink@tagJoin
-            tagCols <- L2Rlink@tagCols
-            if (!is.na(tagJoin))
-                from <- paste(from, .contextualizeColnames(tagJoin, context))
-            if (!is.na(tagCols[1])) {
-                tmp <- .contextualizeColnames(tagCols, context)
-                if (!is.null(names(tagCols)))
-                    tmp <- paste(tmp, "AS", names(tagCols))
-                what_tagCols <- c(what_tagCols, tmp)
+        if (with.extracols) {
+            extracols <- c(
+                if (!is.na(L2Rlink@Tcolname)) L2Rlink@Tcolname,
+                L2Rlink@Rattrib_colnames
+            )
+            if (length(extracols) != 0) {
+                tmp <- .contextualizeColnames(extracols, context)
+                if (!is.null(names(extracols)))
+                    tmp <- paste(tmp, "AS", names(extracols))
+                what_extracols <- c(what_extracols, tmp)
             }
+            Rattrib_join <- L2Rlink@Rattrib_join
+            if (!is.na(Rattrib_join))
+                from <- paste(from, .contextualizeColnames(Rattrib_join, context))
         }
         filter <- L2Rlink@filter
         if (filter != "1")
@@ -250,7 +276,7 @@ L2Rchain.colnames <- function(L2Rchain)
     list(
         what_Lcol=what_Lcol,
         what_Rcol=what_Rcol,
-        what_tagCols=what_tagCols,
+        what_extracols=what_extracols,
         from=from,
         where=where
     )
@@ -353,15 +379,15 @@ dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
     SQLchunks <- .makeSQLchunks(L2Rchain)
     what_Lcol <- SQLchunks$what_Lcol
     what_Rcol <- SQLchunks$what_Rcol
-    what_tagCols <- SQLchunks$what_tagCols
-    SQLwhat <- paste(c(what_Lcol, what_Rcol, what_tagCols), collapse=",")
+    what_extracols <- SQLchunks$what_extracols
+    SQLwhat <- paste(c(what_Lcol, what_Rcol, what_extracols), collapse=",")
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL)
 }
 
 dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 {
-    SQLchunks <- .makeSQLchunks(L2Rchain, with.tags=FALSE)
+    SQLchunks <- .makeSQLchunks(L2Rchain, with.extracols=FALSE)
     what_Lcol <- SQLchunks$what_Lcol
     what_Rcol <- SQLchunks$what_Rcol
     SQLwhat <- "COUNT(*)"
@@ -448,7 +474,7 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
 dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                                      direction, datacache=NULL)
 {
-    SQLchunks <- .makeSQLchunks(L2Rchain, with.tags=FALSE)
+    SQLchunks <- .makeSQLchunks(L2Rchain, with.extracols=FALSE)
     cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
                          L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
@@ -476,7 +502,7 @@ dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
 dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                                           direction, datacache=NULL)
 {
-    SQLchunks <- .makeSQLchunks(L2Rchain, with.tags=FALSE)
+    SQLchunks <- .makeSQLchunks(L2Rchain, with.extracols=FALSE)
     cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
                          L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)

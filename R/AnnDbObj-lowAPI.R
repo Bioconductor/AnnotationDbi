@@ -13,8 +13,8 @@
 ###        db,
 ###        Ltablename, Rtablename,
 ###        Lfilter, Rfilter,
-###        collabels,
-###        colnames,
+###        colnames, collabels,
+###        Lcolname, Rcolname, Tcolname, Rattrib_colnames,
 ###        direction, revmap,
 ###        show
 ###
@@ -46,8 +46,8 @@
 ### Generics that return meta information about a given map:
 ###     db,
 ###     Ltablename, Rtablename,
-###     Lcolname, Rcolname,
-###     colnames,
+###     colnames, collabels,
+###     Lcolname, Rcolname, Tcolname, Rattrib_colnames,
 ###     Lfilter, Rfilter
 ###
 ### Note that these generics do _not_ query the database!
@@ -80,15 +80,28 @@ setMethod("Rfilter", "AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "collabels" and "colnames" methods.
+### The "colnames", "collabels", "Lcolname", "Rcolname", "Tcolname" and
+### "Rattrib_colnames" methods.
 ###
-
-setMethod("collabels", "AnnDbBimap",
-    function(x) L2Rchain.collabels(x@L2Rchain))
 
 setMethod("colnames", "AnnDbBimap",
     function(x, do.NULL=TRUE, prefix="col")
         L2Rchain.colnames(x@L2Rchain))
+
+setMethod("collabels", "AnnDbBimap",
+    function(x) L2Rchain.collabels(x@L2Rchain))
+
+setMethod("Lcolname", "AnnDbBimap",
+    function(x) L2Rchain.Lcolname(x@L2Rchain))
+
+setMethod("Rcolname", "AnnDbBimap",
+    function(x) L2Rchain.Rcolname(x@L2Rchain))
+
+setMethod("Tcolname", "AnnDbBimap",
+    function(x) L2Rchain.Tcolname(x@L2Rchain))
+
+setMethod("Rattrib_colnames", "AnnDbBimap",
+    function(x) L2Rchain.Rattrib_colnames(x@L2Rchain))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -140,9 +153,10 @@ setReplaceMethod("direction", "AnnDbMap",
 setMethod("revmap", "AnnDbBimap",
     function(x, objName=NULL, ...)
     {
+        x <- callNextMethod(x)
         if (!is.null(objName))
             x@objName <- toString(objName)
-        callNextMethod() # calls the method for Bimap
+        x
     }
 )
 
@@ -596,7 +610,8 @@ setMethod("show", "AnnDbBimap",
         if (.is.submap(object))
             map <- "submap"
         cat(object@objName, " ", map, " for ", object@objTarget,
-            " (object of class \"", class(object), "\")\n", sep="")
+            " (object of class \"", class(object), "\")\n|\n", sep="")
+        Bimap.summary(object)
     }
 )
 

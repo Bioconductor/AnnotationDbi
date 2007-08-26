@@ -169,8 +169,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             list(
                 tablename="chromosome_locations",
                 Lcolname="id",
-                Rcolname="start_location",
-                tagCols=c(Chromosome="{chromosome}")
+                Tcolname=c(Chromosome="{chromosome}"),
+                Rcolname="start_location"
             )
         ),
         rightColType="integer"
@@ -195,8 +195,9 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="id",
+                Tcolname=c(Evidence="{evidence}"),
                 Rcolname="go_id",
-                tagCols=c(Evidence="{evidence}", Ontology="NULL")
+                Rattrib_colnames=c(Ontology="NULL")
             )
         ),
         rightTables=Go3tablenames()
@@ -218,7 +219,9 @@ createAnnObjs.FLYCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    map <- ann_objs$GO2PROBE; map@rightTables <- Go3tablenames(all=TRUE)
+    map <- ann_objs$GO2PROBE
+    map@rightTables <- Go3tablenames(all=TRUE)
+    map@objName <- "GO2ALLPROBES"
     ann_objs$GO2ALLPROBES <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)

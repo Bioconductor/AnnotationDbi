@@ -128,11 +128,11 @@ Bimap_methods <- c(
     ## GROUP 2: Methods for which a default is provided (in this file) but
     ## some of them are redefined for AnnDbBimap objects to obtain better
     ## performance
+    "Lcolname", "Rcolname", "Tcolname", "Rattrib_colnames",
     "revmap",
     "Llength", "Rlength",
     "count.mappedLkeys", "count.mappedRkeys",
     "count.links",
-    "Lcolname", "Rcolname",
     ## GROUP 3: Directed methods (i.e. what they return depends on the
     ## direction of the map). All what they do is to dispatch on the
     ## corresponding undirected method according to the value of direction(x)
@@ -145,6 +145,37 @@ Bimap_methods <- c(
 
 ### A virtual class with no slot (a kind of Java "interface")
 setClass("Bimap", representation("VIRTUAL"))
+
+setMethod("Lcolname", "Bimap",
+    function(x)
+    {
+        colnames <- colnames(x)
+        names(colnames) <- collabels(x)
+        colnames["Lcolname"]
+    }
+)
+setMethod("Rcolname", "Bimap",
+    function(x)
+    {
+        colnames <- colnames(x)
+        names(colnames) <- collabels(x)
+        colnames["Rcolname"]
+    }
+)
+setMethod("Tcolname", "Bimap",
+    function(x)
+    {
+        colnames <- colnames(x)
+        names(colnames) <- collabels(x)
+        colnames["Tcolname"]
+    }
+)
+setMethod("Rattrib_colnames", "Bimap",
+    function(x)
+    {
+        colnames(x)[collabels(x) == "Rattrib_colname"]
+    }
+)
 
 setMethod("revmap", "Bimap",
     function(x, ...) { direction(x) <- - direction(x); x }
@@ -171,17 +202,12 @@ setMethod("ncol", "Bimap",
 setMethod("from.colpos", "Bimap",
     function(x, direction)
     {
-        if (direction == 1) side = "left" else side = "right"
+        if (direction == 1) side = "Lcolname" else side = "Rcolname"
         match(side, collabels(x))
     }
 )
 setMethod("to.colpos", "Bimap",
     function(x, direction) from.colpos(x, - direction))
-
-setMethod("Lcolname", "Bimap",
-    function(x) colnames(x)[from.colpos(x,  1)])
-setMethod("Rcolname", "Bimap",
-    function(x) colnames(x)[from.colpos(x, -1)])
 
 ### FIXME
 ### For now, tags and attributes are all mixed together which is bad and will
@@ -202,7 +228,7 @@ setMethod("dim", "Bimap",
 
 ### Directed methods
 
-.DIRECTION_STR2INT <- c("L2R (left-to-right)"=1L, "R2L (right-to-left)"=-1L, "undirected"=0L)
+.DIRECTION_STR2INT <- c("L --> R"=1L, "L <-- R"=-1L, "undirected"=0L)
 
 .normalize.direction <- function(direction)
 {
@@ -262,4 +288,52 @@ setMethod("toList", "Bimap",
                "-1"=toRList(x, keys),
                     stop("toList() is undefined for an undirected bimap"))
 )
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Used by the show methods for FlatBimap and AnnDbBimap objects.
+###
+
+.key.summary <- function(keys, mapped)
+{
+    len0 <- length(keys)
+    if (len0 > 2)
+        keys <- keys[1:2]
+    string <- paste(paste("\"", keys, "\"", sep=""), collapse=", ")
+    if (len0 > 2) {
+        string <- paste(string, ", ... (total=", len0, "/mapped=", mapped, ")", sep="")
+    }
+    string
+}
+
+Bimap.summary <- function(x)
+{
+    ## Left keys
+    cat("| Lcolname: ", Lcolname(x), sep="")
+    if (is(x, "AnnDbBimap"))
+        cat(" (Ltablename: ", Ltablename(x), ")", sep="")
+    cat("\n")
+    tmp <- mappedLkeys(x) # just to put them in the cache
+    cat("|    Lkeys: ", .key.summary(Lkeys(x), count.mappedLkeys(x)), "\n", sep="")
+    cat("|\n")
+
+    if (!is(x, "AnnDbMap")) {
+        ## Right keys
+        cat("| Rcolname: ", Rcolname(x), sep="")
+        if (is(x, "AnnDbBimap"))
+            cat(" (Rtablename: ", Rtablename(x), ")", sep="")
+        cat("\n")
+        tmp <- mappedRkeys(x) # just to put them in the cache
+        cat("|    Rkeys: ", .key.summary(Rkeys(x), count.mappedRkeys(x)), "\n", sep="")
+        cat("|\n")
+    }
+
+    ## Tag
+    if (!is.na(Tcolname(x)))
+        cat("| Tcolname: ", Tcolname(x), "\n|\n", sep="")
+
+    ## direction
+    direction <- names(.DIRECTION_STR2INT)[.DIRECTION_STR2INT == direction(x)]
+    cat("| direction: ", direction, "\n", sep="")
+}
 
