@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-RODENT_DB_L2Rlink1 <- list(tablename="genes", Lkeyname="gene_id", Rkeyname="id")
+RODENT_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rchain
 RODENT_DB_AnnDbBimap_seeds <- list(
@@ -24,8 +24,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="accessions",
-                Lkeyname="id",
-                Rkeyname="accession"
+                Lcolname="id",
+                Rcolname="accession"
             )
         )
     ),
@@ -36,8 +36,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="alias",
-                Lkeyname="id",
-                Rkeyname="alias_symbol"
+                Lcolname="id",
+                Rcolname="alias_symbol"
             )
         ),
         direction=-1L
@@ -49,8 +49,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="chromosomes",
-                Lkeyname="id",
-                Rkeyname="chromosome"
+                Lcolname="id",
+                Rcolname="chromosome"
             )
         )
     ),
@@ -61,8 +61,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="ec",
-                Lkeyname="id",
-                Rkeyname="ec_number"
+                Lcolname="id",
+                Rcolname="ec_number"
             )
         )
     ),
@@ -73,8 +73,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lkeyname="id",
-                Rkeyname="gene_name"
+                Lcolname="id",
+                Rcolname="gene_name"
             )
         )
     ),
@@ -85,8 +85,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="cytogenetic_locations",
-                Lkeyname="id",
-                Rkeyname="cytogenetic_location"
+                Lcolname="id",
+                Rcolname="cytogenetic_location"
             )
         )
     ),
@@ -97,8 +97,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="kegg",
-                Lkeyname="id",
-                Rkeyname="kegg_id"
+                Lcolname="id",
+                Rcolname="kegg_id"
             )
         )
     ),
@@ -109,8 +109,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="pubmed",
-                Lkeyname="id",
-                Rkeyname="pubmed_id"
+                Lcolname="id",
+                Rcolname="pubmed_id"
             )
         )
     ),
@@ -121,8 +121,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="refseq",
-                Lkeyname="id",
-                Rkeyname="accession"
+                Lcolname="id",
+                Rcolname="accession"
             )
         )
     ),
@@ -133,8 +133,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lkeyname="id",
-                Rkeyname="symbol"
+                Lcolname="id",
+                Rcolname="symbol"
             )
         )
     ),
@@ -145,8 +145,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="unigene",
-                Lkeyname="id",
-                Rkeyname="unigene_id"
+                Lcolname="id",
+                Rcolname="unigene_id"
             )
         )
     ),
@@ -157,9 +157,9 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
-                Lkeyname="id",
+                Lcolname="id",
                 tagname=c(Chromosome="{chromosome}"),
-                Rkeyname="start_location"
+                Rcolname="start_location"
             )
         ),
         rightColType="integer"
@@ -171,8 +171,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="pfam",
-                Lkeyname="id",
-                Rkeyname="ipi_id",
+                Lcolname="id",
+                Rcolname="ipi_id",
                 Rattribnames=c(PfamId="{pfam_id}")
             )
         )
@@ -184,8 +184,8 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 tablename="prosite",
-                Lkeyname="id",
-                Rkeyname="ipi_id",
+                Lcolname="id",
+                Rcolname="ipi_id",
                 Rattribnames=c(PrositeId="{prosite_id}")
             )
         )
@@ -197,9 +197,9 @@ RODENT_DB_AnnDbBimap_seeds <- list(
             RODENT_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lkeyname="id",
+                Lcolname="id",
                 tagname=c(Evidence="{evidence}"),
-                Rkeyname="go_id",
+                Rcolname="go_id",
                 Rattribnames=c(Ontology="NULL")
             )
         ),

@@ -21,8 +21,8 @@ KEGG_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="pathway2name",
-                Lkeyname="path_id",
-                Rkeyname="path_name"
+                Lcolname="path_id",
+                Rcolname="path_name"
             )
         )
     ),
@@ -32,8 +32,8 @@ KEGG_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="pathway2gene",
-                Lkeyname="pathway_id",
-                Rkeyname="gene_id"
+                Lcolname="pathway_id",
+                Rcolname="gene_id"
             )
         )
     ),
@@ -43,8 +43,8 @@ KEGG_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="ec2go",
-                Lkeyname="ec_no",
-                Rkeyname="go_id"
+                Lcolname="ec_no",
+                Rcolname="go_id"
             )
         )
     )

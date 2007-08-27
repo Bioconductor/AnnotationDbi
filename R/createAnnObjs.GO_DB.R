@@ -21,14 +21,14 @@ GO_DB_AnnDbBimap_seeds <- list(
 #        L2Rchain=list(
 #            list(
 #                tablename="go_gene",
-#                Lkeyname="gene_id",
+#                Lcolname="gene_id",
 #                tagname=c(Evidence="{evidence}"),
-#                Rkeyname="term_id"
+#                Rcolname="term_id"
 #            ),
 #            list(
 #                tablename="go_term",
-#                Lkeyname="term_id",
-#                Rkeyname="go_id",
+#                Lcolname="term_id",
+#                Rcolname="go_id",
 #                Rattribnames=c(Ontology="{ontology}")
 #            )
 #        )
@@ -40,14 +40,14 @@ GO_DB_AnnDbBimap_seeds <- list(
 #        L2Rchain=list(
 #            list(
 #                tablename="go_term",
-#                Lkeyname="go_id",
-#                Rkeyname="term_id"
+#                Lcolname="go_id",
+#                Rcolname="term_id"
 #            ),
 #            list(
 #                tablename="go_gene",
-#                Lkeyname="term_id",
+#                Lcolname="term_id",
 #                tagname=c(Evidence="{evidence}"),
-#                Rkeyname="gene_id"
+#                Rcolname="gene_id"
 #            )
 #        )
 #    ),
@@ -57,14 +57,14 @@ GO_DB_AnnDbBimap_seeds <- list(
 #        L2Rchain=list(
 #            list(
 #                tablename="go_term",
-#                Lkeyname="go_id",
-#                Rkeyname="term_id"
+#                Lcolname="go_id",
+#                Rcolname="term_id"
 #            ),
 #            list(
 #                tablename="go_all_gene",
-#                Lkeyname="term_id",
+#                Lcolname="term_id",
 #                tagname=c(Evidence="{evidence}"),
-#                Rkeyname="gene_id"
+#                Rcolname="gene_id"
 #            )
 #        )
 #    ),
@@ -74,20 +74,20 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_term",
-                Lkeyname="go_id",
-                Rkeyname="term_id",
+                Lcolname="go_id",
+                Rcolname="term_id",
                 filter="{ontology}='BP'"
             ),
             list(
                 tablename="go_bp_parents",
-                Lkeyname="term_id",
+                Lcolname="term_id",
                 tagname=c(RelationshipType="{evidence}"),
-                Rkeyname="parent_id"
+                Rcolname="parent_id"
             ),
             list(
                 tablename="go_term",
-                Lkeyname="term_id",
-                Rkeyname="go_id"
+                Lcolname="term_id",
+                Rcolname="go_id"
             )
         )
     ),
@@ -97,20 +97,20 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_term",
-                Lkeyname="go_id",
-                Rkeyname="term_id",
+                Lcolname="go_id",
+                Rcolname="term_id",
                 filter="{ontology}='CC'"
             ),
             list(
                 tablename="go_cc_parents",
-                Lkeyname="term_id",
+                Lcolname="term_id",
                 tagname=c(RelationshipType="{evidence}"),
-                Rkeyname="parent_id"
+                Rcolname="parent_id"
             ),
             list(
                 tablename="go_term",
-                Lkeyname="term_id",
-                Rkeyname="go_id"
+                Lcolname="term_id",
+                Rcolname="go_id"
             )
         )
     ),
@@ -120,20 +120,20 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_term",
-                Lkeyname="go_id",
-                Rkeyname="term_id",
+                Lcolname="go_id",
+                Rcolname="term_id",
                 filter="{ontology}='MF'"
             ),
             list(
                 tablename="go_mf_parents",
-                Lkeyname="term_id",
+                Lcolname="term_id",
                 tagname=c(RelationshipType="{evidence}"),
-                Rkeyname="parent_id"
+                Rcolname="parent_id"
             ),
             list(
                 tablename="go_term",
-                Lkeyname="term_id",
-                Rkeyname="go_id"
+                Lcolname="term_id",
+                Rcolname="go_id"
             )
         )
     ),
@@ -143,19 +143,19 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_term",
-                Lkeyname="go_id",
-                Rkeyname="term_id",
+                Lcolname="go_id",
+                Rcolname="term_id",
                 filter="{ontology}='BP'"
             ),
             list(
                 tablename="go_bp_offspring",
-                Lkeyname="offspring_id",
-                Rkeyname="term_id"
+                Lcolname="offspring_id",
+                Rcolname="term_id"
             ),
             list(
                 tablename="go_term",
-                Lkeyname="term_id",
-                Rkeyname="go_id"
+                Lcolname="term_id",
+                Rcolname="go_id"
             )
         )
     ),
@@ -165,19 +165,19 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_term",
-                Lkeyname="go_id",
-                Rkeyname="term_id",
+                Lcolname="go_id",
+                Rcolname="term_id",
                 filter="{ontology}='CC'"
             ),
             list(
                 tablename="go_cc_offspring",
-                Lkeyname="offspring_id",
-                Rkeyname="term_id"
+                Lcolname="offspring_id",
+                Rcolname="term_id"
             ),
             list(
                 tablename="go_term",
-                Lkeyname="term_id",
-                Rkeyname="go_id"
+                Lcolname="term_id",
+                Rcolname="go_id"
             )
         )
     ),
@@ -187,19 +187,19 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_term",
-                Lkeyname="go_id",
-                Rkeyname="term_id",
+                Lcolname="go_id",
+                Rcolname="term_id",
                 filter="{ontology}='MF'"
             ),
             list(
                 tablename="go_mf_offspring",
-                Lkeyname="offspring_id",
-                Rkeyname="term_id"
+                Lcolname="offspring_id",
+                Rcolname="term_id"
             ),
             list(
                 tablename="go_term",
-                Lkeyname="term_id",
-                Rkeyname="go_id"
+                Lcolname="term_id",
+                Rcolname="go_id"
             )
         )
     ),
@@ -209,8 +209,8 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_term",
-                Lkeyname="go_id",
-                Rkeyname="go_id",
+                Lcolname="go_id",
+                Rcolname="go_id",
                 Rattribnames=c(
                     Term="{term}",
                     Ontology="{ontology}",
@@ -228,8 +228,8 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_obsolete",
-                Lkeyname="go_id",
-                Rkeyname="go_id",
+                Lcolname="go_id",
+                Rcolname="go_id",
                 Rattribnames=c(
                     Term="{term}",
                     Ontology="{ontology}",
@@ -252,14 +252,14 @@ GO_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="go_synonym",
-                Lkeyname="synonym",
-                Rkeyname="term_id",
+                Lcolname="synonym",
+                Rcolname="term_id",
                 filter="{like_go_id}=1"
             ),
             list(
                 tablename="go_term",
-                Lkeyname="term_id",
-                Rkeyname="go_id",
+                Lcolname="term_id",
+                Rcolname="go_id",
                 Rattribnames=c(
                     Term="{term}",
                     Ontology="{ontology}",

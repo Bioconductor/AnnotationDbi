@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-FLYCHIP_DB_L2Rlink1 <- list(tablename="probes", Lkeyname="probe_id", Rkeyname="id")
+FLYCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="id")
 
 ### Mandatory fields: objName, Class and L2Rchain
 FLYCHIP_DB_AnnDbBimap_seeds <- list(
@@ -23,8 +23,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             list(
                 tablename="probes",
-                Lkeyname="probe_id",
-                Rkeyname="accession"
+                Lcolname="probe_id",
+                Rcolname="accession"
             )
         )
     ),
@@ -35,8 +35,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="alias",
-                Lkeyname="id",
-                Rkeyname="alias_symbol"
+                Lcolname="id",
+                Rcolname="alias_symbol"
             )
         ),
         direction=-1L
@@ -48,8 +48,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosomes",
-                Lkeyname="id",
-                Rkeyname="chromosome"
+                Lcolname="id",
+                Rcolname="chromosome"
             )
         )
     ),
@@ -60,8 +60,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="genes",
-                Lkeyname="id",
-                Rkeyname="gene_id"
+                Lcolname="id",
+                Rcolname="gene_id"
             )
         )
     ),
@@ -72,8 +72,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="ec",
-                Lkeyname="id",
-                Rkeyname="ec_number"
+                Lcolname="id",
+                Rcolname="ec_number"
             )
         )
     ),
@@ -84,8 +84,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lkeyname="id",
-                Rkeyname="gene_name"
+                Lcolname="id",
+                Rcolname="gene_name"
             )
         )
     ),
@@ -96,8 +96,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="cytogenetic_locations",
-                Lkeyname="id",
-                Rkeyname="cytogenetic_location"
+                Lcolname="id",
+                Rcolname="cytogenetic_location"
             )
         )
     ),
@@ -108,8 +108,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="kegg",
-                Lkeyname="id",
-                Rkeyname="kegg_id"
+                Lcolname="id",
+                Rcolname="kegg_id"
             )
         )
     ),
@@ -120,8 +120,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="pubmed",
-                Lkeyname="id",
-                Rkeyname="pubmed_id"
+                Lcolname="id",
+                Rcolname="pubmed_id"
             )
         )
     ),
@@ -132,8 +132,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="refseq",
-                Lkeyname="id",
-                Rkeyname="accession"
+                Lcolname="id",
+                Rcolname="accession"
             )
         )
     ),
@@ -144,8 +144,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lkeyname="id",
-                Rkeyname="symbol"
+                Lcolname="id",
+                Rcolname="symbol"
             )
         )
     ),
@@ -156,8 +156,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="unigene",
-                Lkeyname="id",
-                Rkeyname="unigene_id"
+                Lcolname="id",
+                Rcolname="unigene_id"
             )
         )
     ),
@@ -168,9 +168,9 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
-                Lkeyname="id",
+                Lcolname="id",
                 tagname=c(Chromosome="{chromosome}"),
-                Rkeyname="start_location"
+                Rcolname="start_location"
             )
         ),
         rightColType="integer"
@@ -182,8 +182,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 tablename="flybase",
-                Lkeyname="id",
-                Rkeyname="FB_id"
+                Lcolname="id",
+                Rcolname="FB_id"
             )
         )
     ),
@@ -194,9 +194,9 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
             FLYCHIP_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lkeyname="id",
+                Lcolname="id",
                 tagname=c(Evidence="{evidence}"),
-                Rkeyname="go_id",
+                Rcolname="go_id",
                 Rattribnames=c(Ontology="NULL")
             )
         ),

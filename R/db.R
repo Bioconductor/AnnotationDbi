@@ -8,6 +8,16 @@
 ### -------------------------------------------------------------------------
 
 
+assign("debugSQL", FALSE, envir=RTobjs)
+
+debug.sql <- function()
+{
+    debugSQL <- !get("debugSQL", envir=RTobjs)
+    assign("debugSQL", debugSQL, envir=RTobjs)
+    debugSQL
+}
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Generate SQL code.
 ###
@@ -87,14 +97,17 @@ L2Rlink <- function(...) new("L2Rlink", ...)
 setMethod("toString", "L2Rlink",
     function(x)
     {
-        paste("{", x@Lkeyname, "}", x@tablename, "{", x@Rkeyname, "}", sep="")
+        paste("{", x@Lcolname, "}", x@tablename, "{", x@Rcolname, "}", sep="")
     }
 )
 
 setMethod("show", "L2Rlink",
     function(object)
     {
-        s <- paste("{Lkeyname}table{Rkeyname}:", toString(object))
+        callNextMethod()
+        return(invisible(NULL))
+        ## FIXME: code below is broken
+        s <- paste("{Lcolname}table{Rcolname}:", toString(object))
         extracols <- c(
             if (!is.na(L2Rlink@tagname)) L2Rlink@tagname,
             L2Rlink@Rattribnames
@@ -115,9 +128,9 @@ setMethod("show", "L2Rlink",
 setMethod("rev", "L2Rlink",
     function(x)
     {
-        tmp <- x@Lkeyname
-        x@Lkeyname <- x@Rkeyname
-        x@Rkeyname <- tmp
+        tmp <- x@Lcolname
+        x@Lcolname <- x@Rcolname
+        x@Rcolname <- tmp
         x
     }
 )
@@ -129,8 +142,8 @@ L2Rchain.rev <- function(L2Rchain) rev(lapply(L2Rchain, rev))
 L2Rchain.Ltablename <- function(L2Rchain) L2Rchain[[1]]@tablename
 L2Rchain.Rtablename <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@tablename
 
-L2Rchain.Lkeyname <- function(L2Rchain) L2Rchain[[1]]@Lkeyname
-L2Rchain.Rkeyname <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@Rkeyname
+L2Rchain.Lkeyname <- function(L2Rchain) L2Rchain[[1]]@Lcolname
+L2Rchain.Rkeyname <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@Rcolname
 
 L2Rchain.Lfilter <- function(L2Rchain)
 {
@@ -152,13 +165,13 @@ L2Rchain.Rfilter <- function(L2Rchain)
 ### L2Rchain chain has no tag.
 L2Rchain.tagname <- function(L2Rchain)
 {
-    colname <- sapply(L2Rchain, function(L2Rlink) L2Rlink@tagname)
-    colname <- colname[!is.na(colname)][1]
-    if (is.na(colname))
-        return(colname)
-    if (!is.null(names(colname)))
-        return(names(colname))
-    .contextualizeColnames(colname)
+    tagname <- sapply(L2Rchain, function(L2Rlink) L2Rlink@tagname)
+    tagname <- tagname[!is.na(tagname)][1]
+    if (is.na(tagname))
+        return(tagname)
+    if (!is.null(names(tagname)))
+        return(names(tagname))
+    .contextualizeColnames(tagname)
 }
 
 L2Rchain.Rattribnames <- function(L2Rchain)
@@ -205,12 +218,14 @@ L2Rchain.colnames <- function(L2Rchain)
 ### hence the 5 elements returned by .makeSQLchunks() are divided in
 ### 3 groups:
 ###   1) The "what" group:
-###      - what_Lcol: single string containing the "contextualized" name of
+###      - what_Lkey: single string containing the "contextualized" name of
 ###        the leftmost col of 'L2Rchain'.
-###      - what_Rcol: same but for the rightmost col.
-###      - what_extracols: character vector of length the total number of
-###        tag cols contained in 'L2Rchain' (could be 0). Each element
-###        has been "contextualized" and right-pasted with " AS tag-name".
+###      - what_Rkey: same but for the rightmost col.
+###      - what_tag: same for the tag col (character(0) if no tag) which in
+###        addition is right-pasted with " AS <tagname>".
+###      - what_Rattribs: character vector (can be of length 0) where each
+###        element is the "contextualized" name of a right attribute
+###        right-pasted with " AS <Rattribname>".
 ###   2) The "from" group:
 ###      - from: single string containing the "from" part of the SELECT.
 ###   3) The "where" group:
@@ -218,49 +233,51 @@ L2Rchain.colnames <- function(L2Rchain)
 ###        contained in 'L2Rchain', putting them in parenthezis and pasting
 ###        them together with the " AND " separator.
 ###        If 'L2Rchain' contains no filters then 'where' is the string "1".
-.makeSQLchunks <- function(L2Rchain, with.extracols=TRUE)
+.makeSQLchunks <- function(L2Rchain)
 {
-    what_extracols <- where <- character(0)
+    what_tag <- what_Rattribs <- where <- character(0)
     chainlen <- length(L2Rchain)
     for (i in seq_len(chainlen)) {
         L2Rlink <- L2Rchain[[i]]
         tablename <- L2Rlink@tablename
-        Lkeyname <- L2Rlink@Lkeyname
-        Rkeyname <- L2Rlink@Rkeyname
+        Lcolname <- L2Rlink@Lcolname
+        Rcolname <- L2Rlink@Rcolname
         if (chainlen == 1) {
             context <- from <- tablename
-            what_Lcol <- paste(context, Lkeyname, sep=".")
-            what_Rcol <- paste(context, Rkeyname, sep=".")
+            what_Lkey <- paste(context, Lcolname, sep=".")
+            what_Rkey <- paste(context, Rcolname, sep=".")
         } else {
             if (i == 1) {
-                context <- "_left"
-                what_Lcol <- paste(context, Lkeyname, sep=".")
+                context <- "_L"
+                what_Lkey <- paste(context, Lcolname, sep=".")
                 from <- paste(tablename, "AS", context)
             } else {
                 if (i == chainlen) {
-                    context <- "_right"
-                    what_Rcol <- paste(context, Rkeyname, sep=".")
+                    context <- "_R"
+                    what_Rkey <- paste(context, Rcolname, sep=".")
                 } else {
                     context <- paste("_", i, sep="")
                 }
-                on <- paste(prev_context, ".", prev_Rkeyname, "=",
-                            context, ".", Lkeyname, sep="")
+                on <- paste(prev_context, ".", prev_Rcolname, "=",
+                            context, ".", Lcolname, sep="")
                 from <- paste(from, "INNER JOIN", tablename, "AS", context, "ON", on)
             }
             prev_context <- context
-            prev_Rkeyname <- Rkeyname
+            prev_Rcolname <- Rcolname
         }
-        if (with.extracols) {
-            extracols <- c(
-                if (!is.na(L2Rlink@tagname)) L2Rlink@tagname,
-                L2Rlink@Rattribnames
-            )
-            if (length(extracols) != 0) {
-                tmp <- .contextualizeColnames(extracols, context)
-                if (!is.null(names(extracols)))
-                    tmp <- paste(tmp, "AS", names(extracols))
-                what_extracols <- c(what_extracols, tmp)
-            }
+        if (!is.na(L2Rlink@tagname)) {
+            if (length(what_tag) != 0)
+                stop("'L2Rchain' has more than one tag")
+            tagname <- L2Rlink@tagname
+            what_tag <- .contextualizeColnames(tagname, context)
+            if (!is.null(names(tagname)))
+                what_tag <- paste(what_tag, "AS", names(tagname))
+        }
+        if (i == chainlen && length(L2Rlink@Rattribnames) != 0) {
+            Rattribnames <- L2Rlink@Rattribnames
+            what_Rattribs <- .contextualizeColnames(Rattribnames, context)
+            if (!is.null(names(Rattribnames)))
+                what_Rattribs <- paste(what_Rattribs, "AS", names(Rattribnames))
             Rattrib_join <- L2Rlink@Rattrib_join
             if (!is.na(Rattrib_join))
                 from <- paste(from, .contextualizeColnames(Rattrib_join, context))
@@ -273,28 +290,32 @@ L2Rchain.colnames <- function(L2Rchain)
         where <- "1"
     else
         where <- paste(paste("(", where, ")", sep=""), collapse=" AND ")
-    list(
-        what_Lcol=what_Lcol,
-        what_Rcol=what_Rcol,
-        what_extracols=what_extracols,
+    SQLchunks <- list(
+        what_Lkey=what_Lkey,
+        what_Rkey=what_Rkey,
+        what_tag=what_tag,
+        what_Rattribs=what_Rattribs,
         from=from,
         where=where
     )
+    if (get("debugSQL", envir=RTobjs)) {
+        cat("SQLchunks:\n")
+        cat("  what_Lkey: ", SQLchunks$what_Lkey, "\n", sep="")
+        cat("  what_Rkey: ", SQLchunks$what_Rkey, "\n", sep="")
+        cat("  what_tag: ", SQLchunks$what_tag, "\n", sep="")
+        cat("  what_Rattribs:\n")
+        show(SQLchunks$what_Rattribs)
+        cat("  from: ", SQLchunks$from, "\n", sep="")
+        cat("  where:\n")
+        show(SQLchunks$where)
+    }
+    SQLchunks
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### DB functions.
 ###
-
-assign("debugSQL", FALSE, envir=RTobjs)
-
-debug.sql <- function()
-{
-    debugSQL <- !get("debugSQL", envir=RTobjs)
-    assign("debugSQL", debugSQL, envir=RTobjs)
-    debugSQL
-}
 
 ### Use .dbGetQuery(conn, SQL, 1) instead of .dbGetQuery(conn, SQL)[[1]],
 ### it's much safer!
@@ -366,9 +387,9 @@ dbCountMapLinks <- function(conn, L2Rchain)
 .makeSQL <- function(SQLchunks, SQLwhat, Lkeys, Rkeys)
 {
     where <- c(
-        .toSQLWhere(SQLchunks$what_Lcol, Lkeys),
+        .toSQLWhere(SQLchunks$what_Lkey, Lkeys),
         SQLchunks$where,
-        .toSQLWhere(SQLchunks$what_Rcol, Rkeys)
+        .toSQLWhere(SQLchunks$what_Rkey, Rkeys)
     )
     where <- paste(where, collapse=" AND ")
     paste("SELECT", SQLwhat, "FROM", SQLchunks$from, "WHERE", where)
@@ -377,19 +398,19 @@ dbCountMapLinks <- function(conn, L2Rchain)
 dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
-    what_Lcol <- SQLchunks$what_Lcol
-    what_Rcol <- SQLchunks$what_Rcol
-    what_extracols <- SQLchunks$what_extracols
-    SQLwhat <- paste(c(what_Lcol, what_Rcol, what_extracols), collapse=",")
+    what_Lkey <- SQLchunks$what_Lkey
+    what_Rkey <- SQLchunks$what_Rkey
+    what_extracols <- c(SQLchunks$what_tag, SQLchunks$what_Rattribs)
+    SQLwhat <- paste(c(what_Lkey, what_Rkey, what_extracols), collapse=",")
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL)
 }
 
 dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 {
-    SQLchunks <- .makeSQLchunks(L2Rchain, with.extracols=FALSE)
-    what_Lcol <- SQLchunks$what_Lcol
-    what_Rcol <- SQLchunks$what_Rcol
+    SQLchunks <- .makeSQLchunks(L2Rchain)
+    what_Lkey <- SQLchunks$what_Lkey
+    what_Rkey <- SQLchunks$what_Rkey
     SQLwhat <- "COUNT(*)"
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL, 1)
@@ -474,7 +495,7 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
 dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                                      direction, datacache=NULL)
 {
-    SQLchunks <- .makeSQLchunks(L2Rchain, with.extracols=FALSE)
+    SQLchunks <- .makeSQLchunks(L2Rchain)
     cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
                          L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
@@ -484,12 +505,12 @@ dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
             return(vals)
         }
     }
-    what_Lcol <- SQLchunks$what_Lcol
-    what_Rcol <- SQLchunks$what_Rcol
+    what_Lkey <- SQLchunks$what_Lkey
+    what_Rkey <- SQLchunks$what_Rkey
     if (direction == 1)
-        distinct_col <- what_Lcol
+        distinct_col <- what_Lkey
     else
-        distinct_col <- what_Rcol
+        distinct_col <- what_Rkey
     what <- paste("DISTINCT", distinct_col)
     SQL <- .makeSQL(SQLchunks, what, Lkeys, Rkeys)
     vals <- .dbGetQuery(conn, SQL, 1)
@@ -502,7 +523,7 @@ dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
 dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                                           direction, datacache=NULL)
 {
-    SQLchunks <- .makeSQLchunks(L2Rchain, with.extracols=FALSE)
+    SQLchunks <- .makeSQLchunks(L2Rchain)
     cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
                          L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
@@ -512,12 +533,12 @@ dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
             return(count)
         }
     }
-    what_Lcol <- SQLchunks$what_Lcol
-    what_Rcol <- SQLchunks$what_Rcol
+    what_Lkey <- SQLchunks$what_Lkey
+    what_Rkey <- SQLchunks$what_Rkey
     if (direction == 1)
-        distinct_col <- what_Lcol
+        distinct_col <- what_Lkey
     else
-        distinct_col <- what_Rcol
+        distinct_col <- what_Rkey
     SQLwhat <- paste("COUNT(DISTINCT ", distinct_col, ")", sep="")
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL, 1)
