@@ -59,6 +59,18 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
+                tablename="ec",
+                Lcolname="id",
+                Rcolname="ec_number"
+            )
+        )
+    ),
+    list(
+        objName="ARACYCENZYME",
+        Class="AtomicAnnDbBimap",
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
+            list(
                 tablename="enzyme",
                 Lcolname="id",
                 Rcolname="ec_name"
@@ -176,9 +188,6 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
     map@rightTables <- Go3tablenames(all=TRUE)
     map@objName <- "GO2ALLPROBES"
     ann_objs$GO2ALLPROBES <- map
-
-    ## Some map aliases
-    ann_objs$ENTREZID <- ann_objs$ACCNUM
 
     ## 1 special map that is not an AnnDbBimap object (just a named integer vector)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
