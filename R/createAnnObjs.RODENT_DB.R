@@ -220,7 +220,6 @@ createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
     ## Reverse maps
     ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
     ann_objs$ENZYME2EG <- revmap(ann_objs$ENZYME, objName="ENZYME2EG")
-    ann_objs$GENENAME2EG <- revmap(ann_objs$GENENAME, objName="GENENAME2EG")
     ann_objs$MAP2EG <- revmap(ann_objs$MAP, objName="MAP2EG")
     ann_objs$PATH2EG <- revmap(ann_objs$PATH, objName="PATH2EG")
     ann_objs$PMID2EG <- revmap(ann_objs$PMID, objName="PMID2EG")
@@ -251,7 +250,6 @@ compareAnnDataIn2Pkgs.RODENT_DB <- function(pkgname1, pkgname2, prefix, quick=FA
         "ACCNUM2EG",
         "ALIAS2EG",
         "ENZYME2EG",
-        "GENENAME2EG",
         "MAP2EG",
         "PATH2EG",
         "PMID2EG",

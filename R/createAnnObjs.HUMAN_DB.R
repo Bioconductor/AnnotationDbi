@@ -232,7 +232,6 @@ createAnnObjs.HUMAN_DB <- function(prefix, objTarget, conn, datacache)
     ## Reverse maps
     ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
     ann_objs$ENZYME2EG <- revmap(ann_objs$ENZYME, objName="ENZYME2EG")
-    ann_objs$GENENAME2EG <- revmap(ann_objs$GENENAME, objName="GENENAME2EG")
     ann_objs$MAP2EG <- revmap(ann_objs$MAP, objName="MAP2EG")
     ann_objs$OMIM2EG <- revmap(ann_objs$OMIM, objName="OMIM2EG")
     ann_objs$PATH2EG <- revmap(ann_objs$PATH, objName="PATH2EG")
@@ -264,7 +263,6 @@ compareAnnDataIn2Pkgs.HUMAN_DB <- function(pkgname1, pkgname2, prefix, quick=FAL
         "ACCNUM2EG",
         "ALIAS2EG",
         "ENZYME2EG",
-        "GENENAME2EG",
         "MAP2EG",
         "OMIM2EG",
         "PATH2EG",
