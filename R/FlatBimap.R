@@ -4,15 +4,13 @@
 ###
 
 
-### Possible col labels are: "Lkeyname", "Rkeyname", "tagname",
-### "Rattribname"
+### Possible col metanames are: "Lkeyname", "Rkeyname" and "tagname"
 ### There must be exactly 1 "Lkeyname" and 1 "Rkeyname" col.
 ### There can be 0 or 1 "tagname" col.
-### There can be 0 or any number of "Rattribname" cols.
 setClass("FlatBimap",
     contains="Bimap",
     representation(
-        colmetanames="character",      # must have the same length as the 'data' slot
+        colmetanames="character",   # must have a length <= ncol of data slot
         direction="integer",
         data="data.frame",
         Lkeys="character",
@@ -30,8 +28,8 @@ setClass("FlatBimap",
 setMethod("initialize", "FlatBimap",
     function(.Object, colmetanames, direction, data, Lkeys, Rkeys)
     {
-        if (length(colmetanames) != ncol(data))
-            stop("number of column labels doesn't match number of columns")
+        if (ncol(data) < length(colmetanames))
+            stop("FlatBimap object has not enough columns")
         .Object@colmetanames <- colmetanames
         if (!missing(direction))
             .Object@direction <- .normalize.direction(direction)
@@ -141,7 +139,7 @@ setMethod("nrow", "FlatBimap",
     function(x) nrow(x@data))
 
 ### FIXME: links is broken!
-### (try with links(flatten(GOBPCHILDREN), with.Rattribs=FALSE))
+### (try with links(flatten(GOBPCHILDREN), drop.Rattribs=TRUE))
 setMethod("links", "FlatBimap",
     function(x)
     {

@@ -150,9 +150,6 @@ L2Rchain.rev <- function(L2Rchain) rev(lapply(L2Rchain, rev))
 L2Rchain.Ltablename <- function(L2Rchain) L2Rchain[[1]]@tablename
 L2Rchain.Rtablename <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@tablename
 
-L2Rchain.Lkeyname <- function(L2Rchain) L2Rchain[[1]]@Lcolname
-L2Rchain.Rkeyname <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@Rcolname
-
 L2Rchain.Lfilter <- function(L2Rchain)
 {
     filter <- L2Rchain[[1]]@filter
@@ -168,6 +165,9 @@ L2Rchain.Rfilter <- function(L2Rchain)
         return(filter)
     paste("(", .contextualizeColnames(filter), ")", sep="")
 }
+
+L2Rchain.Lkeyname <- function(L2Rchain) L2Rchain[[1]]@Lcolname
+L2Rchain.Rkeyname <- function(L2Rchain) L2Rchain[[length(L2Rchain)]]@Rcolname
 
 ### Return the first tag colname found (from left to right) or NA if the
 ### L2Rchain chain has no tag.
@@ -191,31 +191,29 @@ L2Rchain.Rattribnames <- function(L2Rchain)
 }
 
 ### THIS IS THE CURRENT DESIGN: the left col is the 1st col, the right col is
-### the 2nd col and then we have all the tags,  IT MUST BE KEPT CONSISTENT
-### THROUGH ALL THE REST OF THIS FILE... FOR NOW.
+### the 2nd col and the (optional) tag is the 3rd col,  IT MUST BE KEPT
+### CONSISTENT THROUGH ALL THE REST OF THIS FILE... FOR NOW.
 L2Rchain.colmetanames <- function(L2Rchain)
 {
     tagname <- L2Rchain.tagname(L2Rchain)
-    Rattribnames <- L2Rchain.Rattribnames(L2Rchain)
     c(
         "Lkeyname",
         "Rkeyname",
-        if (!is.na(tagname)) "tagname",
-        rep("Rattribname", length(Rattribnames))
+        if (!is.na(tagname)) "tagname"
     )
 }
 
 L2Rchain.colnames <- function(L2Rchain)
 {
     tagname <- L2Rchain.tagname(L2Rchain)
-    Rattribnames <- L2Rchain.Rattribnames(L2Rchain)
     c(
         L2Rchain.Lkeyname(L2Rchain),
         L2Rchain.Rkeyname(L2Rchain),
         if (!is.na(tagname)) tagname,
-        Rattribnames
+        L2Rchain.Rattribnames(L2Rchain)
     )
 }
+
 
 ### Return a named list of 5 elements. Those elements are pieces of an SQL
 ### SELECT statement used by some of the DB functions in this file to build
@@ -404,14 +402,14 @@ dbCountMapLinks <- function(conn, L2Rchain)
     paste("SELECT", SQLwhat, "FROM", SQLchunks$from, "WHERE", where)
 }
 
-dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, with.Rattribs)
+dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, drop.Rattribs)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
     cols <- c(SQLchunks$what_Lkey, SQLchunks$what_Rkey, SQLchunks$what_tag)
-    if (with.Rattribs) {
-        SQLwhat <- paste(c(cols, SQLchunks$what_Rattribs), collapse=",")
-    } else {
+    if (drop.Rattribs) {
         SQLwhat <- paste("DISTINCT", paste(cols, collapse=","))
+    } else {
+        SQLwhat <- paste(c(cols, SQLchunks$what_Rattribs), collapse=",")
     }
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     data0 <- .dbGetQuery(conn, SQL)
@@ -420,18 +418,18 @@ dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, with.Rattribs)
     .make0rowDataFrame(cols)
 }
 
-dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, with.Rattribs)
+dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, drop.Rattribs)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
-    if (with.Rattribs) {
-        SQLwhat <- "COUNT(*)"
-    } else {
+    if (drop.Rattribs) {
         cols <- c(SQLchunks$what_Lkey, SQLchunks$what_Rkey, SQLchunks$what_tag)
         SQLwhat <- paste("DISTINCT", paste(cols, collapse=","))
+    } else {
+        SQLwhat <- "COUNT(*)"
     }
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     res <- .dbGetQuery(conn, SQL, 1)
-    if (with.Rattribs)
+    if (!drop.Rattribs)
         return(res)
     length(res)
 }

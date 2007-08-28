@@ -173,7 +173,7 @@ setMethod("tagname", "Bimap",
 setMethod("Rattribnames", "Bimap",
     function(x)
     {
-        colnames(x)[colmetanames(x) == "Rattribname"]
+        colnames(x)[-seq_along(colmetanames(x))]
     }
 )
 
