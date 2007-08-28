@@ -91,6 +91,8 @@ initWithDbMetada <- function(x, db_file)
             stop(metadata_name, " specified in '", db_file, "' (\"", val, "\") ",
                  "doesn't match 'x@", slot_name, "' (\"", slot(x, slot_name), "\")")
     }
+    if (is.na(x@manufacturerUrl))
+        x@manufacturerUrl <- ""
     x
 }
 
