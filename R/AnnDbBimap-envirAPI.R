@@ -76,7 +76,7 @@ setMethod("as.list", "AtomicAnnDbBimap",
             x <- subset(x, Lkeys=keys, Rkeys=NULL)
         else
             x <- subset(x, Lkeys=NULL, Rkeys=keys)
-        y <- flatten(x, fromKeys.only=TRUE)
+        y <- flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
             ann_list <- list()
         } else {
@@ -107,7 +107,8 @@ setMethod("as.list", "IpiAnnDbMap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, Lkeys=keys, Rkeys=NULL), fromKeys.only=TRUE)
+        x <- subset(x, Lkeys=keys, Rkeys=NULL)
+        y <- flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
             ann_list <- list()
         } else {
@@ -124,7 +125,8 @@ setMethod("as.list", "AgiAnnDbMap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, Lkeys=keys, Rkeys=NULL), fromKeys.only=TRUE)
+        x <- subset(x, Lkeys=keys, Rkeys=NULL)
+        y <- flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE)
         if (nrow(y@data) == 0)
             ann_list <- list()
         else
@@ -155,7 +157,7 @@ setMethod("as.list", "GoAnnDbBimap",
             x <- subset(x, Lkeys=keys, Rkeys=NULL)
         else
             x <- subset(x, Lkeys=NULL, Rkeys=keys)
-        y <- flatten(x, fromKeys.only=TRUE)
+        y <- flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE)
         keys <- keys(y)
         if (direction(x) == 1) {
             ann_list <- as.list(rep(as.character(NA), length(keys)))
@@ -211,7 +213,8 @@ setMethod("as.list", "GONodeAnnDbBimap",
     {
         if (!is.null(keys) && length(keys) == 0)
             return(list())
-        y <- flatten(subset(x, Lkeys=keys, Rkeys=NULL), fromKeys.only=TRUE)
+        x <- subset(x, Lkeys=keys, Rkeys=NULL)
+        y <- flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE)
         makeGONode <- function(go_id, Term, Ontology, Definition, ...)
         {
             new("GONode", GOID=go_id[1],

@@ -59,6 +59,7 @@ exportMethods(
     "from.keys", "to.keys",
     "dim",
     "keys", "keys<-",
+    "[",
     "length",
     "mappedkeys",
     "count.mappedkeys",

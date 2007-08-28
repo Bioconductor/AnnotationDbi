@@ -19,14 +19,14 @@
 ###        show
 ###
 ###   2) Generics that access the database:
-###        links, count.links,
-###        nrow,
 ###        Lkeys, Rkeys,
 ###        Llength, Rlength, 
 ###        mappedLkeys, mappedRkeys,
 ###        count.mappedLkeys, count.mappedRkeys,
 ###        subset,
-###        flatten, toTable, dim,
+###        flatten,
+###        links, count.links,
+###        toTable, nrow,
 ###        as.character,
 ###        toLList, toRList,
 ###        is.na
@@ -165,51 +165,6 @@ setMethod("revmap", "environment",
 )
 setMethod("revmap", "list",
     function(x, ...) reverseSplit(x)
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "links" and "count.links" methods.
-###
-
-setMethod("links", "AnnDbBimap",
-    function(x) dbGetMapLinks(db(x), x@L2Rchain))
-
-setMethod("count.links", "AnnDbBimap",
-    function(x) dbCountMapLinks(db(x), x@L2Rchain))
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "nrow" methods.
-###
-
-### CURRENTLY BROKEN!
-setMethod("nrow", "AnnDbTable",
-    function(x)
-    {
-        dbCountRawAnnDbMapRows(db(x), Ltablename(x), Lkeyname(x), NULL, NULL, x@from)
-    }
-)
-
-setMethod("nrow", "AnnDbBimap",
-    function(x)
-    {
-        dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys)
-    }
-)
-
-
-setMethod("nrow", "Go3AnnDbBimap",
-    function(x)
-    {
-        countRows <- function(ontology)
-        {
-            tablename <- Rtablename(x)[ontology]
-            L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
-            dbCountRowsFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys)
-        }
-        countRows("BP") + countRows("CC") + countRows("MF")
-    }
 )
 
 
@@ -522,10 +477,10 @@ setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 #)
 
 setMethod("flatten", "AnnDbBimap",
-    function(x, fromKeys.only=FALSE)
+    function(x, with.Rattribs=FALSE, fromKeys.only=FALSE)
     {
         data0 <- dbSelectFromL2Rchain(db(x), x@L2Rchain,
-                                     x@Lkeys, x@Rkeys)
+                                      x@Lkeys, x@Rkeys, with.Rattribs)
         Lkeys <- Rkeys <- as.character(NA)
         if (!fromKeys.only || direction(x) ==  1)
             Lkeys <- Lkeys(x)
@@ -544,14 +499,14 @@ setMethod("flatten", "AnnDbBimap",
 ###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
 ### Surprisingly the latter is almost twice faster than the former!
 setMethod("flatten", "Go3AnnDbBimap",
-    function(x, fromKeys.only=FALSE)
+    function(x, with.Rattribs=FALSE, fromKeys.only=FALSE)
     {
         getPartialSubmap <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
             L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
             data <- dbSelectFromL2Rchain(db(x), L2Rchain,
-                                        x@Lkeys, x@Rkeys)
+                                         x@Lkeys, x@Rkeys, with.Rattribs)
             if (nrow(data) != 0)
                 data[["Ontology"]] <- ontology
             data
@@ -569,14 +524,80 @@ setMethod("flatten", "Go3AnnDbBimap",
     }
 )
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "links" and "count.links" methods.
+###
+
+setMethod("links", "AnnDbBimap",
+    function(x)
+    {
+        ## FIXME: use links method for FlatBimap objects instead
+        ## of direct access to @data
+        flatten(x, with.Rattribs=FALSE, fromKeys.only=TRUE)@data
+    }
+)
+
+setMethod("count.links", "AnnDbBimap",
+    function(x)
+    {
+        dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys, with.Rattribs=FALSE)
+    }
+)
+
+setMethod("count.links", "Go3AnnDbBimap",
+    function(x)
+    {
+        countRows <- function(ontology)
+        {
+            tablename <- Rtablename(x)[ontology]
+            L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
+            dbCountRowsFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys, with.Rattribs=FALSE)
+        }
+        countRows("BP") + countRows("CC") + countRows("MF")
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "toTable" and "nrow" methods.
+###
+
 setMethod("toTable", "AnnDbBimap",
     function(x, Lkeys=NULL, Rkeys=NULL)
     {
         x <- subset(x, Lkeys, Rkeys)
-        flatten(x, fromKeys.only=TRUE)@data
+        flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE)@data
     }
 )
 
+### CURRENTLY BROKEN!
+setMethod("nrow", "AnnDbTable",
+    function(x)
+    {
+        dbCountRawAnnDbMapRows(db(x), Ltablename(x), Lkeyname(x), NULL, NULL, x@from)
+    }
+)
+
+setMethod("nrow", "AnnDbBimap",
+    function(x)
+    {
+        dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys, with.Rattribs=TRUE)
+    }
+)
+
+setMethod("nrow", "Go3AnnDbBimap",
+    function(x)
+    {
+        countRows <- function(ontology)
+        {
+            tablename <- Rtablename(x)[ontology]
+            L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
+            dbCountRowsFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys, with.Rattribs=TRUE)
+        }
+        countRows("BP") + countRows("CC") + countRows("MF")
+    }
+)
 
 
 ### =========================================================================
@@ -630,7 +651,7 @@ setMethod("as.character", "AtomicAnnDbBimap",
     {
         if (ncol(x) > 2)
             stop("AtomicAnnDbBimap object with tags cannot be coerced to a character vector")
-        data <- flatten(x, fromKeys.only=TRUE)@data
+        data <- flatten(x, with.Rattribs=FALSE, fromKeys.only=TRUE)@data
         if (direction(x) == 1)
             ans <- data[[2]] # could also use [[Rkeyname(x)]]
         else
@@ -672,7 +693,7 @@ setMethod("toLList", "AnnDbBimap",
     function(x, keys=NULL)
     {
         x <- subset(x, Lkeys=keys, Rkeys=NULL)
-        toLList(flatten(x, fromKeys.only=TRUE))
+        toLList(flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE))
     }
 )
 
@@ -680,7 +701,7 @@ setMethod("toLList", "AnnDbMap",
     function(x, keys=NULL)
     {
         x <- subset(x, Lkeys=keys, Rkeys=NULL)
-        y <- flatten(x, fromKeys.only=TRUE)
+        y <- flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE)
         if (length(x@rightColType) == 1
          && typeof(y@data[[2]]) != x@rightColType) {
                 converter <- get(paste("as.", x@rightColType, sep=""))
@@ -694,7 +715,7 @@ setMethod("toRList", "AnnDbBimap",
     function(x, keys=NULL)
     {
         x <- subset(x, Lkeys=NULL, Rkeys=keys)
-        toRList(flatten(x, fromKeys.only=TRUE))
+        toRList(flatten(x, with.Rattribs=TRUE, fromKeys.only=TRUE))
     }
 )
 

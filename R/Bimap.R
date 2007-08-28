@@ -260,6 +260,26 @@ setReplaceMethod("keys", "Bimap",
                     stop("keys<- is undefined for an undirected bimap"))
     }
 )
+
+### Supported 'i' types: character vector, numeric vector, logical vector,
+### NULL and missing.
+setMethod("[", "Bimap",
+    function(x, i, j, ..., drop)
+    {
+        if (!missing(j) || length(list(...)) > 0)
+            stop("invalid subsetting")
+        if (missing(i))
+            return(x)
+        keys <- keys(x)
+        if (is.character(i)) {
+            keys(x) <- i
+        } else {
+            keys(x) <- keys[i]
+        }
+        x
+    }
+)
+
 setMethod("length", "Bimap",
     function(x)
         switch(as.character(direction(x)),

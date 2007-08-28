@@ -395,25 +395,33 @@ dbCountMapLinks <- function(conn, L2Rchain)
     paste("SELECT", SQLwhat, "FROM", SQLchunks$from, "WHERE", where)
 }
 
-dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
+dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, with.Rattribs)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
-    what_Lkey <- SQLchunks$what_Lkey
-    what_Rkey <- SQLchunks$what_Rkey
-    what_extracols <- c(SQLchunks$what_tag, SQLchunks$what_Rattribs)
-    SQLwhat <- paste(c(what_Lkey, what_Rkey, what_extracols), collapse=",")
+    cols <- c(SQLchunks$what_Lkey, SQLchunks$what_Rkey, SQLchunks$what_tag)
+    if (with.Rattribs) {
+        SQLwhat <- paste(c(cols, SQLchunks$what_Rattribs), collapse=",")
+    } else {
+        SQLwhat <- paste("DISTINCT", paste(cols, collapse=","))
+    }
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     .dbGetQuery(conn, SQL)
 }
 
-dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
+dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, with.Rattribs)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
-    what_Lkey <- SQLchunks$what_Lkey
-    what_Rkey <- SQLchunks$what_Rkey
-    SQLwhat <- "COUNT(*)"
+    if (with.Rattribs) {
+        SQLwhat <- "COUNT(*)"
+    } else {
+        cols <- c(SQLchunks$what_Lkey, SQLchunks$what_Rkey, SQLchunks$what_tag)
+        SQLwhat <- paste("DISTINCT", paste(cols, collapse=","))
+    }
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
-    .dbGetQuery(conn, SQL, 1)
+    res <- .dbGetQuery(conn, SQL, 1)
+    if (!with.Rattribs)
+        res <- length(res)
+    res
 }
 
 

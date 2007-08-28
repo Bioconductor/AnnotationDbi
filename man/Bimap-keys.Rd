@@ -57,6 +57,9 @@
 \alias{keys<-}
 \alias{keys<-,Bimap-method}
 
+\alias{[}
+\alias{[,Bimap-method}
+
 \alias{Lkeys<-}
 \alias{Lkeys<-,FlatBimap-method}
 \alias{Lkeys<-,AnnDbBimap-method}
@@ -100,6 +103,7 @@
 
   ## Subsetting methods
   keys(x) <- value
+  x[i]
   Lkeys(x) <- value
   Rkeys(x) <- value
   subset(x, ...)
@@ -112,6 +116,9 @@
   \item{value}{
     A character vector containing the new keys (must be a subset of the
     current keys).
+  }
+  \item{i}{
+    Index specifying map elements to extract.
   }
   \item{...}{
     Extra arguments can be:
@@ -145,6 +152,8 @@
   x
   length(x)
   count.mappedkeys(x)
+  x[1:3]
+  links(x[1:3])
 
   ## Keep only mapped keys
   keys(x) <- mappedkeys(x)
@@ -152,12 +161,14 @@
   count.mappedkeys(x)
   x # now it is a submap
 
-  ## mappedkeys and count.mappedkeys also work with an environment
+  ## The above can be achieved with
+  x <- hgu95av2GO[mappedkeys(hgu95av2GO)]
+
+  ## mappedkeys() and count.mappedkeys() also work with an environment
   ## or a list
   z <- list(k1=NA, k2=letters[1:4], k3="x")
   mappedkeys(z)
   count.mappedkeys(z)
-  
 }
 
 \keyword{methods}
