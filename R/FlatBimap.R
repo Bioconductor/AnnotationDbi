@@ -30,7 +30,7 @@ setClass("FlatBimap",
 setMethod("initialize", "FlatBimap",
     function(.Object, colmetanames, direction, data, Lkeys, Rkeys)
     {
-        if (nrow(data) != 0 && length(colmetanames) != ncol(data))
+        if (length(colmetanames) != ncol(data))
             stop("number of column labels doesn't match number of columns")
         .Object@colmetanames <- colmetanames
         if (!missing(direction))

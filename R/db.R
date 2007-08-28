@@ -17,6 +17,14 @@ debug.sql <- function()
     debugSQL
 }
 
+## Needed to deal properly with "NULL data frames with 0 rows" returned
+## by RSQLite when the result of a SELECT query has 0 row
+.make0rowDataFrame <- function(colnames)
+{
+    args <- sapply(colnames, function(col) character(0))
+    args <- c(args, list(check.names=FALSE, stringsAsFactors=FALSE))
+    do.call("data.frame", args)
+}
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Generate SQL code.
@@ -332,8 +340,9 @@ L2Rchain.colnames <- function(L2Rchain)
     }
     if (is.na(j0))
         return(data0)
-    ## Work around pb with the SQLite driver returning a data frame with
-    ## 0 columns when the number of rows is 0
+    ## Needed to deal properly with data frame with 0 column ("NULL data
+    ## frames with 0 rows") returned by RSQLite when the result of a SELECT
+    ## query has 0 row
     if (nrow(data0) == 0)
         character(0)
     else
@@ -405,7 +414,10 @@ dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, with.Rattribs)
         SQLwhat <- paste("DISTINCT", paste(cols, collapse=","))
     }
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
-    .dbGetQuery(conn, SQL)
+    data0 <- .dbGetQuery(conn, SQL)
+    if (nrow(data0) != 0)
+        return(data0)
+    .make0rowDataFrame(cols)
 }
 
 dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, with.Rattribs)
@@ -419,9 +431,9 @@ dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, with.Rattribs)
     }
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     res <- .dbGetQuery(conn, SQL, 1)
-    if (!with.Rattribs)
-        res <- length(res)
-    res
+    if (with.Rattribs)
+        return(res)
+    length(res)
 }
 
 
