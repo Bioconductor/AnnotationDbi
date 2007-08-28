@@ -168,7 +168,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
         objName="FLYBASE",
         Class="AtomicAnnDbBimap",
         L2Rchain=list(
-            FLYCHIP_DB_L2Rlink1,
+            FLY_DB_L2Rlink1,
             list(
                 tablename="flybase",
                 Lcolname="id",
