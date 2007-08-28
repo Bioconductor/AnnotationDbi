@@ -114,6 +114,7 @@ export(
     createAnnObjs.ARABIDOPSISCHIP_DB,
     createAnnObjs.HUMAN_DB,
     createAnnObjs.RODENT_DB,
+    createAnnObjs.FLY_DB,
     createAnnObjs.YEAST_DB,
     createAnnObjs.GO_DB,
     createAnnObjs.KEGG_DB,
