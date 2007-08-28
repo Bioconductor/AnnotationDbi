@@ -187,7 +187,7 @@ removeCommentsFromFile <- function(infile, outfile)
 loadAnnDbPkgIndex <- function(file)
 {
     if (missing(file)) {
-        file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
+        file <- system.file("extdata", "GentlemanLab", "ANNDBPKG-INDEX.TXT",
                             package="AnnotationDbi")
     } else {
         if (!is.character(file) || length(file) != 1 || is.na(file))
@@ -296,7 +296,7 @@ setMethod("makeAnnDbPkg", "character",
     function(x, db_file, dest_dir=".", no.man=FALSE, ...)
     {
         if (missing(db_file)) {
-            db_file <- system.file("extdata", "ANNDBPKG-INDEX.TXT",
+            db_file <- system.file("extdata", "GentlemanLab", "ANNDBPKG-INDEX.TXT",
                                    package="AnnotationDbi")
         }
         index <- loadAnnDbPkgIndex(db_file)
