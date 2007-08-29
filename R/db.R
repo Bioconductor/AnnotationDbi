@@ -381,16 +381,6 @@ dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lkeyname,
     .dbGetQuery(conn, SQL, 1)
 }
 
-dbGetMapEdges <- function(conn, L2Rchain)
-{
-    stop("COMING SOON, SORRY!")
-}
-
-dbCountMapEdges <- function(conn, L2Rchain)
-{
-    stop("COMING SOON, SORRY!")
-}
-
 .makeSQL <- function(SQLchunks, SQLwhat, Lkeys, Rkeys)
 {
     where <- c(
