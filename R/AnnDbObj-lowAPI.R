@@ -26,7 +26,7 @@
 ###        count.mappedLkeys, count.mappedRkeys,
 ###        subset,
 ###        flatten,
-###        edges,
+###        links,
 ###        toTable, nrow,
 ###        as.character,
 ###        toLList, toRList,
@@ -568,21 +568,21 @@ setMethod("nrow", "Go3AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "edges" and "count.edges" methods.
+### The "links" and "count.links" methods.
 ###
 
-setMethod("edges", "AnnDbBimap",
+setMethod("links", "AnnDbBimap",
     function(x)
     {
         Rattribnames(x) <- NULL
-        edges(flatten(x, fromKeys.only=TRUE))
+        links(flatten(x, fromKeys.only=TRUE))
     }
 )
 
-setMethod("edges", "Go3AnnDbBimap",
-    function(x) edges(flatten(x, fromKeys.only=TRUE)))
+setMethod("links", "Go3AnnDbBimap",
+    function(x) links(flatten(x, fromKeys.only=TRUE)))
 
-setMethod("count.edges", "Go3AnnDbBimap",
+setMethod("count.links", "Go3AnnDbBimap",
     function(x) nrow(x))
 
 

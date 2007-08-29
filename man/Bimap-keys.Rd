@@ -153,7 +153,7 @@
   length(x)
   count.mappedkeys(x)
   x[1:3]
-  edges(x[1:3])
+  links(x[1:3])
 
   ## Keep only mapped keys
   keys(x) <- mappedkeys(x)

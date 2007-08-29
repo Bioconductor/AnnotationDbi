@@ -166,7 +166,7 @@ setMethod("subset", "FlatBimap",
 setMethod("nrow", "FlatBimap",
     function(x) nrow(x@data))
 
-setMethod("edges", "FlatBimap",
+setMethod("links", "FlatBimap",
     function(x)
     {
         Rattribnames(x) <- NULL

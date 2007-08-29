@@ -44,7 +44,7 @@
 ###      d      C        0
 ###      d      C        1
 ###
-### Note that now the number of rows is greater than the number of edges!
+### Note that now the number of rows is greater than the number of links!
 ###
 ### -------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@
 ###
 ###    A AnnDbBimap object is a bimap whose data are stored in a data base.
 ###    A FlatBimap object is a bimap whose data (left keys, right keys and
-###    edges) are stored in memory (in a data frame for the edges).
+###    links) are stored in memory (in a data frame for the links).
 ###    Conceptually, an AnnDbBimap and a FlatBimap object are the same (only
 ###    their internal representation differ) so it's natural to try to define
 ###    a set of methods that make sense for both (so they can be manipulated
@@ -124,7 +124,7 @@ Bimap_methods <- c(
     "subset",
     "mappedLkeys", "mappedRkeys",
     "nrow",
-    "edges",
+    "links",
     "toLList", "toRList",
     ## GROUP 2: Methods for which a default is provided (in this file) but
     ## some of them are redefined for AnnDbBimap objects to obtain better
@@ -134,7 +134,7 @@ Bimap_methods <- c(
     "revmap",
     "Llength", "Rlength",
     "count.mappedLkeys", "count.mappedRkeys",
-    "count.edges",
+    "count.links",
     ## GROUP 3: Directed methods (i.e. what they return depends on the
     ## direction of the map). All what they do is to dispatch on the
     ## corresponding undirected method according to the value of direction(x)
@@ -194,7 +194,7 @@ setMethod("count.mappedLkeys", "Bimap",
 setMethod("count.mappedRkeys", "Bimap",
     function(x) length(mappedRkeys(x)))
 
-setMethod("count.edges", "Bimap",
+setMethod("count.links", "Bimap",
     function(x)
     {
         Rattribnames(x) <- NULL
