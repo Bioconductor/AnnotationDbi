@@ -14,7 +14,8 @@
 ###        Ltablename, Rtablename,
 ###        Lfilter, Rfilter,
 ###        colnames, colmetanames,
-###        Lkeyname, Rkeyname, tagname, Rattribnames,
+###        Lkeyname, Rkeyname, tagname,
+###        Rattribnames, Rattribnames<-,
 ###        direction, revmap,
 ###        show
 ###
@@ -25,7 +26,7 @@
 ###        count.mappedLkeys, count.mappedRkeys,
 ###        subset,
 ###        flatten,
-###        edges, count.edges,
+###        edges,
 ###        toTable, nrow,
 ###        as.character,
 ###        toLList, toRList,
@@ -43,15 +44,10 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Generics that return meta information about a given map:
-###     db,
-###     Ltablename, Rtablename,
-###     colnames, colmetanames,
-###     Lkeyname, Rkeyname, tagname, Rattribnames,
-###     Lfilter, Rfilter
+### The "db", "Ltablename", "Rtablename", "Lfilter" and "Rfilter" new
+### generics.
 ###
-### Note that these generics do _not_ query the database!
-###
+### They do NOT access the database!
 
 setMethod("db", "AnnDbObj", function(object) object@conn)
 
@@ -80,9 +76,10 @@ setMethod("Rfilter", "AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "colnames", "colmetanames", "Lkeyname", "Rkeyname", "tagname" and
-### "Rattribnames" methods.
+### The "colnames", "colmetanames", "Lkeyname", "Rkeyname", "tagname",
+### "Rattribnames" and "Rattribnames<-" methods.
 ###
+### They do NOT access the database!
 
 setMethod("colnames", "AnnDbBimap",
     function(x, do.NULL=TRUE, prefix="col")
@@ -102,6 +99,23 @@ setMethod("tagname", "AnnDbBimap",
 
 setMethod("Rattribnames", "AnnDbBimap",
     function(x) L2Rchain.Rattribnames(x@L2Rchain))
+
+setReplaceMethod("Rattribnames", "AnnDbBimap",
+    function(x, value)
+    {
+        Rattribnames0 <- Rattribnames(x)
+        L2Rchain.Rattribnames(x@L2Rchain) <- value
+        if (length(Rattribnames(x)) < length(Rattribnames0))
+            x <- as(x, Class="AnnDbBimap", strict=TRUE)
+        x
+    }
+)
+setReplaceMethod("Rattribnames", "Go3AnnDbBimap",
+    function(x, value)
+    {
+        stop("can't modify the Rattrib names of a ", class(x), " object")
+    }
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -477,10 +491,9 @@ setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 #)
 
 setMethod("flatten", "AnnDbBimap",
-    function(x, drop.Rattribs=FALSE, fromKeys.only=FALSE)
+    function(x, fromKeys.only=FALSE)
     {
-        data0 <- dbSelectFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
-                                             drop.Rattribs)
+        data0 <- dbSelectFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys)
         Lkeys <- Rkeys <- as.character(NA)
         if (!fromKeys.only || direction(x) ==  1)
             Lkeys <- Lkeys(x)
@@ -499,14 +512,13 @@ setMethod("flatten", "AnnDbBimap",
 ###   rbind(dbGetQuery("query1"), dbGetQuery("query2"), dbGetQuery("query3"))
 ### Surprisingly the latter is almost twice faster than the former!
 setMethod("flatten", "Go3AnnDbBimap",
-    function(x, drop.Rattribs=FALSE, fromKeys.only=FALSE)
+    function(x, fromKeys.only=FALSE)
     {
         getPartialSubmap <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
             L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
-            dbSelectFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys,
-                                        drop.Rattribs)
+            dbSelectFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys)
         }
         data0 <- rbind(getPartialSubmap("BP"),
                        getPartialSubmap("CC"),
@@ -523,52 +535,8 @@ setMethod("flatten", "Go3AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "edges" and "count.edges" methods.
+### The "nrow" method.
 ###
-
-setMethod("edges", "AnnDbBimap",
-    function(x)
-    {
-        ## FIXME: use edges method for FlatBimap objects instead
-        ## of direct access to @data
-        flatten(x, drop.Rattribs=TRUE, fromKeys.only=TRUE)@data
-    }
-)
-
-setMethod("count.edges", "AnnDbBimap",
-    function(x)
-    {
-        dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
-                                       drop.Rattribs=TRUE)
-    }
-)
-
-setMethod("count.edges", "Go3AnnDbBimap",
-    function(x)
-    {
-        countRows <- function(ontology)
-        {
-            tablename <- Rtablename(x)[ontology]
-            L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
-            dbCountRowsFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys,
-                                           drop.Rattribs=TRUE)
-        }
-        countRows("BP") + countRows("CC") + countRows("MF")
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "toTable" and "nrow" methods.
-###
-
-setMethod("toTable", "AnnDbBimap",
-    function(x, Lkeys=NULL, Rkeys=NULL)
-    {
-        x <- subset(x, Lkeys, Rkeys)
-        flatten(x, drop.Rattribs=FALSE, fromKeys.only=TRUE)@data
-    }
-)
 
 ### CURRENTLY BROKEN!
 setMethod("nrow", "AnnDbTable",
@@ -581,8 +549,7 @@ setMethod("nrow", "AnnDbTable",
 setMethod("nrow", "AnnDbBimap",
     function(x)
     {
-        dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
-                                       drop.Rattribs=FALSE)
+        dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys)
     }
 )
 
@@ -593,10 +560,41 @@ setMethod("nrow", "Go3AnnDbBimap",
         {
             tablename <- Rtablename(x)[ontology]
             L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
-            dbCountRowsFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys,
-                                           drop.Rattribs=FALSE)
+            dbCountRowsFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys)
         }
         countRows("BP") + countRows("CC") + countRows("MF")
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "edges" and "count.edges" methods.
+###
+
+setMethod("edges", "AnnDbBimap",
+    function(x)
+    {
+        Rattribnames(x) <- NULL
+        edges(flatten(x, fromKeys.only=TRUE))
+    }
+)
+
+setMethod("edges", "Go3AnnDbBimap",
+    function(x) edges(flatten(x, fromKeys.only=TRUE)))
+
+setMethod("count.edges", "Go3AnnDbBimap",
+    function(x) nrow(x))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "toTable" method.
+###
+
+setMethod("toTable", "AnnDbBimap",
+    function(x, Lkeys=NULL, Rkeys=NULL)
+    {
+        x <- subset(x, Lkeys, Rkeys)
+        flatten(x, fromKeys.only=TRUE)@data
     }
 )
 
@@ -652,7 +650,8 @@ setMethod("as.character", "AtomicAnnDbBimap",
     {
         if (ncol(x) > 2)
             stop("AtomicAnnDbBimap object with tags cannot be coerced to a character vector")
-        data <- flatten(x, drop.Rattribs=TRUE, fromKeys.only=TRUE)@data
+        Rattribnames(x) <- NULL
+        data <- flatten(x, fromKeys.only=TRUE)@data
         if (direction(x) == 1)
             ans <- data[[2]] # could also use [[Rkeyname(x)]]
         else
@@ -694,7 +693,7 @@ setMethod("toLList", "AnnDbBimap",
     function(x, keys=NULL)
     {
         x <- subset(x, Lkeys=keys, Rkeys=NULL)
-        toLList(flatten(x, drop.Rattribs=FALSE, fromKeys.only=TRUE))
+        toLList(flatten(x, fromKeys.only=TRUE))
     }
 )
 
@@ -702,7 +701,7 @@ setMethod("toLList", "AnnDbMap",
     function(x, keys=NULL)
     {
         x <- subset(x, Lkeys=keys, Rkeys=NULL)
-        y <- flatten(x, drop.Rattribs=FALSE, fromKeys.only=TRUE)
+        y <- flatten(x, fromKeys.only=TRUE)
         if (length(x@rightColType) == 1
          && typeof(y@data[[2]]) != x@rightColType) {
                 converter <- get(paste("as.", x@rightColType, sep=""))
@@ -716,7 +715,7 @@ setMethod("toRList", "AnnDbBimap",
     function(x, keys=NULL)
     {
         x <- subset(x, Lkeys=NULL, Rkeys=keys)
-        toRList(flatten(x, drop.Rattribs=FALSE, fromKeys.only=TRUE))
+        toRList(flatten(x, fromKeys.only=TRUE))
     }
 )
 

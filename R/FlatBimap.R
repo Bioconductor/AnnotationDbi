@@ -28,6 +28,11 @@ setClass("FlatBimap",
 setMethod("initialize", "FlatBimap",
     function(.Object, colmetanames, direction, data, Lkeys, Rkeys)
     {
+        if (!is.character(colmetanames)
+         || any(duplicated(colmetanames))
+         || !all(colmetanames %in% c("Lkeyname", "Rkeyname", "tagname"))
+         || !all(c("Lkeyname", "Rkeyname") %in% colmetanames))
+            stop("invalid col metanames")
         if (ncol(data) < length(colmetanames))
             stop("FlatBimap object has not enough columns")
         .Object@colmetanames <- colmetanames
@@ -36,6 +41,8 @@ setMethod("initialize", "FlatBimap",
         .Object@data <- data
         .Object@Lkeys <- Lkeys
         .Object@Rkeys <- Rkeys
+        if (any(duplicated(Rattribnames(.Object))))
+           stop("duplicated Rattrib names")
         .Object
     }
 )
@@ -50,6 +57,27 @@ setMethod("colmetanames", "FlatBimap",
 
 setMethod("colnames", "FlatBimap",
     function(x, do.NULL=TRUE, prefix="col") colnames(x@data))
+
+setReplaceMethod("Rattribnames", "FlatBimap",
+    function(x, value)
+    {
+        colnames0 <- colnames(x@data)
+        if (!is.null(value) && !is.character(value))
+            stop("Rattrib names must be a character vector or NULL")
+        if (!all(value %in% Rattribnames(x)))
+            stop("invalid Rattrib names")
+        if (any(duplicated(value)))
+            stop("can't assign duplicated Rattrib names")
+        ii <- c(seq_along(colmetanames(x)), match(value, colnames0))
+        x@data <- x@data[ii]
+        if (length(ii) < length(colnames0))
+            x@data <- unique(x@data)
+        ## Needed because subsetting a data frame can change the names
+        ## of its cols (for the duplicated names)
+        colnames(x@data) <- colnames0[ii]
+        x
+    }
+)
 
 setMethod("direction", "FlatBimap",
     function(x) x@direction)
@@ -138,13 +166,11 @@ setMethod("subset", "FlatBimap",
 setMethod("nrow", "FlatBimap",
     function(x) nrow(x@data))
 
-### FIXME: edges is broken!
-### (try with edges(flatten(GOBPCHILDREN), drop.Rattribs=TRUE))
 setMethod("edges", "FlatBimap",
     function(x)
     {
-        j <- c(match("Lkeyname", x@colmetanames), match("Rkeyname", x@colmetanames))
-        unique(x@data[ , j])
+        Rattribnames(x) <- NULL
+        x@data
     }
 )
 

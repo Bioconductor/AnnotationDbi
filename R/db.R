@@ -184,10 +184,28 @@ L2Rchain.tagname <- function(L2Rchain)
 
 L2Rchain.Rattribnames <- function(L2Rchain)
 {
-    colnames <- L2Rchain[[length(L2Rchain)]]@Rattribnames
-    if (!is.null(names(colnames)))
-        return(names(colnames))
-    .contextualizeColnames(colnames)
+    Rattribnames0 <- L2Rchain[[length(L2Rchain)]]@Rattribnames
+    if (length(Rattribnames0) == 0)
+        return(character(0))
+    names(Rattribnames0)
+}
+
+`L2Rchain.Rattribnames<-` <- function(L2Rchain, value)
+{
+    if (is.null(value)) {
+        L2Rchain[[length(L2Rchain)]]@Rattribnames <- character(0)
+        L2Rchain[[length(L2Rchain)]]@Rattrib_join <- as.character(NA)
+        return(L2Rchain)
+    }
+    if (!is.character(value))
+        stop("Rattrib names must be a character vector or NULL")
+    Rattribnames0 <- L2Rchain[[length(L2Rchain)]]@Rattribnames
+    if (!all(value %in% names(Rattribnames0)))
+        stop("invalid Rattrib names")
+    if (any(duplicated(value)))
+        stop("can't assign duplicated Rattrib names")
+    L2Rchain[[length(L2Rchain)]]@Rattribnames <- Rattribnames0[value]
+    L2Rchain
 }
 
 ### THIS IS THE CURRENT DESIGN: the left col is the 1st col, the right col is
@@ -282,8 +300,9 @@ L2Rchain.colnames <- function(L2Rchain)
         if (i == chainlen && length(L2Rlink@Rattribnames) != 0) {
             Rattribnames <- L2Rlink@Rattribnames
             what_Rattribs <- .contextualizeColnames(Rattribnames, context)
-            if (!is.null(names(Rattribnames)))
-                what_Rattribs <- paste(what_Rattribs, "AS", names(Rattribnames))
+            if (is.null(names(Rattribnames)))
+                stop("Rattribnames in 'L2Rchain' must be a named character vector")
+            what_Rattribs <- paste(what_Rattribs, "AS", names(Rattribnames))
             Rattrib_join <- L2Rlink@Rattrib_join
             if (!is.na(Rattrib_join))
                 from <- paste(from, .contextualizeColnames(Rattrib_join, context))
@@ -392,15 +411,11 @@ dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lkeyname,
     paste("SELECT", SQLwhat, "FROM", SQLchunks$from, "WHERE", where)
 }
 
-dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, drop.Rattribs)
+dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
     cols <- c(SQLchunks$what_Lkey, SQLchunks$what_Rkey, SQLchunks$what_tag)
-    if (drop.Rattribs) {
-        SQLwhat <- paste("DISTINCT", paste(cols, collapse=","))
-    } else {
-        SQLwhat <- paste(c(cols, SQLchunks$what_Rattribs), collapse=",")
-    }
+    SQLwhat <- paste(c(cols, SQLchunks$what_Rattribs), collapse=",")
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     data0 <- .dbGetQuery(conn, SQL)
     if (nrow(data0) != 0)
@@ -408,20 +423,12 @@ dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, drop.Rattribs)
     .make0rowDataFrame(cols)
 }
 
-dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys, drop.Rattribs)
+dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
-    if (drop.Rattribs) {
-        cols <- c(SQLchunks$what_Lkey, SQLchunks$what_Rkey, SQLchunks$what_tag)
-        SQLwhat <- paste("DISTINCT", paste(cols, collapse=","))
-    } else {
-        SQLwhat <- "COUNT(*)"
-    }
+    SQLwhat <- "COUNT(*)"
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
-    res <- .dbGetQuery(conn, SQL, 1)
-    if (!drop.Rattribs)
-        return(res)
-    length(res)
+    .dbGetQuery(conn, SQL, 1)
 }
 
 

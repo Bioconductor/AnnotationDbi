@@ -116,6 +116,7 @@ Bimap_methods <- c(
     ## _and_ AnnDbBimap objects
     "colmetanames",
     "colnames",
+    "Rattribnames<-",
     "direction",
     "direction<-",
     "Lkeys", "Rkeys",
@@ -128,7 +129,8 @@ Bimap_methods <- c(
     ## GROUP 2: Methods for which a default is provided (in this file) but
     ## some of them are redefined for AnnDbBimap objects to obtain better
     ## performance
-    "Lkeyname", "Rkeyname", "tagname", "Rattribnames",
+    "Lkeyname", "Rkeyname", "tagname",
+    "Rattribnames",
     "revmap",
     "Llength", "Rlength",
     "count.mappedLkeys", "count.mappedRkeys",
@@ -170,6 +172,7 @@ setMethod("tagname", "Bimap",
         colnames["tagname"]
     }
 )
+
 setMethod("Rattribnames", "Bimap",
     function(x)
     {
@@ -192,7 +195,12 @@ setMethod("count.mappedRkeys", "Bimap",
     function(x) length(mappedRkeys(x)))
 
 setMethod("count.edges", "Bimap",
-    function(x) nrow(edges(x)))
+    function(x)
+    {
+        Rattribnames(x) <- NULL
+        nrow(x)
+    }
+)
 
 setMethod("ncol", "Bimap",
     function(x) length(colnames(x)))
