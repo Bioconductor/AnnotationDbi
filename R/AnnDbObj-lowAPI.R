@@ -25,7 +25,7 @@
 ###        count.mappedLkeys, count.mappedRkeys,
 ###        subset,
 ###        flatten,
-###        links, count.links,
+###        edges, count.edges,
 ###        toTable, nrow,
 ###        as.character,
 ###        toLList, toRList,
@@ -523,19 +523,19 @@ setMethod("flatten", "Go3AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "links" and "count.links" methods.
+### The "edges" and "count.edges" methods.
 ###
 
-setMethod("links", "AnnDbBimap",
+setMethod("edges", "AnnDbBimap",
     function(x)
     {
-        ## FIXME: use links method for FlatBimap objects instead
+        ## FIXME: use edges method for FlatBimap objects instead
         ## of direct access to @data
         flatten(x, drop.Rattribs=TRUE, fromKeys.only=TRUE)@data
     }
 )
 
-setMethod("count.links", "AnnDbBimap",
+setMethod("count.edges", "AnnDbBimap",
     function(x)
     {
         dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
@@ -543,7 +543,7 @@ setMethod("count.links", "AnnDbBimap",
     }
 )
 
-setMethod("count.links", "Go3AnnDbBimap",
+setMethod("count.edges", "Go3AnnDbBimap",
     function(x)
     {
         countRows <- function(ontology)

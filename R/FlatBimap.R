@@ -138,9 +138,9 @@ setMethod("subset", "FlatBimap",
 setMethod("nrow", "FlatBimap",
     function(x) nrow(x@data))
 
-### FIXME: links is broken!
-### (try with links(flatten(GOBPCHILDREN), drop.Rattribs=TRUE))
-setMethod("links", "FlatBimap",
+### FIXME: edges is broken!
+### (try with edges(flatten(GOBPCHILDREN), drop.Rattribs=TRUE))
+setMethod("edges", "FlatBimap",
     function(x)
     {
         j <- c(match("Lkeyname", x@colmetanames), match("Rkeyname", x@colmetanames))

@@ -381,12 +381,12 @@ dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lkeyname,
     .dbGetQuery(conn, SQL, 1)
 }
 
-dbGetMapLinks <- function(conn, L2Rchain)
+dbGetMapEdges <- function(conn, L2Rchain)
 {
     stop("COMING SOON, SORRY!")
 }
 
-dbCountMapLinks <- function(conn, L2Rchain)
+dbCountMapEdges <- function(conn, L2Rchain)
 {
     stop("COMING SOON, SORRY!")
 }
