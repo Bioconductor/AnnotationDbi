@@ -182,31 +182,9 @@ identical.collections <- function(x, y)
 ### We use it to validate our SQLite-based ann packages by comparing each of
 ### them to its envir-based sibling package e.g.:
 ###     > library(AnnotationDbi)
-###   HUMANCHIP_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.HUMANCHIP_DB("hgu95av2", "hgu95av2.db", "hgu95av2")
-###   RODENTCHIP_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.RODENTCHIP_DB("mgu74a", "mgu74a.db", "mgu74a")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.RODENTCHIP_DB("rae230a.db", "rae230a.db", "rae230a")
-###   YEASTCHIP_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEASTCHIP_DB("yeast2", "yeast2.db", "yeast2")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEASTCHIP_DB("ygs98", "ygs98.db", "ygs98")
-###   ARABIDOPSISCHIP_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.ARABIDOPSISCHIP_DB("ag", "ag.db", "ag")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.ARABIDOPSISCHIP_DB("ath1121501", "ath1121501.db", "ath1121501")
-###   HUMAN_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.HUMAN_DB("org.Hs", "org.Hs.db", "org.Hs")
-###   RODENT_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.RODENT_DB("org.Mm", "org.Mm.db", "org.Mm")
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.RODENT_DB("org.Rn", "org.Rn.db", "org.Rn")
-###   YEAST_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.YEAST_DB("YEAST", "YEAST.db", "YEAST")
-###   GO_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.GO_DB("GO", "GO.db", "GO")
-###   KEGG_DB schema
-###     > AnnotationDbi:::compareAnnDataIn2Pkgs.KEGG_DB("KEGG", "KEGG.db", "KEGG")
+###     > AnnotationDbi:::compareAnnDataIn2Pkgs("hgu95av2", "hgu95av2.db", "hgu95av2")
 ###
-compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
-                                  reverse_maps=c(), quick=FALSE, verbose=FALSE)
+compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
 {
     require(pkgname1, character.only=TRUE) || stop(pkgname1, " package needed")
     require(pkgname2, character.only=TRUE) || stop(pkgname2, " package needed")
@@ -214,9 +192,24 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, direct_maps,
     {
         get(mapname, envir=as.environment(paste("package", pkgname, sep=":")), inherits=FALSE)
     }
+    maps1 <- names(getMap(pkgname1, paste(prefix, "MAPCOUNTS", sep="")))
+    maps2 <- names(getMap(pkgname2, paste(prefix, "MAPCOUNTS", sep="")))
+    notin2 <- setdiff(maps1, maps2)
+    if (length(notin2) != 0) {
+        cat("Maps in ", pkgname1, "::", prefix, "MAPCOUNTS",
+            " not in ", pkgname2, "::", prefix, "MAPCOUNTS:\n", sep="")
+        cat("  ", paste(notin2, collapse=", "), "\n\n", sep="")
+    }
+    notin1 <- setdiff(maps2, maps1)
+    if (length(notin1) != 0) {
+        cat("Maps in ", pkgname2, "::", prefix, "MAPCOUNTS",
+            " not in ", pkgname1, "::", prefix, "MAPCOUNTS:\n", sep="")
+        cat("  ", paste(notin1, collapse=", "), "\n\n", sep="")
+    }
+
+    maps <- intersect(maps1, maps2)
     mismatch_summary <- list()
-    for (mapshortname in c(direct_maps, reverse_maps)) {
-        mapname <- paste(prefix, mapshortname, sep="")
+    for (mapname in maps) {
         cat("*** Comparing ", mapname, " maps:\n", sep="")
         map1 <- getMap(pkgname1, mapname)
         cat("***   map1 is ", mapname, " from package ", pkgname1, "\n", sep="")

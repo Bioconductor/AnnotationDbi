@@ -228,22 +228,3 @@ createAnnObjs.FLY_DB <- function(prefix, objTarget, conn, datacache)
     prefixAnnObjNames(ann_objs, prefix)
 }
 
-compareAnnDataIn2Pkgs.FLY_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
-{
-    direct_maps <- sapply(FLY_DB_AnnDbBimap_seeds, function(x) x$objName)
-    reverse_maps <- c(
-        "ACCNUM2EG",
-        "ALIAS2EG",
-        "ENZYME2EG",
-        "MAP2EG",
-        "PATH2EG",
-        "PMID2EG",
-        "REFSEQ2EG",
-        "SYMBOL2EG",
-        "UNIGENE2EG",
-        "FLYBASE2EG",
-        "GO2EG"
-    )
-    compareAnnDataIn2Pkgs(pkgname1, pkgname2, prefix, direct_maps, reverse_maps, quick, verbose)
-}
-

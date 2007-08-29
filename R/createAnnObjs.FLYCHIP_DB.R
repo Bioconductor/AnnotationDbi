@@ -239,17 +239,3 @@ createAnnObjs.FLYCHIP_DB <- function(prefix, objTarget, conn, datacache)
     prefixAnnObjNames(ann_objs, prefix)
 }
 
-compareAnnDataIn2Pkgs.FLYCHIP_DB <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbose=FALSE)
-{
-    direct_maps <- sapply(FLYCHIP_DB_AnnDbBimap_seeds, function(x) x$objName)
-    reverse_maps <- c(
-        "ALIAS2PROBE",
-        "ENZYME2PROBE",
-        "PATH2PROBE",
-        "PMID2PROBE",
-        "GO2PROBE",
-        "GO2ALLPROBES"
-    )
-    compareAnnDataIn2Pkgs(pkgname1, pkgname2, prefix, direct_maps, reverse_maps, quick, verbose)
-}
-
