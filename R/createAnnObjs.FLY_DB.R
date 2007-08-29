@@ -172,7 +172,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             list(
                 tablename="flybase",
                 Lcolname="id",
-                Rcolname="FB_id"
+                Rcolname="flybase_id"
             )
         )
     ),
