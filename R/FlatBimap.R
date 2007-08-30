@@ -52,11 +52,11 @@ setMethod("initialize", "FlatBimap",
 ### Implementation of the Bimap interface.
 ###
 
-setMethod("colmetanames", "FlatBimap",
-    function(x) x@colmetanames)
-
 setMethod("colnames", "FlatBimap",
     function(x, do.NULL=TRUE, prefix="col") colnames(x@data))
+
+setMethod("colmetanames", "FlatBimap",
+    function(x) x@colmetanames)
 
 setReplaceMethod("Rattribnames", "FlatBimap",
     function(x, value)

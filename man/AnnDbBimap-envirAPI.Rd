@@ -6,12 +6,12 @@
 \alias{ls,AnnDbBimap-method}
 
 \alias{exists}
-\alias{exists,AnnDbBimap-method}
-\alias{exists,AnnDbBimap,missing-method}
+\alias{exists,ANY,ANY,AnnDbBimap-method}
+\alias{exists,ANY,AnnDbBimap,missing-method}
 
 \alias{get}
-\alias{get,AnnDbBimap-method}
-\alias{get,AnnDbBimap,missing-method}
+\alias{get,ANY,ANY,AnnDbBimap-method}
+\alias{get,ANY,AnnDbBimap,missing-method}
 
 \alias{[[}
 \alias{[[,AnnDbBimap-method}
@@ -133,6 +133,9 @@
 }
 
 \seealso{
+  \link{Bimap-colmethods},
+  \link{Bimap-keymethods},
+  \code{\link{direction}}
 }
 
 \examples{

@@ -65,6 +65,7 @@ exportMethods(
     "mappedkeys",
     "count.mappedkeys",
     "toList",
+    "isNA",
 
     ## FlatBimap methods
     "head",
@@ -76,17 +77,16 @@ exportMethods(
     "Lfilter", "Rfilter",
     "flatten", "toTable",
     "as.character",
-    "is.na",
 
     ## from R/AnnDbMap-envirAPI.R
     "ls",
-    "as.list",
-    "mget",
-    "eapply",
-    "get",
     "exists",
+    "get",
     "[[",
     "$",
+    "mget",
+    "as.list",
+    "eapply",
     "sample",
 
     ## more...

@@ -33,6 +33,7 @@ setGeneric("keys<-", signature="x", function(x, value) standardGeneric("keys<-")
 setGeneric("mappedkeys", function(x) standardGeneric("mappedkeys"))
 setGeneric("count.mappedkeys", function(x) standardGeneric("count.mappedkeys"))
 setGeneric("toList", signature="x", function(x, keys=NULL) standardGeneric("toList"))
+setGeneric("isNA", function(x) standardGeneric("isNA"))
 
 ### Others (do whatever you want with them ;-)
 setGeneric("db", function(object) standardGeneric("db"))

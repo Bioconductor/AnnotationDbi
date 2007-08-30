@@ -4,15 +4,22 @@
 
 \alias{keys}
 \alias{keys,Bimap-method}
+
 \alias{length}
 \alias{length,Bimap-method}
+
 \alias{mappedkeys}
 \alias{mappedkeys,Bimap-method}
-\alias{mappedkeys,environment-method}
-\alias{mappedkeys,list-method}
+\alias{mappedkeys,ANY-method}
+
 \alias{count.mappedkeys}
 \alias{count.mappedkeys,Bimap-method}
 \alias{count.mappedkeys,ANY-method}
+
+\alias{isNA}
+\alias{isNA,Bimap-method}
+\alias{isNA,environment-method}
+\alias{isNA,ANY-method}
 
 \alias{Lkeys}
 \alias{Lkeys,FlatBimap-method}
@@ -78,22 +85,24 @@
 \title{Methods for manipulating the keys of a Bimap object}
 
 \description{
-  These methods are devided in 3 groups: directed, undirected and subsetting
-  methods. Unlike for undirected methods, the result of a directed method
-  depends on the direction of the Bimap object (left-to-right or
-  right-to-left, see \code{\link{direction}} for more details).
-  The subsetting methods allow to extract a submap from a Bimap object
-  by restricting the mapping to a subset of keys.
+  These methods are devided in 3 groups: directed \link{Bimap} methods,
+  undirected \link{Bimap} methods and subsetting \link{Bimap} methods.
+  Unlike for undirected methods, the result of a directed method
+  depends on the \link{direction} of the \link{Bimap} object (left-to-right
+  or right-to-left, see \code{\link{direction}} for more details).
+  The subsetting methods allow to extract a submap from a \link{Bimap}
+  object by restricting the mapping to a subset of keys.
 }
 
 \usage{
-  ## Directed methods
+  ## Directed Bimap methods
   keys(x)
   length(x)
   mappedkeys(x)
   count.mappedkeys(x)
+  isNA(x)
 
-  ## Undirected methods
+  ## Undirected Bimap methods
   Lkeys(x)
   Rkeys(x)
   Llength(x)
@@ -103,7 +112,7 @@
   count.mappedLkeys(x)
   count.mappedRkeys(x)
 
-  ## Subsetting methods
+  ## Subsetting Bimap methods
   keys(x) <- value
   x[i]
   Lkeys(x) <- value
@@ -133,7 +142,7 @@
       }
       \item{\code{objName}}{
         The name to give to the submap (only supported if \code{x} is an
-        AnnDbBimap object).
+        \link{AnnDbBimap} object).
       }
     }
   }
@@ -145,6 +154,7 @@
 \author{H. Pages}
 
 \seealso{
+  \code{\link{Bimap-colmethods}},
   \code{\link{direction}}
 }
 

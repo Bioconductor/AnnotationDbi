@@ -50,7 +50,9 @@
 \author{H. Pages}
 
 \seealso{
-  \code{\link{keys}}
+  \link{Bimap-colmethods},
+  \link{Bimap-keymethods},
+  \link{AnnDbBimap-envirAPI}
 }
 
 \examples{

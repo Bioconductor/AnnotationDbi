@@ -30,10 +30,9 @@
 ###        toTable, nrow,
 ###        as.character,
 ###        toLList, toRList,
-###        is.na
-###      NB: "keys", "length", "mappedkeys" and "count.mappedkeys" are
-###      "directed" methods i.e. they give a different result on a map and its
-###      "reverse" map (this result depends on the direction of the map).
+###      NB: "keys" and "length" are "directed" methods i.e. they give a
+###      different result on a map and its "reverse" map (this result depends
+###      on the direction of the map).
 ###      For each of these methods, there are 2 "undirected" methods: a left
 ###      method and a right method.
 ###
@@ -441,24 +440,6 @@ setMethod("count.mappedRkeys", "AnnDbMap",
     }
 )
 
-### And for an environment or a list...
-setMethod("mappedkeys", "environment",
-    function(x)
-    {
-        is_na <- eapply(x, function(x) length(x) == 1 && is.na(x), all.names=TRUE)
-        names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
-    }
-)
-setMethod("mappedkeys", "list",
-    function(x)
-    {
-        is_na <- lapply(x, function(x) length(x) == 1 && is.na(x))
-        names(is_na)[!unlist(is_na, recursive=FALSE, use.names=FALSE)]
-    }
-)
-setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
-
-
 
 ### =========================================================================
 ### The "flatten" methods
@@ -723,26 +704,6 @@ setMethod("toRList", "AnnDbMap",
     function(x, keys=NULL)
     {
         stop("toRList() is not supported for an \"", class(x), "\" object")
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "is.na" generic.
-###
-### 'is.na(x)' is a named logical vector that associates each key in the map
-### with TRUE except for those keys that are actually mapped to something
-### (other than an NA).
-###
-
-setMethod("is.na", "AnnDbBimap",
-    function(x)
-    {
-        mapped_keys <- mappedkeys(x)
-        keys <- keys(x)
-        ans <- !(keys %in% mapped_keys)
-        names(ans) <- keys
-        ans
     }
 )
 

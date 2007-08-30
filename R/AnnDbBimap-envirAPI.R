@@ -289,14 +289,14 @@ setMethod("eapply", signature(env="AnnDbBimap"),
 ### to work so we need to dispatch on the 'pos' arg too.
 .get <- function(what, map) mget(what[1], map)[[1]]
 
-setMethod("get", signature(envir="AnnDbBimap"),
+setMethod("get", signature(x="ANY", pos="ANY", envir="AnnDbBimap"),
     function(x, pos, envir, mode, inherits)
     {
         .get(x, envir)
     }
 )
 
-setMethod("get", signature(pos="AnnDbBimap", envir="missing"),
+setMethod("get", signature(x="ANY", pos="AnnDbBimap", envir="missing"),
     function(x, pos, envir, mode, inherits)
     {
         .get(x, pos)
@@ -314,14 +314,14 @@ setMethod("get", signature(pos="AnnDbBimap", envir="missing"),
 ### to work so we need to dispatch on the 'where' arg too.
 .exists <- function(x, map) x %in% keys(map)
 
-setMethod("exists", signature(envir="AnnDbBimap"),
+setMethod("exists", signature(x="ANY", where="ANY", envir="AnnDbBimap"),
     function(x, where, envir, frame, mode, inherits)
     {
         .exists(x, envir)
     }
 )
 
-setMethod("exists", signature(where="AnnDbBimap", envir="missing"),
+setMethod("exists", signature(x="ANY", where="AnnDbBimap", envir="missing"),
     function(x, where, envir, frame, mode, inherits)
     {
         .exists(x, where)

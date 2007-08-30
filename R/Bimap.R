@@ -114,8 +114,8 @@
 Bimap_methods <- c(
     ## GROUP 1: 15 methods that _must_ be defined for FlatBimap objects
     ## _and_ AnnDbBimap objects
-    "colmetanames",
     "colnames",
+    "colmetanames",
     "Rattribnames<-",
     "direction",
     "direction<-",
@@ -142,7 +142,8 @@ Bimap_methods <- c(
     "length",
     "mappedkeys",
     "count.mappedkeys",
-    "toList"
+    "toList",
+    "isNA"
 )
 
 ### A virtual class with no slot (a kind of Java "interface")
@@ -316,6 +317,40 @@ setMethod("toList", "Bimap",
                "-1"=toRList(x, keys),
                     stop("toList() is undefined for an undirected bimap"))
 )
+
+### Like "is.na", "isNA" returns a named logical vector that associates each
+### key in the map with TRUE except for those keys that are actually mapped
+### to something (other than an NA).
+setMethod("isNA", "Bimap",
+    function(x)
+    {
+        mapped_keys <- mappedkeys(x)
+        keys <- keys(x)
+        ans <- !(keys %in% mapped_keys)
+        names(ans) <- keys
+        ans
+    }
+)
+
+### "is.na" on environments has a silly semantic but since it is sealed then
+### it can't be redefined.
+setMethod("isNA", "environment",
+    function(x) is.na(as.list(x, all.names=TRUE))
+)
+
+### And for ANY other vector-like object for which an "is.na"
+### method is defined (e.g. an environment or a list)
+
+setMethod("isNA", "ANY", function(x) is.na(x))
+
+setMethod("mappedkeys", "ANY",
+    function(x)
+    {
+        notNA <- !isNA(x)
+        names(notNA)[notNA]
+    }
+)
+setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
