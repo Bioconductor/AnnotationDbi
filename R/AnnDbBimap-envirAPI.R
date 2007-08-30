@@ -55,7 +55,19 @@
 ###
 
 setMethod("ls", signature(name="AnnDbBimap"),
-    function(name, pos, envir, all.names, pattern) keys(name)
+    function(name, pos, envir, all.names, pattern)
+    {
+        if (!missing(pos))
+            warning("ignoring 'pos' argument")
+        if (!missing(envir))
+            warning("ignoring 'envir' argument")
+        if (!missing(all.names))
+            warning("ignoring 'all.names' argument")
+        keys <- keys(name)
+        if (!missing(pattern))
+            keys <- keys[grep(pattern, keys)]
+        keys
+    }
 )
 
 
@@ -262,7 +274,7 @@ setMethod("mget", signature(envir="AnnDbBimap"),
 setMethod("eapply", signature(env="AnnDbBimap"),
     function(env, FUN, ..., all.names)
     {
-        lapply(as.list(env), FUN)
+        lapply(as.list(env), FUN, ...)
     }
 )
 
@@ -275,19 +287,19 @@ setMethod("eapply", signature(env="AnnDbBimap"),
 ### and this
 ###   get("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'pos' arg too.
-do_get <- function(what, map) mget(what[1], map)[[1]]
+.get <- function(what, map) mget(what[1], map)[[1]]
 
 setMethod("get", signature(envir="AnnDbBimap"),
     function(x, pos, envir, mode, inherits)
     {
-        do_get(x, envir)
+        .get(x, envir)
     }
 )
 
 setMethod("get", signature(pos="AnnDbBimap", envir="missing"),
     function(x, pos, envir, mode, inherits)
     {
-        do_get(x, pos)
+        .get(x, pos)
     }
 )
 
@@ -300,19 +312,19 @@ setMethod("get", signature(pos="AnnDbBimap", envir="missing"),
 ### and this
 ###   exists("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'where' arg too.
-do_exists <- function(x, map) x %in% keys(map)
+.exists <- function(x, map) x %in% keys(map)
 
 setMethod("exists", signature(envir="AnnDbBimap"),
     function(x, where, envir, frame, mode, inherits)
     {
-        do_exists(x, envir)
+        .exists(x, envir)
     }
 )
 
 setMethod("exists", signature(where="AnnDbBimap", envir="missing"),
     function(x, where, envir, frame, mode, inherits)
     {
-        do_exists(x, where)
+        .exists(x, where)
     }
 )
 
@@ -358,12 +370,20 @@ setMethod("$", "AnnDbBimap", function(x, name) x[[name]])
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "sample" new generic.
 ###
-
+.sample <- function(x, size, replace, prob)
+{
+    keys <- ls(x)
+    keys <- keys[sample(length(keys), size, replace, prob)]
+    mget(keys, x)
+}
+    
 setMethod("sample", "AnnDbBimap",
     function(x, size, replace=FALSE, prob=NULL)
-    {
-        keys <- ls(x)
-        as.list(x, keys=keys[sample(length(keys), size, replace, prob)])
-    }
+        .sample(x, size, replace, prob)
+)
+
+setMethod("sample", "environment",
+    function(x, size, replace=FALSE, prob=NULL)
+        .sample(x, size, replace, prob)
 )
 
