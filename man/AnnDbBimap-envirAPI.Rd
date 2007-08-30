@@ -1,5 +1,7 @@
 \name{AnnDbBimap-envirAPI}
 
+\alias{AnnDbBimap-envirAPI}
+
 \alias{ls}
 \alias{ls,AnnDbBimap-method}
 

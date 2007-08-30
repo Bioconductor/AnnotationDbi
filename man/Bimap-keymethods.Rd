@@ -1,5 +1,7 @@
 \name{Bimap-keymethods}
 
+\alias{Bimap-keymethods}
+
 \alias{keys}
 \alias{keys,Bimap-method}
 \alias{length}
