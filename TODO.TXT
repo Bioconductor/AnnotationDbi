@@ -1,0 +1,11 @@
+- add man pages for all exported symbols with at least
+  the \usage, \arguments  and \examples sections
+
+- look at subListExtract in Biobase and see where it can
+  be used to improve speed in AnnotationDbi
+
+- change the map[["titi"]] behaviour so it returns NULL
+  if key "titi" is not found in the map (so we align exactly
+  with what [[ does with environments)
+
+-
