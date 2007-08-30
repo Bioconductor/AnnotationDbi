@@ -414,13 +414,18 @@ dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lkeyname,
 dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
-    cols <- c(SQLchunks$what_Lkey, SQLchunks$what_Rkey, SQLchunks$what_tag)
-    SQLwhat <- paste(c(cols, SQLchunks$what_Rattribs), collapse=",")
+    cols <- c(
+        SQLchunks$what_Lkey,
+        SQLchunks$what_Rkey,
+        SQLchunks$what_tag,
+        SQLchunks$what_Rattribs
+    )
+    SQLwhat <- paste(cols, collapse=",")
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     data0 <- .dbGetQuery(conn, SQL)
     if (nrow(data0) != 0)
         return(data0)
-    .make0rowDataFrame(cols)
+    .make0rowDataFrame(L2Rchain.colnames(L2Rchain))
 }
 
 dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)

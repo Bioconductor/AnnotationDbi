@@ -64,10 +64,6 @@ setMethod("ls", signature(name="AnnDbBimap"),
 ###
 
 setMethod("as.list", "AnnDbBimap",
-    function(x, keys=NULL) toList(x, keys)
-)
-
-setMethod("as.list", "AtomicAnnDbBimap",
     function(x, keys=NULL)
     {
         if (!is.null(keys) && length(keys) == 0)
@@ -158,7 +154,8 @@ setMethod("as.list", "GoAnnDbBimap",
         else
             x <- subset(x, Lkeys=NULL, Rkeys=keys)
         y <- flatten(x, fromKeys.only=TRUE)
-        keys <- keys(y)
+        if (is.null(keys))
+            keys <- keys(y)
         if (direction(x) == 1) {
             ann_list <- as.list(rep(as.character(NA), length(keys)))
             names(ann_list) <- keys
@@ -348,7 +345,10 @@ setMethod("[[", "AnnDbBimap",
             stop("attempt to select more than one element")
         if (!is.character(i) || is.na(i))
             stop("wrong argument for subsetting an object of class ", sQuote(class(x)))
-        get(i, envir=x)
+        val <- mget(i, envir=x, ifnotfound=NA)[[1]]
+        if (is.na(val) && !(i %in% keys(x)))
+            val <- NULL
+        val
     }
 )
 

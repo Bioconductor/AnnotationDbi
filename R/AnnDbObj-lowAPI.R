@@ -672,7 +672,7 @@ setMethod("as.character", "AtomicAnnDbBimap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "toLList" and "toRList" methods.
 ###
-### Like the "toList" methods, the "toLList" and "toRList" methods
+### Like the "as.list" methods, the "toLList" and "toRList" methods
 ### have a 'keys' arg.
 ### The 'keys' arg. can be one of the following:
 ###   - NULL: all map elements are extracted (equivalent to passing
