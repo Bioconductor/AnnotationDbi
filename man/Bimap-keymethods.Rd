@@ -1,4 +1,4 @@
-\name{keys}
+\name{Bimap-keymethods}
 
 \alias{keys}
 \alias{keys,Bimap-method}
