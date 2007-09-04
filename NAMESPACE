@@ -5,8 +5,8 @@ import(DBI)
 import(RSQLite)
 
 exportClasses(
-    ## from R/GONode.R
-    "GONode",
+    ## from R/GOTerms.R
+    "GOTerms",
 
     ## from R/AllClasses.R
     "Bimap",
@@ -30,7 +30,7 @@ exportClasses(
 exportMethods(
     "show",
 
-    ## from R/GONode.R
+    ## from R/GOTerms.R
     "GOID",
     "Term",
     "Ontology",
@@ -95,8 +95,8 @@ exportMethods(
 )
 
 export(
-    ## from R/GONode.R
-    GONode,
+    ## from R/GOTerms.R
+    GOTerms,
 
     ## from R/FlatBimap.R
     foldListOfAtomicVectors,

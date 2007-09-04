@@ -1,31 +1,4 @@
-### =========================================================================
-### The GONode class
-### ----------------
-###
-### The "GONode" class is the AnnotationDbi version of the "GOTerms" class
-### defined in the annotate package. The reasons we define our own
-### GOTerms-like class are (1) to get rid of the trailing "s" in "GOTerms"
-### (using a plural form to name a class that can only represent 1 single
-### GO node is confusing) and (2) because we can't import the GOTerms class
-### from annotate (that's because annotate itself already imports
-### AnnotationDbi).
-### The global picture is the following:
-###   - annotate Imports and Depends on AnnotationDbi.
-###   - The definitions of the "GOID", "Term", "Ontology", "Synonym",
-###     "Secondary" and "Definition" generics have been moved from annotate
-###     to this file.
-###   - The corresponding methods for GOTerms objects were kept in annotate.
-###   - The new corresponding methods for GONode objects are defined in
-###     in this file.
-###   - GONode and GOTerms objects should remain semantically equivalent and
-###     provide the same interface.
-###   - Maybe at some point in the future, the "GOTerms" class should be
-###     deprecated in favor of the "GONode" class...
-###
-### -------------------------------------------------------------------------
-
-
-setClass("GONode",
+setClass("GOTerms",
     representation(
         GOID="character",       # a single string (mono-valued)
         Term="character",       # a single string (mono-valued)
@@ -44,7 +17,7 @@ setClass("GONode",
 ### Initialization.
 ###
 
-setMethod("initialize", "GONode",
+setMethod("initialize", "GOTerms",
     function(.Object, ...)
     {
         args <- list(...)
@@ -72,7 +45,12 @@ setMethod("initialize", "GONode",
     }
 )
 
-GONode <- function(...) new("GONode", ...)
+GOTerms <- function(GOId, term, ontology, synonym = "", secondary = "",
+                    definition = ""){
+    return(new("GOTerms", GOID = GOId, Term = term,
+               Synonym = synonym, Secondary = secondary,
+               Definition = definition, Ontology = ontology))
+}
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -87,24 +65,24 @@ setGeneric("Definition", function(object) standardGeneric("Definition"))
 setGeneric("Synonym", function(object) standardGeneric("Synonym"))
 setGeneric("Secondary", function(object) standardGeneric("Secondary"))
 
-setMethod("GOID", "GONode", function(object) object@GOID)
+setMethod("GOID", "GOTerms", function(object) object@GOID)
 
-setMethod("Term", "GONode", function(object) object@Term)
+setMethod("Term", "GOTerms", function(object) object@Term)
 
-setMethod("Ontology", "GONode", function(object) object@Ontology)
+setMethod("Ontology", "GOTerms", function(object) object@Ontology)
 
-setMethod("Definition", "GONode", function(object) object@Definition)
+setMethod("Definition", "GOTerms", function(object) object@Definition)
 
-setMethod("Synonym", "GONode", function(object) object@Synonym)
+setMethod("Synonym", "GOTerms", function(object) object@Synonym)
 
-setMethod("Secondary", "GONode", function(object) object@Secondary)
+setMethod("Secondary", "GOTerms", function(object) object@Secondary)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "show" methods.
 ###
 
-setMethod("show", "GONode",
+setMethod("show", "GOTerms",
     function(object)
     {
         s <- character(0)

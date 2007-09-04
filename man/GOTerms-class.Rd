@@ -1,10 +1,10 @@
-\name{GONode-class}
+\name{GOTerms-class}
 \docType{class}
 
-\alias{class:GONode}
-\alias{GONode-class}
+\alias{class:GOTerms}
+\alias{GOTerms-class}
 
-\alias{GONode}
+\alias{GOTerms}
 
 \alias{GOID}
 \alias{Term}
@@ -13,22 +13,22 @@
 \alias{Synonym}
 \alias{Secondary}
 
-\alias{GOID,GONode-method}
-\alias{Term,GONode-method}
-\alias{Ontology,GONode-method}
-\alias{Definition,GONode-method}
-\alias{Synonym,GONode-method}
-\alias{Secondary,GONode-method}
+\alias{GOID,GOTerms-method}
+\alias{Term,GOTerms-method}
+\alias{Ontology,GOTerms-method}
+\alias{Definition,GOTerms-method}
+\alias{Synonym,GOTerms-method}
+\alias{Secondary,GOTerms-method}
 
-\alias{show,GONode-method}
+\alias{show,GOTerms-method}
 
-\title{Class "GONode"}
+\title{Class "GOTerms"}
 
 \description{A class to represent Gene Ontology nodes}
 
 \section{Objects from the Class}{
   Objects can be created by calls of the form
-  \code{GONode(GOId, term, ontology, definition, synonym, secondary)}.
+  \code{GOTerms(GOId, term, ontology, definition, synonym, secondary)}.
   GOId, term, and ontology are required.
 }
 
@@ -61,30 +61,30 @@
 
 \section{Methods}{
   \describe{
-    \item{GOID}{\code{signature(object = "GONode")}:
+    \item{GOID}{\code{signature(object = "GOTerms")}:
       The get method for slot GOID.}
-    \item{Term}{\code{signature(object = "GONode")}:
+    \item{Term}{\code{signature(object = "GOTerms")}:
       The get method for slot Term.}
-    \item{Ontology}{\code{signature(object = "GONode")}:
+    \item{Ontology}{\code{signature(object = "GOTerms")}:
       The get method for slot Ontology.}
-    \item{Definition}{\code{signature(object = "GONode")}:
+    \item{Definition}{\code{signature(object = "GOTerms")}:
       The get method for slot Definition.}
-    \item{Synonym}{\code{signature(object = "GONode")}:
+    \item{Synonym}{\code{signature(object = "GOTerms")}:
       The get method for slot Synonym.}
-    \item{Secondary}{\code{signature(object = "GONode")}:
+    \item{Secondary}{\code{signature(object = "GOTerms")}:
       The get method for slot Secondary.}
-    \item{show}{\code{signature(x = "GONode")}:
+    \item{show}{\code{signature(x = "GOTerms")}:
       The method for pretty print.}
   }
 }
 
 \references{\url{http://www.geneontology.org/}}
 
-\note{GONode objects are used to represent primary GO nodes in the
+\note{GOTerms objects are used to represent primary GO nodes in the
    SQLite-based annotation data package GO.db}
 
 \examples{
-  gonode <- new("GONode", GOID="GO:1234567", Term="Test", Ontology="MF",
+  gonode <- new("GOTerms", GOID="GO:1234567", Term="Test", Ontology="MF",
                           Definition="just for testing")
   GOID(gonode)
   Term(gonode)

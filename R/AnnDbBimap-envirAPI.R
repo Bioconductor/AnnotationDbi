@@ -226,11 +226,11 @@ setMethod("as.list", "GONodeAnnDbBimap",
         y <- flatten(x, fromKeys.only=TRUE)
         makeGONode <- function(go_id, Term, Ontology, Definition, ...)
         {
-            new("GONode", GOID=go_id[1],
-                          Term=Term[1],
-                          Ontology=Ontology[1],
-                          Definition=Definition[1],
-                          ...)
+            new("GOTerms", GOID=go_id[1],
+                           Term=Term[1],
+                           Ontology=Ontology[1],
+                           Definition=Definition[1],
+                           ...)
         }
         foldListOfLists(y, direction=1, mode=1, makeGONode)
     }
@@ -358,7 +358,7 @@ setMethod("[[", "AnnDbBimap",
         if (!is.character(i) || is.na(i))
             stop("wrong argument for subsetting an object of class ", sQuote(class(x)))
         val <- mget(i, envir=x, ifnotfound=NA)[[1]]
-        if (is.na(val) && !(i %in% keys(x)))
+        if (!isS4(val) && is.na(val) && !(i %in% keys(x)))
             val <- NULL
         val
     }
