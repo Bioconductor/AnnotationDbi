@@ -267,7 +267,10 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
             mapply(file.rename, from_doc_names, to_doc_names)
         }
 
-	dest_db_file <- file.path(dest_dir, x@Package, "inst", "extdata", db_file_basename)
+        dest_db_dir <- file.path(dest_dir, x@Package, "inst", "extdata")
+        if (!dir.create(dest_db_dir, recursive=TRUE))
+          stop("unable to create dest db dir ", dest_db_dir)
+	dest_db_file <- file.path(dest_db_dir, db_file_basename)
         if (!file.copy(db_file, dest_db_file))
             stop("cannot copy file '", db_file, "' to '", dest_db_file, "'")
         return(invisible(TRUE))
