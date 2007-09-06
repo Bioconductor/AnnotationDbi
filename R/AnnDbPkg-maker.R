@@ -268,7 +268,8 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
         }
 
         dest_db_dir <- file.path(dest_dir, x@Package, "inst", "extdata")
-        if (!dir.create(dest_db_dir, recursive=TRUE))
+        if (!file.exists(dest_db_dir)
+            && !dir.create(dest_db_dir, recursive=TRUE))
           stop("unable to create dest db dir ", dest_db_dir)
 	dest_db_file <- file.path(dest_db_dir, db_file_basename)
         if (!file.copy(db_file, dest_db_file))
