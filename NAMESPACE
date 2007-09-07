@@ -118,6 +118,7 @@ export(
     createAnnObjs.RODENT_DB,
     createAnnObjs.FLY_DB,
     createAnnObjs.YEAST_DB,
+    createAnnObjs.YEASTLEGACY_DB,
     createAnnObjs.GO_DB,
     createAnnObjs.KEGG_DB,
     createAnnObjs.AFFYHUEX_DB,

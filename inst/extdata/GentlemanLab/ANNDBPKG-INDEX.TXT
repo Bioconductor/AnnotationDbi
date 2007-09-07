@@ -865,6 +865,18 @@ species: Yeast
 biocViews: AnnotationData, Saccharomyces_cerevisiae
 
 
+###TEMP just to get a YEAST classic made...
+Package: YEAST.db
+Title: SGD centric annotation maps for Yeast
+Version: 0.99.1
+PkgTemplate: YEASTLEGACY.DB
+DBfile: /home/mcarlson/sanctionedSqlite/YEAST.sqlite
+AnnObjPrefix: YEAST
+AnnObjTarget: Yeast
+species: Yeast
+biocViews: AnnotationData, Saccharomyces_cerevisiae
+
+
 ### =========================================================================
 ### GO_DB schema
 ### ------------

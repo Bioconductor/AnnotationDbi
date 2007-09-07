@@ -28,6 +28,7 @@ Collate: 00RTobjs.R
          createAnnObjs.RODENT_DB.R
          createAnnObjs.FLY_DB.R
          createAnnObjs.YEAST_DB.R
+         createAnnObjs.YEASTLEGACY_DB.R
          createAnnObjs.GO_DB.R
          createAnnObjs.KEGG_DB.R
          createAnnObjs.AFFYHUEX_DB.R
