@@ -63,8 +63,7 @@ debug.sql <- function()
     if (length(names) == 0)
         return("")
     names <- gsub(.SINGLE_QUOTE, .TWO_SINGLE_QUOTE, names, fixed=TRUE)
-    names <- paste(.SINGLE_QUOTE, names, .SINGLE_QUOTE, sep="")
-    paste(names, collapse=",")
+    paste(.SINGLE_QUOTE, names, .SINGLE_QUOTE, sep="", collapse=",")
 }
 
 .toSQLWhere <- function(colname, names)
