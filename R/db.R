@@ -65,6 +65,7 @@ debug.sql <- function()
     names <- gsub(.SINGLE_QUOTE, .TWO_SINGLE_QUOTE, names, fixed=TRUE)
     paste(.SINGLE_QUOTE, names, .SINGLE_QUOTE, sep="", collapse=",")
 }
+toSQLStringSet <- .toSQLStringSet       # an alias for export
 
 .toSQLWhere <- function(colname, names)
 {

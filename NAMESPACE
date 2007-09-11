@@ -133,6 +133,7 @@ export(
     ## helpers for map creation, temporary
     ## until pluggable maps come online
     make_eg_to_go_map,
-    make_go_to_eg_map
+    make_go_to_eg_map,
+    toSQLStringSet
 )
 
