@@ -13,7 +13,7 @@ CREATE TABLE genes (
 CREATE TABLE probes (
   id INTEGER NULL,                              -- REFERENCES genes
   probe_id VARCHAR(80) PRIMARY KEY,             -- manufacturer ID
-  accession VARCHAR(20) NOT NULL,               -- GenBank accession number
+  accession VARCHAR(20),               -- GenBank accession number
   FOREIGN KEY (id) REFERENCES genes (id)
 );
 CREATE TABLE alias (
