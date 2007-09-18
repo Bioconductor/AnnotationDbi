@@ -12,7 +12,7 @@ CREATE TABLE genes (
 -- Data linked to the "genes" table.
 CREATE TABLE probes (
   probe_id VARCHAR(80) PRIMARY KEY,             -- manufacturer ID
-  accession VARCHAR(20) NOT NULL,               -- GenBank accession number
+  accession VARCHAR(20) NULL,                   -- GenBank accession number
   _id INTEGER NULL,                             -- REFERENCES genes
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
