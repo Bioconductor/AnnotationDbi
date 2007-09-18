@@ -108,6 +108,11 @@ UniGene ID
   Examples: 'Hs.2', 'Hs.511848', 'Hs.695912'
   Note: highest value observed so far for Human is Hs.695912
 
+FlyBase ID
+----------
+  SQL type: CHAR(11)
+  Examples: 'FBgn0001942', 'FBgn0030936', 'FBgn0051992'
+
 Yeast gene systematic name
 --------------------------
   SQL type: VARCHAR(14)
