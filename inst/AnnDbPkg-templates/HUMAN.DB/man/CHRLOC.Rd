@@ -15,6 +15,9 @@
   strand) to q (3' end of the sense strand) arms. Chromosomal locations on the
   antisense strand have a leading "-" sign (e. g. -1234567). 
 
+  Since some genes have multiple start sites, this field can map to
+  multiple locations.
+ 
   Mappings were based on data provided by: @CHRLOCSOURCE@
   
 }
