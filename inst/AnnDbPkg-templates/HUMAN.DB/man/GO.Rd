@@ -1,5 +1,6 @@
 \name{@ANNOBJPREFIX@GO}
 \alias{@ANNOBJPREFIX@GO}
+\alias{@ANNOBJPREFIX@GO2EG}
 \title{Map between Entrez Gene IDs and Gene Ontology (GO)}
 \description{
   @ANNOBJPREFIX@GO is an R object that provides mappings between
@@ -53,77 +54,32 @@
   
   Mappings were based on data provided by: @GOSOURCE@
 
-}
 
-\examples{
-        x <- @ANNOBJPREFIX@GO
-        # Get the entrez gene identifiers that are mapped to a GO ID
-        mapped_genes <- mappedkeys(x)
-        # Convert to a list
-        xx <- as.list(x, keys=mapped_genes)
-        if(length(xx) > 0) {
-            # Try the first one
-            got <- xx[[1]]           
-            got[[1]][["GOID"]]
-            got[[1]][["Ontology"]]
-            got[[1]][["Evidence"]]
-
-        }
-}
-\keyword{datasets}
-
-
-
-\name{@ANNOBJPREFIX@GO2EG}
-\alias{@ANNOBJPREFIX@GO2EG}
-\title{Map between Gene Ontology (GO) and Entrez Gene Identifiers}
-\description{
-   @ANNOBJPREFIX@GO2EG is an R object that provides mappings between
-   GO identifiers and entrez gene identifiers.
-}
-\details{
-  Each GO term maps to a named vector of entrez gene identifiers. The name
-  associated with each entrez gene identifier corresponds to the evidence code
-  for that GO identifier. The evidence code indicates what kind of evidence
-  supports the association between the GO and entrez gene identifiers. Evidence
-  codes currently in use include:
-
-  IMP - inferred from mutant phenotype
-
-  IGI - inferred from genetic interaction
-
-  IPI - inferred from physical interaction
-
-  ISS - inferred from sequence similarity
-
-  IDA - inferred from direct assay
-
-  IEP - inferred from expression pattern
-
-  IEA - inferred from electronic annotation
-
-  TAS - traceable author statement
-
-  NAS - non-traceable author statement
-
-  ND - no biological data available
-
-  IC - inferred by curator
-
-  A GO identifier may be mapped to the same entrez gene identifier more than once but
-  the evidence code can be different. Mappings between Gene Ontology identifiers
-  and Gene Ontology terms and other information are available in a
-  separate data package named GO.
-
-  Mappings were based on data provided by:
-
-  @GO2EGSOURCE@
-
+  
+  For the reverse map GO2EG, each GO term maps to a named vector of
+  entrez gene identifiers. A GO identifier may be mapped to the same
+  entrez gene identifier more than once but the evidence code can be
+  different. Mappings between Gene Ontology identifiers and Gene Ontology
+  terms and other information are available in a separate data package
+  named GO.
 }
 \references{
 \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
 }
 \examples{
+    x <- @ANNOBJPREFIX@GO
+    # Get the entrez gene identifiers that are mapped to a GO ID
+    mapped_genes <- mappedkeys(x)
+    # Convert to a list
+    xx <- as.list(x, keys=mapped_genes)
+    if(length(xx) > 0) {
+        # Try the first one
+        got <- xx[[1]]           
+        got[[1]][["GOID"]]
+        got[[1]][["Ontology"]]
+        got[[1]][["Evidence"]]
+    }
+    # For the reverse map:
     # Convert to a list
     xx <- as.list(@ANNOBJPREFIX@GO2EG)
     if(length(xx) > 0){
