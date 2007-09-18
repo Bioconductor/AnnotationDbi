@@ -1,13 +1,13 @@
 \name{@ANNOBJPREFIX@CHRLOC}
 \alias{@ANNOBJPREFIX@CHRLOC}
-\title{Entrez Gene IDs to Chromosomal Location}
+\title{ORF IDs to Chromosomal Location}
 \description{
-  @ANNOBJPREFIX@CHRLOC is an R object that maps entrez gene identifiers to the
+  @ANNOBJPREFIX@CHRLOC is an R object that maps ORF identifiers to the
   starting position of the gene. The position of a gene is
   measured as the number of base pairs.
 }
 \details{
-  Each entrez gene identifier maps to a named vector of chromosomal locations,
+  Each ORF identifier maps to a named vector of chromosomal locations,
   where the name indicates the chromosome. 
   
   Chromosomal locations on both the sense and antisense strands are
@@ -23,7 +23,7 @@
 }
 \examples{
         x <- @ANNOBJPREFIX@CHRLOC
-        # Get the entrez gene identifiers that are mapped to chromosome locations
+        # Get the ORF identifiers that are mapped to chromosome locations
         mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_genes)

@@ -20,8 +20,8 @@
 }
 
 \examples{
-  ## Count the number of rows in the "genes" table:
-  dbGetQuery(db_conn, "SELECT COUNT(*) FROM genes")
+  ## Count the number of rows in the "sgd" table:
+  dbGetQuery(db_conn, "SELECT COUNT(*) FROM sgd")
 }
 
 \keyword{utilities}

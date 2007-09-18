@@ -1,15 +1,15 @@
 \name{@ANNOBJPREFIX@ENZYME}
 \alias{@ANNOBJPREFIX@ENZYME}
-\alias{@ANNOBJPREFIX@ENZYME2EG}
-\title{Map between Entrez Gene IDs and Enzyme Commission (EC) Numbers}
+\alias{@ANNOBJPREFIX@ENZYME2SGD}
+\title{Map between ORF IDs and Enzyme Commission (EC) Numbers}
 \description{ 
   @ANNOBJPREFIX@ENZYME is an R object that provides mappings between
-  entrez gene identifiers and EC numbers. 
+  ORF identifiers and EC numbers. 
 }
 \details{
-  Each entrez gene identifier maps to a named vector containing the EC number that
+  Each ORF identifier maps to a named vector containing the EC number that
   corresponds to the enzyme produced by that gene. The name corresponds
-  to the entrez gene identifier. If this information is unknown, the vector
+  to the ORF identifier. If this information is unknown, the vector
   will contain an \code{NA}.
   
   Enzyme Commission numbers are assigned by the Nomenclature Committee
@@ -18,7 +18,7 @@
   identified. 
   
   An Enzyme Commission number is of the format EC x.y.z.w, where x, y, z,
-  and w are numeric numbers. In @ANNOBJPREFIX@ENZYME2EG, EC is dropped from the
+  and w are numeric numbers. In @ANNOBJPREFIX@ENZYME2SGD, EC is dropped from the
   Enzyme Commission numbers.
 
   Enzyme Commission numbers have corresponding names that describe the
@@ -41,33 +41,39 @@
   The EC name for a given EC number can be viewed at
   \url{http://www.chem.qmul.ac.uk/iupac/jcbn/index.html#6} 
   
-  Mappings between entrez gene identifiers and enzyme identifiers were obtained using files
+  Mappings between ORF identifiers and enzyme identifiers were obtained using files
   provided by: @ENZYMESOURCE@
 
+  
   For the reverse map, each EC number maps to a named vector containing
-  the entrez gene identifier that corresponds to the gene that produces
-  that enzyme. The name of the vector corresponds to the EC number. 
+  the ORF identifier that corresponds to the gene that produces
+  that enzyme. The name of the vector corresponds to the EC number.
+
+  Please note that this reverse map is so named because the ID being returned
+  to is the primary ID of the org.Sc.sgd.db database/package type and NOT
+  because the ID is an SGD systematic ID.  To get an SGD systematic ID,
+  you can do a SQL query on the sgd table.
 }
 \references{
 \url{ftp://ftp.genome.ad.jp/pub/kegg/pathways}
 }
 \examples{
     x <- @ANNOBJPREFIX@ENZYME
-    # Get the entrez gene identifiers that are mapped to an EC number 
+    # Get the ORF identifiers that are mapped to an EC number 
     mapped_genes <- mappedkeys(x)
     # Convert to a list
     xx <- as.list(x, keys=mapped_genes)
     if(length(xx) > 0) {
-      # Get the ENZYME for the first five genes
+      # Get the ENZYME id for the first five genes
       xx[1:5]
       # Get the first one
       xx[[1]]
     }
     # For the reverse map:
     # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@ENZYME2EG)
+    xx <- as.list(@ANNOBJPREFIX@ENZYME2SGD)
     if(length(xx) > 0){
-       # Gets the entrez gene identifiers for the first five enzyme
+       # Gets the ORF identifiers for the first five enzyme
        #commission numbers
        xx[1:5]
        # Get the first one

@@ -1,19 +1,19 @@
 \name{@ANNOBJPREFIX@CHR}
 \alias{@ANNOBJPREFIX@CHR}
-\title{Map Entrez Gene IDs to Chromosomes}
+\title{Map ORF IDs to Chromosomes}
 \description{
- @ANNOBJPREFIX@CHR is an R object that provides mappings between entrez gene
+ @ANNOBJPREFIX@CHR is an R object that provides mappings between ORF
  identifiers and the chromosome that contains the gene of interest. 
 }
 \details{
-  Each entrez gene identifier maps to a vector of a chromosome. 
+  Each ORF identifier maps to a vector of a chromosome. 
   
   Mappings were based on data provided by: @CHRSOURCE@
 }
 
 \examples{
         x <- @ANNOBJPREFIX@CHR
-        # Get the entrez gene identifiers that are mapped to a chromosome
+        # Get the ORF identifiers that are mapped to a chromosome
         mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_genes)

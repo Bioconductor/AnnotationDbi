@@ -1,14 +1,14 @@
 \name{@ANNOBJPREFIX@GO}
 \alias{@ANNOBJPREFIX@GO}
-\alias{@ANNOBJPREFIX@GO2EG}
-\title{Map between Entrez Gene IDs and Gene Ontology (GO)}
+\alias{@ANNOBJPREFIX@GO2SGD}
+\title{Map between ORF IDs and Gene Ontology (GO)}
 \description{
   @ANNOBJPREFIX@GO is an R object that provides mappings between
-  entrez gene identifiers and the GO identifiers that they are 
+  ORF identifiers and the GO identifiers that they are 
   directly associated with. 
 }
 \details{
-     Each Entrez Gene identifier is mapped to a list of lists.  The names on
+     Each ORF identifier is mapped to a list of lists.  The names on
      the outer list are GO identifiers.  Each inner list consists of three
      named elements: GOID, Ontology, and Evidence.
 
@@ -46,29 +46,33 @@
 
   IC: inferred by curator
   
-  Mappings between entrez gene identifiers and GO information were obtained through
-  their mappings to Entrez Gene identifiers. NAs are assigned to entrez gene identifiers
+  Mappings between ORF identifiers and GO information were obtained through
+  their mappings to ORF identifiers. NAs are assigned to ORF identifiers
   that can not be mapped to any Gene Ontology information. Mappings
   between Gene Ontology identifiers an Gene Ontology terms and other information
   are available in a separate data package named GO.
   
   Mappings were based on data provided by: @GOSOURCE@
 
-
   
-  For the reverse map GO2EG, each GO term maps to a named vector of
-  entrez gene identifiers. A GO identifier may be mapped to the same
-  entrez gene identifier more than once but the evidence code can be
+  For the reverse map @ANNOBJPREFIX@GO2SGD, each GO term maps to a named vector of
+  ORF identifiers. A GO identifier may be mapped to the same
+  ORF identifier more than once but the evidence code can be
   different. Mappings between Gene Ontology identifiers and Gene Ontology
   terms and other information are available in a separate data package
   named GO.
+
+  Please note that this reverse map is so named because the ID being returned
+  to is the primary ID of the org.Sc.sgd.db database/package type and NOT
+  because the ID is an SGD systematic ID.  To get an SGD systematic ID,
+  you can do a SQL query on the sgd table.
 }
 \references{
 \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
 }
 \examples{
     x <- @ANNOBJPREFIX@GO
-    # Get the entrez gene identifiers that are mapped to a GO ID
+    # Get the ORF identifiers that are mapped to a GO ID
     mapped_genes <- mappedkeys(x)
     # Convert to a list
     xx <- as.list(x, keys=mapped_genes)
@@ -81,11 +85,11 @@
     }
     # For the reverse map:
     # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@GO2EG)
+    xx <- as.list(@ANNOBJPREFIX@GO2SGD)
     if(length(xx) > 0){
-        # Gets the entrez gene ids for the top 2nd and 3nd GO identifiers
+        # Gets the ORF ids for the top 2nd and 3nd GO identifiers
         goids <- xx[2:3]
-        # Gets the entrez gene ids for the first element of goids
+        # Gets the ORF ids for the first element of goids
         goids[[1]]
         # Evidence code for the mappings
         names(goids[[1]])
