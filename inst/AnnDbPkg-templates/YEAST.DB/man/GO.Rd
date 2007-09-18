@@ -1,6 +1,6 @@
 \name{@ANNOBJPREFIX@GO}
 \alias{@ANNOBJPREFIX@GO}
-\alias{@ANNOBJPREFIX@GO2SGD}
+\alias{@ANNOBJPREFIX@GO2ORF}
 \title{Map between ORF IDs and Gene Ontology (GO)}
 \description{
   @ANNOBJPREFIX@GO is an R object that provides mappings between
@@ -55,17 +55,12 @@
   Mappings were based on data provided by: @GOSOURCE@
 
   
-  For the reverse map @ANNOBJPREFIX@GO2SGD, each GO term maps to a named vector of
+  For the reverse map @ANNOBJPREFIX@GO2ORF, each GO term maps to a named vector of
   ORF identifiers. A GO identifier may be mapped to the same
   ORF identifier more than once but the evidence code can be
   different. Mappings between Gene Ontology identifiers and Gene Ontology
   terms and other information are available in a separate data package
   named GO.
-
-  Please note that this reverse map is so named because the ID being returned
-  to is the primary ID of the org.Sc.sgd.db database/package type and NOT
-  because the ID is an SGD systematic ID.  To get an SGD systematic ID,
-  you can do a SQL query on the sgd table.
 }
 \references{
 \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
@@ -85,7 +80,7 @@
     }
     # For the reverse map:
     # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@GO2SGD)
+    xx <- as.list(@ANNOBJPREFIX@GO2ORF)
     if(length(xx) > 0){
         # Gets the ORF ids for the top 2nd and 3nd GO identifiers
         goids <- xx[2:3]

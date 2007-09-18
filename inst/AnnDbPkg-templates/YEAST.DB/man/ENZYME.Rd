@@ -1,6 +1,6 @@
 \name{@ANNOBJPREFIX@ENZYME}
 \alias{@ANNOBJPREFIX@ENZYME}
-\alias{@ANNOBJPREFIX@ENZYME2SGD}
+\alias{@ANNOBJPREFIX@ENZYME2ORF}
 \title{Map between ORF IDs and Enzyme Commission (EC) Numbers}
 \description{ 
   @ANNOBJPREFIX@ENZYME is an R object that provides mappings between
@@ -18,7 +18,7 @@
   identified. 
   
   An Enzyme Commission number is of the format EC x.y.z.w, where x, y, z,
-  and w are numeric numbers. In @ANNOBJPREFIX@ENZYME2SGD, EC is dropped from the
+  and w are numeric numbers. In @ANNOBJPREFIX@ENZYME2ORF, EC is dropped from the
   Enzyme Commission numbers.
 
   Enzyme Commission numbers have corresponding names that describe the
@@ -48,11 +48,6 @@
   For the reverse map, each EC number maps to a named vector containing
   the ORF identifier that corresponds to the gene that produces
   that enzyme. The name of the vector corresponds to the EC number.
-
-  Please note that this reverse map is so named because the ID being returned
-  to is the primary ID of the org.Sc.sgd.db database/package type and NOT
-  because the ID is an SGD systematic ID.  To get an SGD systematic ID,
-  you can do a SQL query on the sgd table.
 }
 \references{
 \url{ftp://ftp.genome.ad.jp/pub/kegg/pathways}
@@ -71,7 +66,7 @@
     }
     # For the reverse map:
     # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@ENZYME2SGD)
+    xx <- as.list(@ANNOBJPREFIX@ENZYME2ORF)
     if(length(xx) > 0){
        # Gets the ORF identifiers for the first five enzyme
        #commission numbers

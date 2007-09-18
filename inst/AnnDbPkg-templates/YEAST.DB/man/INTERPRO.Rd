@@ -1,18 +1,16 @@
-\name{YEASTINTERPRO}
-\alias{YEASTINTERPRO}
+\name{@ANNOBJPREFIX@INTERPRO}
+\alias{@ANNOBJPREFIX@INTERPRO}
 \title{Map Yeast Systematic Names to InterPro IDs}
 \description{
-  YEASTINTERPRO is an R environment that provides mappings between yeast
-  systematic names and the associated InterPro identifiers.
+  @ANNOBJPREFIX@INTERPRO is an R environment that provides mappings between yeast
+  ORF identifiers and the associated InterPro identifiers.
 }
 \details{
-  Each yeast systematic name maps to a vector of InterPro identifiers.
+  Each yeast ORF identifier maps to a vector of InterPro identifiers.
 
   Mappings were based on data provided by:
 
-  Saccharomyces Genome Database
-
-  Package built on Thu Mar 15 18:04:19 2007
+  @INTERPROSOURCE@
 }
 \references{
   InterPro website: \url{http://www.ebi.ac.uk/interpro/}
@@ -21,7 +19,7 @@
 }
 \examples{
         # Convert to a list
-        xxx <- as.list(YEASTINTERPRO)
+        xxx <- as.list(@ANNOBJPREFIX@INTERPRO)
         # randomly display 10 probes
         sample(xxx, 10)
 }
