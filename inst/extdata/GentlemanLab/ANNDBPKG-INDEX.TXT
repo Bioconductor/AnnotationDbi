@@ -801,7 +801,7 @@ manufacturer: Affymetrix
 ### ------------------------------------------
 ###   Fields:
 ###     Package (*)
-###     Title (*)
+###     Title
 ###     Version (*)
 ###     PkgTemplate: HUMAN.DB|RODENT.DB|FLY.DB|YEAST.DB
 ###     DBfile (*)
@@ -814,7 +814,6 @@ manufacturer: Affymetrix
 ### Fields marked with an (*) are required.
 
 Package: org.Hs.eg.db
-Title: Entrez Gene centric annotation maps for Human
 Version: 0.99.3
 PkgTemplate: HUMAN.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Hs.eg.sqlite
@@ -824,7 +823,6 @@ species: Human
 biocViews: AnnotationData, Homo_sapiens, humanLLMappings
 
 Package: org.Mm.eg.db
-Title: Entrez Gene centric annotation maps for Mouse
 Version: 0.99.3
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Mm.eg.sqlite
@@ -834,7 +832,6 @@ species: Mouse
 biocViews: AnnotationData, Mus_musculus, mouseLLMappings
 
 Package: org.Rn.eg.db
-Title: Entrez Gene centric annotation maps for Rat
 Version: 0.99.3
 PkgTemplate: RODENT.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Rn.eg.sqlite
@@ -844,7 +841,6 @@ species: Rat
 biocViews: AnnotationData, Rattus_norvegicus, ratLLMappings
 
 Package: org.Dm.eg.db
-Title: Entrez Gene centric annotation maps for Fly
 Version: 0.99.3
 PkgTemplate: FLY.DB
 DBfile: /home/mcarlson/sanctionedSqlite/org.Dm.eg.sqlite
@@ -854,7 +850,6 @@ species: Fly
 biocViews: AnnotationData, Drosophila_melanogaster
 
 Package: org.Sc.sgd.db
-Title: SGD centric annotation maps for Yeast
 Version: 0.99.3
 PkgTemplate: YEAST.DB
 ### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite (broken)

@@ -1,6 +1,6 @@
 Package: @PKGNAME@
-Title: @PKGTITLE@
-Description: @PKGTITLE@ assembled using data from public repositories
+Title: Genome wide annotation for @SPECIES@
+Description: Genome wide annotation for @SPECIES@, primarily based on mapping using ORF identifiers from SGD.
 Version: @PKGVERSION@
 Author: @AUTHOR@
 Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
