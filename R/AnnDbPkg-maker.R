@@ -241,8 +241,8 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
         if (file.exists(man_dir)) {
             if (!no.man) {
                 doc_template_names <- list.files(man_dir, "\\.Rd$")
-                is_static <- doc_template_names %in% c("db_conn.Rd", "db_file.Rd")
-                doc_template_names <- doc_template_names[!is_static]
+                #is_static <- doc_template_names %in% c("db_conn.Rd", "db_file.Rd")
+                #doc_template_names <- doc_template_names[!is_static]
                 map_names <- sub("\\.Rd$", "", doc_template_names)
                 if (length(map_names) != 0)
                     symvals <- c(symvals, getSymbolValuesForManPages(map_names, db_file))

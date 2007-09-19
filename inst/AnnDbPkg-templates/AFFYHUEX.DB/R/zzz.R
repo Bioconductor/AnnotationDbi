@@ -7,7 +7,7 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     require("methods", quietly=TRUE)
     ## Connect to the SQLite DB
     db_file <- system.file("extdata", "@DBFILE@", package=pkgname, lib.loc=libname)
-    addToNamespaceAndExport("db_file", db_file, pkgname)
+    addToNamespaceAndExport("@ANNOBJPREFIX@_dbfile", db_file, pkgname)
     db_conn <- dbFileConnect(db_file)
     addToNamespaceAndExport("db_conn", db_conn, pkgname)
     ## Create the AnnObj instances

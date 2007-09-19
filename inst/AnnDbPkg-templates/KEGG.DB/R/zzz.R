@@ -1,20 +1,23 @@
 datacache <- new.env(hash=TRUE, parent=emptyenv())
 
+@ANNOBJPREFIX@_dbconn <- function() get("dbconn", envir=datacache)
+
 .onLoad <- function(libname, pkgname)
 {
     require("methods", quietly=TRUE)
     ## Connect to the SQLite DB
-    db_file <- system.file("extdata", "@DBFILE@", package=pkgname, lib.loc=libname)
-    addToNamespaceAndExport("db_file", db_file, pkgname)
-    db_conn <- dbFileConnect(db_file)
-    addToNamespaceAndExport("db_conn", db_conn, pkgname)
+    dbfile <- system.file("extdata", "@DBFILE@", package=pkgname, lib.loc=libname)
+    assign("dbfile", dbfile, envir=datacache)
+    addToNamespaceAndExport("@ANNOBJPREFIX@_dbfile", dbfile, pkgname)
+    dbconn <- dbFileConnect(dbfile)
+    assign("dbconn", dbconn, envir=datacache)
     ## Create the AnnObj instances
-    ann_objs <- createAnnObjs.@DBSCHEMA@("@ANNOBJPREFIX@", "@ANNOBJTARGET@", db_conn, datacache)
+    ann_objs <- createAnnObjs.@DBSCHEMA@("@ANNOBJPREFIX@", "@ANNOBJTARGET@", dbconn, datacache)
     mergeToNamespaceAndExport(ann_objs, pkgname)
 }
 
 .onUnload <- function(libpath)
 {
-    dbFileDisconnect(db_conn)
+    dbFileDisconnect(@ANNOBJPREFIX@_dbconn())
 }
 
