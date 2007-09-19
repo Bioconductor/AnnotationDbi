@@ -17,7 +17,11 @@ exclude <- c(
     "chipmapsrc_fly.sqlite",
     "chipmapsrc_human.sqlite",
     "chipmapsrc_mouse.sqlite",
-    "chipmapsrc_rat.sqlite"
+    "chipmapsrc_rat.sqlite",
+    "humanCHRLOC.sqlite",
+    "mouseCHRLOC.sqlite",
+    "ratCHRLOC.sqlite",
+    "flyCHRLOC.sqlite"
 )
 
 sqlitefiles <- list.files(srcdir, pattern="\\.sqlite$")
