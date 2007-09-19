@@ -130,7 +130,7 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         rightTables=Go3tablenames()
     ),
     list(
-        objName="COMMON2SYSTEMATIC",
+        objName="COMMON2ORF",
         Class="AtomicAnnDbBimap",
         L2Rchain=list(
             list(
