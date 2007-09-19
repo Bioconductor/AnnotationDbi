@@ -1,9 +1,9 @@
-\name{YEASTSMART}
-\alias{YEASTSMART}
-\title{Map Yeast Systematic Names to SMART IDs}
+\name{@ANNOBJPREFIX@SMART}
+\alias{@ANNOBJPREFIX@SMART}
+\title{Map Yeast ORF Identifiers to SMART IDs}
 \description{
-  YEASTSMART is an R environment that provides mappings between yeast
-  systematic names and the associated SMART identifiers.
+  @ANNOBJPREFIX@SMART is an R environment that provides mappings between yeast
+  ORF Identifiers and the associated SMART identifiers.
 }
 \details{
   Each yeast systematic name maps to a vector of SMART identifiers.
@@ -21,7 +21,7 @@
 }
 \examples{
         # Convert to a list
-        xxx <- as.list(YEASTSMART)
+        xxx <- as.list(@ANNOBJPREFIX@SMART)
         # randomly display 10 probes
         sample(xxx, 10)
 }

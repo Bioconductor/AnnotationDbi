@@ -1,8 +1,9 @@
-\name{YEASTREJECTORF}
-\alias{YEASTREJECTORF}
-\title{Real and Rejected Yeast Genes (ORF)}
+\name{@ANNOBJPREFIX@REJECTORF}
+\alias{@ANNOBJPREFIX@REJECTORF}
+\title{Rejected Yeast Genes (ORF)}
 \description{
-  Real and rejected yeast ORFs from Kellis et al. (2003)
+  This is based upon Real and rejected yeast ORFs from Kellis et
+  al. (2003) to list the rejected genes by this criteria.
 }
 \details{
   A character vector which contains yeast ORFs which are rejected
@@ -15,7 +16,7 @@
 }
 \examples{
 library(YEAST)
-head(YEASTREJECTORF)
+head(@ANNOBJPREFIX@REJECTORF)
 }
 \keyword{datasets}
 

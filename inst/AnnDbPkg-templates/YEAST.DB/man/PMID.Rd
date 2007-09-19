@@ -1,16 +1,17 @@
 \name{@ANNOBJPREFIX@PMID}
 \alias{@ANNOBJPREFIX@PMID}
-\title{Map between Entrez Gene Identifiers and PubMed Identifiers}
+\alias{@ANNOBJPREFIX@PMID2ORF}
+\title{Map between ORF Identifiers and PubMed Identifiers}
 \description{
    @ANNOBJPREFIX@PMID is an R object that provides mappings between
-   entrez gene identifiers and PubMed identifiers.
+   ORF identifiers and PubMed identifiers.
 }
 \details{
-  Each entrez gene identifier is mapped to a named vector of PubMed identifiers. The
-  name associated with each vector corresponds to the entrez gene identifier. 
+  Each ORF identifier is mapped to a named vector of PubMed identifiers. The
+  name associated with each vector corresponds to the ORF identifier. 
   The length of the vector may be one or greater, depending on how
-  many PubMed identifiers a given entrez gene identifier is mapped to. An \code{NA} is
-  reported for any entrez gene identifier that cannot be mapped to a PubMed identifier.
+  many PubMed identifiers a given ORF identifier is mapped to. An \code{NA} is
+  reported for any ORF identifier that cannot be mapped to a PubMed identifier.
 
   Titles, abstracts, and possibly full texts of articles can be obtained
   from PubMed by providing a valid PubMed identifier. The pubmed function of
@@ -24,12 +25,12 @@
 }
 \examples{
         x <- @ANNOBJPREFIX@PMID
-        # Get the entrez gene identifiers that are mapped to any PubMed ID
+        # Get the ORF identifiers that are mapped to any PubMed ID
         mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x, keys=mapped_genes)
     if(length(xx) > 0){
-        # The entrez gene identifiers for the first two elements of XX
+        # The ORF identifiers for the first two elements of XX
         xx[1:2]
         # Get the first one
         xx[[1]]
@@ -41,38 +42,10 @@
             pubmed(xx[[1]], disp = "browser")
         }
     }
-}
-\keyword{datasets}
-
-
-
-\name{@ANNOBJPREFIX@PMID2EG}
-\alias{@ANNOBJPREFIX@PMID2EG}
-\title{Map between PubMed Identifiers and Entrez Gene Identifiers}
-\description{
-  @ANNOBJPREFIX@PMID2EG is an R object that provides mappings between
-  PubMed identifiers and entrez gene identifiers.
-}
-\details{
-  Each PubMed identifier is mapped to a named vector of entrez gene identifiers. The
-  name represents the PubMed identifier and the vector contains all entrez gene
-  identifiers that are represented by that PubMed identifier. The length of the vector
-  may be one or longer, depending on how many entrez gene identifiers are
-  mapped to a given PubMed identifier.
-
-  Titles, abstracts, and possibly full texts of articles can be obtained
-  from PubMed by providing a valid PubMed identifier. The pubmed function of
-  annotate can also be used for the same purpose
-
-  Mappings were based on data provided by: @PMID2EGSOURCE@
-
-}
-
-\examples{
     # Convert the object to a list
-    xx <- as.list(@ANNOBJPREFIX@PMID2EG)
+    xx <- as.list(@ANNOBJPREFIX@PMID2ORF)
     if(length(xx) > 0){
-        # The entrez gene identifiers for the first two elements of XX
+        # The ORF identifiers for the first two elements of XX
         xx[1:2]
         # Get the first one
         xx[[1]]
@@ -84,5 +57,5 @@
         }
     }
 }
-
 \keyword{datasets}
+
