@@ -1,5 +1,6 @@
 \name{@ANNOBJPREFIX@MAP}
 \alias{@ANNOBJPREFIX@MAP}
+\alias{@ANNOBJPREFIX@MAP2EG}
 \title{Map between Entrez Gene Identifiers and cytogenetic maps/bands}
 \description{
    @ANNOBJPREFIX@MAP is an R object that provides mappings between
@@ -41,45 +42,7 @@
           # Get the first one
           xx[[1]]
         }
-}
-\keyword{datasets}
-
-
-
-
-\name{@ANNOBJPREFIX@MAP2EG}
-\alias{@ANNOBJPREFIX@MAP2EG}
-\title{Map between cytogenetic maps/bands and Entrez Gene Identifiers}
-\description{
-   @ANNOBJPREFIX@MAP is an R object that provides mappings between
-   cytoband locations and entrez gene identifiers.
-}
-\details{
-  Each cytoband location is mapped to a vector of corresponding entrez
-  gene identifiers. The vector length may be one or longer, if there are
-  multiple reported genes for a given chromosomal region. An \code{NA}
-  is reported for any cytoband that cannot be mappes to any entrez gene
-  identifiers at this time.
-  
-  Cytogenetic bands for most higher organisms are labeled p1, p2, p3,
-  q1, q2, q3 (p and q are the p and q arms), etc., counting from the
-  centromere out toward the telomeres. At higher resolutions, sub-bands
-  can be seen within the bands. The sub-bands are also numbered from the
-  centromere out toward the telomere. Thus, a label of 7q31.2 indicates
-  that the band is on chromosome 7, q arm, band 3, sub-band 1, and
-  sub-sub-band 2.   
-
-  The physical location of each band on a chromosome can be obtained
-  from another object named "organism"CYTOLOC in a separate data
-  package for human(humanCHRLOC), mouse(mouseCHRLOC), and rat(ratCHRLOC).  
-  
-  Mappings were based on data provided by: @MAPSOURCE@
-
-}
-\references{
-  \url{http://www.ncbi.nlm.nih.gov}
-}
-\examples{
+        #For the reverse map @ANNOBJPREFIX@MAP2EG
         x <- @ANNOBJPREFIX@MAP2EG
         # Get the cytobands that are mapped to any entrez gene id
         mapped_bands <- mappedkeys(x)
@@ -93,3 +56,5 @@
         }
 }
 \keyword{datasets}
+
+

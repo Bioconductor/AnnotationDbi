@@ -1,5 +1,6 @@
 \name{@ANNOBJPREFIX@OMIM}
 \alias{@ANNOBJPREFIX@OMIM}
+\alias{@ANNOBJPREFIX@OMIM2EG}
 \title{Map between Entrez Gene Identifiers and Mendelian Inheritance in
   Man (MIM) identifiers}
 \description{
@@ -36,39 +37,8 @@
           # Get the first one
           xx[[1]]
         }
-}
 
-\keyword{datasets}
-
-
-
-
-\name{@ANNOBJPREFIX@OMIM2EG}
-\alias{@ANNOBJPREFIX@OMIM2EG}
-\title{Map between Mendelian Inheritance in Man (MIM) identifiers and Entrez Gene Identifiers}
-\description{
-  @ANNOBJPREFIX@OMIM is an R object that provides mappings between
-  OMIM identifiers and entrez gene identifiers.
-}
-\details{
-  Each OMIM identifier is mapped to an entrez gene identifier. An
-  \code{NA} is reported for any OMIM identifier that cannot be mapped to
-  an entrez gene identifier at this time.
-  
-  OMIM is based upon the book Mendelian Inheritance in Man
-  (V. A. McKusick) and focuses primarily on inherited or heritable
-  genetic diseases. It contains textual information, pictures, and reference
-  information that can be searched using various terms, among which the
-  MIM number is one. 
-  
-  Mappings were based on data provided by: @OMIMSOURCE@
-
-}
-\references{
-  \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene}
-  \url{http://www3.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM}
-}
-\examples{
+        # For the reverse map:
         x <- @ANNOBJPREFIX@OMIM2EG
         # Get the OMIM IDs that are mapped to the entrez gene IDs
         mapped_OMIMs <- mappedkeys(x)
@@ -83,4 +53,3 @@
 }
 
 \keyword{datasets}
-
