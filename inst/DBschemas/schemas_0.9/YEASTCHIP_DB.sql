@@ -6,7 +6,7 @@
 -- The "sgd" table is the central table.
 CREATE TABLE sgd (
   id INTEGER PRIMARY KEY,
-  systematic_name VARCHAR(14) NULL UNIQUE,      -- Yeast gene systematic name
+  systematic_name VARCHAR(14) NULL UNIQUE,      -- Yeast ORF ID
   gene_name VARCHAR(14) NULL UNIQUE,            -- Yeast gene name
   sgd_id CHAR(10) NOT NULL UNIQUE               -- SGD ID
 );

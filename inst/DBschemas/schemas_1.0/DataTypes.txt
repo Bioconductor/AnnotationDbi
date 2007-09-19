@@ -113,12 +113,12 @@ FlyBase ID
   SQL type: CHAR(11)
   Examples: 'FBgn0001942', 'FBgn0030936', 'FBgn0051992'
 
-Yeast gene systematic name
---------------------------
+Yeast ORF ID
+------------
   SQL type: VARCHAR(14)
   Examples: 'YPL141C', 'YGRWsigma7', 'YPRWdelta14'
   Note: the maximum length observed so far is 11 but using VARCHAR(14)
-        is a safety precaution for longer Yeast gene systematic names
+        is a safety precaution for longer Yeast ORF IDs
         that could appear in the future
 
 Yeast gene name
@@ -126,7 +126,7 @@ Yeast gene name
   SQL type: VARCHAR(14)
   Examples: 'ADK2', 'TMA23', '21S_RRNA_4', 'MF(ALPHA)1'
   Note: the maximum length observed so far is 10 but using VARCHAR(14)
-        is a safety precaution for longer Yeast gene systematic names
+        is a safety precaution for longer Yeast gene names
         that could appear in the future
 
 SGD ID

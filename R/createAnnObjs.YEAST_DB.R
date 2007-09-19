@@ -189,10 +189,10 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs <- createAnnDbBimaps(YEAST_DB_AnnDbBimap_seeds, seed0)
 
     ## Reverse maps
-    ann_objs$ENZYME2SGD <- revmap(ann_objs$ENZYME, objName="ENZYME2SGD")
-    ann_objs$PATH2SGD <- revmap(ann_objs$PATH, objName="PATH2SGD")
-    ann_objs$PMID2SGD <- revmap(ann_objs$PMID, objName="PMID2SGD")
-    ann_objs$GO2SGD <- revmap(ann_objs$GO, objName="GO2SGD")
+    ann_objs$ENZYME2ORF <- revmap(ann_objs$ENZYME, objName="ENZYME2ORF")
+    ann_objs$PATH2ORF <- revmap(ann_objs$PATH, objName="PATH2ORF")
+    ann_objs$PMID2ORF <- revmap(ann_objs$PMID, objName="PMID2ORF")
+    ann_objs$GO2ORF <- revmap(ann_objs$GO, objName="GO2ORF")
 
     ## 3 special maps that are not AnnDbBimap objects (just named vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
