@@ -106,14 +106,16 @@ initComputedSlots <- function(x)
         x@AnnObjTarget <- paste("chip", x@AnnObjPrefix)
     ## Automatic default for "Title" slot
     if (is.na(x@Title)) {
-        if (is.na(x@manufacturer) || is.na(x@chipName) || is.na(x@AnnObjTarget))
-            stop("not enough information to set the 'Title' slot for package ", x@Package)
-        x@Title <- paste(x@manufacturer,
-                         " ",
-                         x@chipName,
-                         " annotation data (",
-                         x@AnnObjTarget,
-                         ")", sep="")
+        if (is.na(x@manufacturer) || is.na(x@chipName) || is.na(x@AnnObjTarget)) {
+            warning("not enough information to set the 'Title' slot for package ", x@Package)
+        } else {
+            x@Title <- paste(x@manufacturer,
+                             " ",
+                             x@chipName,
+                             " annotation data (",
+                             x@AnnObjTarget,
+                             ")", sep="")
+        }
     } 
     ## Automatic default for "biocViews" slot
     if (is.na(x@biocViews)
