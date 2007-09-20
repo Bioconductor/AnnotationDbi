@@ -53,13 +53,31 @@ CREATE TABLE go_bp (
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
+CREATE TABLE go_bp_all (
+  _id INTEGER NOT NULL,                         -- REFERENCES genes
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
 CREATE TABLE go_cc (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
+CREATE TABLE go_cc_all (
+  _id INTEGER NOT NULL,                         -- REFERENCES genes
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
 CREATE TABLE go_mf (
+  _id INTEGER NOT NULL,                         -- REFERENCES genes
+  go_id CHAR(10) NOT NULL,                      -- GO ID
+  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
+CREATE TABLE go_mf_all (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
@@ -130,8 +148,11 @@ CREATE INDEX Fchromosome_locations ON chromosome_locations (_id);
 CREATE INDEX Fcytogenetic_locations ON cytogenetic_locations (_id);
 CREATE INDEX Fec ON ec (_id);
 CREATE INDEX Fgo_bp ON go_bp (_id);
+CREATE INDEX Fgo_bp_all ON go_bp_all (_id);
 CREATE INDEX Fgo_cc ON go_cc (_id);
+CREATE INDEX Fgo_cc_all ON go_cc_all (_id);
 CREATE INDEX Fgo_mf ON go_mf (_id);
+CREATE INDEX Fgo_mf_all ON go_mf_all (_id);
 CREATE INDEX Fkegg ON kegg (_id);
 CREATE INDEX Fpfam ON pfam (_id);
 CREATE INDEX Fprosite ON prosite (_id);

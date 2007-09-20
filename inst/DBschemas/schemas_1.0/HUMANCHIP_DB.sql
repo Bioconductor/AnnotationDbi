@@ -54,7 +54,7 @@ CREATE TABLE go_bp (
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
-CREATE TABLE go_bp_all ( 
+CREATE TABLE go_bp_all (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code

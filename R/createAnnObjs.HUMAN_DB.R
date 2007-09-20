@@ -242,6 +242,10 @@ createAnnObjs.HUMAN_DB <- function(prefix, objTarget, conn, datacache)
     #ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
     #ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
+    map <- ann_objs$GO2EG
+    map@rightTables <- Go3tablenames(all=TRUE)
+    map@objName <- "GO2ALLEGS"
+    ann_objs$GO2ALLEGS <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)

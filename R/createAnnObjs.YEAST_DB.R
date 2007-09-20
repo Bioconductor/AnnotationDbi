@@ -193,6 +193,10 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$PATH2ORF <- revmap(ann_objs$PATH, objName="PATH2ORF")
     ann_objs$PMID2ORF <- revmap(ann_objs$PMID, objName="PMID2ORF")
     ann_objs$GO2ORF <- revmap(ann_objs$GO, objName="GO2ORF")
+    map <- ann_objs$GO2ORF
+    map@rightTables <- Go3tablenames(all=TRUE)
+    map@objName <- "GO2ALLORFS"
+    ann_objs$GO2ALLORFS <- map
 
     ## 3 special maps that are not AnnDbBimap objects (just named vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)

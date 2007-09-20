@@ -214,6 +214,10 @@ createAnnObjs.FLY_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
     ann_objs$FLYBASE2EG <- revmap(ann_objs$FLYBASE, objName="FLYBASE2EG")
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
+    map <- ann_objs$GO2EG
+    map@rightTables <- Go3tablenames(all=TRUE)
+    map@objName <- "GO2ALLEGS"
+    ann_objs$GO2ALLEGS <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
