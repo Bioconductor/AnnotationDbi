@@ -4,14 +4,14 @@ make_eg_to_go_map <- function(chip) {
     chipNS <- getNamespace(paste(chip, ".db", sep=""))
     chip2GO <- get(paste(chip, "GO", sep=""), chipNS)
     chipGO2PROBE <- get(paste(chip, "GO2PROBE", sep=""), chipNS)
-    db_conn <- get("db_conn", chipNS)
+    dbconn <- get(paste(chip, "_dbconn", sep=""), chipNS)
     L2Rchain <- list(new("L2Rlink", tablename="genes",
                         Lcolname="gene_id", Rcolname="id"),
                     chip2GO@L2Rchain[[2]])
     eg2go.map <- new("Go3AnnDbBimap",
                      rightTables=chipGO2PROBE@rightTables,
                      L2Rchain=L2Rchain,
-                     conn=db_conn,
+                     conn=dbconn(),
                      objName="ENTREZID2GO",
                      objTarget=paste("chip", chip))
     eg2go.map
@@ -37,7 +37,7 @@ make_go_to_eg_map <- function(chip) {
 
 ##      hgu95av2ENZYME2ENTREZID <- new("AtomicAnnDbBimap",
 ##        L2Rchain=L2Rchain,
-##        conn=db_conn,
+##        conn=hgu95av2_dbconn(),
 ##        objName="ENZYME2ENTREZID",
 ##        objTarget="chip hgu95av2"
 ##      )
