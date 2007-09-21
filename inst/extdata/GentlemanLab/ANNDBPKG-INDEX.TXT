@@ -351,7 +351,7 @@ PkgTemplate: HUMANCHIP.DB
 DBfile: /home/mcarlson/sanctionedSqlite/POCRCannotation.sqlite
 AnnObjPrefix: POCRCannotation
 species: Human
-manufacturer: ISB
+manufacturer: CUSTOM
 
 ### =========================================================================
 ### RODENTCHIP_DB schema
