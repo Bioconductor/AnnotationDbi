@@ -14,7 +14,7 @@
   each DAG (tree) is a GO term (id) associated with a named vector of
   manufacturer identifiers.  The name associated with each ORF id
   corresponds to the evidence code for that GO identifier.  This environment
-  YEASTGO2ALLORFS maps between a given GO identifier and all ORF
+  @ANNOBJPREFIX@GO2ALLORFS maps between a given GO identifier and all ORF
   identifiers annotated at that GO term or one of its children in the GO ontology.  
 
   The evidence code indicates what kind of evidence supports the

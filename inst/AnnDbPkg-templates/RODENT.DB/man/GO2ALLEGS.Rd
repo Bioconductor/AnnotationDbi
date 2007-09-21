@@ -14,7 +14,7 @@
   each DAG (tree) is a GO term (id) associated with a named vector of
   manufacturer identifiers.  The name associated with each Entrez Gene id
   corresponds to the evidence code for that GO identifier.  This environment
-  YEASTGO2ALLEGS maps between a given GO identifier and all Entrez Gene
+  @ANNOBJPREFIX@GO2ALLEGS maps between a given GO identifier and all Entrez Gene
   identifiers annotated at that GO term or one of its children in the GO ontology.  
 
   The evidence code indicates what kind of evidence supports the

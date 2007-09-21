@@ -15,7 +15,6 @@
   genes and regulatory elements.  Nature 423, 241-254 (15 May 2003)
 }
 \examples{
-library(YEAST)
 head(@ANNOBJPREFIX@REJECTORF)
 }
 \keyword{datasets}
