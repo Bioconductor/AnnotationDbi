@@ -344,6 +344,14 @@ AnnObjPrefix: SHDZ
 species: Human
 manufacturer: Stanford Microarray Database
 
+Package: POCRCannotation.db
+Title: A package containing metadata for POCRC arrays
+Version: 1.99.3
+PkgTemplate: HUMANCHIP.DB
+DBfile: /home/mcarlson/sanctionedSqlite/POCRCannotation.sqlite
+AnnObjPrefix: POCRCannotation
+species: Human
+manufacturer: ISB
 
 ### =========================================================================
 ### RODENTCHIP_DB schema
