@@ -77,14 +77,14 @@ checkMAPCOUNTS <- function(pkgname, prefix)
         cat("  - MAPCOUNTS[\"", mapname, "\"] = ", count0, "\n", sep="")
 
         ## count1
-        if (is.numeric(map)) # to deal with the CHRLENGTHS case
+        if (is.vector(map) && is.null(names(map))) # to deal with the REJECTORF case
             t1 <- system.time(count1 <- sum(!is.na(map)))
         else
             t1 <- system.time(count1 <- count.mappedkeys(map))
         cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
         if (count1 != count0)
             stop("count1 and count0 differ")
-        if (is.numeric(map))
+        if (is.vector(map) && is.null(names(map)))
             next
 
         ## count2

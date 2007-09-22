@@ -340,16 +340,34 @@ setMethod("isNA", "environment",
 
 ### And for ANY other vector-like object for which an "is.na"
 ### method is defined (e.g. an environment or a list)
-
 setMethod("isNA", "ANY", function(x) is.na(x))
 
-setMethod("mappedkeys", "ANY",
+setMethod("mappedkeys", "environment",
     function(x)
     {
+        ## This is needed because the ! operator loses the "names" attributes
+        ## when applied on a named vector of length 0
+        if (length(x) == 0)
+            return(character(0))
         notNA <- !isNA(x)
         names(notNA)[notNA]
     }
 )
+
+setMethod("mappedkeys", "vector",
+    function(x)
+    {
+        if (is.null(names(x)))
+            stop("mappedkeys() is not defined on an unnamed vector")
+        ## This is needed because the ! operator loses the "names" attributes
+        ## when applied on a named vector of length 0
+        if (length(x) == 0)
+            return(character(0))
+        notNA <- !isNA(x)
+        names(notNA)[notNA]
+    }
+)
+
 setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 
 
