@@ -30,8 +30,8 @@ The API provided by \Rpackage{AnnotationDbi} allows you to treat the
 \Rclass{AnnDbBimap} objects like \Rclass{environment} instances.  For
 example, the functions \verb+[[+, \Rfunction{get}, \Rfunction{mget},
 and \Rfunction{ls} all behave the same as with the old-style packages.
-In addition, we are experimenting with new generic functions
-\Rfunction{toTable} and \Rfunction{toList} that provide some
+In addition, we are experimenting with new methods like \Rfunction{[},
+\Rfunction{toTable}, \Rfunction{subset} and many more that provide some
 additional flexibility in accessing the annotation data.
 
 <<setup0, results=hide, echo=FALSE>>=
@@ -174,12 +174,11 @@ zz <- dbGetQuery(hgu95av2_dbconn(), sql)
 
 @ 
 
-A low-level interface is available to access the data in table
-(\Rclass{data.frame}) format using \Rfunction{toTable}.
+A \Rclass{Bimap} interface is available to access the data in table
+(\Rclass{data.frame}) format using \Rfunction{[} and \Rfunction{toTable}.
 
 <<toTable>>=
-toTable(hgu95av2GO, probes[1:3])
-
+toTable(hgu95av2GO[probes[1:3]])
 @ 
 
 
@@ -234,29 +233,24 @@ allKEGGIds <- keys(revx)
 
 There are "undirected" methods related to these methods:
 <<moreUndirectedMethods>>=
-junk <- Lkeys(x)     # same for all maps in hgu95av2.db (except pseudo-map
-                         # MAPCOUNTS)
-Llength(x)           # nb of Lkeys
-junk <- Rkeys(x)    # KEGG ids for PATH/PATH2PROBE maps, GO ids for
-                         # GO/GO2PROBE/GO2ALLPROBES maps, etc...
-Rlength(x)          # nb of Rkeys
-@ 
+junk <- Lkeys(x)        # same for all maps in hgu95av2.db (except pseudo-map
+                        # MAPCOUNTS)
+Llength(x)              # nb of Lkeys
+junk <- Rkeys(x)        # KEGG ids for PATH/PATH2PROBE maps, GO ids for
+                        # GO/GO2PROBE/GO2ALLPROBES maps, etc...
+Rlength(x)              # nb of Rkeys
+@
 
 NB: they give the same result for x and revmap(x)
-
-This helps to understand the naming of Rfunction{toTable} args:
-<<naming, eval=FALSE>>=
-toTable(x, Lkeys, Rkeys)
-@ 
 
 Using revmap can be very efficient in some use cases:
 <<revmapUseCases>>=
 x <- hgu95av2CHR
 Rkeys(x)
-chroms <- c("19", "Y")
 chroms <- Rkeys(x)[23:24]
 chroms
-toTable(x, , chroms)[1:10, ]
+Rkeys(x) <- chroms
+toTable(x)[1:10, ]
 @ 
 
 To get this in the classic named-list format:
@@ -287,7 +281,8 @@ Are the probes in 'pbids' mapped to cytogenetic location "6p21.3"?
 <<cytogenetic2>>=
 pbids <- c("38912_at", "41654_at", "907_at", "2053_at", "2054_g_at", 
            "40781_at")
-toTable(x, pbids, "18q11.2")
+x <- subset(x, Lkeys=pbids, Rkeys="18q11.2")
+toTable(x)
 @ 
 
 To coerce this map to a named vector:

@@ -28,8 +28,6 @@ exportClasses(
 )
 
 exportMethods(
-    "show",
-
     ## from R/GOTerms.R
     "GOID",
     "Term",
@@ -39,44 +37,35 @@ exportMethods(
     "Definition",
 
     ## The Bimap interface
-    "colnames", "colmetanames",
-    "Lkeyname", "Rkeyname", "tagname",
-    "Rattribnames", "Rattribnames<-",
-    "direction",
-    "direction<-",
+    "direction", "direction<-",
     "revmap",
-    "Lkeys", "Rkeys",
-    "Lkeys<-", "Rkeys<-",
+    "colnames", "colmetanames",
+    "Lkeyname", "Rkeyname", "keyname",
+    "tagname",
+    "Rattribnames", "Rattribnames<-",
+    "Lkeys", "Rkeys", "keys",
+    "Lkeys<-", "Rkeys<-", "keys<-",
     "subset",
-    "mappedLkeys", "mappedRkeys",
+    "[",
+    "Llength", "Rlength", "length",
+    "isNA",
+    "mappedLkeys", "mappedRkeys", "mappedkeys",
+    "count.mappedLkeys", "count.mappedRkeys", "count.mappedkeys",
+    "toTable",
+    "head", "tail",
     "nrow",
     "links",
-    "toLList", "toRList",
-    "Llength", "Rlength",
-    "count.mappedLkeys", "count.mappedRkeys",
     "count.links",
-    "ncol",
-    "from.colpos", "to.colpos", "tags.colpos",
-    "from.keys", "to.keys",
-    "dim",
-    "keys", "keys<-",
-    "[",
-    "length",
-    "mappedkeys",
-    "count.mappedkeys",
-    "toList",
-    "isNA",
+    "ncol", "dim",
+    "show",
+    "toLList", "toRList", "toList",
+    "as.character",
 
-    ## FlatBimap methods
-    "head",
-    "tail",
-    
     ## AnnDbObj lowAPI
     "db",
     "Ltablename", "Rtablename",
     "Lfilter", "Rfilter",
-    "flatten", "toTable",
-    "as.character",
+    "flatten",
 
     ## from R/AnnDbMap-envirAPI.R
     "ls",

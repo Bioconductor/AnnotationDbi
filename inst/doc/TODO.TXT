@@ -1,72 +1,3 @@
-GO schema
----------
-
-The sqlite file is /home/nli/proj/ann/nli/annosrc/db/GO.sqlite
-The script used by Nianhua to generate the env-based pkg from this sqlite
-file is /home/nli/proj/ann/nli/envfake/GO-fake/goFake.R
-
-
-as.list
--------
-  - add a 'ifnotmapped' arg which indicates which value to attach
-    to unmapped names (default would be NULL, not NA!)
-
-mget
-----
-  - call as.list with 'ifnotmapped=NA' in order to mimic behaviour of
-    the current envir-based ann packages
-  - implement the 'ifnotfound' arg (is currently ignored, mget currently
-    returns an error when 'x' is not found).
-
-Add a 'colnames' method (requested by various people) to the low-level API.
-Conceptual definition (for AnnDbMap object x):
-  colnames(x) :== colnames(toTable(x))
-Of course, it has to be implemented in a smartest way...
-
-Nolwenn also suggested that as.list(x) return a list of named vectors
-when x is a RevAtomicAnnDbMap with tags.
-
-
-Some cleaning
--------------
-  - remove all "Annot*" classes (+ "functionORNULL") defined in
-    R/AllClasses.R + methods defined for those classes
-
-
-The 'join' slot
----------------
-The slot 'join' for AnnDbMap objects is not flexible enough. Its names
-is not good neither because it doesn't clearly indicates that it
-must always go in the "reverse" order. Example:
-  if the path to go from 'x@leftTable' to 'x@rightTable' is to go thru
-  table2 (using colL2), followed by table3 (using col23),
-  followed by 'x@rightTable' (using col3R) then 'x@join' must be
-    INNER JOIN table3 USING (col3R)
-    INNER JOIN table2 USING (col23)
-    INNER JOIN leftTable USING (colL2)
-Another ugly (and error-prone) requirement is that rightTable must be omitted
-but not leftTable in the 'join' slot.
-A much better way to store the join information would be to have a 'L2Rjoin'
-slot containing the list of cols and tables you need to go thru to go from
-the leftTable to the rightTable. For the above example, this gives a
-character vector containing 5 strings:
-  colL2 table2 col23 table3 col3R
-Note that:
-  - col names and table names are alternate
-  - first and last values must be a col name
-  - the length of the 'L2Rjoin' slot is always odd
-Advantages:
-  - it leaves out SQL syntactic details
-  - it's clearly easier to read/maintain and then less error-prone
-  - it's easy to write a low-level helper function that generates the SQL
-    code for this join. Having some extra parameters to this function
-    allow control over exactly what kind of join we want: direct or reverse,
-    INNER or LEFT, etc... The SQL code is controlled in one single place
-    (this helper function) and there is no need to change all the slots
-    (and consequently all the createAnnObjs.*_DB.R files) when we decide to
-    change the exact SQL code of the joins.
-
-
 "pluggable" maps
 ----------------
 
@@ -105,5 +36,4 @@ Of course, only maps that belong to the same package would be pluggable
 this way (e.g. hgu95av2PATH2PROBE and hgu95av2ACCNUM, x1 is a reverse
 map and x2 a direct map). So not only to.table(x1) and from.table(x2)
 must be the same, but also the SQL connection ('conn' slot).
-
 

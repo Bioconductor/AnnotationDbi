@@ -1,4 +1,32 @@
 ### =========================================================================
+### The Bimap interface and the FlatBimap class.
+### -------------------------------------------------------------------------
+
+### This is just an interface i.e. a virtual class with no slot (a kind of
+### Java "interface").
+setClass("Bimap", representation("VIRTUAL"))
+
+setClass("FlatBimap",
+    contains="Bimap",
+    representation(
+        colmetanames="character",   # must have a length <= ncol of data slot
+        direction="integer",
+        data="data.frame",
+        Lkeys="character",
+        Rkeys="character",
+        ifnotfound="list"
+    ),
+    prototype(
+        direction=1L,               # left-to-right by default
+        Lkeys=as.character(NA),
+        Rkeys=as.character(NA),
+        ifnotfound=list()           # empty list => raise an error on first key not found
+    )
+)
+
+
+
+### =========================================================================
 ### Containers for SQLite-based annotation data.
 ### -------------------------------------------------------------------------
 

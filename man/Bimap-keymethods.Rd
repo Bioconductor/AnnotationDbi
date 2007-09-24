@@ -78,7 +78,7 @@
 \alias{Rkeys<-,AnnDbBimap-method}
 
 \alias{subset}
-\alias{subset,FlatBimap-method}
+\alias{subset,Bimap-method}
 \alias{subset,AnnDbBimap-method}
 
 
