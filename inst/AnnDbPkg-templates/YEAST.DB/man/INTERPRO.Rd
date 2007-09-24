@@ -14,8 +14,6 @@
 }
 \references{
   InterPro website: \url{http://www.ebi.ac.uk/interpro/}
-  and
-  Data source: \url{http://gopher6/compbio/annotationSourceData/ftp.yeastgenome.org/pub/yeast/sequence_similarity/domains/domains.tab}
 }
 \examples{
         # Convert to a list

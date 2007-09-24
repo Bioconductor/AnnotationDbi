@@ -16,8 +16,6 @@
 }
 \references{
   SMART website: \url{http://smart.embl-heidelberg.de/}
-  and
-  Data source: \url{http://gopher6/compbio/annotationSourceData/ftp.yeastgenome.org/pub/yeast/sequence_similarity/domains/domains.tab}
 }
 \examples{
         # Convert to a list
