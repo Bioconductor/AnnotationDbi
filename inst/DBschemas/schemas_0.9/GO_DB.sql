@@ -8,7 +8,6 @@ CREATE TABLE go_ontology (
   ontology VARCHAR(9) PRIMARY KEY               -- GO ontology (short label)
 );
 CREATE TABLE go_obsolete (
-  term_id INTEGER,
   go_id CHAR(10) PRIMARY KEY,                   -- GO ID
   term VARCHAR(255) NOT NULL,                   -- textual label for the GO term
   ontology VARCHAR(9) NOT NULL,                 -- REFERENCES go_ontology
