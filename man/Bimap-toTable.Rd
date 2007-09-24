@@ -23,14 +23,12 @@
 \alias{nrow,AnnDbBimap-method}
 \alias{nrow,Go3AnnDbBimap-method}
 
-\alias{dim}
 \alias{dim,Bimap-method}
 
 \alias{count.links}
 \alias{count.links,Bimap-method}
 \alias{count.links,Go3AnnDbBimap-method}
 
-\alias{as.character}
 \alias{as.character,AtomicAnnDbBimap-method}
 
 
@@ -51,11 +49,11 @@
 
   ## Get the size of the data without extracting them (undirected methods)
   nrow(x)
-  dim(x)
+  #dim(x)
   count.links(x)  
 
   ## Extract the data (directed method)
-  as.character(x, ...)
+  #as.character(x, ...)
 }
 
 \arguments{

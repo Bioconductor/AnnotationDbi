@@ -5,7 +5,6 @@
 \alias{keys}
 \alias{keys,Bimap-method}
 
-\alias{length}
 \alias{length,Bimap-method}
 
 \alias{mappedkeys}
@@ -67,7 +66,6 @@
 \alias{keys<-}
 \alias{keys<-,Bimap-method}
 
-\alias{[}
 \alias{[,Bimap-method}
 
 \alias{Lkeys<-}
@@ -103,7 +101,7 @@
 \usage{
   ## Directed Bimap methods
   keys(x)
-  length(x)
+  #length(x)
   isNA(x)
   mappedkeys(x)
   count.mappedkeys(x)
@@ -120,7 +118,7 @@
 
   ## Subsetting Bimap methods
   keys(x) <- value
-  x[i]
+  #x[i]
   Lkeys(x) <- value
   Rkeys(x) <- value
   subset(x, ...)

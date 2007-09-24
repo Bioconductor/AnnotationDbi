@@ -31,8 +31,8 @@
 }
 
 \examples{
-  if (FALSE)
-      checkMAPCOUNTS("hgu95av2.db")
+  checkMAPCOUNTS("hgu95av2.db")
+  checkMAPCOUNTS("GO.db")
 }
 
 \keyword{utilities}

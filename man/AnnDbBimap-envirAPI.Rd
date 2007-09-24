@@ -13,10 +13,8 @@
 \alias{get,ANY,ANY,AnnDbBimap-method}
 \alias{get,ANY,AnnDbBimap,missing-method}
 
-\alias{[[}
 \alias{[[,AnnDbBimap-method}
 
-\alias{$}
 \alias{$,AnnDbBimap-method}
 
 \alias{mget}
@@ -50,8 +48,8 @@
   ls(name, pos, envir, all.names, pattern)
   exists(x, where, envir, frame, mode, inherits)
   get(x, pos, envir, mode, inherits)
-  x[[i]]
-  x$name
+  #x[[i]]
+  #x$name
 
   ## Converting to a list
   mget(x, envir, mode, ifnotfound, inherits)
