@@ -10,10 +10,10 @@ exportClasses(
 
     ## from R/AllClasses.R
     "Bimap",
-    "FlatBimap",
-    "AnnDbObj",
-    "AnnDbTable",
-    "L2Rlink",
+    #"FlatBimap",
+    #"AnnDbObj",
+    #"AnnDbTable",
+    #"L2Rlink",
     "AnnDbBimap",
     "AtomicAnnDbBimap",
     "GoAnnDbBimap",
@@ -87,10 +87,6 @@ export(
     ## from R/GOTerms.R
     GOTerms,
 
-    ## from R/FlatBimap.R
-    foldListOfAtomicVectors,
-    foldListOfLists,
-
     ## from R/AnnDbPkg-templates-common.R
     dbFileConnect,
     dbFileDisconnect,
@@ -116,7 +112,7 @@ export(
     loadAnnDbPkgIndex,
 
     ## from R/AnnDbPkg-checker.R
-    checkProperty0,
+    #checkProperty0,
     checkMAPCOUNTS,
 
     ## helpers for map creation, temporary

@@ -24,6 +24,8 @@
 \alias{Rkeyname}
 \alias{Rkeyname,Bimap-method}
 \alias{Rkeyname,AnnDbBimap-method}
+\alias{keyname}
+\alias{keyname,Bimap-method}
 
 \alias{tagname}
 \alias{tagname,Bimap-method}
@@ -56,6 +58,7 @@
   colmetanames(x)
   Lkeyname(x)
   Rkeyname(x)
+  keyname(x)
   tagname(x)
   Rattribnames(x)
   Rattribnames(x) <- value
@@ -102,6 +105,8 @@
   Lkeyname(y)
   Rkeyname(x)
   Rkeyname(y)
+  keyname(x)
+  keyname(y)
   tagname(x)
   tagname(y)
   Rattribnames(x)

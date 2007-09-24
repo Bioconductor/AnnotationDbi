@@ -247,7 +247,7 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbo
                 size <- count3
             random_keys <- sample(common_mapped_keys, size)
             submap1 <- mget(random_keys, envir=map1)
-            if (!identical(names(submap1), random_names))
+            if (!identical(names(submap1), random_keys))
                 stop("mget() didn't return the expected keys on map1")
             submap2 <- mget(random_keys, envir=map2)
             if (!identical(names(submap2), random_keys))

@@ -72,11 +72,11 @@ setMethod("ls", signature(name="AnnDbBimap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "as.list" generic.
+### The "as.list" methods.
 ###
 
 setMethod("as.list", "AnnDbBimap",
-    function(x)
+    function(x, ...)
     {
         y <- flatten(x, fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
@@ -105,7 +105,7 @@ setMethod("as.list", "AnnDbBimap",
 )
 
 setMethod("as.list", "IpiAnnDbMap",
-    function(x)
+    function(x, ...)
     {
         y <- flatten(x, fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
@@ -120,7 +120,7 @@ setMethod("as.list", "IpiAnnDbMap",
 )
 
 setMethod("as.list", "AgiAnnDbMap",
-    function(x)
+    function(x, ...)
     {
         y <- flatten(x, fromKeys.only=TRUE)
         if (nrow(y@data) == 0)
@@ -145,7 +145,7 @@ setMethod("as.list", "AgiAnnDbMap",
 ###      user  system elapsed
 ###     4.456   0.228   4.953
 setMethod("as.list", "GoAnnDbBimap",
-    function(x)
+    function(x, ...)
     {
         y <- flatten(x, fromKeys.only=TRUE)
         keys <- keys(y)
@@ -199,7 +199,7 @@ setMethod("as.list", "GoAnnDbBimap",
 ###   20.893   0.072  21.066 
 ### Why is the S4 initialization mechanism so slow?
 setMethod("as.list", "GONodeAnnDbBimap",
-    function(x)
+    function(x, ...)
     {
         y <- flatten(x, fromKeys.only=TRUE)
         makeGONode <- function(go_id, Term, Ontology, Definition, ...)

@@ -54,7 +54,7 @@
 
   ## Converting to a list
   mget(x, envir, mode, ifnotfound, inherits)
-  as.list(x, keys)
+  as.list(x, ...)
   eapply(env, FUN, ..., all.names)
 
   ## Additional convenience method
@@ -104,9 +104,6 @@
     A value to be used if the key is not found. Only \code{NA} is currently
     supported.
   }
-  \item{keys}{
-    Keys specifying the map elements to extract.
-  }
   \item{env}{
     An \link{AnnDbBimap} object.
   }
@@ -115,7 +112,7 @@
     for environments for the details).
   }
   \item{...}{
-    Optional arguments to \code{FUN}.
+    Optional arguments to \code{FUN}. These arguments are ignored by \code{as.list}.
   }
   \item{size}{
     Non-negative integer giving the number of map elements to choose.

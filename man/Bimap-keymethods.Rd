@@ -10,7 +10,8 @@
 
 \alias{mappedkeys}
 \alias{mappedkeys,Bimap-method}
-\alias{mappedkeys,ANY-method}
+\alias{mappedkeys,environment-method}
+\alias{mappedkeys,vector-method}
 
 \alias{count.mappedkeys}
 \alias{count.mappedkeys,Bimap-method}
@@ -98,9 +99,9 @@
   ## Directed Bimap methods
   keys(x)
   length(x)
+  isNA(x)
   mappedkeys(x)
   count.mappedkeys(x)
-  isNA(x)
 
   ## Undirected Bimap methods
   Lkeys(x)
