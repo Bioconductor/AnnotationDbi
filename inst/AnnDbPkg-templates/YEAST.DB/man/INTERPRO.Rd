@@ -2,7 +2,7 @@
 \alias{@ANNOBJPREFIX@INTERPRO}
 \title{Map Yeast Systematic Names to InterPro IDs}
 \description{
-  @ANNOBJPREFIX@INTERPRO is an R environment that provides mappings between yeast
+  @ANNOBJPREFIX@INTERPRO is an R object that provides mappings between yeast
   ORF identifiers and the associated InterPro identifiers.
 }
 \details{

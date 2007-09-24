@@ -2,7 +2,7 @@
 \alias{@ANNOBJPREFIX@COMMON2ORF}
 \title{Map Between Yeast Common Names and ORF Identifiers}
 \description{
-  @ANNOBJPREFIX@COMMON2ORF is an R environment that maps
+  @ANNOBJPREFIX@COMMON2ORF is an R object that maps
   the yeast common names (gene names and aliases) to the
   corresponding yeast ORF identifiers.
 }

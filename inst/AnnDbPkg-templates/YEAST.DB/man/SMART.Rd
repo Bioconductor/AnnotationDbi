@@ -2,7 +2,7 @@
 \alias{@ANNOBJPREFIX@SMART}
 \title{Map Yeast ORF Identifiers to SMART IDs}
 \description{
-  @ANNOBJPREFIX@SMART is an R environment that provides mappings between yeast
+  @ANNOBJPREFIX@SMART is an R object that provides mappings between yeast
   ORF Identifiers and the associated SMART identifiers.
 }
 \details{

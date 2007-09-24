@@ -3,7 +3,7 @@
 \title{Map Between Gene Ontology (GO) Identifiers and all Entrez Gene
   Identifiers in the subtree}
 \description{
-  @ANNOBJPREFIX@GO2ALLEGS is an R environment that provides mappings
+  @ANNOBJPREFIX@GO2ALLEGS is an R object that provides mappings
   between a given GO identifier and all Entrez Gene identifiers annotated at that
   GO term or one of its children in the GO ontology.
 }
@@ -13,7 +13,7 @@
   are structured as directed acyclic graphs (DAGs).  Each node in
   each DAG (tree) is a GO term (id) associated with a named vector of
   manufacturer identifiers.  The name associated with each Entrez Gene id
-  corresponds to the evidence code for that GO identifier.  This environment
+  corresponds to the evidence code for that GO identifier.  This object
   @ANNOBJPREFIX@GO2ALLEGS maps between a given GO identifier and all Entrez Gene
   identifiers annotated at that GO term or one of its children in the GO ontology.  
 
