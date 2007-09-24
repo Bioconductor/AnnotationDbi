@@ -96,7 +96,7 @@
 ###    A AnnDbBimap object is a bimap whose data are stored in a data base.
 ###    A FlatBimap object is a bimap whose data (left keys, right keys and
 ###    links) are stored in memory (in a data frame for the links).
-###    Conceptually, an AnnDbBimap and a FlatBimap object are the same (only
+###    Conceptually, AnnDbBimap and FlatBimap objects are the same (only
 ###    their internal representation differ) so it's natural to try to define
 ###    a set of methods that make sense for both (so they can be manipulated
 ###    in a similar way). This common interface is the Bimap interface.
