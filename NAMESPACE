@@ -62,7 +62,7 @@ exportMethods(
     "as.character",
 
     ## AnnDbObj lowAPI
-    #"db",
+    #"dbconn",
     #"Ltablename", "Rtablename",
     #"Lfilter", "Rfilter",
     #"flatten",

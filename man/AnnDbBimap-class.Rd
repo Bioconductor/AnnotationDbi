@@ -38,8 +38,7 @@
 
 % Standard generic methods
 
-\alias{show,AnnDbBimap-method}
-
+%coming soon
 
 \title{AnnDbBimap objects}
 
@@ -50,7 +49,6 @@
 }
 
 \seealso{
-  \link{Bimap-keymethods},
   \link{Bimap},
   \link{AnnDbBimap-envirAPI}
 }

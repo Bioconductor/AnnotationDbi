@@ -207,13 +207,13 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     )
 )
 
-createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.RODENT_DB <- function(prefix, objTarget, dbconn, datacache)
 {
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
-        conn=conn
+        conn=dbconn
     )
     ann_objs <- createAnnDbBimaps(RODENT_DB_AnnDbBimap_seeds, seed0)
 
@@ -235,8 +235,8 @@ createAnnObjs.RODENT_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$GO2ALLEGS <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(conn)
-    ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+    ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
     ## Some pre-caching
     Lkeys(ann_objs$GO)

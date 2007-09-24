@@ -273,13 +273,13 @@ GO_DB_AnnDbBimap_seeds <- list(
     )
 )
 
-createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.GO_DB <- function(prefix, objTarget, dbconn, datacache)
 {
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
-        conn=conn
+        conn=dbconn
     )
     ann_objs <- createAnnDbBimaps(GO_DB_AnnDbBimap_seeds, seed0)
 
@@ -302,7 +302,7 @@ createAnnObjs.GO_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$MFOFFSPRING <- revmap2("MFANCESTOR", "MFOFFSPRING")
 
     ## 1 special map that is not an AnnDbBimap object (just a named integer vector)
-    ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

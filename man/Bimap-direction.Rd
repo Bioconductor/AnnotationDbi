@@ -2,14 +2,6 @@
 
 \alias{Bimap-direction}
 
-% Classes
-
-\alias{Bimap}
-\alias{class:Bimap}
-\alias{Bimap-class}
-
-% Methods
-
 \alias{direction}
 \alias{direction,FlatBimap-method}
 \alias{direction,AnnDbBimap-method}
@@ -29,7 +21,7 @@
 \title{Methods for accessing/changing the direction of a Bimap object}
 
 \description{
-  These methods are part of the Bimap API.
+  These methods are part of the \link{Bimap} interface.
 }
 
 \usage{
@@ -50,7 +42,7 @@
     \describe{
       \item{\code{objName}}{
         The name to give to the reversed map (only supported if \code{x} is an
-        AnnDbBimap object).
+        \link{AnnDbBimap} object).
       }
     }
   }
@@ -62,9 +54,7 @@
 \author{H. Pages}
 
 \seealso{
-  \link{Bimap-colmethods},
-  \link{Bimap-keymethods},
-  \link{Bimap-toTable},
+  \link{Bimap},
   \link{AnnDbBimap-envirAPI}
 }
 

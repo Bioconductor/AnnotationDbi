@@ -16,9 +16,9 @@ dbFileConnect <- function(db_file)
 }
 
 ### Used at unload time (in .onUnload).
-dbFileDisconnect <- function(db_conn)
+dbFileDisconnect <- function(dbconn)
 {
-    dbDisconnect(db_conn)
+    dbDisconnect(dbconn)
 }
 
 ### Used at load time (in .onLoad) by the SQLite-based ann data package to

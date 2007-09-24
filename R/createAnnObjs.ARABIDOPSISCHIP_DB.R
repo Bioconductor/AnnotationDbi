@@ -169,13 +169,13 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     )
 )
 
-createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
 {
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
-        conn=conn
+        conn=dbconn
     )
     ann_objs <- createAnnDbBimaps(ARABIDOPSISCHIP_DB_AnnDbBimap_seeds, seed0)
 
@@ -190,7 +190,7 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$GO2ALLPROBES <- map
 
     ## 1 special map that is not an AnnDbBimap object (just a named integer vector)
-    ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
     ## Some pre-caching
     Lkeys(ann_objs$GO)

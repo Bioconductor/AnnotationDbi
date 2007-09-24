@@ -63,23 +63,23 @@ createAnnDbBimaps <- function(seeds, seed0, envir=NULL)
 
 ### 3 special maps that are not AnnDbBimap objects (just named vectors).
 
-createCHRLENGTHS <- function(conn)
+createCHRLENGTHS <- function(dbconn)
 {
-    data <- dbGetTable(conn, "chrlengths")
+    data <- dbGetTable(dbconn, "chrlengths")
     CHRLENGTHS <- data[["length"]]
     names(CHRLENGTHS) <- data[["chr"]]
     CHRLENGTHS
 }
 
-createREJECTORF <- function(conn)
+createREJECTORF <- function(dbconn)
 {
-    data <- dbGetTable(conn, "reject_orf")
+    data <- dbGetTable(dbconn, "reject_orf")
     data[["systematic_name"]]
 }
 
-createMAPCOUNTS <- function(conn, prefix)
+createMAPCOUNTS <- function(dbconn, prefix)
 {
-    data <- dbGetTable(conn, "qcdata", "WHERE map_name != 'TOTAL' ORDER BY map_name")
+    data <- dbGetTable(dbconn, "qcdata", "WHERE map_name != 'TOTAL' ORDER BY map_name")
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
     MAPCOUNTS

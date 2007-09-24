@@ -63,9 +63,9 @@ initWithDbMetada <- function(x, db_file)
         CHIPNAME="chipName",
         MANUFACTURERURL="manufacturerUrl"
     )
-    db_conn <- dbFileConnect(db_file)
-    on.exit(dbFileDisconnect(db_conn))
-    metadata <- dbGetTable(db_conn, "metadata")
+    dbconn <- dbFileConnect(db_file)
+    on.exit(dbFileDisconnect(dbconn))
+    metadata <- dbGetTable(dbconn, "metadata")
     if (!identical(colnames(metadata), c("name", "value")))
         stop("\"metadata\" table has unexpected col names")
     if (any(duplicated(metadata$name))) {
@@ -131,9 +131,9 @@ initComputedSlots <- function(x)
 
 initWithDbDoc <- function(db_file)
 {
-    db_conn <- dbFileConnect(db_file)
-    on.exit(dbFileDisconnect(db_conn))
-    map_metadata <- dbGetTable(db_conn, "map_metadata")
+    dbconn <- dbFileConnect(db_file)
+    on.exit(dbFileDisconnect(dbconn))
+    map_metadata <- dbGetTable(dbconn, "map_metadata")
     map_metadata
 }
 
@@ -243,7 +243,7 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
         if (file.exists(man_dir)) {
             if (!no.man) {
                 doc_template_names <- list.files(man_dir, "\\.Rd$")
-                #is_static <- doc_template_names %in% c("db_conn.Rd", "db_file.Rd")
+                #is_static <- doc_template_names %in% c("_dbconn.Rd", "_dbfile.Rd")
                 #doc_template_names <- doc_template_names[!is_static]
                 map_names <- sub("\\.Rd$", "", doc_template_names)
                 if (length(map_names) != 0)

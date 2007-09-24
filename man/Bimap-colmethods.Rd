@@ -39,7 +39,7 @@
 \title{Methods for manipulating the col names of a Bimap object}
 
 \description{
-  These methods are part of the \link{Bimap} API.
+  These methods are part of the \link{Bimap} interface.
 
   They are accessor methods that can be used to manipulate the column
   names of a \link{Bimap} object.
@@ -84,9 +84,7 @@
 \author{H. Pages}
 
 \seealso{
-  \link{Bimap-direction},
-  \link{Bimap-keymethods},
-  \link{Bimap-toTable},
+  \link{Bimap},
   \link{AnnDbBimap-envirAPI}
 }
 

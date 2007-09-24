@@ -8,7 +8,7 @@
 ###
 ### This file defines and implements the low-level API for AnnDbObj objects.
 ### This API consists of the following set of generics:
-###     db,
+###     dbconn,
 ###     Ltablename, Rtablename,
 ###     Lfilter, Rfilter,
 ###     flatten,
@@ -21,13 +21,13 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "db", "Ltablename", "Rtablename", "Lfilter" and "Rfilter" new
+### The "dbconn", "Ltablename", "Rtablename", "Lfilter" and "Rfilter" new
 ### generics.
 ###
 ### They do NOT access the database!
 ###
 
-setMethod("db", "AnnDbObj", function(object) object@conn)
+setMethod("dbconn", "AnnDbObj", function(object) object@conn)
 
 setMethod("Ltablename", "AnnDbBimap",
     function(x) L2Rchain.Ltablename(x@L2Rchain))
@@ -65,16 +65,16 @@ setMethod("Rfilter", "AnnDbBimap",
 #setMethod("flatten", "AnnDbTable",
 #    function(x)
 #    {
-#        dbRawAnnDbMapToTable(db(x), Ltablename(x), Lkeyname(x), Lkeys,
-#                                    NULL, NULL, NULL,
-#                                    x@showCols, x@from)
+#        dbRawAnnDbMapToTable(dbconn(x), Ltablename(x), Lkeyname(x), Lkeys,
+#                                        NULL, NULL, NULL,
+#                                        x@showCols, x@from)
 #    }
 #)
 
 setMethod("flatten", "AnnDbBimap",
     function(x, fromKeys.only=FALSE)
     {
-        data0 <- dbSelectFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys)
+        data0 <- dbSelectFromL2Rchain(dbconn(x), x@L2Rchain, x@Lkeys, x@Rkeys)
         Lkeys <- Rkeys <- as.character(NA)
         if (!fromKeys.only || direction(x) ==  1)
             Lkeys <- Lkeys(x)
@@ -99,7 +99,7 @@ setMethod("flatten", "Go3AnnDbBimap",
         {
             tablename <- Rtablename(x)[ontology]
             L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
-            dbSelectFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys)
+            dbSelectFromL2Rchain(dbconn(x), L2Rchain, x@Lkeys, x@Rkeys)
         }
         data0 <- rbind(getPartialSubmap("BP"),
                        getPartialSubmap("CC"),

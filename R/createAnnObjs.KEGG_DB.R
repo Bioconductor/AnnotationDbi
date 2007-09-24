@@ -50,13 +50,13 @@ KEGG_DB_AnnDbBimap_seeds <- list(
     )
 )
 
-createAnnObjs.KEGG_DB <- function(prefix, objTarget, conn, datacache)
+createAnnObjs.KEGG_DB <- function(prefix, objTarget, dbconn, datacache)
 {
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache,
-        conn=conn
+        conn=dbconn
     )
     ann_objs <- createAnnDbBimaps(KEGG_DB_AnnDbBimap_seeds, seed0)
 
@@ -66,7 +66,7 @@ createAnnObjs.KEGG_DB <- function(prefix, objTarget, conn, datacache)
     ann_objs$GO2ENZYMEID <- revmap(ann_objs$ENZYMEID2GO, objName="GO2ENZYMEID")
 
     ## 1 special map that is not an AnnDbBimap object (just a named integer vector)
-    ann_objs$MAPCOUNTS <- createMAPCOUNTS(conn, prefix)
+    ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
     prefixAnnObjNames(ann_objs, prefix)
 }

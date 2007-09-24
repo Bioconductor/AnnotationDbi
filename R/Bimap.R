@@ -3,22 +3,62 @@
 ### -----------------------------------------
 
 
-### -------------------------------------------------------------------------
 ### The bimap concept
 ### -----------------
 ###
-### Example of a bimap M:
+### A bimap is made of:
 ###
-###   4 objects on the left (Lkeys): a, b, c, d
-###   2 objects on the right (Rkeys): A, B, C
+###   - 2 sets of objects: the left objects and the right objects. All the
+###     objects have a name and this name is unique in each set (i.e. in the
+###     left set and in the right set). The names of the left (resp. right)
+###     objects are called the left (resp. right) keys or the Lkeys (resp. the
+###     Rkeys).
+###     
+###   - Any number of links (edges) between the left and right objects. Note
+###     that the links can be tagged. In our model, for a given bimap, either
+###     none or all the links are tagged.
 ###
-###   Edges:
-###      a <--> A
-###      a <--> B
-###      b <--> A
-###      d <--> C
+### In other words, a bimap is a bipartite graph.
 ###
-### The "flat" representation of M looks like a data frame:
+### Here are some examples:
+###
+###   1. bimap B1:
+###
+###      4 left objects (Lkeys): "a", "b", "c", "d"
+###      3 objects on the right (Rkeys): "A", "B", "C"
+###
+###      Links (edges):
+###        "a" <--> "A"
+###        "a" <--> "B"
+###        "b" <--> "A"
+###        "d" <--> "C"
+###
+###      Note that:
+###        - There can be any number of links starting from or ending at a
+###          given object.
+###        - The links in this example are untagged.
+###
+###   2. bimap B2:
+###
+###      4 left objects (Lkeys): "a", "b", "c", "d"
+###      3 objects on the right (Rkeys): "A", "B", "C"
+###
+###      Tagged links (edges):
+###        "a" <-"x"-> "A"
+###        "a" <-"y"-> "B"
+###        "b" <-"x"-> "A"
+###        "d" <-"x"-> "C"
+###        "d" <-"y"-> "C"
+###
+###      Note that there are 2 links between d and C: 1 with tag "x" and 1
+###      with tag "y".
+###
+###
+### Flat representation of a bimap
+### ------------------------------
+###
+### The flat representation of a bimap is a data frame. For example,
+### for B1, it is:
 ###
 ###   left  right
 ###      a      A 
@@ -28,30 +68,28 @@
 ###
 ### If in addition the right objects have 1 multi-valued attribute, for
 ### example, a numeric vector:
+###
 ###   A <-- c(1.2, 0.9)
 ###   B <-- character(0)
 ###   C <-- -1:1
 ###
-### then the "flat" representation of M becomes:
+### then the flat representation of B1 becomes:
 ###
-###   left  right  Rattrib
-###      a      A      1.2
-###      a      A      0.9
-###      a      B       NA
-###      b      A      1.2
-###      b      A      0.9
-###      d      C       -1
-###      d      C        0
-###      d      C        1
+###   left  right  Rattrib1
+###      a      A       1.2
+###      a      A       0.9
+###      a      B        NA
+###      b      A       1.2
+###      b      A       0.9
+###      d      C        -1
+###      d      C         0
+###      d      C         1
 ###
 ### Note that now the number of rows is greater than the number of links!
 ###
-### -------------------------------------------------------------------------
-
-
-### -------------------------------------------------------------------------
-### The "Bimap" interface
-### ---------------------
+###
+### The Bimap interface in AnnotationDbi
+### ------------------------------------
 ###
 ### AnnDbBimap and FlatBimap objects:
 ###
@@ -61,7 +99,7 @@
 ###    Conceptually, an AnnDbBimap and a FlatBimap object are the same (only
 ###    their internal representation differ) so it's natural to try to define
 ###    a set of methods that make sense for both (so they can be manipulated
-###    in a similar way). This common interface is the "Bimap" interface.
+###    in a similar way). This common interface is the Bimap interface.
 ###
 ### The "flatten" generic:
 ###
@@ -74,8 +112,6 @@
 ###    read-only). This conversion from AnnDbBimap to FlatBimap is performed
 ###    by the "flatten" generic function (with methods for AnnDbBimap objects
 ###    only). 
-###    The "flatten" generic (defined for AnnDbBimap objects only) converts
-###    an AnnDbBimap object into a FlatBimap object .
 ###
 ### Property0:
 ###
@@ -405,8 +441,8 @@ setMethod("Lkeys", "AnnDbBimap",
     {
         if (.inslot.Lkeys(x))
             return(x@Lkeys)
-        dbUniqueVals(db(x), Ltablename(x), Lkeyname(x),
-                            Lfilter(x), x@datacache)
+        dbUniqueVals(dbconn(x), Ltablename(x), Lkeyname(x),
+                                Lfilter(x), x@datacache)
     }
 )
 
@@ -429,8 +465,8 @@ setMethod("Rkeys", "AnnDbBimap",
     {
         if (.inslot.Rkeys(x))
             return(x@Rkeys)
-        dbUniqueVals(db(x), Rtablename(x), Rkeyname(x),
-                            Rfilter(x), x@datacache)
+        dbUniqueVals(dbconn(x), Rtablename(x), Rkeyname(x),
+                                Rfilter(x), x@datacache)
     }
 )
 
@@ -442,8 +478,8 @@ setMethod("Rkeys", "Go3AnnDbBimap",
         getNames <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
-            dbUniqueVals(db(x), tablename, "go_id",
-                                Rfilter(x), x@datacache)
+            dbUniqueVals(dbconn(x), tablename, "go_id",
+                                    Rfilter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         ## (if not, then apply unique to this result)
@@ -612,8 +648,8 @@ setMethod("Llength", "AnnDbBimap",
     {
         if (.inslot.Lkeys(x))
             return(length(x@Lkeys))
-        dbCountUniqueVals(db(x), Ltablename(x), Lkeyname(x),
-                                 Lfilter(x), x@datacache)
+        dbCountUniqueVals(dbconn(x), Ltablename(x), Lkeyname(x),
+                                     Lfilter(x), x@datacache)
     }
 )
 
@@ -625,8 +661,8 @@ setMethod("Rlength", "AnnDbBimap",
     {
         if (.inslot.Rkeys(x))
             return(length(x@Rkeys))
-        dbCountUniqueVals(db(x), Rtablename(x), Rkeyname(x),
-                                 Rfilter(x), x@datacache)
+        dbCountUniqueVals(dbconn(x), Rtablename(x), Rkeyname(x),
+                                     Rfilter(x), x@datacache)
     }
 )
 
@@ -638,7 +674,7 @@ setMethod("Rlength", "Go3AnnDbBimap",
         countNames <- function(ontology)
         {
             tablename <- Rtablename(x)[ontology]
-            dbCountUniqueVals(db(x), tablename, "go_id", Rfilter(x), x@datacache)
+            dbCountUniqueVals(dbconn(x), tablename, "go_id", Rfilter(x), x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countNames("BP") + countNames("CC") + countNames("MF")
@@ -711,8 +747,8 @@ setMethod("mappedLkeys", "FlatBimap",
 setMethod("mappedLkeys", "AnnDbBimap",
     function(x)
     {
-        dbUniqueMappedKeys(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
-                                  1, x@datacache)
+        dbUniqueMappedKeys(dbconn(x), x@L2Rchain, x@Lkeys, x@Rkeys,
+                                      1, x@datacache)
     }
 )
 
@@ -723,8 +759,8 @@ setMethod("mappedLkeys", "Go3AnnDbBimap",
         {
             tablename <- Rtablename(x)[ontology]
             L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
-            dbUniqueMappedKeys(db(x), L2Rchain, x@Lkeys, x@Rkeys,
-                                      1, x@datacache)
+            dbUniqueMappedKeys(dbconn(x), L2Rchain, x@Lkeys, x@Rkeys,
+                                          1, x@datacache)
         }
         keys1 <- getMappedKeys("BP")
         keys2 <- getMappedKeys("CC")
@@ -741,8 +777,8 @@ setMethod("mappedRkeys", "FlatBimap",
 setMethod("mappedRkeys", "AnnDbBimap",
     function(x)
     {
-        dbUniqueMappedKeys(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
-                                  -1, x@datacache)
+        dbUniqueMappedKeys(dbconn(x), x@L2Rchain, x@Lkeys, x@Rkeys,
+                                      -1, x@datacache)
     }
 )
 
@@ -754,8 +790,8 @@ setMethod("mappedRkeys", "Go3AnnDbBimap",
             tablename <- Rtablename(x)[ontology]
             L2Rchain <- x@L2Rchain
             L2Rchain[[length(L2Rchain)]]@tablename <- tablename
-            dbUniqueMappedKeys(db(x), L2Rchain, x@Lkeys, x@Rkeys,
-                                      -1, x@datacache)
+            dbUniqueMappedKeys(dbconn(x), L2Rchain, x@Lkeys, x@Rkeys,
+                                          -1, x@datacache)
         }
         keys1 <- getMappedKeys("BP")
         keys2 <- getMappedKeys("CC")
@@ -818,8 +854,8 @@ setMethod("count.mappedLkeys", "Bimap",
 setMethod("count.mappedLkeys", "AnnDbBimap",
     function(x)
     {
-        dbCountUniqueMappedKeys(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
-                                       1, x@datacache)
+        dbCountUniqueMappedKeys(dbconn(x), x@L2Rchain, x@Lkeys, x@Rkeys,
+                                           1, x@datacache)
     }
 )
 
@@ -833,8 +869,8 @@ setMethod("count.mappedRkeys", "Bimap",
 setMethod("count.mappedRkeys", "AnnDbBimap",
     function(x)
     {
-        dbCountUniqueMappedKeys(db(x), x@L2Rchain, x@Lkeys, x@Rkeys,
-                                       -1, x@datacache)
+        dbCountUniqueMappedKeys(dbconn(x), x@L2Rchain, x@Lkeys, x@Rkeys,
+                                           -1, x@datacache)
     }
 )
 
@@ -845,8 +881,8 @@ setMethod("count.mappedRkeys", "Go3AnnDbBimap",
         {
             tablename <- Rtablename(x)[ontology]
             L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
-            dbCountUniqueMappedKeys(db(x), L2Rchain, x@Lkeys, x@Rkeys,
-                                           -1, x@datacache)
+            dbCountUniqueMappedKeys(dbconn(x), L2Rchain, x@Lkeys, x@Rkeys,
+                                               -1, x@datacache)
         }
         ## Because a given go_id can only belong to 1 of the 3 ontologies...
         countMappedNames("BP") + countMappedNames("CC") + countMappedNames("MF")
@@ -1014,14 +1050,14 @@ setMethod("nrow", "FlatBimap",
 setMethod("nrow", "AnnDbTable",
     function(x)
     {
-        dbCountRawAnnDbMapRows(db(x), Ltablename(x), Lkeyname(x), NULL, NULL, x@from)
+        dbCountRawAnnDbMapRows(dbconn(x), Ltablename(x), Lkeyname(x), NULL, NULL, x@from)
     }
 )
 
 setMethod("nrow", "AnnDbBimap",
     function(x)
     {
-        dbCountRowsFromL2Rchain(db(x), x@L2Rchain, x@Lkeys, x@Rkeys)
+        dbCountRowsFromL2Rchain(dbconn(x), x@L2Rchain, x@Lkeys, x@Rkeys)
     }
 )
 
@@ -1032,7 +1068,7 @@ setMethod("nrow", "Go3AnnDbBimap",
         {
             tablename <- Rtablename(x)[ontology]
             L2Rchain <- makeGo3L2Rchain(x@L2Rchain, tablename, ontology)
-            dbCountRowsFromL2Rchain(db(x), L2Rchain, x@Lkeys, x@Rkeys)
+            dbCountRowsFromL2Rchain(dbconn(x), L2Rchain, x@Lkeys, x@Rkeys)
         }
         countRows("BP") + countRows("CC") + countRows("MF")
     }

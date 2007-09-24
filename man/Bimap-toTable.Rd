@@ -35,7 +35,7 @@
 \title{Methods for extracting data from a Bimap object}
 
 \description{
-  These methods are part of the \link{Bimap} API.
+  These methods are part of the \link{Bimap} interface.
 
   They can be used to extract data from a \link{Bimap} object.
 }
@@ -74,9 +74,7 @@
 \author{H. Pages}
 
 \seealso{
-  \link{Bimap-direction},
-  \link{Bimap-colmethods},
-  \link{Bimap-keymethods},
+  \link{Bimap},
   \link{AnnDbBimap-envirAPI}
 }
 

@@ -37,7 +37,7 @@ setGeneric("toRList", signature="x", function(x) standardGeneric("toRList"))
 setGeneric("toList", signature="x", function(x) standardGeneric("toList"))
 
 ### Others (do whatever you want with them ;-)
-setGeneric("db", function(object) standardGeneric("db"))
+setGeneric("dbconn", function(object) standardGeneric("dbconn"))
 setGeneric("Ltablename", function(x) standardGeneric("Ltablename"))
 setGeneric("Rtablename", function(x) standardGeneric("Rtablename"))
 setGeneric("Lfilter", function(x) standardGeneric("Lfilter"))
