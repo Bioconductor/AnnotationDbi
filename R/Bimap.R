@@ -1015,13 +1015,14 @@ setMethod("dim", "Bimap",
 .key.summary <- function(keys, nmapped)
 {
     len0 <- length(keys)
+    if (len0 == 0)
+        return("")
     if (len0 > 2)
         keys <- keys[1:2]
     string <- paste(paste("\"", keys, "\"", sep=""), collapse=", ")
-    if (len0 > 2) {
-        string <- paste(string, ", ... (total=", len0, "/mapped=", nmapped, ")", sep="")
-    }
-    string
+    if (len0 > 2)
+        string <- paste(string, ", ...", sep="")
+    paste(string, " (total=", len0, "/mapped=", nmapped, ")", sep="")
 }
 
 .Bimap.summary <- function(x)

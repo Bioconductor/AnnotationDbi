@@ -76,14 +76,8 @@ setMethod("ls", signature(name="AnnDbBimap"),
 ###
 
 setMethod("as.list", "AnnDbBimap",
-    function(x, keys=NULL)
+    function(x)
     {
-        if (!is.null(keys) && length(keys) == 0)
-            return(list())
-        if (direction(x) == 1)
-            x <- subset(x, Lkeys=keys, Rkeys=NULL)
-        else
-            x <- subset(x, Lkeys=NULL, Rkeys=keys)
         y <- flatten(x, fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
             ann_list <- list()
@@ -111,11 +105,8 @@ setMethod("as.list", "AnnDbBimap",
 )
 
 setMethod("as.list", "IpiAnnDbMap",
-    function(x, keys=NULL)
+    function(x)
     {
-        if (!is.null(keys) && length(keys) == 0)
-            return(list())
-        x <- subset(x, Lkeys=keys, Rkeys=NULL)
         y <- flatten(x, fromKeys.only=TRUE)
         if (nrow(y@data) == 0) {
             ann_list <- list()
@@ -129,11 +120,8 @@ setMethod("as.list", "IpiAnnDbMap",
 )
 
 setMethod("as.list", "AgiAnnDbMap",
-    function(x, keys=NULL)
+    function(x)
     {
-        if (!is.null(keys) && length(keys) == 0)
-            return(list())
-        x <- subset(x, Lkeys=keys, Rkeys=NULL)
         y <- flatten(x, fromKeys.only=TRUE)
         if (nrow(y@data) == 0)
             ann_list <- list()
@@ -157,17 +145,10 @@ setMethod("as.list", "AgiAnnDbMap",
 ###      user  system elapsed
 ###     4.456   0.228   4.953
 setMethod("as.list", "GoAnnDbBimap",
-    function(x, keys=NULL)
+    function(x)
     {
-        if (!is.null(keys) && length(keys) == 0)
-            return(list())
-        if (direction(x) == 1)
-            x <- subset(x, Lkeys=keys, Rkeys=NULL)
-        else
-            x <- subset(x, Lkeys=NULL, Rkeys=keys)
         y <- flatten(x, fromKeys.only=TRUE)
-        if (is.null(keys))
-            keys <- keys(y)
+        keys <- keys(y)
         if (direction(x) == 1) {
             ann_list <- as.list(rep(as.character(NA), length(keys)))
             names(ann_list) <- keys
@@ -218,11 +199,8 @@ setMethod("as.list", "GoAnnDbBimap",
 ###   20.893   0.072  21.066 
 ### Why is the S4 initialization mechanism so slow?
 setMethod("as.list", "GONodeAnnDbBimap",
-    function(x, keys=NULL)
+    function(x)
     {
-        if (!is.null(keys) && length(keys) == 0)
-            return(list())
-        x <- subset(x, Lkeys=keys, Rkeys=NULL)
         y <- flatten(x, fromKeys.only=TRUE)
         makeGONode <- function(go_id, Term, Ontology, Definition, ...)
         {
@@ -240,14 +218,10 @@ setMethod("as.list", "GONodeAnnDbBimap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "mget" new generic.
 ###
-### 'mget(x, map)' vs 'as.list(map, keys=x)':
+### 'mget(x, map)' vs 'as.list(map)':
 ###   1. mget checks its 'x' arg. and gracefully fails if it's not of
 ###      the expected type (i.e. NULL or NA-free character vector),
-###   2. mget will error on the first string in 'x' not in 'keys(map)',
-###      as.list will accept those strings and map them to NAs.
-###   3. if 'x' is a subset of 'keys(map)', then 'mget(x, map)'
-###      is identical to 'as.list(map, keys=x)'.
-###   4. 'mget(keys(map), map)' is identical to 'as.list(map)'.
+###   2. 'mget(keys(map), map)' is identical to 'as.list(map)'.
 ###      Note that for a real "environment", 'as.list(envir)' is not identical
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
@@ -262,7 +236,8 @@ setMethod("mget", signature(envir="AnnDbBimap"),
                 stop("only NA is currently supported for 'ifnotfound'")
             envir@ifnotfound <- as.list(ifnotfound)
         }
-        as.list(envir, keys=x)
+        keys(envir) <- x
+        as.list(envir)
     }
 )
 

@@ -503,7 +503,10 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
                                               L2Rchain, Lkeys, Rkeys,
                                               where, direction)
 {
-    if (is.null(datacache) || !is.na(Lkeys) || !is.na(Rkeys) || where != "1")
+    if (is.null(datacache)
+     || length(Lkeys) != 1 || !is.na(Lkeys)
+     || length(Rkeys) != 1 || !is.na(Rkeys)
+     || where != "1")
         return(NULL)
     if (direction == 1)
         symbol <- "uniqueLeftMappedKeys"
