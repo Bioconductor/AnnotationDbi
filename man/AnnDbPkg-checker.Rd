@@ -32,7 +32,7 @@
 
 \examples{
   checkMAPCOUNTS("hgu95av2.db")
-  checkMAPCOUNTS("GO.db")
+  #checkMAPCOUNTS("GO.db")
 }
 
 \keyword{utilities}
