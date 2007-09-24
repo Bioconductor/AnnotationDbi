@@ -50,8 +50,8 @@
 ###        "d" <-"x"-> "C"
 ###        "d" <-"y"-> "C"
 ###
-###      Note that there are 2 links between d and C: 1 with tag "x" and 1
-###      with tag "y".
+###      Note that there are 2 links between objects "d" and "C":
+###      1 with tag "x" and 1 with tag "y".
 ###
 ###
 ### Flat representation of a bimap
