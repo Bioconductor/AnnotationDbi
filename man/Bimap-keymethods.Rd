@@ -82,11 +82,16 @@
 \alias{subset,Bimap-method}
 \alias{subset,AnnDbBimap-method}
 
+\alias{show,FlatBimap-method}
+\alias{show,AnnDbTable-method}
+
 
 \title{Methods for manipulating the keys of a Bimap object}
 
 \description{
-  These methods are devided in 3 groups: directed \link{Bimap} methods,
+  These methods are part of the \link{Bimap} API.
+
+  They are devided in 3 groups: directed \link{Bimap} methods,
   undirected \link{Bimap} methods and subsetting \link{Bimap} methods.
   Unlike for undirected methods, the result of a directed method
   depends on the \link{direction} of the \link{Bimap} object (left-to-right
@@ -155,8 +160,10 @@
 \author{H. Pages}
 
 \seealso{
-  \code{\link{Bimap-colmethods}},
-  \code{\link{direction}}
+  \link{Bimap-direction},
+  \link{Bimap-colmethods},
+  \link{Bimap-toTable},
+  \link{AnnDbBimap-envirAPI}
 }
 
 \examples{

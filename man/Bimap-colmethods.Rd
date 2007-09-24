@@ -2,14 +2,6 @@
 
 \alias{Bimap-colmethods}
 
-% Classes
-
-\alias{Bimap}
-\alias{class:Bimap}
-\alias{Bimap-class}
-
-% Methods
-
 \alias{colnames}
 \alias{colnames,FlatBimap-method}
 \alias{colnames,AnnDbBimap-method}
@@ -36,8 +28,9 @@
 \alias{Rattribnames,AnnDbBimap-method}
 
 \alias{Rattribnames<-}
-\alias{Rattribnames<-,Bimap-method}
+\alias{Rattribnames<-,FlatBimap-method}
 \alias{Rattribnames<-,AnnDbBimap-method}
+\alias{Rattribnames<-,Go3AnnDbBimap-method}
 
 \alias{ncol}
 \alias{ncol,Bimap-method}
@@ -46,9 +39,12 @@
 \title{Methods for manipulating the col names of a Bimap object}
 
 \description{
-  Accessor methods for manipulating the col names of a Bimap object.
+  These methods are part of the \link{Bimap} API.
 
-  Note that all the methods below: (1) are undirected Bimap methods
+  They are accessor methods that can be used to manipulate the column
+  names of a \link{Bimap} object.
+
+  Note that all the methods below: (1) are undirected \link{Bimap} methods
   (i.e. their result does NOT depend on the \link{direction}
   of the map) and (2) don't access the database.
 }
@@ -67,7 +63,7 @@
 
 \arguments{
   \item{x}{
-    A Bimap object.
+    A \link{Bimap} object.
   }
   \item{do.NULL}{
     Ignored.
@@ -88,8 +84,9 @@
 \author{H. Pages}
 
 \seealso{
+  \link{Bimap-direction},
   \link{Bimap-keymethods},
-  \code{\link{direction}},
+  \link{Bimap-toTable},
   \link{AnnDbBimap-envirAPI}
 }
 

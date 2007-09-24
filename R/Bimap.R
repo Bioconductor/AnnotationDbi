@@ -872,6 +872,88 @@ setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "show" methods.
+###
+
+.key.summary <- function(keys, nmapped)
+{
+    len0 <- length(keys)
+    if (len0 == 0)
+        return("")
+    if (len0 > 2)
+        keys <- keys[1:2]
+    string <- paste(paste("\"", keys, "\"", sep=""), collapse=", ")
+    if (len0 > 2)
+        string <- paste(string, ", ...", sep="")
+    paste(string, " (total=", len0, "/mapped=", nmapped, ")", sep="")
+}
+
+.Bimap.summary <- function(x)
+{
+    ## Left keys
+    cat("| Lkeyname: ", Lkeyname(x), sep="")
+    if (is(x, "AnnDbBimap"))
+        cat(" (Ltablename: ", Ltablename(x), ")", sep="")
+    cat("\n")
+    tmp <- mappedLkeys(x) # just to put them in the cache
+    cat("|    Lkeys: ", .key.summary(Lkeys(x), count.mappedLkeys(x)), "\n", sep="")
+    cat("|\n")
+
+    if (!is(x, "AnnDbMap")) {
+        ## Right keys
+        cat("| Rkeyname: ", Rkeyname(x), sep="")
+        if (is(x, "AnnDbBimap"))
+            cat(" (Rtablename: ", Rtablename(x), ")", sep="")
+        cat("\n")
+        tmp <- mappedRkeys(x) # just to put them in the cache
+        cat("|    Rkeys: ", .key.summary(Rkeys(x), count.mappedRkeys(x)), "\n", sep="")
+        cat("|\n")
+    }
+
+    ## Tag
+    if (!is.na(tagname(x)))
+        cat("| tagname: ", tagname(x), "\n|\n", sep="")
+
+    ## direction
+    direction <- names(.DIRECTION_STR2INT)[.DIRECTION_STR2INT == direction(x)]
+    cat("| direction: ", direction, "\n", sep="")
+}
+
+setMethod("show", "FlatBimap",
+    function(object)
+    {
+        cat("\"", class(object), "\" object:\n|\n", sep="")
+        .Bimap.summary(object)
+        cat("\ndata:\n")
+        if (nrow(object) <= 20) {
+            show(object@data)
+        } else {
+            show(head(object, n=10))
+            cat("...\n")
+            cat("(", nrow(object), " rows)\n", sep="")
+        }
+    }
+)
+
+.is.submap <- function(x)
+{
+    .inslot.Lkeys(x) || .inslot.Rkeys(x)
+}
+
+setMethod("show", "AnnDbBimap",
+    function(object)
+    {
+        map <- "map"
+        if (.is.submap(object))
+            map <- "submap"
+        cat(object@objName, " ", map, " for ", object@objTarget,
+            " (object of class \"", class(object), "\")\n|\n", sep="")
+        .Bimap.summary(object)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "toTable" methods.
 ###
 
@@ -897,10 +979,10 @@ setMethod("toTable", "AnnDbBimap",
 ###
 
 setMethod("head", "FlatBimap",
-    function(x, n=10, ...)
+    function(x, ...)
     {
         c <- colnames(x)
-        y <- head(x@data, n, ...)
+        y <- head(x@data, ...)
         if (!identical(colnames(y), c))
             colnames(y) <- c
         y
@@ -908,10 +990,10 @@ setMethod("head", "FlatBimap",
 )
 
 setMethod("tail", "FlatBimap",
-    function(x, n=10, ...)
+    function(x, ...)
     {
         c <- colnames(x)
-        y <- tail(x@data, n, ...)
+        y <- tail(x@data, ...)
         if (!identical(colnames(y), c))
             colnames(y) <- c
         y
@@ -1009,88 +1091,6 @@ setMethod("dim", "Bimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "show" methods.
-###
-
-.key.summary <- function(keys, nmapped)
-{
-    len0 <- length(keys)
-    if (len0 == 0)
-        return("")
-    if (len0 > 2)
-        keys <- keys[1:2]
-    string <- paste(paste("\"", keys, "\"", sep=""), collapse=", ")
-    if (len0 > 2)
-        string <- paste(string, ", ...", sep="")
-    paste(string, " (total=", len0, "/mapped=", nmapped, ")", sep="")
-}
-
-.Bimap.summary <- function(x)
-{
-    ## Left keys
-    cat("| Lkeyname: ", Lkeyname(x), sep="")
-    if (is(x, "AnnDbBimap"))
-        cat(" (Ltablename: ", Ltablename(x), ")", sep="")
-    cat("\n")
-    tmp <- mappedLkeys(x) # just to put them in the cache
-    cat("|    Lkeys: ", .key.summary(Lkeys(x), count.mappedLkeys(x)), "\n", sep="")
-    cat("|\n")
-
-    if (!is(x, "AnnDbMap")) {
-        ## Right keys
-        cat("| Rkeyname: ", Rkeyname(x), sep="")
-        if (is(x, "AnnDbBimap"))
-            cat(" (Rtablename: ", Rtablename(x), ")", sep="")
-        cat("\n")
-        tmp <- mappedRkeys(x) # just to put them in the cache
-        cat("|    Rkeys: ", .key.summary(Rkeys(x), count.mappedRkeys(x)), "\n", sep="")
-        cat("|\n")
-    }
-
-    ## Tag
-    if (!is.na(tagname(x)))
-        cat("| tagname: ", tagname(x), "\n|\n", sep="")
-
-    ## direction
-    direction <- names(.DIRECTION_STR2INT)[.DIRECTION_STR2INT == direction(x)]
-    cat("| direction: ", direction, "\n", sep="")
-}
-
-setMethod("show", "FlatBimap",
-    function(object)
-    {
-        cat("\"", class(object), "\" object:\n|\n", sep="")
-        .Bimap.summary(object)
-        cat("\ndata:\n")
-        if (nrow(object) <= 20) {
-            show(object@data)
-        } else {
-            show(head(object))
-            cat("...\n")
-            cat("(", nrow(object), " rows)\n", sep="")
-        }
-    }
-)
-
-.is.submap <- function(x)
-{
-    .inslot.Lkeys(x) || .inslot.Rkeys(x)
-}
-
-setMethod("show", "AnnDbBimap",
-    function(object)
-    {
-        map <- "map"
-        if (.is.submap(object))
-            map <- "submap"
-        cat(object@objName, " ", map, " for ", object@objTarget,
-            " (object of class \"", class(object), "\")\n|\n", sep="")
-        .Bimap.summary(object)
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "from.colpos", "to.colpos", "from.keys" and "to.keys" methods.
 ###
 ### NOTE: Not sure these methods are really needed. Need to check. At best
@@ -1119,9 +1119,8 @@ setMethod("to.keys", "Bimap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "toLList", "toRList" and "toList" methods.
 ###
-### TODO: Get rid of the 'keys' arg and rename these methods:
-###       as.Llist, as.Rlist and as.list respectively.
-###       Define these methods for FlatBimap objects.
+### NOTE: These methods are not exported yet (will be soon).
+### TODO: Define these methods for FlatBimap objects.
 ###
 
 .alignAnnList <- function(ann_list, keys)
@@ -1143,10 +1142,8 @@ setMethod("to.keys", "Bimap",
 }
 
 setMethod("toLList", "FlatBimap",
-    function(x, keys=NULL)
+    function(x)
     {
-        if (!is.null(keys))
-            x <- subset(x, Lkeys=keys, Rkeys=NULL)
         if (nrow(x@data) == 0)
             ann_list <- list()
         else
@@ -1156,17 +1153,15 @@ setMethod("toLList", "FlatBimap",
 )
 
 setMethod("toLList", "AnnDbBimap",
-    function(x, keys=NULL)
+    function(x)
     {
-        x <- subset(x, Lkeys=keys, Rkeys=NULL)
         toLList(flatten(x, fromKeys.only=TRUE))
     }
 )
 
 setMethod("toLList", "AnnDbMap",
-    function(x, keys=NULL)
+    function(x)
     {
-        x <- subset(x, Lkeys=keys, Rkeys=NULL)
         y <- flatten(x, fromKeys.only=TRUE)
         if (length(x@rightColType) == 1
          && typeof(y@data[[2]]) != x@rightColType) {
@@ -1178,10 +1173,8 @@ setMethod("toLList", "AnnDbMap",
 )
 
 setMethod("toRList", "FlatBimap",
-    function(x, keys=NULL)
+    function(x)
     {
-        if (!is.null(keys))
-            x <- subset(x, Lkeys=NULL, Rkeys=keys)
         if (nrow(x@data) == 0)
             ann_list <- list()
         else
@@ -1191,25 +1184,24 @@ setMethod("toRList", "FlatBimap",
 )
 
 setMethod("toRList", "AnnDbBimap",
-    function(x, keys=NULL)
+    function(x)
     {
-        x <- subset(x, Lkeys=NULL, Rkeys=keys)
         toRList(flatten(x, fromKeys.only=TRUE))
     }
 )
 
 setMethod("toRList", "AnnDbMap",
-    function(x, keys=NULL)
+    function(x)
     {
         stop("toRList() is not supported for an \"", class(x), "\" object")
     }
 )
 
 setMethod("toList", "Bimap",
-    function(x, keys=NULL)
+    function(x)
         switch(as.character(direction(x)),
-                "1"=toLList(x, keys),
-               "-1"=toRList(x, keys),
+                "1"=toLList(x),
+               "-1"=toRList(x),
                     stop("toList() is undefined for an undirected bimap"))
 )
 

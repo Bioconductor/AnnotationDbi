@@ -1,4 +1,14 @@
-\name{direction}
+\name{Bimap-direction}
+
+\alias{Bimap-direction}
+
+% Classes
+
+\alias{Bimap}
+\alias{class:Bimap}
+\alias{Bimap-class}
+
+% Methods
 
 \alias{direction}
 \alias{direction,FlatBimap-method}
@@ -10,6 +20,7 @@
 \alias{direction<-,AnnDbMap-method}
 
 \alias{revmap}
+\alias{revmap,Bimap-method}
 \alias{revmap,AnnDbBimap-method}
 \alias{revmap,environment-method}
 \alias{revmap,list-method}
@@ -18,6 +29,7 @@
 \title{Methods for accessing/changing the direction of a Bimap object}
 
 \description{
+  These methods are part of the Bimap API.
 }
 
 \usage{
@@ -52,6 +64,7 @@
 \seealso{
   \link{Bimap-colmethods},
   \link{Bimap-keymethods},
+  \link{Bimap-toTable},
   \link{AnnDbBimap-envirAPI}
 }
 

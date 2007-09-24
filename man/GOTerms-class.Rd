@@ -6,18 +6,19 @@
 
 \alias{GOTerms}
 
-\alias{GOID}
-\alias{Term}
-\alias{Ontology}
-\alias{Definition}
-\alias{Synonym}
-\alias{Secondary}
+\alias{initialize,GOTerms-method}
 
+\alias{GOID}
 \alias{GOID,GOTerms-method}
+\alias{Term}
 \alias{Term,GOTerms-method}
+\alias{Ontology}
 \alias{Ontology,GOTerms-method}
+\alias{Definition}
 \alias{Definition,GOTerms-method}
+\alias{Synonym}
 \alias{Synonym,GOTerms-method}
+\alias{Secondary}
 \alias{Secondary,GOTerms-method}
 
 \alias{show,GOTerms-method}

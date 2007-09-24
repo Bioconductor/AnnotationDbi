@@ -1,5 +1,17 @@
 \name{AnnotationDbi internals}
 
+\alias{class:FlatBimap}
+\alias{FlatBimap-class}
+\alias{FlatBimap}
+
+\alias{class:L2Rlink}
+\alias{L2Rlink-class}
+\alias{L2Rlink}
+
+\alias{initialize,FlatBimap-method}
+\alias{initialize,L2Rlink-method}
+\alias{show,L2Rlink-method}
+
 \alias{dbFileConnect}
 \alias{dbFileDisconnect}
 \alias{addToNamespaceAndExport}

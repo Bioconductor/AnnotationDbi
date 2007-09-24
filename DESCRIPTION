@@ -7,7 +7,7 @@ Author: Herve Pages, Seth Falcon, Nianhua Li
 Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.5.0), methods, Biobase (>= 1.14.0), DBI (>= 0.2-3), RSQLite (>= 0.5-6)
 Imports: methods, Biobase, DBI, RSQLite
-Suggests: GO, hgu95av2.db, hgu95av2
+Suggests: hgu95av2.db, hgu95av2, GO.db, GO
 Collate: 00RTobjs.R
          AllGenerics.R
          AllClasses.R

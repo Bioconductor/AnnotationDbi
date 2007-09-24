@@ -10,10 +10,10 @@ exportClasses(
 
     ## from R/AllClasses.R
     "Bimap",
-    #"FlatBimap",
+    "FlatBimap",
     #"AnnDbObj",
     #"AnnDbTable",
-    #"L2Rlink",
+    "L2Rlink",
     "AnnDbBimap",
     "AtomicAnnDbBimap",
     "GoAnnDbBimap",
@@ -51,21 +51,21 @@ exportMethods(
     "isNA",
     "mappedLkeys", "mappedRkeys", "mappedkeys",
     "count.mappedLkeys", "count.mappedRkeys", "count.mappedkeys",
+    "show",
     "toTable",
     "head", "tail",
     "nrow",
     "links",
     "count.links",
     "ncol", "dim",
-    "show",
-    "toLList", "toRList", "toList",
+    #"toLList", "toRList", "toList",
     "as.character",
 
     ## AnnDbObj lowAPI
-    "db",
-    "Ltablename", "Rtablename",
-    "Lfilter", "Rfilter",
-    "flatten",
+    #"db",
+    #"Ltablename", "Rtablename",
+    #"Lfilter", "Rfilter",
+    #"flatten",
 
     ## from R/AnnDbMap-envirAPI.R
     "ls",

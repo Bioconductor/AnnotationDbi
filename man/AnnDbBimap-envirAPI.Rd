@@ -21,6 +21,7 @@
 
 \alias{mget}
 \alias{mget,AnnDbBimap-method}
+\alias{mget,ANY,AnnDbBimap-method}
 
 \alias{as.list}
 \alias{as.list,AnnDbBimap-method}
