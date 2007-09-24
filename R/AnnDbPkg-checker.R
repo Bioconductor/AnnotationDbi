@@ -58,12 +58,15 @@ checkProperty0 <- function(pkgname)
 ### The "checkMAPCOUNTS" function.
 ###
 ### Typical use:
-###   > checkMAPCOUNTS("hgu95av2.db", "hgu95av2")
+###   > checkMAPCOUNTS("hgu95av2.db")
 ###
 
-checkMAPCOUNTS <- function(pkgname, prefix)
+checkMAPCOUNTS <- function(pkgname)
 {
     require(pkgname, character.only=TRUE) || stop(pkgname, " package needed")
+    if (substr(pkgname, nchar(pkgname) - 2, nchar(pkgname)) != ".db")
+        stop(pkgname, " doesn't look like the name of an SQLite-based annotation package")
+    prefix <- substr(pkgname, 1, nchar(pkgname) - 3)
     getMap <- function(mapname) get(mapname, envir=asNamespace(pkgname))
     MAPCOUNTS <- getMap(paste(prefix, "MAPCOUNTS", sep=""))
     for (mapname in names(MAPCOUNTS)) {
