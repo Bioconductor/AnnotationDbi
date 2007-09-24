@@ -183,7 +183,7 @@ toTable(hgu95av2GO[probes[1:3]])
 
 
 <<thisworks>>=
-as.list(revmap(hgu95av2PATH), "00300")
+as.list(revmap(hgu95av2PATH)["00300"])
 @ 
 
 In the case of the PATH map, we don't need to use revmap(x)
@@ -197,7 +197,7 @@ revx2 <- revmap(x, objName="PATH2PROBE")
 revx2
 identical(revx, revx2)
 
-as.list(revx, "00300")
+as.list(revx["00300"])
 @ 
 
 Note that the order of the cols returned by \Rfunction{toTable} does
@@ -216,7 +216,7 @@ There can be more than 2 columns in the returned data frame:
   3 cols:
 <<threecols>>=
 toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
-as.list(hgu95av2PFAM, "1000_at")
+as.list(hgu95av2PFAM["1000_at"])
 @ 
 
 But the Rkeys are ALWAYS in the 2nd col.
@@ -255,7 +255,7 @@ toTable(x)[1:10, ]
 
 To get this in the classic named-list format:
 <<easy>>=
-z <- as.list(revmap(x), chroms)
+z <- as.list(revmap(x)[chroms])
 names(z)
 z[["Y"]][1:5]
 @ 
@@ -273,7 +273,7 @@ A last example with cytogenetic locations:
 <<cytogenicLoc>>=
 x <- hgu95av2MAP
 toTable(hgu95av2MAP)[1:6, ]
-as.list(revmap(x), "8p22")
+as.list(revmap(x)["8p22"])
 @ 
 
 Are the probes in 'pbids' mapped to cytogenetic location "6p21.3"?
