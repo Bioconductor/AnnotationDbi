@@ -223,8 +223,7 @@ createAnnObjs.RODENTCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
-        datacache=datacache,
-        conn=dbconn
+        datacache=datacache
     )
     ann_objs <- createAnnDbBimaps(RODENTCHIP_DB_AnnDbBimap_seeds, seed0)
 

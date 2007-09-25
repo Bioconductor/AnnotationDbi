@@ -11,7 +11,7 @@ exportClasses(
     ## from R/AllClasses.R
     "Bimap",
     "FlatBimap",
-    #"AnnDbObj",
+    "AnnDbObj",
     #"AnnDbTable",
     "L2Rlink",
     "AnnDbBimap",
@@ -62,7 +62,7 @@ exportMethods(
     "as.character",
 
     ## AnnDbObj lowAPI
-    #"dbconn",
+    "dbconn", "dbfile",
     #"Ltablename", "Rtablename",
     #"Lfilter", "Rfilter",
     #"flatten",

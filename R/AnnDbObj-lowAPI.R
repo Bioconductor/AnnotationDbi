@@ -8,7 +8,7 @@
 ###
 ### This file defines and implements the low-level API for AnnDbObj objects.
 ### This API consists of the following set of generics:
-###     dbconn,
+###     dbconn, dbfile,
 ###     Ltablename, Rtablename,
 ###     Lfilter, Rfilter,
 ###     flatten,
@@ -27,7 +27,8 @@
 ### They do NOT access the database!
 ###
 
-setMethod("dbconn", "AnnDbObj", function(object) object@conn)
+setMethod("dbconn", "AnnDbObj", function(x) get("dbconn", envir=x@datacache))
+setMethod("dbfile", "AnnDbObj", function(x) get("dbfile", envir=x@datacache))
 
 setMethod("Ltablename", "AnnDbBimap",
     function(x) L2Rchain.Ltablename(x@L2Rchain))

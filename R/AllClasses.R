@@ -39,7 +39,7 @@ setClass("AnnObj",
     representation(
         "VIRTUAL",
         objName="character",
-        objTarget="character"   # "chip hgu95av2" or "YEAST" or...
+        objTarget="character"      # "chip hgu95av2" or "YEAST" or...
     )
 )
 
@@ -52,8 +52,10 @@ setClass("AnnDbObj",
     contains="AnnObj",
     representation(
         "VIRTUAL",
-        datacache="environment",
-        conn="DBIConnection"
+        ## Used to define objects like "dbconn" or "dbfile" that are shared
+        ## by all the AnnDbObj objects defined on top of the same database
+        ## (like all the AnnDbObj objects in a given ann db package).
+        datacache="environment" 
     )
 )
 
