@@ -1,11 +1,42 @@
-- add man pages for all exported symbols with at least
-  the \usage, \arguments  and \examples sections
+- provide some utility to make it easy to look at the schema
+  of a given package + in the man page for this utility, mention
+  dbListTable and dbListFields and put \code{\link[DBI]{dbListTable}}
+  and \code{\link[DBI]{dbListFields}} in the \seealso section
+
+- implement mechanism to check the DBSCHEMAVERSION of a db pkg at
+  load time
+
+- add AnnotationDbi.Rnw vignette (main vignette) with more focus on the
+  Bimap interface
+
+- fix man page for MAPCOUNTS map in ann db pkg templates +
+  in the \examples section, call checkMAPCOUNTS on the db
+  package so R CMD check will automatically check this +
+  put \code{\link[AnnotationDbi]{checkMAPCOUNTS}} in the
+  \seealso section
+
+- fix the current INDEX mess (mix of old and new CREATE INDEX
+  statements that lead to duplicated indices and an sqlite file
+  bigger in size), I think all the old CREATE INDEX statements
+  can be removed (they are the same as the new ones) except in
+  GO_DB where some useful indices are missing in 0.9
 
 - look at subListExtract in Biobase and see where it can
   be used to improve speed in AnnotationDbi
 
-- change the map[["titi"]] behaviour so it returns NULL
-  if key "titi" is not found in the map (so we align exactly
-  with what [[ does with environments)
+- pluggable maps
+  --------------
 
--
+  If [to.tablename(x1),to.colname(x1)] (the right table/colname for a direct map,
+  the left table/colname for a reverse map) is the same as
+  [from.tablename(x2)|from.colname(x2)] (the left table/colname for a direct map,
+  the right/colname table for a reverse map), and if inslot.to.keys(x1) and
+  inslot.from.keys(x2) are both NAs, then x1 and x2 are "pluggable".
+  x <- plugmaps(x1, x2), the result of the "plug" operation, is a map that goes
+  from [from.tablename(x1),from.colname(x1)] to [to.tablename(x2)|to.colname(x2)].
+
+  Of course, only maps that belong to the same package will be pluggable
+  this way (e.g. hgu95av2PATH2PROBE and hgu95av2ACCNUM, x1 is a reverse
+  map and x2 a direct map). So, in fact, something else to check before
+  to decide whether x1 and x2 are pluggable is that dbfile(x1) == dbfile(x2).
+
