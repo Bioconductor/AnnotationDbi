@@ -89,6 +89,7 @@
 }
 
 \examples{
+  ## With the hgu95av2GO and hgu95av2GO2PROBE maps
   library(hgu95av2.db)
   x <- hgu95av2GO
   y <- hgu95av2GO2PROBE
@@ -108,6 +109,20 @@
   Rattribnames(y)
   ncol(x)
   ncol(y)
+
+  ## Changing the right attributes of the GOSYNONYM map
+  library(GO.db)
+  x <- GOSYNONYM
+  class(x) # GONodeAnnDbBimap
+  as.list(x)[1:3]
+  colnames(x)
+  colmetanames(x)
+  tagname(x) # untagged bimap
+  Rattribnames(x)
+  Rattribnames(x) <- Rattribnames(x)[3:1]
+  colnames(x)
+  class(x) # AnnDbBimap
+  as.list(x)[1:3]
 }
 
 \keyword{methods}
