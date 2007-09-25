@@ -129,9 +129,7 @@
 }
 
 \seealso{
-  \link{Bimap-colmethods},
-  \link{Bimap-keymethods},
-  \code{\link{direction}}
+  \link{Bimap}
 }
 
 \examples{
@@ -144,4 +142,5 @@
 }
 
 \keyword{methods}
+\keyword{interface}
 

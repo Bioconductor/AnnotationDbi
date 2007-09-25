@@ -178,4 +178,5 @@
 }
 
 \keyword{classes}
+\keyword{interface}
 
