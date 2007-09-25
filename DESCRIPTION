@@ -2,7 +2,7 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 0.99.10
+Version: 0.99.11
 Author: Herve Pages, Seth Falcon, Nianhua Li
 Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.5.0), methods, Biobase (>= 1.14.0), DBI (>= 0.2-3), RSQLite (>= 0.5-6)
