@@ -50,13 +50,45 @@
 ### The ".formatList" function.
 ### 'x' must be a list with unique names.
 ###
-### Re-order and format 'x' as follow:
+### .formatList() will re-order the elements in 'x' based on the names passed
+### in the 'names' arg (a character vector):
+###
 ###   > x <- list(aa=1, b=2:-1, c=3)
 ###   > names <- c("a", "c", "d", "c")
-###   > .formatList(x, names)
-### ... must return 'list(a=NA, c=3, d=NA, c=3)'
-### Note that the returned list must have exactly the names in 'names' (in the
-### same order).
+###   > AnnotationDbi:::.formatList(x, names)
+###   $a
+###   [1] NA
+###
+###   $c
+###   [1] 3
+###
+###   $d
+###   [1] NA
+###
+###   $c
+###   [1] 3
+###
+### Note that the returned list must always have exactly:
+###   - the length of the 'names' arg
+###   - the names passed in the 'names' arg and in the same order
+###
+### In addition, .formatList() allows to replace some values in the original
+### list by a value specified by the caller:
+###
+###   > names <- c("d", "b", "aa", "b")
+###   > AnnotationDbi:::.formatList(x, names, replace.multiple="multiple")
+###   $d
+###   [1] NA
+###
+###   $b
+###   [1] "multiple"
+###
+###   $aa
+###   [1] 1
+###
+###   $b
+###   [1] "multiple"
+
 .formatList <- function(x, names, replace.single=NULL, replace.multiple=NULL)
 {
     if (length(x) != 0)
