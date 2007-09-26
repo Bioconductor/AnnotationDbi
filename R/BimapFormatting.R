@@ -21,7 +21,8 @@ setMethod("from.colpos", "Bimap",
 )
 
 setMethod("to.colpos", "Bimap",
-    function(x) from.colpos(x, - direction(x)))
+    function(x)
+        from.colpos(revmap(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
