@@ -17,7 +17,7 @@
 KEGG_DB_AnnDbBimap_seeds <- list(
     list(
         objName="PATHID2NAME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="pathway2name",
@@ -28,7 +28,7 @@ KEGG_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PATHID2EXTID",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="pathway2gene",
@@ -39,7 +39,7 @@ KEGG_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENZYMEID2GO",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="ec2go",

@@ -31,7 +31,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ARACYC",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
@@ -43,7 +43,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
@@ -55,7 +55,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
@@ -67,7 +67,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ARACYCENZYME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
@@ -79,7 +79,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
@@ -104,7 +104,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
@@ -116,7 +116,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
@@ -128,7 +128,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(

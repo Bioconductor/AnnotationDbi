@@ -113,7 +113,7 @@
   ## Changing the right attributes of the GOSYNONYM map
   library(GO.db)
   x <- GOSYNONYM
-  class(x) # GONodeAnnDbBimap
+  class(x) # GOTermsAnnDbBimap
   as.list(x)[1:3]
   colnames(x)
   colmetanames(x)

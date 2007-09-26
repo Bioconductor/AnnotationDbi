@@ -29,7 +29,7 @@
 \alias{count.links,Bimap-method}
 \alias{count.links,Go3AnnDbBimap-method}
 
-\alias{as.character,AtomicAnnDbBimap-method}
+\alias{as.character,AnnDbBimap-method}
 
 
 \title{Methods for extracting data from a Bimap object}

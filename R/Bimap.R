@@ -1153,6 +1153,199 @@ setMethod("to.keys", "Bimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "fromCol", "toCol" and "tagCol" methods.
+###
+### Note that we must use 'x@data[[2]]' instead of 'x@data[[Rkeyname(x)]]'
+### because 'x' colnames are not necessarily unique e.g.:
+###   > head(flatten(subset(GOBPPARENTS, "GO:0000001")), 2)
+###          go_id      go_id Evidence
+###   1 GO:0000001 GO:0048308      isa
+###   2 GO:0000001 GO:0048311      isa
+###
+### TODO: Make these methods use colmetanames(x) to find the positions of the
+### left, right and tag cols in x@data instead of hardcoding this with
+### x@data[[1]], x@data[[2]] and x@data[[3]].
+###
+
+setMethod("fromCol", "Bimap",
+    function(x)
+    {
+        if (direction(x) == 1)
+            x@data[[1]]
+        else
+            x@data[[2]]
+    }
+)
+
+setMethod("toCol", "Bimap",
+    function(x)
+    {
+        if (direction(x) == 1)
+            x@data[[2]]
+        else
+            x@data[[1]]
+    }
+)
+
+setMethod("tagCol", "Bimap",
+    function(x)
+    {
+        if (is.na(tagname(x)))
+            return(NULL)
+        x@data[[3]]
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "as.list" methods.
+###
+
+### Re-order and format list 'x' as follow:
+###   > x <- list(aa=1, b=2:-1, c=3)
+###   > names <- c("a", "c", "d")
+###   > .formatList(x, names)
+### ... must return 'list(a=NA, c=3, d=NA)'
+### Note that the returned list must have exactly the names in 'names' (in the
+### same order).
+.formatList <- function(x, names, replace.single=NULL, replace.multiple=NULL)
+{
+    if (length(x) != 0)
+        x <- l2e(x)
+    doReplaceSingle <- length(replace.single) != 0L
+    doReplaceMultiple <- length(replace.multiple) != 0L
+    formatVal <- function(key)
+    {
+        val <- x[[key]]
+        lval <- length(val)
+        if (lval == 1L) {
+            if (doReplaceMultiple)
+              return(replace.multiple)
+        } else if (lval > 1L) {
+            if (doReplaceMultiple)
+              return(replace.multiple)
+        } else {
+            # lval == 0
+            val <- NA
+        }
+        val
+    }
+    names(names) <- names
+    lapply(names, formatVal)
+}
+
+setMethod("as.list", "Bimap",
+    function(x, ...)
+    {
+        Rattribnames(x) <- NULL
+        toCol <- toCol(x)
+        names(toCol) <- tagCol(x)
+        y <- split(toCol, fromCol(x))
+        .formatList(y, keys(x))
+    }
+)
+
+setMethod("as.list", "AnnDbBimap",
+    function(x, ...)
+    {
+        Rattribnames(x) <- NULL
+        y <- flatten(x, fromKeys.only=TRUE)
+        as.list(y)
+    }
+)
+
+### Needed to deal with the PFAM and PROSITE maps.
+### Their colnames are:
+###   PFAM: "probe_id", "ipi_id", "PfamId"
+###   PROSITE: "probe_id", "ipi_id", "PrositeId"
+setMethod("as.list", "IpiAnnDbMap",
+    function(x, ...)
+    {
+        y <- flatten(x, fromKeys.only=TRUE)
+        toCol <- y@data[[3]]
+        names(toCol) <- toCol(y)
+        z <- split(toCol, fromCol(y))
+        .formatList(z, keys(y))
+    }
+)
+
+setMethod("as.list", "AgiAnnDbMap",
+    function(x, ...)
+    {
+        y <- flatten(x, fromKeys.only=TRUE)
+        z <- split(toCol(y), fromCol(y))
+        .formatList(z, keys(y), x@replace.single, x@replace.multiple)
+    }
+)
+
+setMethod("as.list", "GoAnnDbBimap",
+    function(x, ...)
+    {
+        y <- flatten(x, fromKeys.only=TRUE)
+        if (direction(y) == -1)
+            return(as.list(y))
+        keys <- keys(y)
+        ann_list <- as.list(rep(as.character(NA), length(keys)))
+        names(ann_list) <- keys
+        if (nrow(y@data) != 0) {
+            makeGOList <- function(GOIDs, Evidences, Ontologies)
+            {
+                mapply(function(gid, evi, ont)
+                       list(GOID=gid, Evidence=evi, Ontology=ont),
+                       GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
+            }
+            fromCol <- fromCol(y)
+            GOIDs <- split(y@data[["go_id"]], fromCol)
+            Evidences <- split(y@data[["Evidence"]], fromCol)
+            Ontologies <- split(y@data[["Ontology"]], fromCol)
+            ## The 'GOIDs', 'Evidences' and 'Ontologies' lists have the same
+            ## names in the same order.
+            mapped_keys <- names(GOIDs)
+            ii <- match(mapped_keys, keys, nomatch=0L)
+            for (i1 in seq_len(length(ii))) {
+                i2 <- ii[i1]
+                ## 'mapped_keys' should always be a subset of 'keys'
+                ## hence 'i2 == 0L' should never happen. So maybe we should
+                ## raise something like "AnnotationDbi internal error" instead
+                ## of just ignoring this...
+                if (i2 == 0L) next
+                ann_list[[i2]] <- makeGOList(GOIDs[[i1]], Evidences[[i1]],
+                                                 Ontologies[[i1]])
+            }
+        }
+        ann_list
+    }
+)
+
+### Formatting the right objects with 'makeGONode' instead of just using the
+### default formatting provided by foldListOfLists() (the default is to create
+### a list for each object) makes things _much_ slower:
+###  > x <- flatten(GOTERM)
+###  > system.time(y <- foldListOfLists(x, "Lkeyname", mode=1))
+###     user  system elapsed
+###    1.888   0.016   1.905
+###  > system.time(y <- foldListOfLists(x, "Lkeyname", mode=1, FUN=makeGONode))
+###     user  system elapsed
+###   20.893   0.072  21.066
+### Why is the S4 initialization mechanism so slow?
+setMethod("as.list", "GOTermsAnnDbBimap",
+    function(x, ...)
+    {
+        y <- flatten(x, fromKeys.only=TRUE)
+        makeGONode <- function(go_id, Term, Ontology, Definition, ...)
+        {
+            new("GOTerms", GOID=go_id[1],
+                           Term=Term[1],
+                           Ontology=Ontology[1],
+                           Definition=Definition[1],
+                           ...)
+        }
+        foldListOfLists(y, direction=1, mode=1, makeGONode)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "toLList", "toRList" and "toList" methods.
 ###
 ### NOTE: These methods are not exported yet (will be soon).
@@ -1245,7 +1438,7 @@ setMethod("toList", "Bimap",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "as.character" methods.
 ###
-### Only defined for untagged AtomicAnnDbBimap objects for now.
+### Only defined for untagged AnnDbBimap objects for now.
 ###
 ### TODO: Extend to FlatBimap objects.
 ###
@@ -1253,23 +1446,17 @@ setMethod("toList", "Bimap",
 ### R doesn't let me add a 'keys' arg here:
 ###  Error in rematchDefinition(definition, fdef, mnames, fnames, signature) :
 ###          methods can add arguments to the generic only if '...' is an argument to the generic
-setMethod("as.character", "AtomicAnnDbBimap",
+setMethod("as.character", "AnnDbBimap",
     function(x)
     {
-        if (ncol(x) > 2)
-            stop("AtomicAnnDbBimap object with tags cannot be coerced to a character vector")
+        if (!is.na(tagname(x)))
+            stop("AnnDbBimap object with tags cannot be coerced to a character vector")
         Rattribnames(x) <- NULL
-        data <- flatten(x, fromKeys.only=TRUE)@data
-        if (direction(x) == 1)
-            ans <- data[[2]] # could also use [[Rkeyname(x)]]
-        else
-            ans <- data[[1]] # could also use [[Lkeyname(x)]]
+        y <- flatten(x, fromKeys.only=TRUE)
+        ans <- toCol(y)
         if (!is.character(ans))
             ans <- as.character(ans)
-        if (direction(x) == 1)
-            names(ans) <- data[[1]] # could also use [[Lkeyname(x)]]
-        else
-            names(ans) <- data[[2]] # could also use [[Rkeyname(x)]]
+        names(ans) <- fromCol(y)
         if (any(duplicated(names(ans))))
             warning("returned vector has duplicated names")
         ans

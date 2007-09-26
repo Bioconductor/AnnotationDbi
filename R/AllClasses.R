@@ -131,11 +131,6 @@ setClass("AnnDbBimap",
     )
 )
 
-### The most common type of bimap.
-### For an AtomicAnnDbBimap object, the right values are character vectors.
-### FIXME: This subclass should not be needed, use AnnDbBimap instead!
-setClass("AtomicAnnDbBimap", contains="AnnDbBimap")
-
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### GO-related bimaps.
@@ -154,8 +149,8 @@ setClass("Go3AnnDbBimap",
     )
 )
 
-### For a GONodeAnnDbBimap object, the right values are GONode objects.
-setClass("GONodeAnnDbBimap", contains="AnnDbBimap")
+### For a GOTermsAnnDbBimap object, the right values are GONode objects.
+setClass("GOTermsAnnDbBimap", contains="AnnDbBimap")
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

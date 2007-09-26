@@ -19,7 +19,7 @@ HUMANCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname=
 HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="probes",
@@ -30,7 +30,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ALIAS2PROBE",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -43,7 +43,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -55,7 +55,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENTREZID",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -67,7 +67,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -79,7 +79,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -91,7 +91,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="MAP",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -103,7 +103,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="OMIM",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -115,7 +115,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -127,7 +127,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -139,7 +139,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="REFSEQ",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -151,7 +151,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(
@@ -163,7 +163,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="UNIGENE",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             HUMANCHIP_DB_L2Rlink1,
             list(

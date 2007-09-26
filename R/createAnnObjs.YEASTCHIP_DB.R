@@ -19,7 +19,7 @@ YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname=
 YEASTCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ALIAS",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
             list(
@@ -31,7 +31,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
             list(
@@ -57,7 +57,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="DESCRIPTION",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
             list(
@@ -69,7 +69,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
             list(
@@ -81,7 +81,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
             list(
@@ -93,7 +93,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
             list(
@@ -105,7 +105,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
             list(
@@ -132,7 +132,7 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ORF",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
             list(

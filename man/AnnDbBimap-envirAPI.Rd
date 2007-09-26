@@ -22,11 +22,12 @@
 \alias{mget,ANY,AnnDbBimap-method}
 
 \alias{as.list}
+\alias{as.list,Bimap-method}
 \alias{as.list,AnnDbBimap-method}
 \alias{as.list,IpiAnnDbMap-method}
 \alias{as.list,AgiAnnDbMap-method}
 \alias{as.list,GoAnnDbBimap-method}
-\alias{as.list,GONodeAnnDbBimap-method}
+\alias{as.list,GOTermsAnnDbBimap-method}
 
 \alias{eapply}
 \alias{eapply,AnnDbBimap-method}

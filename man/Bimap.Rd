@@ -13,10 +13,6 @@
 \alias{class:AnnDbBimap}
 \alias{AnnDbBimap-class}
 
-\alias{AtomicAnnDbBimap}
-\alias{class:AtomicAnnDbBimap}
-\alias{AtomicAnnDbBimap-class}
-
 \alias{GoAnnDbBimap}
 \alias{class:GoAnnDbBimap}
 \alias{GoAnnDbBimap-class}
@@ -25,9 +21,9 @@
 \alias{class:Go3AnnDbBimap}
 \alias{Go3AnnDbBimap-class}
 
-\alias{GONodeAnnDbBimap}
-\alias{class:GONodeAnnDbBimap}
-\alias{GONodeAnnDbBimap-class}
+\alias{GOTermsAnnDbBimap}
+\alias{class:GOTermsAnnDbBimap}
+\alias{GOTermsAnnDbBimap-class}
 
 \alias{AnnDbMap}
 \alias{class:AnnDbMap}

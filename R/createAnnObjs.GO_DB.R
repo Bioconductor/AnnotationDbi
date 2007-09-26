@@ -36,7 +36,7 @@ GO_DB_AnnDbBimap_seeds <- list(
 #    ## TODO: Try to define the ENTREZID map as the reverse of ENTREZID2GO
 #    list(
 #        objName="ENTREZID",
-#        Class="AtomicAnnDbBimap",
+#        Class="AnnDbBimap",
 #        L2Rchain=list(
 #            list(
 #                tablename="go_term",
@@ -53,7 +53,7 @@ GO_DB_AnnDbBimap_seeds <- list(
 #    ),
 #    list(
 #        objName="ALLENTREZID",
-#        Class="AtomicAnnDbBimap",
+#        Class="AnnDbBimap",
 #        L2Rchain=list(
 #            list(
 #                tablename="go_term",
@@ -70,7 +70,7 @@ GO_DB_AnnDbBimap_seeds <- list(
 #    ),
     list(
         objName="BPPARENTS",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_term",
@@ -93,7 +93,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CCPARENTS",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_term",
@@ -116,7 +116,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="MFPARENTS",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_term",
@@ -139,7 +139,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="BPANCESTOR",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_term",
@@ -161,7 +161,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CCANCESTOR",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_term",
@@ -183,7 +183,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="MFANCESTOR",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_term",
@@ -205,7 +205,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="TERM",
-        Class="GONodeAnnDbBimap",
+        Class="GOTermsAnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_term",
@@ -224,7 +224,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="OBSOLETE",
-        Class="GONodeAnnDbBimap",
+        Class="GOTermsAnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_obsolete",
@@ -248,7 +248,7 @@ GO_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="SYNONYM",
-        Class="GONodeAnnDbBimap",
+        Class="GOTermsAnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="go_synonym",

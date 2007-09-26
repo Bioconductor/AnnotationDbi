@@ -19,7 +19,7 @@ YEASTLEGACY_DB_L2Rlink1 <- list(tablename="sgd", Lcolname="systematic_name", Rco
 YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ALIAS",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(
@@ -31,7 +31,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(
@@ -57,7 +57,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="DESCRIPTION",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(
@@ -69,7 +69,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(
@@ -81,7 +81,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="sgd",
@@ -92,7 +92,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(
@@ -104,7 +104,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(
@@ -131,7 +131,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="COMMON2SYSTEMATIC",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="gene2systematic",
@@ -142,7 +142,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="INTERPRO",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(
@@ -154,7 +154,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PFAM",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(
@@ -166,7 +166,7 @@ YEASTLEGACY_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="SMART",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             YEASTLEGACY_DB_L2Rlink1,
             list(

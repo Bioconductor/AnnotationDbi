@@ -19,7 +19,7 @@ RODENT_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="id")
 RODENT_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -31,7 +31,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ALIAS2EG",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -44,7 +44,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -56,7 +56,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -68,7 +68,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -80,7 +80,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="MAP",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -92,7 +92,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -104,7 +104,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -116,7 +116,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="REFSEQ",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -128,7 +128,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(
@@ -140,7 +140,7 @@ RODENT_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="UNIGENE",
-        Class="AtomicAnnDbBimap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             RODENT_DB_L2Rlink1,
             list(

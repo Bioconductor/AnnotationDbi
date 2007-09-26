@@ -32,9 +32,9 @@ make_go_to_eg_map <- function(chip) {
 ##        new("L2Rlink", tablename="genes", Lcolname="id", Rcolname="gene_id")
 ##      )
 
-## 2) Create a new AtomicAnnDbBimap instance:
+## 2) Create a new AnnDbBimap instance:
 
-##      hgu95av2ENZYME2ENTREZID <- new("AtomicAnnDbBimap",
+##      hgu95av2ENZYME2ENTREZID <- new("AnnDbBimap",
 ##        L2Rchain=L2Rchain,
 ##        datacache=hgu95av2ENZYME@datacache,
 ##        objName="ENZYME2ENTREZID",
