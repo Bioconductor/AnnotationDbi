@@ -15,8 +15,13 @@
   put \code{\link[AnnotationDbi]{checkMAPCOUNTS}} in the
   \seealso section
 
-- in man pages for ACCNUM or MULTIHIT, add an example showing how
-  to convert these maps to a standard map with as(agACCNUM, "AnnDbBimap")
+- merge man pages for ACCNUM or MULTIHIT. In the examples show
+  the 3 situations:
+    0 hit: agACCNUM[["13290_at"]]; agMULTIHIT[["13290_at"]]
+    1 hit: agACCNUM[["12328_at"]]; agMULTIHIT[["12328_at"]]
+    multihit: agACCNUM[["15228_s_at"]]; agMULTIHIT[["15228_s_at"]]
+  and how to "merge" those 2 maps by converting one of them with
+  as(agACCNUM, "AnnDbBimap")
 
 - fix the current INDEX mess (mix of old and new CREATE INDEX
   statements that lead to duplicated indices and an sqlite file
