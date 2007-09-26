@@ -15,6 +15,9 @@
   put \code{\link[AnnotationDbi]{checkMAPCOUNTS}} in the
   \seealso section
 
+- in man pages for ACCNUM or MULTIHIT, add an example showing how
+  to convert these maps to a standard map with as(agACCNUM, "AnnDbBimap")
+
 - fix the current INDEX mess (mix of old and new CREATE INDEX
   statements that lead to duplicated indices and an sqlite file
   bigger in size), I think all the old CREATE INDEX statements
