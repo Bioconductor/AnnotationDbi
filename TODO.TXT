@@ -1,13 +1,15 @@
 - provide some utility to make it easy to look at the schema
   of a given package + in the man page for this utility, mention
   dbListTable and dbListFields and put \code{\link[DBI]{dbListTable}}
-  and \code{\link[DBI]{dbListFields}} in the \seealso section
+  and \code{\link[DBI]{dbListFields}} in the \seealso section.
+  What about @ANNOBJPREFIX@_dbschema() and @ANNOBJPREFIX@_dbschemaVersion()?
+  Or maybe a @ANNOBJPREFIX@_dbInfo() function that prints the content
+  of the metadata table + the dbfile?
+  Also make @ANNOBJPREFIX@_dbfile a function instead of a character
+  string.
 
 - implement mechanism to check the DBSCHEMAVERSION of a db pkg at
   load time
-
-- add AnnotationDbi.Rnw vignette (main vignette) with more focus on the
-  Bimap interface
 
 - fix man page for MAPCOUNTS map in ann db pkg templates +
   in the \examples section, call checkMAPCOUNTS on the db
@@ -23,11 +25,24 @@
   and how to "merge" those 2 maps by converting one of them with
   as(agACCNUM, "AnnDbBimap")
 
+- makeAnnDbPkg(): make it chmod the sqlite file so it's read-only
+
+- add AnnotationDbi.Rnw vignette (main vignette) with more focus on the
+  Bimap interface
+
 - fix the current INDEX mess (mix of old and new CREATE INDEX
   statements that lead to duplicated indices and an sqlite file
   bigger in size), I think all the old CREATE INDEX statements
   can be removed (they are the same as the new ones) except in
   GO_DB where some useful indices are missing in 0.9
+
+- try adding a "go" (or "go_all") VIEW in the schema that contains
+  the UNION of the go_[bp|cc|mf] (or go_[bp|cc|mf]_all) tables.
+  2 things to check carefully: the impact on the size of the SQLite
+  file and the impact on the speed of the GO, GO2PROBES and
+  GO2ALLPROBES maps (their definitions would first need to be
+  modified to make them GoAnnDbBimap instances and have them use
+  this new view as the right table instead of the 3 original tables).
 
 - look at subListExtract in Biobase and see where it can
   be used to improve speed in AnnotationDbi
