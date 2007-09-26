@@ -2,8 +2,13 @@
   of a given package + in the man page for this utility, mention
   dbListTable and dbListFields and put \code{\link[DBI]{dbListTable}}
   and \code{\link[DBI]{dbListFields}} in the \seealso section.
-  What about @ANNOBJPREFIX@_dbschema() and @ANNOBJPREFIX@_dbschemaVersion()?
-  Or maybe a @ANNOBJPREFIX@_dbInfo() function that prints the content
+  What about @ANNOBJPREFIX@_dbschema() to display the schema definition
+  (add "dbschema" method for AnnDbObj objects)? Provide 'with.indices'
+  arg (with default to FALSE) for displaying the CREATE INDEX statements
+  or not (filter the lines of the output based on the presence of
+  the "CREATE INDEX" string at their beginning and the presence of a
+  unique ";" located at their end).
+  Also add a @ANNOBJPREFIX@_dbInfo() function that prints the content
   of the metadata table + the dbfile?
   Also make @ANNOBJPREFIX@_dbfile a function instead of a character
   string.
@@ -17,8 +22,8 @@
   put \code{\link[AnnotationDbi]{checkMAPCOUNTS}} in the
   \seealso section
 
-- merge man pages for ACCNUM or MULTIHIT. In the examples show
-  the 3 situations:
+- merge man pages for ACCNUM or MULTIHIT. In the examples, show
+  the 3 possible situations:
     0 hit: agACCNUM[["13290_at"]]; agMULTIHIT[["13290_at"]]
     1 hit: agACCNUM[["12328_at"]]; agMULTIHIT[["12328_at"]]
     multihit: agACCNUM[["15228_s_at"]]; agMULTIHIT[["15228_s_at"]]
