@@ -57,7 +57,6 @@ exportMethods(
     "links",
     "count.links",
     "ncol", "dim",
-    #"fromCol", "toCol", "tagCol",
     #"toLList", "toRList", "toList",
     "as.character",
 

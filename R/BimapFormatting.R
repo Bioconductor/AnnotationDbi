@@ -5,35 +5,56 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "from.colpos" and "to.colpos" methods.
-###
-### NOTE: Not sure these methods are really needed. Need to check. At best
-### they need to be revisited and probably reworked. They are currently not
-### exported.
-###
-
-setMethod("from.colpos", "Bimap",
-    function(x)
-    {
-        if (direction(x) == 1) side = "Lkeyname" else side = "Rkeyname"
-        match(side, colmetanames(x))
-    }
-)
-
-setMethod("to.colpos", "Bimap",
-    function(x)
-        from.colpos(revmap(x)))
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Convenience functions used in this file only (not exported)
 ###
 
-### Re-order and format list 'x' as follow:
+### The ".fromCol", ".toCol" and ".tagCol" functions.
+### 'x' must be a Bimap object.
+###
+### Note that we must use 'x@data[[2]]' instead of 'x@data[[Rkeyname(x)]]'
+### because 'x' colnames are not necessarily unique e.g.:
+###   > head(flatten(subset(GOBPPARENTS, "GO:0000001")), 2)
+###          go_id      go_id Evidence
+###   1 GO:0000001 GO:0048308      isa
+###   2 GO:0000001 GO:0048311      isa
+###
+### TODO: Make these methods use colmetanames(x) to find the positions of the
+### left, right and tag cols in x@data instead of hardcoding this with
+### x@data[[1]], x@data[[2]] and x@data[[3]].
+###
+
+.fromCol <- function(x)
+{
+    if (direction(x) == 1)
+        x@data[[1]]
+    else
+        x@data[[2]]
+}
+
+.toCol <- function(x)
+{
+    if (direction(x) == 1)
+        x@data[[2]]
+    else
+        x@data[[1]]
+}
+
+.tagCol <- function(x)
+{
+    if (is.na(tagname(x)))
+        return(NULL)
+    x@data[[3]]
+}
+
+
+### The ".formatList" function.
+### 'x' must be a list with unique names.
+###
+### Re-order and format 'x' as follow:
 ###   > x <- list(aa=1, b=2:-1, c=3)
-###   > names <- c("a", "c", "d")
+###   > names <- c("a", "c", "d", "c")
 ###   > .formatList(x, names)
-### ... must return 'list(a=NA, c=3, d=NA)'
+### ... must return 'list(a=NA, c=3, d=NA, c=3)'
 ### Note that the returned list must have exactly the names in 'names' (in the
 ### same order).
 .formatList <- function(x, names, replace.single=NULL, replace.multiple=NULL)
@@ -61,6 +82,21 @@ setMethod("to.colpos", "Bimap",
     names(names) <- names
     lapply(names, formatVal)
 }
+
+### The ".from.colpos" and ".to.colpos" functions.
+### 'x' must be a Bimap object.
+
+.from.colpos <- function(x)
+{
+    if (direction(x) == 1) side = "Lkeyname" else side = "Rkeyname"
+    match(side, colmetanames(x))
+}
+
+.to.colpos <- function(x)
+{
+    .from.colpos(revmap(x))
+}
+
 
 ### The ".toListOfLists" function.
 ###
@@ -91,6 +127,8 @@ setMethod("to.colpos", "Bimap",
 ###   .toListOfLists() does this conversion from "flat" to "list".
 ###
 ### Arguments:
+###
+### 'x': a Bimap object.
 ###
 ### 'mode': 3 modes are supported:
 ###         mode 1: mono-valued map
@@ -131,8 +169,8 @@ setMethod("to.colpos", "Bimap",
     if (missing(FUN))
         FUN <- function(...) list(...)
     ## First slicing (top level)
-    slicer1 <- from.colpos(x)
-    slicer2 <- to.colpos(x)
+    slicer1 <- .from.colpos(x)
+    slicer2 <- .to.colpos(x)
     if (slicer2 > slicer1)
         slicer2 <- slicer2 - 1
     keepcols <- seq_len(length(x@data))[- slicer1]
@@ -167,51 +205,6 @@ setMethod("to.colpos", "Bimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "fromCol", "toCol" and "tagCol" methods.
-###
-### Note that we must use 'x@data[[2]]' instead of 'x@data[[Rkeyname(x)]]'
-### because 'x' colnames are not necessarily unique e.g.:
-###   > head(flatten(subset(GOBPPARENTS, "GO:0000001")), 2)
-###          go_id      go_id Evidence
-###   1 GO:0000001 GO:0048308      isa
-###   2 GO:0000001 GO:0048311      isa
-###
-### TODO: Make these methods use colmetanames(x) to find the positions of the
-### left, right and tag cols in x@data instead of hardcoding this with
-### x@data[[1]], x@data[[2]] and x@data[[3]].
-###
-
-setMethod("fromCol", "Bimap",
-    function(x)
-    {
-        if (direction(x) == 1)
-            x@data[[1]]
-        else
-            x@data[[2]]
-    }
-)
-
-setMethod("toCol", "Bimap",
-    function(x)
-    {
-        if (direction(x) == 1)
-            x@data[[2]]
-        else
-            x@data[[1]]
-    }
-)
-
-setMethod("tagCol", "Bimap",
-    function(x)
-    {
-        if (is.na(tagname(x)))
-            return(NULL)
-        x@data[[3]]
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "as.list" methods.
 ###
 
@@ -219,9 +212,9 @@ setMethod("as.list", "Bimap",
     function(x, ...)
     {
         Rattribnames(x) <- NULL
-        toCol <- toCol(x)
-        names(toCol) <- tagCol(x)
-        y <- split(toCol, fromCol(x))
+        toCol <- .toCol(x)
+        names(toCol) <- .tagCol(x)
+        y <- split(toCol, .fromCol(x))
         .formatList(y, keys(x))
     }
 )
@@ -244,8 +237,8 @@ setMethod("as.list", "IpiAnnDbMap",
     {
         y <- flatten(x, fromKeys.only=TRUE)
         toCol <- y@data[[3]]
-        names(toCol) <- toCol(y)
-        z <- split(toCol, fromCol(y))
+        names(toCol) <- .toCol(y)
+        z <- split(toCol, .fromCol(y))
         .formatList(z, keys(y))
     }
 )
@@ -254,7 +247,7 @@ setMethod("as.list", "AgiAnnDbMap",
     function(x, ...)
     {
         y <- flatten(x, fromKeys.only=TRUE)
-        z <- split(toCol(y), fromCol(y))
+        z <- split(.toCol(y), .fromCol(y))
         .formatList(z, keys(y), x@replace.single, x@replace.multiple)
     }
 )
@@ -275,7 +268,7 @@ setMethod("as.list", "GoAnnDbBimap",
                        list(GOID=gid, Evidence=evi, Ontology=ont),
                        GOIDs, Evidences, Ontologies, SIMPLIFY=FALSE)
             }
-            fromCol <- fromCol(y)
+            fromCol <- .fromCol(y)
             GOIDs <- split(y@data[["go_id"]], fromCol)
             Evidences <- split(y@data[["Evidence"]], fromCol)
             Ontologies <- split(y@data[["Ontology"]], fromCol)
@@ -434,10 +427,10 @@ setMethod("as.character", "AnnDbBimap",
             stop("AnnDbBimap object with tags cannot be coerced to a character vector")
         Rattribnames(x) <- NULL
         y <- flatten(x, fromKeys.only=TRUE)
-        ans <- toCol(y)
+        ans <- .toCol(y)
         if (!is.character(ans))
             ans <- as.character(ans)
-        names(ans) <- fromCol(y)
+        names(ans) <- .fromCol(y)
         if (any(duplicated(names(ans))))
             warning("returned vector has duplicated names")
         ans
