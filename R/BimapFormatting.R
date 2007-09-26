@@ -68,11 +68,11 @@
         val <- x[[key]]
         lval <- length(val)
         if (lval == 1L) {
-            if (doReplaceMultiple)
-              return(replace.multiple)
+            if (doReplaceSingle)
+                return(replace.single)
         } else if (lval > 1L) {
             if (doReplaceMultiple)
-              return(replace.multiple)
+                return(replace.multiple)
         } else {
             # lval == 0
             val <- NA
