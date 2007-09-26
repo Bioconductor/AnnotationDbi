@@ -26,7 +26,7 @@
         # Get the ORF identifiers that are mapped to chromosome locations
         mapped_genes <- mappedkeys(x)
         # Convert to a list
-        xx <- as.list(x, keys=mapped_genes)
+        xx <- as.list(x[mapped_genes])
         if(length(xx) > 0) {
           # Get the CHRLOC for the first five genes
           xx[1:5]

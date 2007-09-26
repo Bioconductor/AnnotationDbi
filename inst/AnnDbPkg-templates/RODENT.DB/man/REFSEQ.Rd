@@ -51,7 +51,7 @@
         # Get the entrez gene identifiers that are mapped to any RefSeq ID
         mapped_genes <- mappedkeys(x)
         # Convert to a list
-        xx <- as.list(x, keys=mapped_genes)
+        xx <- as.list(x[mapped_genes])
         if(length(xx) > 0) {
           # Get the REFSEQ for the first five genes
           xx[1:5]
@@ -64,7 +64,7 @@
         # Get the RefSeq identifier that are mapped to an entrez gene ID
         mapped_seqs <- mappedkeys(x)
         # Convert to a list
-        xx <- as.list(x, keys=mapped_seqs)
+        xx <- as.list(x[mapped_seqs])
         if(length(xx) > 0) {
           # Get the entrez gene for the first five Refseqs
           xx[1:5]

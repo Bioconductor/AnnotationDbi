@@ -30,7 +30,7 @@
         # Get the entrez gene identifiers that are mapped to any Pfam ID
         mapped_genes <- mappedkeys(x)
         # Convert to a list
-        xx <- as.list(x, keys=mapped_genes)
+        xx <- as.list(x[mapped_genes])
         # randomly display 10 genes
         sample(xx, 10)
 }

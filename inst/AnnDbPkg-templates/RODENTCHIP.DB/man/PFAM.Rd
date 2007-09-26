@@ -30,7 +30,7 @@
         # Get the probe identifiers that are mapped to any Pfam ID
         mapped_probes <- mappedkeys(x)
         # Convert to a list
-        xx <- as.list(x, keys=mapped_probes)
+        xx <- as.list(x[mapped_probes])
         # randomly display 10 probes
         sample(xx, 10)
 }

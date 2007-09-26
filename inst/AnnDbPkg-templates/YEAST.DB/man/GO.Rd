@@ -70,7 +70,7 @@
     # Get the ORF identifiers that are mapped to a GO ID
     mapped_genes <- mappedkeys(x)
     # Convert to a list
-    xx <- as.list(x, keys=mapped_genes)
+    xx <- as.list(x[mapped_genes])
     if(length(xx) > 0) {
         # Try the first one
         got <- xx[[1]]           

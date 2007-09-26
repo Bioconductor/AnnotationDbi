@@ -16,7 +16,7 @@
         # Get the ORF identifiers that are mapped to a chromosome
         mapped_genes <- mappedkeys(x)
         # Convert to a list
-        xx <- as.list(x, keys=mapped_genes)
+        xx <- as.list(x[mapped_genes])
         if(length(xx) > 0) {
           # Get the CHR for the first five genes
           xx[1:5]
