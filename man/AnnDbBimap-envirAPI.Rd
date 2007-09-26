@@ -21,14 +21,6 @@
 \alias{mget,AnnDbBimap-method}
 \alias{mget,ANY,AnnDbBimap-method}
 
-\alias{as.list}
-\alias{as.list,Bimap-method}
-\alias{as.list,AnnDbBimap-method}
-\alias{as.list,IpiAnnDbMap-method}
-\alias{as.list,AgiAnnDbMap-method}
-\alias{as.list,GoAnnDbBimap-method}
-\alias{as.list,GOTermsAnnDbBimap-method}
-
 \alias{eapply}
 \alias{eapply,AnnDbBimap-method}
 
@@ -54,7 +46,6 @@
 
   ## Converting to a list
   mget(x, envir, mode, ifnotfound, inherits)
-  as.list(x, ...)
   eapply(env, FUN, ..., all.names)
 
   ## Additional convenience method
@@ -82,7 +73,7 @@
   }
   \item{x}{
     The key(s) to search for for \code{exists}, \code{get} and \code{mget}.
-    An \link{AnnDbBimap} object for \code{[[}, \code{x$name} and \code{as.list}.
+    An \link{AnnDbBimap} object for \code{[[} and \code{x$name}.
     An \link{AnnDbBimap} object or an environment for \code{sample}.
   }
   \item{where}{
@@ -112,7 +103,7 @@
     for environments for the details).
   }
   \item{...}{
-    Optional arguments to \code{FUN}. These arguments are ignored by \code{as.list}.
+    Optional arguments to \code{FUN}.
   }
   \item{size}{
     Non-negative integer giving the number of map elements to choose.

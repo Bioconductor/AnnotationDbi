@@ -29,8 +29,6 @@
 \alias{count.links,Bimap-method}
 \alias{count.links,Go3AnnDbBimap-method}
 
-\alias{as.character,AnnDbBimap-method}
-
 
 \title{Methods for extracting data from a Bimap object}
 
@@ -51,9 +49,6 @@
   nrow(x)
   #dim(x)
   count.links(x)  
-
-  ## Extract the data (directed method)
-  #as.character(x, ...)
 }
 
 \arguments{
@@ -62,8 +57,7 @@
   }
   \item{...}{
     Further arguments to be passed to or from other methods (see
-    \code{\link[utils]{head}}, \code{\link[utils]{tail}} or
-    \code{\link[base]{as.character}}
+    \code{\link[utils]{head}} or \code{\link[utils]{tail}}
     for the details).
   }
 }
@@ -90,9 +84,6 @@
   nrow(x)
   dim(x)
   count.links(x)
-
-  library(hgu95av2.db)
-  as.character(hgu95av2ENTREZID)[1:9]
 }
 
 \keyword{methods}
