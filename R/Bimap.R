@@ -269,7 +269,7 @@ setMethod("revmap", "Bimap",
 setMethod("revmap", "AnnDbBimap",
     function(x, objName=NULL, ...)
     {
-        x <- callNextMethod(x) # calls "revmap" method for "Bimap" objects
+        x <- callNextMethod() # calls "revmap" method for "Bimap" objects
         if (!is.null(objName))
             x@objName <- toString(objName)
         x
