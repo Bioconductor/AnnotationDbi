@@ -7,7 +7,9 @@
   arg (with default to FALSE) for displaying the CREATE INDEX statements
   or not (filter the lines of the output based on the presence of
   the "CREATE INDEX" string at their beginning and the presence of a
-  unique ";" located at their end).
+  unique ";" located at their end). In the man page for
+  @ANNOBJPREFIX@_dbschema(), add a note about "internal" ids vs "external"
+  (or real world) ids.
   Also add a @ANNOBJPREFIX@_dbInfo() function that prints the content
   of the metadata table + the dbfile?
   Also make @ANNOBJPREFIX@_dbfile a function instead of a character
