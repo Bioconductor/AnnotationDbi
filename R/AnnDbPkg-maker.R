@@ -53,7 +53,7 @@ setClass(
 ### Some helper functions.
 ###
 
-initWithDbMetada <- function(x, db_file)
+initWithDbMetada <- function(x, dbfile)
 {
     metadata2slot <- c(
         DBSCHEMA="DBschema",
@@ -63,7 +63,7 @@ initWithDbMetada <- function(x, db_file)
         CHIPNAME="chipName",
         MANUFACTURERURL="manufacturerUrl"
     )
-    dbconn <- dbFileConnect(db_file)
+    dbconn <- dbFileConnect(dbfile)
     on.exit(dbFileDisconnect(dbconn))
     metadata <- dbGetTable(dbconn, "metadata")
     if (!identical(colnames(metadata), c("name", "value")))
@@ -87,7 +87,7 @@ initWithDbMetada <- function(x, db_file)
             next
         }
         if (slot(x, slot_name) != val)
-            stop(metadata_name, " specified in '", db_file, "' (\"", val, "\") ",
+            stop(metadata_name, " specified in '", dbfile, "' (\"", val, "\") ",
                  "doesn't match 'x@", slot_name, "' (\"", slot(x, slot_name), "\")")
     }
     if (is.na(x@manufacturerUrl)) {
@@ -129,17 +129,17 @@ initComputedSlots <- function(x)
     x
 }
 
-initWithDbDoc <- function(db_file)
+initWithDbDoc <- function(dbfile)
 {
-    dbconn <- dbFileConnect(db_file)
+    dbconn <- dbFileConnect(dbfile)
     on.exit(dbFileDisconnect(dbconn))
     map_metadata <- dbGetTable(dbconn, "map_metadata")
     map_metadata
 }
 
-getSymbolValuesForManPages <- function(map_names, db_file)
+getSymbolValuesForManPages <- function(map_names, dbfile)
 {
-    map_metadata <- initWithDbDoc(db_file)
+    map_metadata <- initWithDbDoc(dbfile)
     map_source <- sapply(map_names,
                          function(this_map)
                          {
@@ -207,17 +207,17 @@ loadAnnDbPkgIndex <- function(file)
 ###
 
 setGeneric("makeAnnDbPkg", signature="x",
-    function(x, db_file, dest_dir=".", no.man=FALSE, ...) standardGeneric("makeAnnDbPkg")
+    function(x, dbfile, dest_dir=".", no.man=FALSE, ...) standardGeneric("makeAnnDbPkg")
 )
 
 setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
-    function(x, db_file, dest_dir=".", no.man=FALSE, ...)
+    function(x, dbfile, dest_dir=".", no.man=FALSE, ...)
     {
-        x <- initWithDbMetada(x, db_file)
+        x <- initWithDbMetada(x, dbfile)
         x <- initComputedSlots(x)
-        db_file_basename <- basename(db_file)
-        if (db_file_basename != paste(x@AnnObjPrefix, ".sqlite", sep=""))
-            stop("'", db_file, "': File name doesn't match 'x@AnnObjPrefix' (", x@AnnObjPrefix, ")")
+        dbfile_basename <- basename(dbfile)
+        if (dbfile_basename != paste(x@AnnObjPrefix, ".sqlite", sep=""))
+            stop("'", dbfile, "': File name doesn't match 'x@AnnObjPrefix' (", x@AnnObjPrefix, ")")
         template_path <- system.file("AnnDbPkg-templates",
                                      x@PkgTemplate,
                                      package="AnnotationDbi")
@@ -236,7 +236,7 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
             PKGVERSION=x@Version,
             LIC=x@License,
             BIOCVIEWS=x@biocViews,
-            DBFILE=db_file_basename,
+            DBFILE=dbfile_basename,
             ANNDBIVERSION=ann_dbi_version
         )
         man_dir <- file.path(template_path, "man")
@@ -247,7 +247,7 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
                 #doc_template_names <- doc_template_names[!is_static]
                 map_names <- sub("\\.Rd$", "", doc_template_names)
                 if (length(map_names) != 0)
-                    symvals <- c(symvals, getSymbolValuesForManPages(map_names, db_file))
+                    symvals <- c(symvals, getSymbolValuesForManPages(map_names, dbfile))
             } else {
                 unlink(man_dir, recursive=TRUE)
             }
@@ -273,19 +273,19 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
         if (!file.exists(dest_db_dir)
             && !dir.create(dest_db_dir, recursive=TRUE))
           stop("unable to create dest db dir ", dest_db_dir)
-	dest_db_file <- file.path(dest_db_dir, db_file_basename)
-        if (!file.copy(db_file, dest_db_file))
-            stop("cannot copy file '", db_file, "' to '", dest_db_file, "'")
+	dest_dbfile <- file.path(dest_db_dir, dbfile_basename)
+        if (!file.copy(dbfile, dest_dbfile))
+            stop("cannot copy file '", dbfile, "' to '", dest_dbfile, "'")
         return(invisible(TRUE))
     }
 )
 
 setMethod("makeAnnDbPkg", "list",
-    function(x, db_file, dest_dir=".", no.man=FALSE, ...)
+    function(x, dbfile, dest_dir=".", no.man=FALSE, ...)
     {
         x$Class <- "AnnDbPkgSeed"
         y <- do.call("new", x)
-        makeAnnDbPkg(y, db_file, dest_dir, no.man)
+        makeAnnDbPkg(y, dbfile, dest_dir, no.man)
     }
 )
 
@@ -298,17 +298,17 @@ setMethod("makeAnnDbPkg", "list",
 ###                        # regular expression
 ###
 setMethod("makeAnnDbPkg", "character",
-    function(x, db_file, dest_dir=".", no.man=FALSE, ...)
+    function(x, dbfile, dest_dir=".", no.man=FALSE, ...)
     {
-        if (missing(db_file)) {
-            db_file <- system.file("extdata", "GentlemanLab", "ANNDBPKG-INDEX.TXT",
+        if (missing(dbfile)) {
+            dbfile <- system.file("extdata", "GentlemanLab", "ANNDBPKG-INDEX.TXT",
                                    package="AnnotationDbi")
         }
-        index <- loadAnnDbPkgIndex(db_file)
+        index <- loadAnnDbPkgIndex(dbfile)
         if (length(x) != 1) {
             ii <- match(x, index[ , "Package"])
             if (any(is.na(ii)))
-                stop("packages ", paste(x[is.na(ii)], collapse=", "), " not in ", db_file)
+                stop("packages ", paste(x[is.na(ii)], collapse=", "), " not in ", dbfile)
             index <- index[ii, , drop=FALSE]
         } else if (!is.na(x) && x != "") {
             pkgname <- paste("^", x, "$", sep="")
@@ -331,9 +331,9 @@ setMethod("makeAnnDbPkg", "character",
             y <- index[i, ]
             y <- as.list(y[!is.na(y)])
             cat("[", i, "/", nrow(index), "] making package ", y[["Package"]], ": ", sep="")
-            db_file <- y[["DBfile"]]
+            dbfile <- y[["DBfile"]]
             y <- y[names(y) != "DBfile"]
-            makeAnnDbPkg(y, db_file, dest_dir, no.man)
+            makeAnnDbPkg(y, dbfile, dest_dir, no.man)
         }
         cat("DONE (", nrow(index), " package(s) made under the ", dest_dir, " directory)\n", sep="")
     }

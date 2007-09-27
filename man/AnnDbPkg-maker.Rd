@@ -20,7 +20,7 @@
 }
 
 \usage{
-  makeAnnDbPkg(x, db_file, dest_dir=".", no.man=FALSE, ...)
+  makeAnnDbPkg(x, dbfile, dest_dir=".", no.man=FALSE, ...)
   loadAnnDbPkgIndex(file)
 }
 
@@ -28,7 +28,7 @@
   \item{x}{
     A AnnDbPkgSeed object, a list, a string or a regular expression.
   }
-  \item{db_file}{
+  \item{dbfile}{
     The path to the SQLite containing the annotation data for the package
     to build.
   }

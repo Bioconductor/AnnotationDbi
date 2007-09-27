@@ -3,16 +3,16 @@
 ### packages instead of being redefined over and over in every templates.
 
 ### Used at load time (in .onLoad).
-dbFileConnect <- function(db_file)
+dbFileConnect <- function(dbfile)
 {
     ## This is a protection against dbConnect() working even with non-existing
     ## files (for our use case, the .sqlite file _must_ exist):
-    if (!file.exists(db_file))
-        stop("DB file '", db_file, "' not found")
+    if (!file.exists(dbfile))
+        stop("DB file '", dbfile, "' not found")
     ## We should not need to explicitly library(RSQLite) because it's in
     ## Depends and Imports but this seems to make 'R CMD check hgu95av2.db' happier.
     library(RSQLite)
-    dbConnect(SQLite(), dbname=db_file, cache_size=64000, synchronous=0)
+    dbConnect(SQLite(), dbname=dbfile, cache_size=64000, synchronous=0)
 }
 
 ### Used at unload time (in .onUnload).
