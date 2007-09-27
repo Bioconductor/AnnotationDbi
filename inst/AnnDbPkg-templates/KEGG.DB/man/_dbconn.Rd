@@ -75,7 +75,7 @@
   dbGetQuery(@ANNOBJPREFIX@_dbconn(), "SELECT COUNT(*) FROM pathway2name")
 
   ## The connection object returned by @ANNOBJPREFIX@_dbconn() was created with:
-  dbConnect(SQLite(), dbname=@ANNOBJPREFIX@_dbfile, cache_size=64000, synchronous=0)
+  dbConnect(SQLite(), dbname=@ANNOBJPREFIX@_dbfile(), cache_size=64000, synchronous=0)
 
   @ANNOBJPREFIX@_dbschema()
 
