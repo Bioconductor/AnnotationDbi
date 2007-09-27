@@ -11,9 +11,22 @@
 % Accessor-like methods
 
 \alias{dbconn}
+\alias{dbconn,environment-method}
 \alias{dbconn,AnnDbObj-method}
+
 \alias{dbfile}
+\alias{dbfile,environment-method}
 \alias{dbfile,AnnDbObj-method}
+
+\alias{dbschema}
+\alias{dbschema,DBIConnection-method}
+\alias{dbschema,environment-method}
+\alias{dbschema,AnnDbObj-method}
+
+\alias{dbInfo}
+\alias{dbInfo,DBIConnection-method}
+\alias{dbInfo,environment-method}
+\alias{dbInfo,AnnDbObj-method}
 
 
 \title{AnnDbObj objects}
@@ -47,16 +60,41 @@
       \code{x}'s data.
     }
   }
+  \describe{
+    \item{}{
+      \code{dbschema(x, file="", show.indices=FALSE)}:
+      Prints the schema definition of the SQLite DB.
+      Also works if \code{x} is a DBIConnection object.
+
+      The \code{file} argument must be a connection, or a character string
+      naming the file to print to (see the \code{file} argument of the
+      \code{\link[base]{cat}} function for the details).
+
+      The CREATE INDEX statements are not shown by default.
+      Use \code{show.indices=TRUE} to get them.
+    }
+  }
+  \describe{
+    \item{}{
+      \code{dbInfo(x)}:
+      Prints other information about the SQLite DB.
+      Also works if \code{x} is a DBIConnection object.
+    }
+  }
 }
 
 \seealso{
+  \code{\link[DBI]{dbGetQuery}},
+  \code{\link[DBI]{dbConnect}},
   \link{Bimap}
 }
 
 \examples{
   library(hgu95av2.db)
-  dbconn(hgu95av2GO)
-  dbfile(hgu95av2GO)
+  dbconn(hgu95av2GO)    # same as hgu95av2_dbconn()
+  dbfile(hgu95av2GO)    # same as hgu95av2_dbfile()
+  dbschema(hgu95av2GO)  # same as hgu95av2_dbschema()
+  dbInfo(hgu95av2GO)    # same as hgu95av2_dbInfo()
 }
 
 \keyword{classes}

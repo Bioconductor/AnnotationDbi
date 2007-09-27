@@ -14,7 +14,6 @@
 
 \alias{dbFileConnect}
 \alias{dbFileDisconnect}
-\alias{addToNamespaceAndExport}
 \alias{mergeToNamespaceAndExport}
 
 \alias{createAnnObjs.HUMANCHIP_DB}

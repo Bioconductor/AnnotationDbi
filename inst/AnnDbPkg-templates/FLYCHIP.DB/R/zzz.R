@@ -1,6 +1,9 @@
 datacache <- new.env(hash=TRUE, parent=emptyenv())
 
-@ANNOBJPREFIX@_dbconn <- function() get("dbconn", envir=datacache)
+@ANNOBJPREFIX@_dbconn <- function() dbconn(datacache)
+@ANNOBJPREFIX@_dbfile <- function() dbfile(datacache)
+@ANNOBJPREFIX@_dbschema <- function(file="", show.indices=FALSE) dbschema(datacache, file=file, show.indices=show.indices)
+@ANNOBJPREFIX@_dbInfo <- function() dbInfo(datacache)
 
 @ANNOBJPREFIX@ORGANISM <- "@ORGANISM@"
 
@@ -10,7 +13,6 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     ## Connect to the SQLite DB
     dbfile <- system.file("extdata", "@DBFILE@", package=pkgname, lib.loc=libname)
     assign("dbfile", dbfile, envir=datacache)
-    addToNamespaceAndExport("@ANNOBJPREFIX@_dbfile", dbfile, pkgname)
     dbconn <- dbFileConnect(dbfile)
     assign("dbconn", dbconn, envir=datacache)
     ## Create the AnnObj instances

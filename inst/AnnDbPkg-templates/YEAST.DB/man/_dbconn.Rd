@@ -2,42 +2,72 @@
 
 \alias{@ANNOBJPREFIX@_dbconn}
 \alias{@ANNOBJPREFIX@_dbfile}
+\alias{@ANNOBJPREFIX@_dbschema}
+\alias{@ANNOBJPREFIX@_dbInfo}
 
 
-\title{Returns a connection object to the package annotation DB}
+\title{Collect information about the package annotation DB}
 
 \description{
-  Returns a connection object to the package annotation DB.
+  Some convenience functions for getting a connection object to (or collecting
+  information about) the package annotation DB.
 }
 
 \usage{
   @ANNOBJPREFIX@_dbconn()
+  @ANNOBJPREFIX@_dbfile()
+  @ANNOBJPREFIX@_dbschema(file="", show.indices=FALSE)
+  @ANNOBJPREFIX@_dbInfo()
 }
 
 \arguments{
+  \item{file}{
+    A connection, or a character string naming the file to print to (see
+    the \code{file} argument of the \code{\link[base]{cat}} function for
+    the details).
+  }
+  \item{show.indices}{
+    The CREATE INDEX statements are not shown by default.
+    Use \code{show.indices=TRUE} to get them.
+  }
 }
 
 \details{
-  Don't call \code{\link[DBI]{dbDisconnect}} on the connection object
-  returned by \code{@ANNOBJPREFIX@_dbconn()} or you will
-  break all the \code{AnnDbObj} instances defined in this package!
+  \code{@ANNOBJPREFIX@_dbconn} returns a connection object to the package
+  annotation DB.
+  IMPORTANT: Don't call \code{\link[DBI]{dbDisconnect}} on the connection
+  object returned by \code{@ANNOBJPREFIX@_dbconn} or you will
+  break all the \code{\link[AnnotationDbi]{AnnDbObj}} objects defined in this package!
 
-  In addition to the \code{@ANNOBJPREFIX@_dbconn} function,
-  the \code{@ANNOBJPREFIX@_dbfile} object is provided: it's a single
-  character string containing the path to the file
-  containing the package annotation DB.
+  \code{@ANNOBJPREFIX@_dbfile} returns the path (character string) to the
+  package annotation DB (this is an SQLite file).
+
+  \code{@ANNOBJPREFIX@_dbschema} prints the schema definition of the
+  package annotation DB.
+
+  \code{@ANNOBJPREFIX@_dbInfo} prints other information about the package
+  annotation DB.
 }
 
 \value{
-  \code{@ANNOBJPREFIX@_dbconn()}: a connection object to the package
-  annotation DB.
+  \code{@ANNOBJPREFIX@_dbconn}: a DBIConnection object representing an open
+  connection to the package annotation DB.
 
-  \code{@ANNOBJPREFIX@_dbfile}: the path to the file containing the package
-  annotation DB.
+  \code{@ANNOBJPREFIX@_dbfile}: a character string with the path to the
+  package annotation DB.
+
+  \code{@ANNOBJPREFIX@_dbschema}: none (invisible \code{NULL}).
+
+  \code{@ANNOBJPREFIX@_dbInfo}: none (invisible \code{NULL}).
 }
 
 \seealso{
-  \code{\link[DBI]{dbGetQuery}}
+  \code{\link[DBI]{dbGetQuery}},
+  \code{\link[DBI]{dbConnect}},
+  \code{\link[AnnotationDbi]{dbconn}},
+  \code{\link[AnnotationDbi]{dbfile}},
+  \code{\link[AnnotationDbi]{dbschema}},
+  \code{\link[AnnotationDbi]{dbInfo}}
 }
 
 \examples{
@@ -46,6 +76,10 @@
 
   ## The connection object returned by @ANNOBJPREFIX@_dbconn() was created with:
   dbConnect(SQLite(), dbname=@ANNOBJPREFIX@_dbfile, cache_size=64000, synchronous=0)
+
+  @ANNOBJPREFIX@_dbschema()
+
+  @ANNOBJPREFIX@_dbInfo()
 }
 
 \keyword{utilities}

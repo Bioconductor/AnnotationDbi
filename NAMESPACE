@@ -61,7 +61,10 @@ exportMethods(
     "as.character",
 
     ## AnnDbObj lowAPI
-    "dbconn", "dbfile",
+    "dbconn",
+    "dbfile",
+    "dbschema",
+    "dbInfo",
     #"Ltablename", "Rtablename",
     #"Lfilter", "Rfilter",
     #"flatten",
@@ -89,7 +92,7 @@ export(
     ## from R/AnnDbPkg-templates-common.R
     dbFileConnect,
     dbFileDisconnect,
-    addToNamespaceAndExport,
+    #addToNamespaceAndExport,
     mergeToNamespaceAndExport,
 
     ## from the R/createAnnObjs.*_DB.R files

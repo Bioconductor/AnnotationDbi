@@ -8,7 +8,10 @@
 ###
 ### This file defines and implements the low-level API for AnnDbObj objects.
 ### This API consists of the following set of generics:
-###     dbconn, dbfile,
+###     dbconn,
+###     dbfile,
+###     dbschema,
+###     dbInfo,
 ###     Ltablename, Rtablename,
 ###     Lfilter, Rfilter,
 ###     flatten,
@@ -21,14 +24,52 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "dbconn", "Ltablename", "Rtablename", "Lfilter" and "Rfilter" new
-### generics.
+### The "dbconn" methods.
+###
+
+setMethod("dbconn", "environment", function(x) get("dbconn", envir=x))
+setMethod("dbconn", "AnnDbObj", function(x) dbconn(x@datacache))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "dbfile" methods.
+###
+
+setMethod("dbfile", "environment", function(x) get("dbfile", envir=x))
+setMethod("dbfile", "AnnDbObj", function(x) dbfile(x@datacache))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "dbschema" methods.
+###
+
+setMethod("dbschema", "DBIConnection",
+    function(x, file="", show.indices=FALSE)
+        cat("coming soon...\n", file=file))
+
+setMethod("dbschema", "environment",
+    function(x, file="", show.indices=FALSE)
+        dbschema(dbconn(x), file=file, show.indices=show.indices))
+
+setMethod("dbschema", "AnnDbObj",
+    function(x, file="", show.indices=FALSE)
+        dbschema(x@datacache, file=file, show.indices=show.indices))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "dbInfo" methods.
+###
+
+setMethod("dbInfo", "DBIConnection", function(x) cat("coming soon...\n"))
+setMethod("dbInfo", "environment", function(x) dbInfo(dbconn(x)))
+setMethod("dbInfo", "AnnDbObj", function(x) dbInfo(x@datacache))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "Ltablename", "Rtablename", "Lfilter" and "Rfilter" methods.
 ###
 ### They do NOT access the database!
 ###
-
-setMethod("dbconn", "AnnDbObj", function(x) get("dbconn", envir=x@datacache))
-setMethod("dbfile", "AnnDbObj", function(x) get("dbfile", envir=x@datacache))
 
 setMethod("Ltablename", "AnnDbBimap",
     function(x) L2Rchain.Ltablename(x@L2Rchain))
