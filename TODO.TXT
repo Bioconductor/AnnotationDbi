@@ -12,8 +12,6 @@
   (or real world) ids.
   Also add a @ANNOBJPREFIX@_dbInfo() function that prints the content
   of the metadata table + the dbfile?
-  Also make @ANNOBJPREFIX@_dbfile a function instead of a character
-  string.
 
 - implement mechanism to check the DBSCHEMAVERSION of a db pkg at
   load time
@@ -31,8 +29,6 @@
     multihit: agACCNUM[["15228_s_at"]]; agMULTIHIT[["15228_s_at"]]
   and how to "merge" those 2 maps by converting one of them with
   as(agACCNUM, "AnnDbBimap")
-
-- makeAnnDbPkg(): make it chmod the sqlite file so it's read-only
 
 - add AnnotationDbi.Rnw vignette (main vignette) with more focus on the
   Bimap interface
