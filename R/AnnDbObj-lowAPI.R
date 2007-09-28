@@ -85,9 +85,35 @@ setMethod("dbschema", "DBIConnection",
             ii <- which(substr(lines, 1, nchar(createIndexStart)) == createIndexStart
                       & substr(lines, nchar(lines)-nchar(createIndexEnd)+1, nchar(lines)) == createIndexEnd)
             ii <- setdiff(ii, grep(createIndexEnd, substr(lines, 1, nchar(lines)-nchar(createIndexEnd)), fixed=TRUE))
-            ## TODO: Also remove comments preceding the CREATE INDEX lines
+            ## Remove comments preceding the CREATE INDEX blocks
+            beforeLastBlock <- function(ii, i)
+            {
+                while ((i >= 1) && !(i %in% ii))
+                    i <- i - 1
+                while ((i >= 1) && (i %in% ii))
+                    i <- i - 1
+                i
+            }
+            i <- max(ii)
+            while (i >= 1) {
+                i <- beforeLastBlock(ii, i)
+                while (i >= 1) {
+                    if (substr(lines[i], 1, 2) != "--")
+                        break
+                    ii <- c(i, ii)
+                    i <- i - 1
+                }
+            }
             lines <- lines[-ii]
         }
+        ## Remove empty trailing lines
+        ii <- integer(0)
+        i <- length(lines)
+        while ((i >= 1) && (lines[i] == "")) {
+            ii <- c(i, ii)
+            i <- i - 1
+        }
+        lines <- lines[-ii]
         cat(lines, sep="\n")
     }
 )
