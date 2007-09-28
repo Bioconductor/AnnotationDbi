@@ -18,6 +18,11 @@
 \alias{dbfile,environment-method}
 \alias{dbfile,AnnDbObj-method}
 
+\alias{dbmeta}
+\alias{dbmeta,DBIConnection-method}
+\alias{dbmeta,environment-method}
+\alias{dbmeta,AnnDbObj-method}
+
 \alias{dbschema}
 \alias{dbschema,DBIConnection-method}
 \alias{dbschema,environment-method}
@@ -44,7 +49,7 @@
 }
 
 \section{Accessor-like methods}{
-  In the code snippet below,
+  In the code snippets below,
   \code{x} is an AnnDbObj object.
 
   \describe{
@@ -58,6 +63,13 @@
       \code{dbfile(x)}:
       Return the path (character string) to the SQLite DB (file) containing
       \code{x}'s data.
+    }
+  }
+  \describe{
+    \item{}{
+      \code{dbmeta(x, name)}:
+      Prints the value of metadata whose name is 'name'.
+      Also works if \code{x} is a DBIConnection object.
     }
   }
   \describe{
@@ -91,10 +103,11 @@
 
 \examples{
   library(hgu95av2.db)
-  dbconn(hgu95av2GO)    # same as hgu95av2_dbconn()
-  dbfile(hgu95av2GO)    # same as hgu95av2_dbfile()
-  dbschema(hgu95av2GO)  # same as hgu95av2_dbschema()
-  dbInfo(hgu95av2GO)    # same as hgu95av2_dbInfo()
+  dbconn(hgu95av2GO)                    # same as hgu95av2_dbconn()
+  dbfile(hgu95av2GO)                    # same as hgu95av2_dbfile()
+  dbmeta(hgu95av2_dbconn(), "ORGANISM")
+  dbschema(hgu95av2GO)                  # same as hgu95av2_dbschema()
+  dbInfo(hgu95av2GO)                    # same as hgu95av2_dbInfo()
 }
 
 \keyword{classes}
