@@ -68,14 +68,14 @@
   \describe{
     \item{}{
       \code{dbmeta(x, name)}:
-      Prints the value of metadata whose name is 'name'.
+      Print the value of metadata whose name is 'name'.
       Also works if \code{x} is a DBIConnection object.
     }
   }
   \describe{
     \item{}{
       \code{dbschema(x, file="", show.indices=FALSE)}:
-      Prints the schema definition of the SQLite DB.
+      Print the schema definition of the SQLite DB.
       Also works if \code{x} is a DBIConnection object.
 
       The \code{file} argument must be a connection, or a character string

@@ -108,7 +108,7 @@ setMethod("dbschema", "AnnDbObj",
 setMethod("dbInfo", "DBIConnection",
     function(x)
     {
-        dbGetTable(dbconn, "metadata")
+        dbGetTable(x, "metadata")
     }
 )
 setMethod("dbInfo", "environment", function(x) dbInfo(dbconn(x)))
