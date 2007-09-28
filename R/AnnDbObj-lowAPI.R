@@ -10,6 +10,7 @@
 ### This API consists of the following set of generics:
 ###     dbconn,
 ###     dbfile,
+###     dbmeta,
 ###     dbschema,
 ###     dbInfo,
 ###     Ltablename, Rtablename,
@@ -40,12 +41,56 @@ setMethod("dbfile", "AnnDbObj", function(x) dbfile(x@datacache))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "dbmeta" methods.
+###
+
+setMethod("dbmeta", "DBIConnection",
+    function(x, name)
+    {
+        if (!is.character(name) || length(name) != 1 || is.na(name))
+            stop("'name' must be a non-NA character string")
+        name <- toSQLStringSet(name)
+        SQL <- paste("SELECT value FROM metadata WHERE name=", name, sep="")
+        value <- .dbGetQuery(x, SQL, 1)
+        if (length(value) == 0)
+            stop("meta ", name, " not found")
+        if (length(value) != 1)
+            stop("more than 1 meta found for ", name, " in metadata table (bad table)")
+        value
+    }
+)
+
+setMethod("dbmeta", "environment", function(x, name) dbmeta(dbconn(x), name))
+setMethod("dbmeta", "AnnDbObj", function(x, name) dbmeta(x@datacahe, name))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "dbschema" methods.
 ###
 
 setMethod("dbschema", "DBIConnection",
     function(x, file="", show.indices=FALSE)
-        cat("coming soon...\n", file=file))
+    {
+        schema <- dbmeta(x, "DBSCHEMA")
+        version <- dbmeta(x, "DBSCHEMAVERSION")
+        file <- system.file("DBschemas",
+                            paste("schemas_", version, sep=""),
+                            paste(schema, ".sql", sep=""),
+                            package="AnnotationDbi")
+        lines <- readLines(file)
+        if (!show.indices) {
+            ## Remove the CREATE INDEX lines
+            createIndexStart <- "CREATE INDEX"
+            createIndexEnd <- ";"
+            ii <- which(substr(lines, 1, nchar(createIndexStart)) == createIndexStart
+                      & substr(lines, nchar(lines)-nchar(createIndexEnd)+1, nchar(lines)) == createIndexEnd)
+            ii <- setdiff(ii, grep(createIndexEnd, substr(lines, 1, nchar(lines)-nchar(createIndexEnd)), fixed=TRUE))
+            ## TODO: Also remove comments preceding the CREATE INDEX lines
+            lines <- lines[-ii]
+        }
+        cat(lines, sep="\n")
+    }
+)
 
 setMethod("dbschema", "environment",
     function(x, file="", show.indices=FALSE)
@@ -60,7 +105,12 @@ setMethod("dbschema", "AnnDbObj",
 ### The "dbInfo" methods.
 ###
 
-setMethod("dbInfo", "DBIConnection", function(x) cat("coming soon...\n"))
+setMethod("dbInfo", "DBIConnection",
+    function(x)
+    {
+        dbGetTable(dbconn, "metadata")
+    }
+)
 setMethod("dbInfo", "environment", function(x) dbInfo(dbconn(x)))
 setMethod("dbInfo", "AnnDbObj", function(x) dbInfo(x@datacache))
 

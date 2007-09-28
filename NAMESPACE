@@ -63,6 +63,7 @@ exportMethods(
     ## AnnDbObj lowAPI
     "dbconn",
     "dbfile",
+    "dbmeta",
     "dbschema",
     "dbInfo",
     #"Ltablename", "Rtablename",
