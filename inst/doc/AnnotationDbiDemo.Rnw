@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{AnnDbBimap API Demo}
+%\VignetteIndexEntry{AnnotationDbi Demo}
 %\VignetteDepends{hgu95av2.db}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
@@ -10,7 +10,7 @@
 \newcommand{\Rclass}[1]{{\textit{#1}}}
 
 
-\title{AnnDbBimap API Demo}
+\title{AnnotationDbi Demo}
 \author{Herve Pages, Nianhua Li, and Seth Falcon}
 
 \SweaveOpts{keep.source=TRUE}

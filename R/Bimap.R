@@ -263,13 +263,13 @@ setReplaceMethod("direction", "AnnDbMap",
 ###
 
 setMethod("revmap", "Bimap",
-    function(x, ...) { direction(x) <- - direction(x); x }
+    function(x) { direction(x) <- - direction(x); x }
 )
 
 setMethod("revmap", "AnnDbBimap",
-    function(x, objName=NULL, ...)
+    function(x, objName=NULL)
     {
-        x <- callNextMethod() # calls "revmap" method for "Bimap" objects
+        x <- callNextMethod(x) # calls "revmap" method for "Bimap" objects
         if (!is.null(objName))
             x@objName <- toString(objName)
         x
@@ -277,11 +277,11 @@ setMethod("revmap", "AnnDbBimap",
 )
 
 setMethod("revmap", "environment",
-    function(x, ...) l2e(reverseSplit(as.list(x)))
+    function(x) l2e(reverseSplit(as.list(x)))
 )
 
 setMethod("revmap", "list",
-    function(x, ...) reverseSplit(x)
+    function(x) reverseSplit(x)
 )
 
 
@@ -593,7 +593,7 @@ setReplaceMethod("keys", "Bimap",
 ### The "subset" methods.
 
 setMethod("subset", "Bimap",
-    function(x, Lkeys=NULL, Rkeys=NULL, ...)
+    function(x, Lkeys=NULL, Rkeys=NULL)
     {
         Lkeys(x) <- Lkeys
         Rkeys(x) <- Rkeys
@@ -602,9 +602,10 @@ setMethod("subset", "Bimap",
 )
 
 setMethod("subset", "AnnDbBimap",
-    function(x, Lkeys=NULL, Rkeys=NULL, objName=NULL, ...)
+    function(x, Lkeys=NULL, Rkeys=NULL, objName=NULL)
     {
-        x <- callNextMethod(x) # calls "subset" method for "Bimap" objects
+        ## Call "subset" method for "Bimap" objects
+        x <- callNextMethod(x, Lkeys=Lkeys, Rkeys=Rkeys)
         if (!is.null(objName))
             x@objName <- toString(objName)
         x
