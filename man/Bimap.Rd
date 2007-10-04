@@ -42,6 +42,9 @@
 \alias{show,FlatBimap-method}
 \alias{show,AnnDbBimap-method}
 
+\alias{summary,Bimap-method}
+\alias{summary,AnnDbBimap-method}
+
 
 \title{Bimap objects and the Bimap interface}
 
@@ -49,6 +52,23 @@
   What we usually call "annotation maps" are in fact Bimap objects.
   In the following sections we present the bimap concept and the
   Bimap interface as it is defined in AnnotationDbi.
+}
+
+\section{Display methods}{
+  In the code snippets below,
+  \code{x} is a Bimap object.
+
+  \describe{
+    \item{}{
+      \code{show(x)}:
+      Display minimal information about Bimap object \code{x}.
+    }
+
+    \item{}{
+      \code{summary(x)}:
+      Display a little bit more information about Bimap object \code{x}.
+    }
+  }
 }
 
 \section{The bimap concept}{
@@ -203,6 +223,15 @@
   \link{Bimap-keymethods},
   \link{Bimap-toTable},
   \link{AnnDbBimap-envirAPI}
+}
+
+\examples{
+  library(hgu95av2.db)
+  ls(2)
+  hgu95av2GO # calls the "show" method
+  summary(hgu95av2GO)
+  hgu95av2GO2PROBE # calls the "show" method
+  summary(hgu95av2GO2PROBE)
 }
 
 \keyword{classes}

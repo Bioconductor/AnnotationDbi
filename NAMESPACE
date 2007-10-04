@@ -5,9 +5,6 @@ import(DBI)
 import(RSQLite)
 
 exportClasses(
-    ## from R/GOTerms.R
-    "GOTerms",
-
     ## from R/AllClasses.R
     "Bimap",
     "FlatBimap",
@@ -22,20 +19,25 @@ exportClasses(
     "IpiAnnDbMap",
     "AgiAnnDbMap",
 
+    ## from R/GOTerms.R
+    "GOTerms",
+
     ## from R/AnnDbPkg-maker.R
     "AnnDbPkgSeed"
 )
 
 exportMethods(
-    ## from R/GOTerms.R
-    "GOID",
-    "Term",
-    "Ontology",
-    "Synonym",
-    "Secondary",
-    "Definition",
+    ## from AnnDbObj-lowAPI.R
+    "dbconn",
+    "dbfile",
+    "dbmeta",
+    "dbschema",
+    "dbInfo",
+    #"Ltablename", "Rtablename",
+    #"Lfilter", "Rfilter",
+    #"flatten",
 
-    ## The Bimap interface
+    ## from R/Bimap.R (the Bimap interface)
     "direction", "direction<-",
     "revmap",
     "colnames", "colmetanames",
@@ -51,34 +53,36 @@ exportMethods(
     "mappedLkeys", "mappedRkeys", "mappedkeys",
     "count.mappedLkeys", "count.mappedRkeys", "count.mappedkeys",
     "show",
+    "summary",
     "toTable",
     "head", "tail",
     "nrow",
     "links",
     "count.links",
     "ncol", "dim",
+
+    ## from R/GOTerms.R
+    "GOID",
+    "Term",
+    "Ontology",
+    "Synonym",
+    "Secondary",
+    "Definition",
+
+    ## from R/BimapFormatting.R
+    "as.list",
     #"toLList", "toRList", "toList",
     "as.character",
 
-    ## AnnDbObj lowAPI
-    "dbconn",
-    "dbfile",
-    "dbmeta",
-    "dbschema",
-    "dbInfo",
-    #"Ltablename", "Rtablename",
-    #"Lfilter", "Rfilter",
-    #"flatten",
-
-    ## from R/AnnDbMap-envirAPI.R
+    ## from R/AnnDbBimap-envirAPI.R
     "ls",
-    "exists",
+    "mget",
+    "eapply",
     "get",
+    "exists",
     "[[",
     "$",
-    "mget",
-    "as.list",
-    "eapply",
+    "contents",
     "sample",
 
     ## more...

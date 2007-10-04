@@ -909,7 +909,7 @@ setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "show" methods.
+### The "show" and "summary" methods.
 ###
 
 .key.summary <- function(keys, nmapped)
@@ -956,10 +956,16 @@ setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
     cat("| direction: ", direction, "\n", sep="")
 }
 
+.is.submap <- function(x)
+{
+    .inslot.Lkeys(x) || .inslot.Rkeys(x)
+}
+
 setMethod("show", "FlatBimap",
     function(object)
     {
-        cat("\"", class(object), "\" object:\n|\n", sep="")
+        cat("\"", class(object), "\" object:\n", sep="")
+        cat("|\n")
         .Bimap.summary(object)
         cat("\ndata:\n")
         if (nrow(object) <= 20) {
@@ -972,11 +978,6 @@ setMethod("show", "FlatBimap",
     }
 )
 
-.is.submap <- function(x)
-{
-    .inslot.Lkeys(x) || .inslot.Rkeys(x)
-}
-
 setMethod("show", "AnnDbBimap",
     function(object)
     {
@@ -984,7 +985,17 @@ setMethod("show", "AnnDbBimap",
         if (.is.submap(object))
             map <- "submap"
         cat(object@objName, " ", map, " for ", object@objTarget,
-            " (object of class \"", class(object), "\")\n|\n", sep="")
+            " (object of class \"", class(object), "\")\n", sep="")
+    }
+)
+
+setMethod("summary", "Bimap", function(object) show(object))
+
+setMethod("summary", "AnnDbBimap",
+    function(object)
+    {
+        show(object)
+        cat("|\n")
         .Bimap.summary(object)
     }
 )

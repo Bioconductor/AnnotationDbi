@@ -3,11 +3,11 @@
 \alias{AnnDbBimap-envirAPI}
 
 \alias{ls}
-\alias{ls,AnnDbBimap-method}
+\alias{ls,Bimap-method}
 
 \alias{exists}
-\alias{exists,ANY,ANY,AnnDbBimap-method}
-\alias{exists,ANY,AnnDbBimap,missing-method}
+\alias{exists,ANY,ANY,Bimap-method}
+\alias{exists,ANY,Bimap,missing-method}
 
 \alias{get}
 \alias{get,ANY,ANY,AnnDbBimap-method}
@@ -22,10 +22,12 @@
 \alias{mget,ANY,AnnDbBimap-method}
 
 \alias{eapply}
-\alias{eapply,AnnDbBimap-method}
+\alias{eapply,Bimap-method}
+
+\alias{contents,Bimap-method}
 
 \alias{sample}
-\alias{sample,AnnDbBimap-method}
+\alias{sample,Bimap-method}
 \alias{sample,environment-method}
 
 
@@ -47,6 +49,7 @@
   ## Converting to a list
   mget(x, envir, mode, ifnotfound, inherits)
   eapply(env, FUN, ..., all.names)
+  #contents(object, all.names)
 
   ## Additional convenience method
   sample(x, size, replace=FALSE, prob=NULL)
@@ -121,15 +124,31 @@
 }
 
 \seealso{
+  \code{\link[base]{ls}},
+  \code{\link[base]{exists}},
+  \code{\link[base]{get}},
+  \code{\link[base]{mget}},
+  \code{\link[base]{eapply}},
+  \code{\link[Biobase]{contents}},
+  \code{\link[base]{sample}},
   \link{Bimap}
 }
 
 \examples{
   library(hgu95av2.db)
   x <- hgu95av2CHRLOC
+
   ls(x)[1:3]
+  exists(ls(x)[1], x)
+  exists("titi", x)
+  get(ls(x)[1], x)
+  x[[ls(x)[1]]]
+  x$titi # NULL
+
   mget(ls(x)[1:3], x)
-  x[["titi"]]
+  eapply(x, length)
+  contents(x)
+
   sample(x, 3)
 }
 

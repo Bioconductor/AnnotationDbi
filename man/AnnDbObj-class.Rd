@@ -96,17 +96,36 @@
 }
 
 \seealso{
-  \code{\link[DBI]{dbGetQuery}},
   \code{\link[DBI]{dbConnect}},
+  \code{\link[DBI]{dbListTables}},
+  \code{\link[DBI]{dbListFields}},
+  \code{\link[DBI]{dbGetQuery}},
   \link{Bimap}
 }
 
 \examples{
   library(hgu95av2.db)
-  dbconn(hgu95av2GO)                    # same as hgu95av2_dbconn()
-  dbfile(hgu95av2GO)                    # same as hgu95av2_dbfile()
+
+  dbconn(hgu95av2ENTREZID)              # same as hgu95av2_dbconn()
+  dbfile(hgu95av2ENTREZID)              # same as hgu95av2_dbfile()
+
   dbmeta(hgu95av2_dbconn(), "ORGANISM")
-  dbschema(hgu95av2GO)                  # same as hgu95av2_dbschema()
+  dbmeta(hgu95av2_dbconn(), "DBSCHEMA")
+  dbmeta(hgu95av2_dbconn(), "DBSCHEMAVERSION")
+
+  dbListTables(hgu95av2_dbconn())
+  dbListFields(hgu95av2_dbconn(), "probes")
+  dbListFields(hgu95av2_dbconn(), "genes")
+  dbschema(hgu95av2ENTREZID)            # same as hgu95av2_dbschema()
+  ## According to the schema, the probes.id column references the genes.id
+  ## column. Note that in all tables, the "id" column is an internal id with
+  ## no biological meaning (provided for allowing efficient joins between
+  ## tables).
+  ## To retrieve the mapping between manufacturer IDs and Entrez Gene IDs:
+  dbGetQuery(hgu95av2_dbconn(), "SELECT * FROM probes INNER JOIN genes USING (id) LIMIT 10")
+  ## This mapping is in fact the ENTREZID map:
+  toTable(hgu95av2ENTREZID)[1:10, ] # only relevant columns are retrieved
+
   dbInfo(hgu95av2GO)                    # same as hgu95av2_dbInfo()
 }
 

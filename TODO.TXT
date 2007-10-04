@@ -1,26 +1,10 @@
-- provide some utility to make it easy to look at the schema
-  of a given package + in the man page for this utility, mention
-  dbListTable and dbListFields and put \code{\link[DBI]{dbListTable}}
-  and \code{\link[DBI]{dbListFields}} in the \seealso section.
-  What about @ANNOBJPREFIX@_dbschema() to display the schema definition
-  (add "dbschema" method for AnnDbObj objects)? Provide 'with.indices'
-  arg (with default to FALSE) for displaying the CREATE INDEX statements
-  or not (filter the lines of the output based on the presence of
-  the "CREATE INDEX" string at their beginning and the presence of a
-  unique ";" located at their end). In the man page for
-  @ANNOBJPREFIX@_dbschema(), add a note about "internal" ids vs "external"
-  (or real world) ids.
-  Also add a @ANNOBJPREFIX@_dbInfo() function that prints the content
-  of the metadata table + the dbfile?
+- fix the dbInfo()
+
+- in addition to dbschema(), provide a way to retrieve a high-level
+  description of a given schema (UML? XML? via some S4 classes?)
 
 - implement mechanism to check the DBSCHEMAVERSION of a db pkg at
   load time
-
-- fix man page for MAPCOUNTS map in ann db pkg templates +
-  in the \examples section, call checkMAPCOUNTS on the db
-  package so R CMD check will automatically check this +
-  put \code{\link[AnnotationDbi]{checkMAPCOUNTS}} in the
-  \seealso section
 
 - merge man pages for ACCNUM or MULTIHIT. In the examples, show
   the 3 possible situations:
@@ -49,6 +33,7 @@
 
 - look at subListExtract in Biobase and see where it can
   be used to improve speed in AnnotationDbi
+
 
 - pluggable maps
   --------------

@@ -21,7 +21,7 @@
 ### The "ls" new generic.
 ###
 
-setMethod("ls", signature(name="AnnDbBimap"),
+setMethod("ls", signature(name="Bimap"),
     function(name, pos, envir, all.names, pattern)
     {
         if (!missing(pos))
@@ -69,7 +69,7 @@ setMethod("mget", signature(envir="AnnDbBimap"),
 ### The "eapply" new generic.
 ###
 
-setMethod("eapply", signature(env="AnnDbBimap"),
+setMethod("eapply", signature(env="Bimap"),
     function(env, FUN, ..., all.names)
     {
         lapply(as.list(env), FUN, ...)
@@ -85,6 +85,8 @@ setMethod("eapply", signature(env="AnnDbBimap"),
 ### and this
 ###   get("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'pos' arg too.
+###
+
 .get <- function(what, map) mget(what[1], map)[[1]]
 
 setMethod("get", signature(x="ANY", pos="ANY", envir="AnnDbBimap"),
@@ -110,16 +112,27 @@ setMethod("get", signature(x="ANY", pos="AnnDbBimap", envir="missing"),
 ### and this
 ###   exists("1027_at", hgu95av2GO)
 ### to work so we need to dispatch on the 'where' arg too.
-.exists <- function(x, map) x %in% keys(map)
+###
+### Like the original "exists" function for environment objects, our "exists"
+### methods only use the first element of 'x'. But unlike the original, our
+### methods will raise an error if this first element is a character NA.
+###
 
-setMethod("exists", signature(x="ANY", where="ANY", envir="AnnDbBimap"),
+.exists <- function(x, map)
+{
+    if (!is.character(x) || length(x) == 0 || x[1] %in% c(NA, ""))
+        stop("invalid first argument")
+    x[1] %in% keys(map)
+}
+
+setMethod("exists", signature(x="ANY", where="ANY", envir="Bimap"),
     function(x, where, envir, frame, mode, inherits)
     {
         .exists(x, envir)
     }
 )
 
-setMethod("exists", signature(x="ANY", where="AnnDbBimap", envir="missing"),
+setMethod("exists", signature(x="ANY", where="Bimap", envir="missing"),
     function(x, where, envir, frame, mode, inherits)
     {
         .exists(x, where)
@@ -166,8 +179,25 @@ setMethod("$", "AnnDbBimap", function(x, name) x[[name]])
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "contents" methods.
+###
+### The "contents" method for environment objects is defined in Biobase.
+###
+
+setMethod("contents", "Bimap",
+    function(object, all.names)
+    {
+        if (!missing(all.names))
+            warning("ignoring 'all.names' argument")
+        as.list(object)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "sample" new generic.
 ###
+
 .sample <- function(x, size, replace, prob)
 {
     keys <- ls(x)
@@ -175,7 +205,7 @@ setMethod("$", "AnnDbBimap", function(x, name) x[[name]])
     mget(keys, x)
 }
     
-setMethod("sample", "AnnDbBimap",
+setMethod("sample", "Bimap",
     function(x, size, replace=FALSE, prob=NULL)
         .sample(x, size, replace, prob)
 )
