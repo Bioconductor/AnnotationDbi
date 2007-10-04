@@ -222,6 +222,7 @@
   \link{Bimap-colmethods},
   \link{Bimap-keymethods},
   \link{Bimap-toTable},
+  \link{BimapFormatting},
   \link{AnnDbBimap-envirAPI}
 }
 

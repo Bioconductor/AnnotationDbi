@@ -55,6 +55,7 @@
 
 \seealso{
   \link{Bimap},
+  \link{BimapFormatting},
   \link{AnnDbBimap-envirAPI}
 }
 

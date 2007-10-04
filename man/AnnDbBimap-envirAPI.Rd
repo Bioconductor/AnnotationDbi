@@ -131,6 +131,7 @@
   \code{\link[base]{eapply}},
   \code{\link[Biobase]{contents}},
   \code{\link[base]{sample}},
+  \link{BimapFormatting},
   \link{Bimap}
 }
 
