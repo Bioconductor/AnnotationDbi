@@ -29,6 +29,11 @@
 \alias{count.links,Bimap-method}
 \alias{count.links,Go3AnnDbBimap-method}
 
+\alias{nhit}
+\alias{nhit,Bimap-method}
+\alias{nhit,environment-method}
+\alias{nhit,list-method}
+
 
 \title{Methods for extracting data from a Bimap object}
 
@@ -45,15 +50,16 @@
   tail(x, ...)
   links(x)
 
-  ## Get the size of the data without extracting them (undirected methods)
+  ## Some basic counting on the data without actually extracting them (undirected methods)
   nrow(x)
   #dim(x)
-  count.links(x)  
+  count.links(x)
+  nhit(x)
 }
 
 \arguments{
   \item{x}{
-    A \link{Bimap} object.
+    A \link{Bimap} object (or a list or an environment for \code{nhit}).
   }
   \item{...}{
     Further arguments to be passed to or from other methods (see
@@ -85,6 +91,16 @@
   nrow(x)
   dim(x)
   count.links(x)
+
+  y <- GOBPCHILDREN
+  nhy <- nhit(y) # 'nhy' is a named integer vector
+  identical(names(nhy), keys(y)) # TRUE
+  table(nhy)
+  sum(nhy == 0) # number of GO IDs with no children
+  names(nhy)[nhy == max(nhy)] # the GO ID(s) with the most direct children
+
+  ## Some sanity check
+  sum(nhy) == count.links(y) # TRUE
 }
 
 \keyword{methods}

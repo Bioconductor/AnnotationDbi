@@ -114,7 +114,7 @@ setClass("L2Rlink",
 ###
 
 setClass("AnnDbBimap",
-    contains=c("AnnDbObj", "Bimap"),
+    contains=c("Bimap", "AnnDbObj"),
     representation(
         L2Rchain="list",            # list of L2Rlink objects
         direction="integer",        # 1L for left-to-right, -1L for right-to-left

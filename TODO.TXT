@@ -6,14 +6,6 @@
 - implement mechanism to check the DBSCHEMAVERSION of a db pkg at
   load time
 
-- merge man pages for ACCNUM or MULTIHIT. In the examples, show
-  the 3 possible situations:
-    0 hit: agACCNUM[["13290_at"]]; agMULTIHIT[["13290_at"]]
-    1 hit: agACCNUM[["12328_at"]]; agMULTIHIT[["12328_at"]]
-    multihit: agACCNUM[["15228_s_at"]]; agMULTIHIT[["15228_s_at"]]
-  and how to "merge" those 2 maps by converting one of them with
-  as(agACCNUM, "AnnDbBimap")
-
 - add AnnotationDbi.Rnw vignette (main vignette) with more focus on the
   Bimap interface
 

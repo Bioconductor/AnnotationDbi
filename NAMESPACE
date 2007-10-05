@@ -59,6 +59,7 @@ exportMethods(
     "nrow",
     "links",
     "count.links",
+    "nhit",
     "ncol", "dim",
 
     ## from R/GOTerms.R

@@ -1128,6 +1128,48 @@ setMethod("count.links", "Go3AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "nhit" methods.
+###
+### TODO: maybe it could be optimized for AnnDbBimap objects with a fast (and
+### smart) SQL query (involving COUNT, HAVING or/and GROUP?) that retrieves
+### only the strictly necessary stuff.
+### Something that would be worth testing (e.g. with unit testing):
+###    y <- nhit(x) # y is a named integer vector
+###    names(y) should be identical to names(x)
+###    sum(y) should be equal to count.links(x)
+###
+
+setMethod("nhit", "list",
+    function(x)
+    {
+        sapply(x,
+            function(xx)
+                if (length(xx) == 1L && is.na(xx)) 0L else length(xx)
+        )
+    }
+)
+
+setMethod("nhit", "Bimap", function(x) nhit(as.list(x)))
+
+setMethod("nhit", "environment",
+    function(x)
+    {
+        #nhit(as.list(x, all.names=TRUE))
+        ## Using eapply should be faster than the above (not tested, I'm just
+        ## assuming).
+        unlist(
+            eapply(x,
+                function(xx)
+                    if (length(xx) == 1 && is.na(xx)) 0L else length(xx),
+                all.names=TRUE
+            ),
+            recursive=FALSE
+        )
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "ncol" and "dim" methods.
 ###
 
