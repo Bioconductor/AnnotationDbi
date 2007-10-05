@@ -45,6 +45,7 @@
 \alias{mappedLkeys,FlatBimap-method}
 \alias{mappedLkeys,AnnDbBimap-method}
 \alias{mappedLkeys,Go3AnnDbBimap-method}
+\alias{mappedLkeys,AgiAnnDbMap-method}
 
 \alias{mappedRkeys}
 \alias{mappedRkeys,FlatBimap-method}
@@ -56,6 +57,7 @@
 \alias{count.mappedLkeys,Bimap-method}
 \alias{count.mappedLkeys,AnnDbBimap-method}
 \alias{count.mappedLkeys,Go3AnnDbBimap-method}
+\alias{count.mappedLkeys,AgiAnnDbMap-method}
 
 \alias{count.mappedRkeys}
 \alias{count.mappedRkeys,Bimap-method}

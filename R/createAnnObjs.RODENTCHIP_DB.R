@@ -220,6 +220,8 @@ RODENTCHIP_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.RODENTCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "RODENTCHIP_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,

@@ -195,6 +195,8 @@ FLY_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.FLY_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "FLY_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,

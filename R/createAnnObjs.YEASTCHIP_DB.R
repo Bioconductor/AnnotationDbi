@@ -146,6 +146,8 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.YEASTCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "YEASTCHIP_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,

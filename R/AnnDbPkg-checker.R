@@ -79,24 +79,30 @@ checkMAPCOUNTS <- function(pkgname)
         count0 <- MAPCOUNTS[mapname]
         cat("  - MAPCOUNTS[\"", mapname, "\"] = ", count0, "\n", sep="")
 
-        ## count1
-        if (is.vector(map) && is.null(names(map))) # to deal with the REJECTORF case
-            t1 <- system.time(count1 <- sum(!is.na(map)))
-        else
-            t1 <- system.time(count1 <- count.mappedkeys(map))
-        cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
-        if (count1 != count0)
-            stop("count1 and count0 differ")
-        if (is.vector(map) && is.null(names(map)))
-            next
+        if (is(map, "AgiAnnDbMap") && mappedLkeysIsNotAvailable(map)) {
+            ## count.mappedkeys and mappedkeys are not available for silly map MULTIHIT
+            cat("  - count1 = not available for this map ==> SKIPPED!\n")
+            cat("  - count2 = not available for this map ==> SKIPPED!\n")
+        } else {
+            ## count1
+            if (is.vector(map) && is.null(names(map))) # to deal with the REJECTORF case
+                t1 <- system.time(count1 <- sum(!is.na(map)))
+            else
+                t1 <- system.time(count1 <- count.mappedkeys(map))
+            cat("  - count1 = ", count1, " (", t1[3], " s)\n", sep="")
+            if (count1 != count0)
+                stop("count1 and count0 differ")
+            if (is.vector(map) && is.null(names(map)))
+                next
 
-        ## count2
-        t2 <- system.time(count2 <- length(mappedkeys(map)))
-        cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
-        if (count2 != count0)
-            stop("count2 and count0 differ")
-        if (is(map, "IpiAnnDbMap"))
-            next
+            ## count2
+            t2 <- system.time(count2 <- length(mappedkeys(map)))
+            cat("  - count2 = ", count2, " (", t2[3], " s)\n", sep="")
+            if (count2 != count0)
+                stop("count2 and count0 differ")
+            if (is(map, "IpiAnnDbMap"))
+                next
+        }
 
         ## count3
         t3 <- system.time(count3 <- sum(sapply(as.list(map), function(x) length(x)!=1 || !is.na(x))))

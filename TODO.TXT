@@ -1,10 +1,7 @@
-- fix the dbInfo()
+- fix dbInfo()
 
 - in addition to dbschema(), provide a way to retrieve a high-level
   description of a given schema (UML? XML? via some S4 classes?)
-
-- implement mechanism to check the DBSCHEMAVERSION of a db pkg at
-  load time
 
 - add AnnotationDbi.Rnw vignette (main vignette) with more focus on the
   Bimap interface

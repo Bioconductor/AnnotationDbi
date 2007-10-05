@@ -206,6 +206,8 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.FLYCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "FLYCHIP_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,

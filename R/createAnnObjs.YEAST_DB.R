@@ -180,6 +180,8 @@ YEAST_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.YEAST_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "YEAST_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,

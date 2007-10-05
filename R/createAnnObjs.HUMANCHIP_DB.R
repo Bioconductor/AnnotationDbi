@@ -232,6 +232,8 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.HUMANCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "HUMANCHIP_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,

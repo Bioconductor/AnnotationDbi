@@ -1,3 +1,18 @@
+### All the createAnnObjs.*_DB() functions currently support the same DB
+### schema version (of course, each function support its own schema).
+DBSCHEMAVERSION <- "0.9"
+
+checkDBSCHEMA <- function(dbconn, DBSCHEMA)
+{
+    schema <- dbmeta(dbconn, "DBSCHEMA")
+    if (schema != DBSCHEMA)
+        stop("invalid DB schema (found ", schema, ", expected ", DBSCHEMA, ")")
+    version <- dbmeta(dbconn, "DBSCHEMAVERSION")
+    if (version != DBSCHEMAVERSION)
+        stop("invalid DB schema version (found ", version, ", expected ", DBSCHEMAVERSION, ")")
+}
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### 
 ###

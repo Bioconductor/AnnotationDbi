@@ -275,6 +275,8 @@ GO_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.GO_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "GO_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,

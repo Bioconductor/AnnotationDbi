@@ -221,6 +221,8 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.HUMAN_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "HUMAN_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,

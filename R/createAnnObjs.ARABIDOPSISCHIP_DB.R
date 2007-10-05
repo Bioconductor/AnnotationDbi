@@ -171,6 +171,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
 
 createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
 {
+    checkDBSCHEMA(dbconn, "ARABIDOPSISCHIP_DB")
+
     ## AnnDbBimap objects
     seed0 <- list(
         objTarget=objTarget,
