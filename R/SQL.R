@@ -10,7 +10,7 @@
 
 assign("debugSQL", FALSE, envir=RTobjs)
 
-debug.sql <- function()
+debugSQL <- function()
 {
     debugSQL <- !get("debugSQL", envir=RTobjs)
     assign("debugSQL", debugSQL, envir=RTobjs)
@@ -323,17 +323,17 @@ L2Rchain.colnames <- function(L2Rchain)
         from=from,
         where=where
     )
-    if (get("debugSQL", envir=RTobjs)) {
-        cat("SQLchunks:\n")
-        cat("  what_Lkey: ", SQLchunks$what_Lkey, "\n", sep="")
-        cat("  what_Rkey: ", SQLchunks$what_Rkey, "\n", sep="")
-        cat("  what_tag: ", SQLchunks$what_tag, "\n", sep="")
-        cat("  what_Rattribs:\n")
-        show(SQLchunks$what_Rattribs)
-        cat("  from: ", SQLchunks$from, "\n", sep="")
-        cat("  where:\n")
-        show(SQLchunks$where)
-    }
+    #if (get("debugSQL", envir=RTobjs)) {
+    #    cat("SQLchunks:\n")
+    #    cat("  what_Lkey: ", SQLchunks$what_Lkey, "\n", sep="")
+    #    cat("  what_Rkey: ", SQLchunks$what_Rkey, "\n", sep="")
+    #    cat("  what_tag: ", SQLchunks$what_tag, "\n", sep="")
+    #    cat("  what_Rattribs:\n")
+    #    show(SQLchunks$what_Rattribs)
+    #    cat("  from: ", SQLchunks$from, "\n", sep="")
+    #    cat("  where:\n")
+    #    show(SQLchunks$where)
+    #}
     SQLchunks
 }
 
@@ -348,10 +348,10 @@ L2Rchain.colnames <- function(L2Rchain)
 {
     if (get("debugSQL", envir=RTobjs)) {
         if (!is.character(SQL) || length(SQL) != 1 || is.na(SQL))
-            stop("'SQL' must be a single string")
-        cat("SQL query: ", SQL, "\n", sep="")
+            stop("[debugSQL] 'SQL' must be a single string")
+        cat("[debugSQL] SQL query: ", SQL, "\n", sep="")
         st <- system.time(data0 <- dbGetQuery(conn, SQL))
-        cat("     time: ", st["user.self"], " seconds\n", sep="")
+        cat("[debugSQL]      time: ", st["user.self"], " seconds\n", sep="")
     } else {
         data0 <- dbGetQuery(conn, SQL)
     }
@@ -440,10 +440,8 @@ dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### dbUniqueVals() and dbCountUniqueVals()
 ###
-### IMPORTANT: Use shared cached symbols!
-###
 
-.dbUniqueVals.cached.symbol <- function(datacache, tablename, colname, filter)
+.dbUniqueVals.SQLresultname <- function(datacache, tablename, colname, filter)
 {
     if (is.null(datacache) || filter != "1")
         return(NULL)
@@ -453,12 +451,14 @@ dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
 
 dbUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
 {
-    cached_symbol <- .dbUniqueVals.cached.symbol(datacache,
+    SQLresultname <- .dbUniqueVals.SQLresultname(datacache,
                          tablename, colname, filter)
-    if (!is.null(cached_symbol)) {
-        if (exists(cached_symbol, envir=datacache)) {
-            vals <- get(cached_symbol, envir=datacache)
-            return(vals)
+    if (!is.null(SQLresultname)) {
+        if (exists(SQLresultname, envir=datacache)) {
+            SQLresult <- get(SQLresultname, envir=datacache)
+            if (get("debugSQL", envir=RTobjs))
+                cat("[debugSQL] Using cached result from SQL query: ", SQLresult$SQL, "\n", sep="")
+            return(SQLresult$result)
         }
     }
     what <- paste("DISTINCT", colname)
@@ -469,20 +469,26 @@ dbUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
     vals <- .dbGetQuery(conn, SQL, 1)
     if (!is.character(vals))
         vals <- as.character(vals)
-    if (!is.null(cached_symbol))
-        assign(cached_symbol, vals, envir=datacache)
+    if (!is.null(SQLresultname)) {
+        if (get("debugSQL", envir=RTobjs))
+            cat("[debugSQL] Putting last SQL query and result in cache\n")
+        SQLresult <- list(SQL=SQL, result=vals)
+        assign(SQLresultname, SQLresult, envir=datacache)
+    }
     vals
 }
 
 ### Read-only caching!
 dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
 {
-    cached_symbol <- .dbUniqueVals.cached.symbol(datacache,
+    SQLresultname <- .dbUniqueVals.SQLresultname(datacache,
                          tablename, colname, filter)
-    if (!is.null(cached_symbol)) {
-        if (exists(cached_symbol, envir=datacache)) {
-            count <- length(get(cached_symbol, envir=datacache))
-            return(count)
+    if (!is.null(SQLresultname)) {
+        if (exists(SQLresultname, envir=datacache)) {
+            SQLresult <- get(SQLresultname, envir=datacache)
+            if (get("debugSQL", envir=RTobjs))
+                cat("[debugSQL] Using cached result from SQL query: ", SQLresult$SQL, "\n", sep="")
+            return(length(SQLresult$result))
         }
     }
     what <- paste("COUNT(DISTINCT ", colname, ")", sep="")
@@ -499,7 +505,7 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
 ### IMPORTANT: Use shared cached symbols!
 ###
 
-.dbUniqueMappedKeys.cached.symbol <- function(datacache,
+.dbUniqueMappedKeys.SQLresultname <- function(datacache,
                                               L2Rchain, Lkeys, Rkeys,
                                               where, direction)
 {
@@ -519,13 +525,15 @@ dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                                      direction, datacache=NULL)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
-    cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
+    SQLresultname <- .dbUniqueMappedKeys.SQLresultname(datacache,
                          L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
-    if (!is.null(cached_symbol)) {
-        if (exists(cached_symbol, envir=datacache)) {
-            vals <- get(cached_symbol, envir=datacache)
-            return(vals)
+    if (!is.null(SQLresultname)) {
+        if (exists(SQLresultname, envir=datacache)) {
+            SQLresult <- get(SQLresultname, envir=datacache)
+            if (get("debugSQL", envir=RTobjs))
+                cat("[debugSQL] Using cached result from SQL query: ", SQLresult$SQL, "\n", sep="")
+            return(SQLresult$result)
         }
     }
     what_Lkey <- SQLchunks$what_Lkey
@@ -537,8 +545,12 @@ dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
     what <- paste("DISTINCT", distinct_col)
     SQL <- .makeSQL(SQLchunks, what, Lkeys, Rkeys)
     vals <- .dbGetQuery(conn, SQL, 1)
-    if (!is.null(cached_symbol))
-        assign(cached_symbol, vals, envir=datacache)
+    if (!is.null(SQLresultname)) {
+        if (get("debugSQL", envir=RTobjs))
+            cat("[debugSQL] Putting last SQL query and result in cache\n")
+        SQLresult <- list(SQL=SQL, result=vals)
+        assign(SQLresultname, SQLresult, envir=datacache)
+    }
     vals
 }
 
@@ -547,13 +559,15 @@ dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                                           direction, datacache=NULL)
 {
     SQLchunks <- .makeSQLchunks(L2Rchain)
-    cached_symbol <- .dbUniqueMappedKeys.cached.symbol(datacache,
+    SQLresultname <- .dbUniqueMappedKeys.SQLresultname(datacache,
                          L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
-    if (!is.null(cached_symbol)) {
-        if (exists(cached_symbol, envir=datacache)) {
-            count <- length(get(cached_symbol, envir=datacache))
-            return(count)
+    if (!is.null(SQLresultname)) {
+        if (exists(SQLresultname, envir=datacache)) {
+            SQLresult <- get(SQLresultname, envir=datacache)
+            if (get("debugSQL", envir=RTobjs))
+                cat("[debugSQL] Using cached result from SQL query: ", SQLresult$SQL, "\n", sep="")
+            return(length(SQLresult$result))
         }
     }
     what_Lkey <- SQLchunks$what_Lkey

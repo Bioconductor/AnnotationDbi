@@ -1,5 +1,7 @@
 \name{AnnotationDbi internals}
 
+\alias{debugSQL}
+
 \alias{class:FlatBimap}
 \alias{FlatBimap-class}
 \alias{FlatBimap}

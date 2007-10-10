@@ -92,6 +92,9 @@ exportMethods(
 )
 
 export(
+    ## from R/SQL.R
+    debugSQL,
+
     ## from R/GOTerms.R
     GOTerms,
 
