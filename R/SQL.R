@@ -1,9 +1,6 @@
 ### =========================================================================
-### DB functions
-### ------------
-###
-### Helper functions used by the low-level API.
-### Nothing from this file should need to be exported.
+### SQL functions
+### -------------
 ###
 ### -------------------------------------------------------------------------
 
@@ -342,9 +339,9 @@ L2Rchain.colnames <- function(L2Rchain)
 ### DB functions.
 ###
 
-### Use .dbGetQuery(conn, SQL, 1) instead of .dbGetQuery(conn, SQL)[[1]],
+### Use dbQuery(conn, SQL, 1) instead of dbQuery(conn, SQL)[[1]],
 ### it's much safer!
-.dbGetQuery <- function(conn, SQL, j0=NA)
+dbQuery <- function(conn, SQL, j0=NA)
 {
     if (get("debugSQL", envir=RTobjs)) {
         if (!is.character(SQL) || length(SQL) != 1 || is.na(SQL))
@@ -371,7 +368,7 @@ dbGetTable <- function(conn, tablename, extra.SQL=NULL)
     SQL <- paste("SELECT * FROM ", tablename, sep="")
     if (!is.null(extra.SQL))
         SQL <- paste(SQL, extra.SQL)
-    .dbGetQuery(conn, SQL)
+    dbQuery(conn, SQL)
 }
 
 ### CURRENTLY BROKEN!
@@ -386,7 +383,7 @@ dbRawAnnDbMapToTable <- function(conn, Ltablename, Lkeyname, Lkeys,
     SQL <- paste(SQL, "WHERE", .toSQLWhere(Lkeyname, Lkeys))
     if (!is.null(Rtablename))
         SQL <- paste(SQL, "AND", .toSQLWhere(Rkeyname, Rkeys))
-    .dbGetQuery(conn, SQL)
+    dbQuery(conn, SQL)
 }
 
 ### CURRENTLY BROKEN!
@@ -397,7 +394,7 @@ dbCountRawAnnDbMapRows <- function(conn, Ltablename, Lkeyname,
     SQL <- paste(SQL, "WHERE", .toSQLWhere(Lkeyname, NA))
     if (!is.null(Rtablename))
         SQL <- paste(SQL, "AND", .toSQLWhere(Rkeyname, NA))
-    .dbGetQuery(conn, SQL, 1)
+    dbQuery(conn, SQL, 1)
 }
 
 .makeSQL <- function(SQLchunks, SQLwhat, Lkeys, Rkeys)
@@ -422,7 +419,7 @@ dbSelectFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
     )
     SQLwhat <- paste(cols, collapse=",")
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
-    data0 <- .dbGetQuery(conn, SQL)
+    data0 <- dbQuery(conn, SQL)
     if (nrow(data0) != 0)
         return(data0)
     .make0rowDataFrame(L2Rchain.colnames(L2Rchain))
@@ -433,7 +430,7 @@ dbCountRowsFromL2Rchain <- function(conn, L2Rchain, Lkeys, Rkeys)
     SQLchunks <- .makeSQLchunks(L2Rchain)
     SQLwhat <- "COUNT(*)"
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
-    .dbGetQuery(conn, SQL, 1)
+    dbQuery(conn, SQL, 1)
 }
 
 
@@ -466,7 +463,7 @@ dbUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
     SQL <- paste("SELECT", what, "FROM", tablename, "WHERE", where)
     if (filter != "1")
         SQL <- paste(SQL, "AND", filter)
-    vals <- .dbGetQuery(conn, SQL, 1)
+    vals <- dbQuery(conn, SQL, 1)
     if (!is.character(vals))
         vals <- as.character(vals)
     if (!is.null(SQLresultname)) {
@@ -495,7 +492,7 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
     SQL <- paste("SELECT", what, "FROM", tablename)
     if (filter != "1")
         SQL <- paste(SQL, "WHERE", filter)
-    .dbGetQuery(conn, SQL, 1)
+    dbQuery(conn, SQL, 1)
 }
 
 
@@ -544,7 +541,7 @@ dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
         distinct_col <- what_Rkey
     what <- paste("DISTINCT", distinct_col)
     SQL <- .makeSQL(SQLchunks, what, Lkeys, Rkeys)
-    vals <- .dbGetQuery(conn, SQL, 1)
+    vals <- dbQuery(conn, SQL, 1)
     if (!is.null(SQLresultname)) {
         if (get("debugSQL", envir=RTobjs))
             cat("[debugSQL] Putting last SQL query and result in cache\n")
@@ -578,6 +575,6 @@ dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
         distinct_col <- what_Rkey
     SQLwhat <- paste("COUNT(DISTINCT ", distinct_col, ")", sep="")
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
-    .dbGetQuery(conn, SQL, 1)
+    dbQuery(conn, SQL, 1)
 }
 

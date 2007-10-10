@@ -51,7 +51,7 @@ setMethod("dbmeta", "DBIConnection",
             stop("'name' must be a non-NA character string")
         name <- toSQLStringSet(name)
         SQL <- paste("SELECT value FROM metadata WHERE name=", name, sep="")
-        value <- .dbGetQuery(x, SQL, 1)
+        value <- dbQuery(x, SQL, 1)
         if (length(value) == 0)
             stop("meta ", name, " not found")
         if (length(value) != 1)

@@ -167,9 +167,9 @@ SQLite-based packages:
 
 <<complexDb>>=
 system.time({
-sql <- "select symbol from go_bp inner join gene_info using(id)
-        where go_bp.evidence in ('IPI', 'IDA', 'IMP', 'IGI')"
-zz <- dbGetQuery(hgu95av2_dbconn(), sql)
+SQL <- "SELECT symbol FROM go_bp INNER JOIN gene_info USING(id)
+        WHERE go_bp.evidence in ('IPI', 'IDA', 'IMP', 'IGI')"
+zz <- dbGetQuery(hgu95av2_dbconn(), SQL)
 })
 
 @ 
