@@ -220,6 +220,7 @@ createAnnObjs.FLYCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
+    ann_objs$FLYBASE2PROBE <- revmap(ann_objs$FLYBASE, objName="FLYBASE2PROBE")
     map <- ann_objs$GO2PROBE
     map@rightTables <- Go3tablenames(all=TRUE)
     map@objName <- "GO2ALLPROBES"
