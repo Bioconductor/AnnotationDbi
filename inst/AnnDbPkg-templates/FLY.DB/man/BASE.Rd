@@ -10,8 +10,9 @@
   package name @ANNOBJPREFIX@.db.  "Dm" is for Drosophila melanogaster.
   This package is updated biannually.
   
-  This annotation package supports the following objects:
-
+  You can learn what objects this package supports with the following
+  command:
+  
   ls("package:@ANNOBJPREFIX@.db") 
   
   Each of these objects has their own manual page detailing where relevant
@@ -19,7 +20,9 @@
   objects also have a reverse map available.  When this is true, expect
   to usually find relevant information on the same manual page as the
   forward map.
-
-
+}
+\examples{
+  ls("package:@ANNOBJPREFIX@.db")
+}
 \keyword{datasets}
 

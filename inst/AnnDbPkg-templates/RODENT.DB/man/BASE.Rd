@@ -10,7 +10,7 @@
   package name @ANNOBJPREFIX@.db.  "Mm" is for Mus musculus and "Rn" is for
   Rattus norvegicus.  This package is updated biannually.
   
-  This annotation package supports the following objects:
+  You can learn what objects this package supports with the following command:
 
   ls("package:@ANNOBJPREFIX@.db") 
   
@@ -19,6 +19,9 @@
   objects also have a reverse map available.  When this is true, expect
   to usually find relevant information on the same manual page as the
   forward map.
-
+}
+\examples{
+  ls("package:@ANNOBJPREFIX@.db")
+}
 \keyword{datasets}
 
