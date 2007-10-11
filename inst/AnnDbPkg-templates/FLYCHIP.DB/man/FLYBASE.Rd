@@ -1,5 +1,6 @@
 \name{@ANNOBJPREFIX@FLYBASE}
 \alias{@ANNOBJPREFIX@FLYBASE}
+\alias{@ANNOBJPREFIX@FLYBASE2PROBE}
 \title{Map Entrez Gene identifiers with FlyBase Acession numbers}  
 \description{ 
   @ANNOBJPREFIX@FLYBASE is an R object that contains mappings between 
@@ -25,6 +26,16 @@
       # Get the first one
       xx[[1]]
     }
+    # For the reverse map:
+    # Convert to a list
+    xx <- as.list(@ANNOBJPREFIX@FLYBASE2PROBE)
+   if(length(xx) > 0){
+       # Get the probe identifiers for the first five IDs
+       xx[1:5]
+       # Get the first one
+       xx[[1]]
+    }
+
 }
 \keyword{datasets}
 
