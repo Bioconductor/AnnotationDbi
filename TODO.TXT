@@ -1,3 +1,17 @@
+- Fix this problem:
+    library("org.Mm.eg.db")
+    x <- org.Mm.egREFSEQ2EG
+    mapped_seqs <- mappedkeys(x)
+    y <- x[mapped_seqs]
+    as.list(y)
+  It occurs because the SQL statement is too long (the max length supported
+  by SQLite seems to be 1000000  characters).
+  For example, this will work:
+    zz <- as.list(x[mapped_seqs[1:77403]])
+  but not this
+    zz <- as.list(x[mapped_seqs[1:77404]])
+  nchar(toSQLStringSet(mapped_seqs[1:77404])) is 999869!
+    
 - fix dbInfo()
 
 - in addition to dbschema(), provide a way to retrieve a high-level
