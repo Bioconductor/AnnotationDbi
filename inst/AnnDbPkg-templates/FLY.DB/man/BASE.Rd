@@ -13,7 +13,7 @@
   You can learn what objects this package supports with the following
   command:
   
-  ls("package:@ANNOBJPREFIX@.db") 
+  \code{ls("package:@ANNOBJPREFIX@.db")} 
   
   Each of these objects has their own manual page detailing where relevant
   data was obtained along with examples of how to use it.  Many of these

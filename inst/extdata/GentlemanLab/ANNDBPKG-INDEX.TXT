@@ -353,6 +353,23 @@ AnnObjPrefix: POCRCannotation
 species: Human
 manufacturer: CUSTOM
 
+Package: Hs6UG171.db
+Title: A package containing metadata for Hs6UG171 arrays
+Version: 2.0.1
+PkgTemplate: HUMANCHIP.DB
+DBfile: /home/mcarlson/sanctionedSqlite/Hs6UG171.sqlite
+AnnObjPrefix: Hs6UG171
+species: Human
+manufacturer: CUSTOM
+
+Package: LAPOINTE.db
+Title: A package containing metadata for LAPOINTE arrays
+Version: 2.0.1
+PkgTemplate: HUMANCHIP.DB
+DBfile: /home/mcarlson/sanctionedSqlite/LAPOINTE.sqlite
+AnnObjPrefix: LAPOINTE
+species: Human
+manufacturer: CUSTOM
 
 ### =========================================================================
 ### RODENTCHIP_DB schema
