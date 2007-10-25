@@ -11,30 +11,30 @@ CREATE TABLE genes (
 
 -- Data linked to the "genes" table.
 CREATE TABLE probes (
-  _id INTEGER NULL,                              -- REFERENCES genes
   probe_id VARCHAR(80) NOT NULL,                -- manufacturer ID
   is_multiple SMALLINT NOT NULL,                -- a silly and useless field
+  _id INTEGER NULL,                             -- REFERENCES genes
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE aracyc (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  pathway_name VARCHAR(255) NOT NULL,           -- AraCyc pathway name
+  pathway_name VARCHAR(255) NOT NULL,            -- AraCyc pathway name
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE chromosome_locations (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  chromosome CHAR(1) NOT NULL,                  -- Arabidopsis chromosome
+  seqname CHAR(1) NOT NULL,                      -- Arabidopsis chromosome
   start_location INTEGER NOT NULL,
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
-CREATE TABLE ec (                               --    Table
+CREATE TABLE ec (                                --    Table
   _id INTEGER NOT NULL,                          -- 
-  ec_number VARCHAR(13) NOT NULL,               --    NOT
-  FOREIGN KEY (_id) REFERENCES genes (_id)        -- 
-);                                              --    used!
+  ec_number VARCHAR(13) NOT NULL,                --    NOT
+  FOREIGN KEY (_id) REFERENCES genes (_id)       -- 
+);                                               --    used!
 CREATE TABLE enzyme (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  ec_name VARCHAR(255) NOT NULL,                -- EC name
+  ec_name VARCHAR(255) NOT NULL,                 -- EC name
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 -- Note that the "gene_info" table differs from other schemas:
@@ -43,55 +43,55 @@ CREATE TABLE enzyme (
 --   o one additional col "chromosome"
 CREATE TABLE gene_info (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  gene_name VARCHAR(255) NULL,                  -- gene name
-  symbol VARCHAR(80) NULL,                      -- gene symbol
-  chromosome CHAR(1) NULL,                      -- Arabidopsis chromosome
+  gene_name VARCHAR(255) NULL,                   -- gene name
+  symbol VARCHAR(80) NULL,                       -- gene symbol
+  chromosome CHAR(1) NULL,                       -- Arabidopsis chromosome
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE go_bp (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  go_id CHAR(10) NOT NULL,                       -- GO ID
+  evidence CHAR(3) NOT NULL,                     -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE go_bp_all (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  go_id CHAR(10) NOT NULL,                       -- GO ID
+  evidence CHAR(3) NOT NULL,                     -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE go_cc (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  go_id CHAR(10) NOT NULL,                       -- GO ID
+  evidence CHAR(3) NOT NULL,                     -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE go_cc_all (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  go_id CHAR(10) NOT NULL,                       -- GO ID
+  evidence CHAR(3) NOT NULL,                     -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE go_mf (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  go_id CHAR(10) NOT NULL,                       -- GO ID
+  evidence CHAR(3) NOT NULL,                     -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE go_mf_all (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  go_id CHAR(10) NOT NULL,                      -- GO ID
-  evidence CHAR(3) NOT NULL,                    -- GO evidence code
+  go_id CHAR(10) NOT NULL,                       -- GO ID
+  evidence CHAR(3) NOT NULL,                     -- GO evidence code
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE kegg (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  kegg_id CHAR(5) NOT NULL,                     -- KEGG pathway short ID
+  path_id CHAR(5) NOT NULL,                      -- KEGG pathway short ID
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE pubmed (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  pubmed_id VARCHAR(10) NOT NULL,               -- PubMed ID
+  pubmed_id VARCHAR(10) NOT NULL,                -- PubMed ID
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 
@@ -100,7 +100,7 @@ CREATE TABLE metadata (
   name VARCHAR(80) PRIMARY KEY,
   value VARCHAR(255)
 );
-CREATE TABLE qcdata (
+CREATE TABLE map_counts (
   map_name VARCHAR(80) PRIMARY KEY,
   count INTEGER NOT NULL
 );

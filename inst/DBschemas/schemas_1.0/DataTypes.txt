@@ -4,6 +4,12 @@ Entrez Gene ID
   Examples: '10251', '283297', '100113407'
   Note: highest value observed so far is 100113407
 
+Ensembl Gene ID
+--------------
+  SQL type: VARCHAR(20)
+  Examples: 'ENSRNOG00000016924', 'ENSMUSG00000028125', 'ENSG00000127837'
+  Note: highest value observed so far is 18 characters long
+
 manufacturer ID
 ---------------
   SQL type: VARCHAR(80)
@@ -112,6 +118,11 @@ FlyBase ID
 ----------
   SQL type: CHAR(11)
   Examples: 'FBgn0001942', 'FBgn0030936', 'FBgn0051992'
+
+FlyBase CG ID
+----------
+  SQL type: CHAR(10)
+  Examples: 'CG3038', 'CG13377', 'CG2945'
 
 Yeast ORF ID
 ------------

@@ -22,7 +22,7 @@ CREATE TABLE alias (
 );
 CREATE TABLE ensembl (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
-  ensembl_id VARCHAR(80) NOT NULL,              -- ensembl id
+  ensembl_id VARCHAR(20) NOT NULL,              -- Ensembl Gene ID
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE chromosomes (

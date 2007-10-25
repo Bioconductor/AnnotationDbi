@@ -13,87 +13,87 @@ CREATE TABLE sgd (
 
 -- Data linked to the "sgd" table.
 CREATE TABLE chromosome_features (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   chromosome VARCHAR(2) NULL,                   -- chromosome name
   start INTEGER NULL,
   feature_description TEXT NULL,                -- Yeast feature description
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE ec (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   ec_number VARCHAR(13) NOT NULL,               -- EC number (no "EC:" prefix)
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE gene2alias (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   alias VARCHAR(13) NOT NULL,                   -- Yeast gene alias
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE go_bp (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE go_bp_all (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE go_cc (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE go_cc_all (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE go_mf (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE go_mf_all (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   go_id CHAR(10) NOT NULL,                      -- GO ID
   evidence CHAR(3) NOT NULL,                    -- GO evidence code
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE interpro (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   interpro_id CHAR(9) NOT NULL,                 -- InterPro ID
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE kegg (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
-  kegg_id CHAR(5) NOT NULL,                     -- KEGG pathway short ID
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
+  path_id CHAR(5) NOT NULL,                     -- KEGG pathway short ID
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE pfam (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   pfam_id CHAR(7) NOT NULL,                     -- Pfam ID
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE pubmed (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   pubmed_id VARCHAR(10) NOT NULL,               -- PubMed ID
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 CREATE TABLE smart (
-  _id INTEGER NOT NULL,                          -- REFERENCES sgd
+  _id INTEGER NOT NULL,                         -- REFERENCES sgd
   smart_id CHAR(7) NOT NULL,                    -- SMART ID
   FOREIGN KEY (_id) REFERENCES sgd (_id)
 );
 
 -- Standalone data tables.
 CREATE TABLE chrlengths (
-  chr VARCHAR(2) PRIMARY KEY,                   -- chromosome name
+  chromosome VARCHAR(2) PRIMARY KEY,            -- chromosome name
   length INTEGER NOT NULL
 );
 CREATE TABLE gene2systematic (
@@ -109,7 +109,7 @@ CREATE TABLE metadata (
   name VARCHAR(80) PRIMARY KEY,
   value VARCHAR(255)
 );
-CREATE TABLE qcdata (
+CREATE TABLE map_counts (
   map_name VARCHAR(80) PRIMARY KEY,
   count INTEGER NOT NULL
 );
