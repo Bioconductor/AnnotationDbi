@@ -1,51 +1,51 @@
 --
--- ARABIDOPSISCHIP_DB schema
--- =========================
+-- FLYCHIP_DB schema
+-- =================
 --
 
 -- The "genes" table is the central table.
 CREATE TABLE genes (
   _id INTEGER PRIMARY KEY,
-  gene_id CHAR(9) NOT NULL UNIQUE               -- AGI locus ID
+  gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
 );
 
 -- Data linked to the "genes" table.
 CREATE TABLE probes (
   _id INTEGER NULL,                              -- REFERENCES genes
-  probe_id VARCHAR(80) NOT NULL,                -- manufacturer ID
-  is_multiple SMALLINT NOT NULL,                -- a silly and useless field
+  probe_id VARCHAR(80) PRIMARY KEY,             -- manufacturer ID
+  accession VARCHAR(20) NULL,                   -- GenBank accession number
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
-CREATE TABLE aracyc (
+CREATE TABLE alias (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  pathway_name VARCHAR(255) NOT NULL,           -- AraCyc pathway name
+  alias_symbol VARCHAR(80) NOT NULL,            -- gene symbol or alias
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
+CREATE TABLE chromosomes (
+  _id INTEGER NOT NULL,                          -- REFERENCES genes
+  chromosome VARCHAR(2) NOT NULL,               -- chromosome name
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE chromosome_locations (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  chromosome CHAR(1) NOT NULL,                  -- Arabidopsis chromosome
+  chromosome VARCHAR(20) NOT NULL,              -- sequence name
   start_location INTEGER NOT NULL,
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
-CREATE TABLE ec (                               --    Table
-  _id INTEGER NOT NULL,                          -- 
-  ec_number VARCHAR(13) NOT NULL,               --    NOT
-  FOREIGN KEY (_id) REFERENCES genes (_id)        -- 
-);                                              --    used!
-CREATE TABLE enzyme (
+CREATE TABLE cytogenetic_locations (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  ec_name VARCHAR(255) NOT NULL,                -- EC name
+  cytogenetic_location VARCHAR(20) NOT NULL,    -- cytoband location
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
--- Note that the "gene_info" table differs from other schemas:
---   o no UNIQUE constraint on col "id"
---   o no NOT NULL constraints on cols "gene_name" and "symbol"
---   o one additional col "chromosome"
-CREATE TABLE gene_info (
+CREATE TABLE ec (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
-  gene_name VARCHAR(255) NULL,                  -- gene name
-  symbol VARCHAR(80) NULL,                      -- gene symbol
-  chromosome CHAR(1) NULL,                      -- Arabidopsis chromosome
+  ec_number VARCHAR(13) NOT NULL,               -- EC number (no "EC:" prefix)
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
+CREATE TABLE gene_info (
+  _id INTEGER NOT NULL UNIQUE,                   -- REFERENCES genes
+  gene_name VARCHAR(255) NOT NULL,              -- gene name
+  symbol VARCHAR(80) NOT NULL,                  -- gene symbol
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE go_bp (
@@ -89,10 +89,31 @@ CREATE TABLE kegg (
   kegg_id CHAR(5) NOT NULL,                     -- KEGG pathway short ID
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
+CREATE TABLE flybase (
+  _id INTEGER NOT NULL,                          -- REFERENCES genes
+  flybase_id CHAR(11) NOT NULL,                 -- FlyBase ID
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
 CREATE TABLE pubmed (
   _id INTEGER NOT NULL,                          -- REFERENCES genes
   pubmed_id VARCHAR(10) NOT NULL,               -- PubMed ID
   FOREIGN KEY (_id) REFERENCES genes (_id)
+);
+CREATE TABLE refseq (
+  _id INTEGER NOT NULL,                          -- REFERENCES genes
+  accession VARCHAR(20) NOT NULL,               -- RefSeq accession number
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
+CREATE TABLE unigene (
+  _id INTEGER NOT NULL,                          -- REFERENCES genes
+  unigene_id VARCHAR(10) NOT NULL,              -- UniGene ID
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
+
+-- Standalone data tables.
+CREATE TABLE chrlengths (
+  chr VARCHAR(2) PRIMARY KEY,                   -- chromosome name
+  length INTEGER NOT NULL
 );
 
 -- Metadata tables.
@@ -115,11 +136,11 @@ CREATE TABLE map_metadata (
 -- Note that this is only needed for SQLite: PostgreSQL and MySQL create those
 -- indexes automatically.
 CREATE INDEX Fprobes ON probes (_id);
-CREATE INDEX Faracyc ON aracyc (_id);
+CREATE INDEX Falias ON alias (_id);
+CREATE INDEX Fchromosomes ON chromosomes (_id);
 CREATE INDEX Fchromosome_locations ON chromosome_locations (_id);
+CREATE INDEX Fcytogenetic_locations ON cytogenetic_locations (_id);
 CREATE INDEX Fec ON ec (_id);
-CREATE INDEX Fenzyme ON enzyme (_id);
-CREATE INDEX Fgene_info ON gene_info (_id);
 CREATE INDEX Fgo_bp ON go_bp (_id);
 CREATE INDEX Fgo_bp_all ON go_bp_all (_id);
 CREATE INDEX Fgo_cc ON go_cc (_id);
@@ -127,8 +148,8 @@ CREATE INDEX Fgo_cc_all ON go_cc_all (_id);
 CREATE INDEX Fgo_mf ON go_mf (_id);
 CREATE INDEX Fgo_mf_all ON go_mf_all (_id);
 CREATE INDEX Fkegg ON kegg (_id);
+CREATE INDEX Fflybase ON flybase (_id);
 CREATE INDEX Fpubmed ON pubmed (_id);
-
--- Other indexes.
-CREATE INDEX Lprobes ON probes (probe_id);
+CREATE INDEX Frefseq ON refseq (_id);
+CREATE INDEX Funigene ON unigene (_id);
 
