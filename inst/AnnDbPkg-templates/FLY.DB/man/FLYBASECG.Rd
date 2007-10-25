@@ -4,7 +4,8 @@
 \title{Map FlyBase CG Acession numbers with Entrez Gene identifiers}  
 \description{ 
   @ANNOBJPREFIX@FLYBASE is an R object that contains mappings between 
-  Entrez Gene identifiers and FlyBase CG accession numbers.    
+  Entrez Gene identifiers and FlyBase CG accession numbers.  These
+  accessions are used by ensemble and supported by flybase.    
 }
 \details{
   This object is a simple mapping of Entrez Gene identifiers

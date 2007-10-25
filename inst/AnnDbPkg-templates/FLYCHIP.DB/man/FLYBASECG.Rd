@@ -4,7 +4,8 @@
 \title{Map FlyBase CG accession numbers with manufacturer identifiers}  
 \description{ 
   @ANNOBJPREFIX@FLYBASE is an R object that contains mappings between 
-  manufacturer identifiers and FlyBase CG accession numbers.    
+  manufacturer identifiers and FlyBase CG accession numbers.  These
+  accessions are used by ensemble and supported by flybase.
 }
 \details{
   This object is a simple mapping of manufacturer identifiers

@@ -177,6 +177,18 @@ FLY_DB_AnnDbBimap_seeds <- list(
         )
     ),
     list(
+        objName="FLYBASECG",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            FLY_DB_L2Rlink1,
+            list(
+                tablename="flybase_cg",
+                Lcolname="id",
+                Rcolname="flybase_cg_id"
+            )
+        )
+    ),
+    list(
         objName="GO",
         Class="Go3AnnDbBimap",
         L2Rchain=list(
@@ -214,6 +226,7 @@ createAnnObjs.FLY_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$SYMBOL2EG <- revmap(ann_objs$SYMBOL, objName="SYMBOL2EG")
     ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
     ann_objs$FLYBASE2EG <- revmap(ann_objs$FLYBASE, objName="FLYBASE2EG")
+    ann_objs$FLYBASECG2EG <- revmap(ann_objs$FLYBASECG, objName="FLYBASECG2EG")
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
     map <- ann_objs$GO2EG
     map@rightTables <- Go3tablenames(all=TRUE)

@@ -188,6 +188,18 @@ FLYCHIP_DB_AnnDbBimap_seeds <- list(
         )
     ),
     list(
+        objName="FLYBASECG",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            FLYCHIP_DB_L2Rlink1,
+            list(
+                tablename="flybase_cg",
+                Lcolname="id",
+                Rcolname="flybase_cg_id"
+            )
+        )
+    ),
+    list(
         objName="GO",
         Class="Go3AnnDbBimap",
         L2Rchain=list(
@@ -221,6 +233,7 @@ createAnnObjs.FLYCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
     ann_objs$FLYBASE2PROBE <- revmap(ann_objs$FLYBASE, objName="FLYBASE2PROBE")
+    ann_objs$FLYBASECG2PROBE <- revmap(ann_objs$FLYBASECG, objName="FLYBASECG2PROBE")
     map <- ann_objs$GO2PROBE
     map@rightTables <- Go3tablenames(all=TRUE)
     map@objName <- "GO2ALLPROBES"
