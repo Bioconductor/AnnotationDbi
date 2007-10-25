@@ -57,3 +57,16 @@ KEGG_DB schema:
 
   o renamed "gene_id" col -> "gene_or_orf_id"
 
+
+
+
+SUMMARY OF CHANGES BETWEEN VERSION .9 and .91 (PRE SQL update)
+---------------------------------------------
+
+RODENT and HUMAN schemas:
+
+  o added ensembl table to all RODENT and HUMAN schemas
+
+FLY schemas:
+
+  o added flybase_cg table to all FLY schemas
