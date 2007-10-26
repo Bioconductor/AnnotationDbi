@@ -1,6 +1,6 @@
 ### All the createAnnObjs.*_DB() functions currently support the same DB
 ### schema version (of course, each function support its own schema).
-DBSCHEMAVERSION <- "0.91"
+DBSCHEMAVERSION <- "0.9"
 
 checkDBSCHEMA <- function(dbconn, DBSCHEMA)
 {
