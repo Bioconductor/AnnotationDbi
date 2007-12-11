@@ -1,5 +1,6 @@
 datacache <- new.env(hash=TRUE, parent=emptyenv())
 
+@ANNOBJPREFIX@ <- function() showQCData("@ANNOBJPREFIX@", datacache)
 @ANNOBJPREFIX@_dbconn <- function() dbconn(datacache)
 @ANNOBJPREFIX@_dbfile <- function() dbfile(datacache)
 @ANNOBJPREFIX@_dbschema <- function(file="", show.indices=FALSE) dbschema(datacache, file=file, show.indices=show.indices)

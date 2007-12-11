@@ -21,17 +21,25 @@ Collate: 00RTobjs.R
          flatten.R
          createAnnObjs-utils.R
          createAnnObjs.HUMANCHIP_DB.R
-         createAnnObjs.RODENTCHIP_DB.R
+         createAnnObjs.MOUSECHIP_DB.R
+         createAnnObjs.RATCHIP_DB.R
          createAnnObjs.FLYCHIP_DB.R
          createAnnObjs.YEASTCHIP_DB.R
          createAnnObjs.ARABIDOPSISCHIP_DB.R
          createAnnObjs.HUMAN_DB.R
-         createAnnObjs.RODENT_DB.R
+         createAnnObjs.MOUSE_DB.R
+         createAnnObjs.RAT_DB.R
          createAnnObjs.FLY_DB.R
          createAnnObjs.YEAST_DB.R
          createAnnObjs.YEASTLEGACY_DB.R
          createAnnObjs.GO_DB.R
          createAnnObjs.KEGG_DB.R
+         createAnnObjs.INPARANOIDHOMSA_DB.R
+         createAnnObjs.INPARANOIDMUSMU_DB.R
+         createAnnObjs.INPARANOIDRATNO_DB.R
+         createAnnObjs.INPARANOIDDROME_DB.R
+         createAnnObjs.INPARANOIDSACCE_DB.R
+         createAnnObjs.PFAM_DB.R
          createAnnObjs.AFFYHUEX_DB.R
          AnnDbPkg-templates-common.R
          AnnDbPkg-maker.R

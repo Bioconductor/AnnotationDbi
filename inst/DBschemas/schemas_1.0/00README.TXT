@@ -1,9 +1,7 @@
 This directory contains version 1.0 of the full set of schemas used in the
 sqlite-based annotation data packages.
 
-Version 1.0 is our "ideal" target for the BioC 2.1 release but we might
-not have enough time and resources to make this happen (because of other
-priorities) so we might just stick to version 0.9.
+Version 1.0 is our target for the BioC 2.2 release.
 
 Version 1.0 has been successfully tested (i.e. imported) with SQLite
 (3.4.1), MySQL+InnoDB (5.0.26) and PostgreSQL (8.1.9) on a 64-bit openSUSE
@@ -18,8 +16,16 @@ See the DataTypes.txt file for all the data types used across the 1.0 schemas.
 SUMMARY OF CHANGES SINCE VERSION 0.9
 ------------------------------------
 
-Note that all those changes are disruptive (i.e. they potentially break the
+Note that those changes are disruptive (i.e. they potentially break the
 SQL queries written for version 0.9).
+
+New schemas:
+
+  o replaced RODENT_DB schema by MOUSE_DB and RAT_DB schemas
+  o replaced RODENTCHIP_DB schema by MOUSECHIP_DB and RATCHIP_DB schemas
+  o added the Inparanoid schemas: INPARANOIDHOMSA_DB, INPARANOIDMUSMU_DB,
+    INPARANOIDRATNO_DB, INPARANOIDDROME_DB and INPARANOIDSACCE_DB
+  o added the PFAM_DB schema
 
 All schemas:
 
@@ -36,6 +42,26 @@ All probe-based schemas:
 
   o moved "_id" col to last position in "probes" table
   o removed the "accessions" table
+
+Schemas for Human, Mouse and Rat:
+
+  o added "ensembl" table
+
+HUMAN_DB and RAT_DB schemas:
+
+  o added "ensembl_prot" table
+
+MOUSE_DB and MOUSECHIP_DB schemas:
+
+  o added "mgi" table
+
+FLY_DB and FLYCHIP_DB schemas:
+
+  o added "flybase_cg" table
+
+FLY_DB schema:
+
+  o added "flybase_prot" table
 
 GO_DB schema:
 
@@ -57,16 +83,3 @@ KEGG_DB schema:
 
   o renamed "gene_id" col -> "gene_or_orf_id"
 
-
-
-
-SUMMARY OF CHANGES BETWEEN VERSION .9 and .91 (PRE SQL update)
----------------------------------------------
-
-RODENT and HUMAN schemas:
-
-  o added ensembl table to all RODENT and HUMAN schemas
-
-FLY schemas:
-
-  o added flybase_cg table to all FLY schemas

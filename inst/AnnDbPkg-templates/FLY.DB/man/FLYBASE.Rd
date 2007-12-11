@@ -1,7 +1,7 @@
 \name{@ANNOBJPREFIX@FLYBASE}
 \alias{@ANNOBJPREFIX@FLYBASE}
 \alias{@ANNOBJPREFIX@FLYBASE2EG}
-\title{Map FlyBase Acession numbers with Entrez Gene identifiers}  
+\title{Map FlyBase acession numbers with Entrez Gene identifiers}  
 \description{ 
   @ANNOBJPREFIX@FLYBASE is an R object that contains mappings between 
   Entrez Gene identifiers and FlyBase accession numbers.    
@@ -9,7 +9,7 @@
 \details{
   This object is a simple mapping of Entrez Gene identifiers
   \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene} to Flybase
-  Accession Numbers.
+  accession numbers.
 
   Mappings were based on data provided by: @FLYBASESOURCE@
 }

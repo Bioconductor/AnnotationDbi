@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-HUMAN_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="id")
+HUMAN_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id")
 
 ### Mandatory fields: objName, Class and L2Rchain
 HUMAN_DB_AnnDbBimap_seeds <- list(
@@ -24,7 +24,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="accessions",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="accession"
             )
         )
@@ -36,7 +36,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="alias",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="alias_symbol"
             )
         ),
@@ -49,7 +49,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="chromosomes",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="chromosome"
             )
         )
@@ -61,7 +61,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="ec",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="ec_number"
             )
         )
@@ -73,7 +73,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="gene_name"
             )
         )
@@ -85,7 +85,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="cytogenetic_locations",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="cytogenetic_location"
             )
         )
@@ -97,7 +97,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="omim",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="omim_id"
             )
         )
@@ -109,8 +109,8 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="kegg",
-                Lcolname="id",
-                Rcolname="kegg_id"
+                Lcolname="_id",
+                Rcolname="path_id"
             )
         )
     ),
@@ -121,7 +121,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="pubmed",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="pubmed_id"
             )
         )
@@ -133,7 +133,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="refseq",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="accession"
             )
         )
@@ -145,7 +145,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="symbol"
             )
         )
@@ -157,7 +157,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="unigene",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="unigene_id"
             )
         )
@@ -169,8 +169,8 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
-                Lcolname="id",
-                tagname=c(Chromosome="{chromosome}"),
+                Lcolname="_id",
+                tagname=c(Chromosome="{seqname}"),
                 Rcolname="start_location"
             )
         ),
@@ -183,7 +183,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="pfam",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="ipi_id",
                 Rattribnames=c(PfamId="{pfam_id}")
             )
@@ -196,7 +196,7 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="prosite",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="ipi_id",
                 Rattribnames=c(PrositeId="{prosite_id}")
             )
@@ -209,8 +209,20 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 tablename="ensembl",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="ensembl_id"
+            )
+        )
+    ),
+    list(
+        objName="ENSEMBLPROT",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            HUMAN_DB_L2Rlink1,
+            list(
+                tablename="ensembl_prot",
+                Lcolname="_id",
+                Rcolname="prot_id"
             )
         )
     ),
@@ -221,8 +233,8 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
             HUMAN_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lcolname="id",
-                tagname=c(Evidence="{evidence}"),
+                Lcolname="_id",
+                tagname=c(Evidence="{relationship_type}"),
                 Rcolname="go_id",
                 Rattribnames=c(Ontology="NULL")
             )
@@ -255,6 +267,7 @@ createAnnObjs.HUMAN_DB <- function(prefix, objTarget, dbconn, datacache)
     #ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
     #ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
     ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
+    ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
     map <- ann_objs$GO2EG
     map@rightTables <- Go3tablenames(all=TRUE)

@@ -27,7 +27,7 @@ CREATE TABLE chromosomes (
 );
 CREATE TABLE chromosome_locations (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
-  seqname VARCHAR(20) NOT NULL,              	-- sequence name
+  seqname VARCHAR(20) NOT NULL,                 -- sequence name
   start_location INTEGER NOT NULL,
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
@@ -94,9 +94,14 @@ CREATE TABLE flybase (
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE flybase_cg (
-  id INTEGER NOT NULL,                           -- REFERENCES genes
-  flybase_cg_id VARCHAR(10) NOT NULL,            -- FlyBase CG ID
-  FOREIGN KEY (id) REFERENCES genes (id)
+  _id INTEGER NOT NULL,                         -- REFERENCES genes
+  flybase_cg_id VARCHAR(10) NOT NULL,           -- FlyBase CG ID
+  FOREIGN KEY (_id) REFERENCES genes (_id)
+);
+CREATE TABLE flybase_prot (
+  _id INTEGER NOT NULL,                         -- REFERENCES genes
+  prot_id VARCHAR(20) NOT NULL,                 -- Flybase Protein ID
+  FOREIGN KEY (_id) REFERENCES genes(_id)
 );
 CREATE TABLE pubmed (
   _id INTEGER NOT NULL,                         -- REFERENCES genes

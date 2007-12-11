@@ -1,3 +1,172 @@
+AC ID
+--------------
+  SQL type: VARCHAR(12)
+  Examples: 'PF00389.21', 'PF02826.10', 'P63103.1'
+  Note: max length appears to be about 10 This seems to be the central ID for all things PFAM.
+
+CAZY ID
+--------------
+  SQL type: VARCHAR(6)
+  Examples: 'GT_57', 'GH_29', 'CBM_19'
+  Note: max length seems to be 6
+
+HOMSTRAD ID
+--------------
+  SQL type: VARCHAR(20)
+  Examples: 'Dala_Dala_ligas_N', 'A2M_B', 'Haloperoxidase'
+  Note: max length seems to be less than 20
+
+INTERPRO ID
+--------------
+  SQL type: VARCHAR(9)
+  Examples: 'IPR003391', 'IPR002612', 'IPR005830'
+  Note: max length seems to be 9
+
+LOAD ID 
+--------------
+  SQL type: VARCHAR(15)
+  Examples: 'Adrenomedullin', 'Adeno_PIX', 'BCMA-Tall_bind'
+  Note: max length seems to be less than 15
+
+MEROPS ID
+--------------
+  SQL type: VARCHAR(3)
+  Examples: 'S10', 'M55', 'T1'
+  Note: max length seems to be 3
+
+MIM ID
+--------------
+  SQL type: VARCHAR(6)
+  Examples: '104311', '128230', '222600'
+  Note: max length seems to be 6
+
+PDB ID
+--------------
+  SQL type: VARCHAR(6)
+  Examples: '1u69 B', '1odn A', '2kfn A'
+  Note: max length seems to be 6
+
+start of alignment
+--------------
+  SQL type: INTEGER
+  Examples: '3', '180', '256'
+  Note: just an int
+
+end of alignment
+--------------
+  SQL type: INTEGER
+  Examples: '288', '224', '334'
+  Note: always just an int
+
+PFAMB ID
+--------------
+  SQL type: VARCHAR(8)
+  Examples: 'PB012689', 'PB177858', 'PB176422'
+  Note: max length seems to be 8, these are the machine called PFAM IDs.
+
+PRINTS ID
+--------------
+  SQL type: VARCHAR(7)
+  Examples: 'PR00178', 'PR01233', 'PR00543'
+  Note: max length seems to be 7
+
+PROSITE ID
+--------------
+  SQL type: VARCHAR(9)
+  Examples: 'PDOC00403', 'PDOC00174', 'PDOC00578'
+  Note: max length seems to be 9
+
+PROSITE_PROFILE ID
+--------------
+  SQL type: VARCHAR(7)
+  Examples: 'PS50032', 'PS50203', 'PS50119'
+  Note: max length seems to be 7
+
+RM ID
+--------------
+  SQL type: VARCHAR(8)
+  Examples: '11011151', '2254264', '15531590'
+  Note: max length seems to be 8
+
+SCOP ID
+--------------
+  SQL type: VARCHAR(4)
+  Examples: '1rla', '1by6', '3gcc'
+  Note: max length seems to be 4
+
+SCOP placement
+--------------
+  SQL type: VARCHAR(2)
+  Examples: 'fa', 'fa', 'sf'
+  Note: max length seems to be 2. I only ever see the values fa and sf.
+
+SMART ID
+--------------
+  SQL type: VARCHAR(9)
+  Examples: 'ZnF_UBR1', 'RasGEFN', 'PLDc'
+  Note: max length seems to be about 9
+
+TC ID
+--------------
+  SQL type: VARCHAR(6)
+  Examples: '3.A.15', '9.B.33', '2.A.27'
+  Note: max length seems to be 
+
+PFAM ID ID
+--------------
+  SQL type: VARCHAR(15)
+  Examples: 'ADP_ribosyl_GH', 'Adeno_E1B_55K_N', 'AfaD'
+  Note: max length seems to be 15
+
+DE ID
+--------------
+  SQL type: VARCHAR(80)
+  Examples: 'Adenovirus GP19K', 'ADP-specific Phosphofructokinase/Glucokinase conserved region'
+  Note: A description field.  This one can be very big
+
+TP ID
+--------------
+  SQL type: VARCHAR(6)
+  Examples: 'Repeat', 'Family', 'Domain', 'Motif'
+  Note: max length is 6.  This is only ever one of the above 4 values.
+
+URL ID
+--------------
+  SQL type: VARCHAR(80)
+  Examples: 'http://bioinformatics.weizmann.ac.il/hotmolecbase/entries/ps1.htm'
+  Note: max length is unknown.  These can obviously get pretty big.
+
+
+Inparanoid ID
+--------------
+  SQL type: VARCHAR(30)
+  Examples: 'ENSP00000351750', 'FBpp0073215', 'MGI:1274784'
+  Note: character string that corresponds to a gene OR protein ID.  IDs from one species are all of the same type, but what type will be used for a species can vary...
+
+Inparanoid Cluster ID
+--------------
+  SQL type: INTEGER
+  Examples: '1', '2', '34'
+  Note: These are integers which indicate the groupings assigned by inparanoids algorithm.
+
+Inparanoid Species ID
+--------------
+  SQL type: VARCHAR(15)
+  Examples: 'ensHOMSA.fa', 'modMUSMU.fa', 'modDROME.fa'
+  Note: These indicate the species, the type of ID used by Inparanoid ID and finally the kind of table these data were extracted from
+
+Inparanoid Score
+--------------
+  SQL type: VARCHAR(20)
+  Examples: '1.0', '0.1513', '0.3578'
+  Note: The score indicates the degree to which this protein is considered to belong to the Inparanoid grouping 
+
+Inparanoid Seed Status
+--------------
+  SQL type: VARCHAR(4)
+  Examples: '100%', '', '99%'
+  Note: 0 to 100%.  100% indicates a true "seed" paralog.
+
 Entrez Gene ID
 --------------
   SQL type: VARCHAR(10)
@@ -9,6 +178,12 @@ Ensembl Gene ID
   SQL type: VARCHAR(20)
   Examples: 'ENSRNOG00000016924', 'ENSMUSG00000028125', 'ENSG00000127837'
   Note: highest value observed so far is 18 characters long
+
+Ensembl Protein ID
+--------------
+  SQL type: VARCHAR(20)
+  Examples: 'ENSP00000370606', 'ENSRNOP00000027'
+  Note: Ensembl protein IDs, one peptide per ID.
 
 manufacturer ID
 ---------------
@@ -123,6 +298,12 @@ FlyBase CG ID
 ----------
   SQL type: CHAR(10)
   Examples: 'CG3038', 'CG13377', 'CG2945'
+
+Flybase Protein ID
+--------------
+  SQL type: VARCHAR(20)
+  Examples: 'FBpp0073215', 'FBpp0110310', 'FBpp0071474'
+  Note: Flybase protein IDs, one peptide per ID.
 
 Yeast ORF ID
 ------------

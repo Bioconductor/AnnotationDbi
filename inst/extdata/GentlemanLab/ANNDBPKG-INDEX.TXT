@@ -31,150 +31,147 @@
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### HUMANCHIP_DB > Affymetrix chips
-###
-### Old path for Nianhua's sqlite files:
-###   /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/human/
 
 Package: hcg110.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hcg110.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hcg110.sqlite
 AnnObjPrefix: hcg110
 species: Human
 manufacturer: Affymetrix
 
 Package: hgfocus.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgfocus.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgfocus.sqlite
 AnnObjPrefix: hgfocus
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu133a2.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu133a2.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu133a2.sqlite
 AnnObjPrefix: hgu133a2
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu133a.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu133a.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu133a.sqlite
 AnnObjPrefix: hgu133a
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu133b.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu133b.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu133b.sqlite
 AnnObjPrefix: hgu133b
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu133plus2.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu133plus2.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu133plus2.sqlite
 AnnObjPrefix: hgu133plus2
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu95a.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu95a.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu95a.sqlite
 AnnObjPrefix: hgu95a
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu95av2.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu95av2.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu95av2.sqlite
 AnnObjPrefix: hgu95av2
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu95b.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu95b.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu95b.sqlite
 AnnObjPrefix: hgu95b
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu95c.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu95c.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu95c.sqlite
 AnnObjPrefix: hgu95c
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu95d.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu95d.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu95d.sqlite
 AnnObjPrefix: hgu95d
 species: Human
 manufacturer: Affymetrix
 
 Package: hgu95e.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgu95e.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu95e.sqlite
 AnnObjPrefix: hgu95e
 species: Human
 manufacturer: Affymetrix
 
 Package: hu35ksuba.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hu35ksuba.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hu35ksuba.sqlite
 AnnObjPrefix: hu35ksuba
 species: Human
 manufacturer: Affymetrix
 
 Package: hu35ksubb.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hu35ksubb.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hu35ksubb.sqlite
 AnnObjPrefix: hu35ksubb
 species: Human
 manufacturer: Affymetrix
 
 Package: hu35ksubc.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hu35ksubc.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hu35ksubc.sqlite
 AnnObjPrefix: hu35ksubc
 species: Human
 manufacturer: Affymetrix
 
 Package: hu35ksubd.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hu35ksubd.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hu35ksubd.sqlite
 AnnObjPrefix: hu35ksubd
 species: Human
 manufacturer: Affymetrix
 
 Package: hu6800.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hu6800.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hu6800.sqlite
 AnnObjPrefix: hu6800
 species: Human
 manufacturer: Affymetrix
 
 Package: u133x3p.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/u133x3p.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/u133x3p.sqlite
 AnnObjPrefix: u133x3p
 species: Human
 manufacturer: Affymetrix
@@ -183,41 +180,41 @@ manufacturer: Affymetrix
 ### HUMANCHIP_DB > Agilent chips
 
 Package: hgug4100a.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgug4100a.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgug4100a.sqlite
 AnnObjPrefix: hgug4100a
 species: Human
 manufacturer: Agilent
 
 Package: hgug4101a.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgug4101a.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgug4101a.sqlite
 AnnObjPrefix: hgug4101a
 species: Human
 manufacturer: Agilent
 
 Package: hgug4110b.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgug4110b.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgug4110b.sqlite
 AnnObjPrefix: hgug4110b
 species: Human
 manufacturer: Agilent
 
 Package: hgug4111a.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgug4111a.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgug4111a.sqlite
 AnnObjPrefix: hgug4111a
 species: Human
 manufacturer: Agilent
 
 Package: hgug4112a.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgug4112a.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgug4112a.sqlite
 AnnObjPrefix: hgug4112a
 species: Human
 manufacturer: Agilent
@@ -226,9 +223,9 @@ manufacturer: Agilent
 ### HUMANCHIP_DB > Clontech chips
 
 Package: hguatlas13k.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hguatlas13k.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hguatlas13k.sqlite
 AnnObjPrefix: hguatlas13k
 species: Human
 manufacturer: Clontech
@@ -237,9 +234,9 @@ manufacturer: Clontech
 ### HUMANCHIP_DB > Qiagen chips
 
 Package: hguqiagenv3.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hguqiagenv3.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hguqiagenv3.sqlite
 AnnObjPrefix: hguqiagenv3
 species: Human
 manufacturer: Qiagen
@@ -248,137 +245,138 @@ manufacturer: Qiagen
 ### HUMANCHIP_DB > custom arrays
 
 Package: hgubeta7.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hgubeta7.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgubeta7.sqlite
 AnnObjPrefix: hgubeta7
 species: Human
 biocViews: AnnotationData, CustomArray, Homo_sapiens
 
 Package: hguDKFZ31.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/hguDKFZ31.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hguDKFZ31.sqlite
 AnnObjPrefix: hguDKFZ31
 species: Human
 biocViews: AnnotationData, CustomArray, Homo_sapiens
 
 Package: HuO22.db
 Title: FHCRC Genomics Shared Resource HuO22 Annotation Data (HuO22)
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/HuO22.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/HuO22.sqlite
 AnnObjPrefix: HuO22
 species: Human
 manufacturer: FHCRC Genomics Shared Resource
 
 Package: JazaeriMetaData.db
 Title: A data package containing annotation data for JazaeriMetaData
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/JazaeriMetaData.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/JazaeriMetaData.sqlite
 AnnObjPrefix: JazaeriMetaData
 species: Human
 manufacturer: National Cancer Institute
 
 Package: Norway981.db
 Title: Norway981 http://genome-www5.stanford.edu/ Annotation Data (Norway981)
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/Norway981.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/Norway981.sqlite
 AnnObjPrefix: Norway981
 species: Human
 manufacturer: Stanford Microarray Database
 
 Package: OperonHumanV3.db
 Title: FHCRC Nelson Lab OperonHumanV3 Annotation Data (OperonHumanV3)
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/OperonHumanV3.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/OperonHumanV3.sqlite
 AnnObjPrefix: OperonHumanV3
 species: Human
 manufacturer: FHCRC Nelson Lab
 
 Package: PartheenMetaData.db
 Title: PartheenMetaData http://swegene.onk.lu.se Annotation Data (PartheenMetaData)
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/PartheenMetaData.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/PartheenMetaData.sqlite
 AnnObjPrefix: PartheenMetaData
 species: Human
 manufacturer: Swegene DNA Microarray Resource Centre, Lund, Sweden
 
 Package: pedbarrayv9.db
 Title: FHCRC Nelson Lab pedbarrayv9 Annotation Data (pedbarrayv9)
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/pedbarrayv9.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/pedbarrayv9.sqlite
 AnnObjPrefix: pedbarrayv9
 species: Human
 manufacturer: FHCRC Nelson Lab
 
 Package: pedbarrayv10.db
 Title: FHCRC Nelson Lab pedbarrayv10 Annotation Data (pedbarrayv10)
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/pedbarrayv10.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/pedbarrayv10.sqlite
 AnnObjPrefix: pedbarrayv10
 species: Human
 manufacturer: FHCRC Nelson Lab
 
 Package: Roberts2005Annotation.db
 Title: Roberts2005Annotation Annotation Data (Roberts2005Annotation)
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/Roberts2005Annotation.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/Roberts2005Annotation.sqlite
 AnnObjPrefix: Roberts2005Annotation
 species: Human
 manufacturer: Roberts2005Annotation
 
 Package: SHDZ.db
 Title: SHDZ http://genome-www5.stanford.edu/ Annotation Data (SHDZ)
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/SHDZ.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/SHDZ.sqlite
 AnnObjPrefix: SHDZ
 species: Human
 manufacturer: Stanford Microarray Database
 
 Package: POCRCannotation.db
 Title: A package containing metadata for POCRC arrays
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/POCRCannotation.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/POCRCannotation.sqlite
 AnnObjPrefix: POCRCannotation
 species: Human
 manufacturer: CUSTOM
 
 Package: Hs6UG171.db
 Title: A package containing metadata for Hs6UG171 arrays
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/Hs6UG171.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/Hs6UG171.sqlite
 AnnObjPrefix: Hs6UG171
 species: Human
 manufacturer: CUSTOM
 
 Package: LAPOINTE.db
 Title: A package containing metadata for LAPOINTE arrays
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMANCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/LAPOINTE.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/LAPOINTE.sqlite
 AnnObjPrefix: LAPOINTE
 species: Human
 manufacturer: CUSTOM
 
+
 ### =========================================================================
-### RODENTCHIP_DB schema
-### --------------------
+### MOUSECHIP_DB schema
+### -------------------
 ###   Fields:
 ###     Package (*)
 ###     Title
 ###     Version (*)
-###     PkgTemplate: RODENTCHIP.DB
+###     PkgTemplate: MOUSECHIP.DB
 ###     DBfile (*)
 ###     DBschema
 ###     AnnObjPrefix (*)
@@ -392,303 +390,329 @@ manufacturer: CUSTOM
 ### Fields marked with an (*) are required.
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### RODENTCHIP_DB > Affymetrix chips
-###
-### Old paths for Nianhua's sqlite files:
-###   /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/mouse/
-###   /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/rat/
+### MOUSECHIP_DB > Affymetrix chips
 
 Package: mgu74a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgu74a.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgu74a.sqlite
 AnnObjPrefix: mgu74a
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mgu74av2.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgu74av2.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgu74av2.sqlite
 AnnObjPrefix: mgu74av2
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mgu74b.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgu74b.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgu74b.sqlite
 AnnObjPrefix: mgu74b
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mgu74bv2.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgu74bv2.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgu74bv2.sqlite
 AnnObjPrefix: mgu74bv2
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mgu74c.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgu74c.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgu74c.sqlite
 AnnObjPrefix: mgu74c
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mgu74cv2.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgu74cv2.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgu74cv2.sqlite
 AnnObjPrefix: mgu74cv2
 species: Mouse
 manufacturer: Affymetrix
 
 Package: moe430a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/moe430a.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/moe430a.sqlite
 AnnObjPrefix: moe430a
 species: Mouse
 manufacturer: Affymetrix
 
 Package: moe430b.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/moe430b.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/moe430b.sqlite
 AnnObjPrefix: moe430b
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mouse4302.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mouse4302.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mouse4302.sqlite
 AnnObjPrefix: mouse4302
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mouse430a2.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mouse430a2.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mouse430a2.sqlite
 AnnObjPrefix: mouse430a2
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mu11ksuba.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mu11ksuba.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mu11ksuba.sqlite
 AnnObjPrefix: mu11ksuba
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mu11ksubb.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mu11ksubb.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mu11ksubb.sqlite
 AnnObjPrefix: mu11ksubb
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mu19ksuba.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mu19ksuba.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mu19ksuba.sqlite
 AnnObjPrefix: mu19ksuba
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mu19ksubb.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mu19ksubb.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mu19ksubb.sqlite
 AnnObjPrefix: mu19ksubb
 species: Mouse
 manufacturer: Affymetrix
 
 Package: mu19ksubc.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mu19ksubc.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mu19ksubc.sqlite
 AnnObjPrefix: mu19ksubc
 species: Mouse
 manufacturer: Affymetrix
 
-Package: rae230a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rae230a.sqlite
-AnnObjPrefix: rae230a
-species: Rat
-manufacturer: Affymetrix
-
-Package: rae230b.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rae230b.sqlite
-AnnObjPrefix: rae230b
-species: Rat
-manufacturer: Affymetrix
-
-Package: rat2302.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rat2302.sqlite
-AnnObjPrefix: rat2302
-species: Rat
-manufacturer: Affymetrix
-
-Package: rgu34a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rgu34a.sqlite
-AnnObjPrefix: rgu34a
-species: Rat
-manufacturer: Affymetrix
-
-Package: rgu34b.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rgu34b.sqlite
-AnnObjPrefix: rgu34b
-species: Rat
-manufacturer: Affymetrix
-
-Package: rgu34c.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rgu34c.sqlite
-AnnObjPrefix: rgu34c
-species: Rat
-manufacturer: Affymetrix
-
-Package: rnu34.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rnu34.sqlite
-AnnObjPrefix: rnu34
-species: Rat
-manufacturer: Affymetrix
-
-Package: rtu34.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rtu34.sqlite
-AnnObjPrefix: rtu34
-species: Rat
-manufacturer: Affymetrix
-
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### RODENTCHIP_DB > Agilent chips
+### MOUSECHIP_DB > Agilent chips
 
 Package: mgug4104a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgug4104a.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgug4104a.sqlite
 AnnObjPrefix: mgug4104a
 species: Mouse
 manufacturer: Agilent
 
 Package: mgug4120a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgug4120a.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgug4120a.sqlite
 AnnObjPrefix: mgug4120a
 species: Mouse
 manufacturer: Agilent
 
 Package: mgug4121a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgug4121a.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgug4121a.sqlite
 AnnObjPrefix: mgug4121a
 species: Mouse
 manufacturer: Agilent
 
 Package: mgug4122a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mgug4122a.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mgug4122a.sqlite
 AnnObjPrefix: mgug4122a
 species: Mouse
 manufacturer: Agilent
 
-Package: rgug4105a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rgug4105a.sqlite
-AnnObjPrefix: rgug4105a
-species: Rat
-manufacturer: Agilent
-
-Package: rgug4130a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rgug4130a.sqlite
-AnnObjPrefix: rgug4130a
-species: Rat
-manufacturer: Agilent
-
-Package: rgug4131a.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rgug4131a.sqlite
-AnnObjPrefix: rgug4131a
-species: Rat
-manufacturer: Agilent
-
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### RODENTCHIP_DB > Clontech chips
+### MOUSECHIP_DB  > Clontech chips
 
 Package: mguatlas5k.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mguatlas5k.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mguatlas5k.sqlite
 AnnObjPrefix: mguatlas5k
 species: Mouse
 manufacturer: Clontech
 
-Package: rguatlas4k.db
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/rguatlas4k.sqlite
-AnnObjPrefix: rguatlas4k
-species: Rat
-manufacturer: Clontech
-
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### RODENTCHIP_DB > custom arrays
+### MOUSECHIP_DB > custom arrays
 
 Package: mpedbarray.db
 Title: FHCRC Nelson Lab mpedbarray Annotation Data (mpedbarray)
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/mpedbarray.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/mpedbarray.sqlite
 AnnObjPrefix: mpedbarray
 species: Mouse
 manufacturer: FHCRC Nelson Lab
 
 Package: Mu15v1.db
 Title: FHCRC Genomics Shared Resource Mu15v1 Annotation Data (Mu15v1)
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/Mu15v1.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/Mu15v1.sqlite
 AnnObjPrefix: Mu15v1
 species: Mouse
 manufacturer: FHCRC Genomics Shared Resource
 
 Package: Mu22v3.db
 Title: FHCRC Genomics Shared Resource Mu22v3 Annotation Data (Mu22v3)
-Version: 2.0.3
-PkgTemplate: RODENTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/Mu22v3.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/Mu22v3.sqlite
 AnnObjPrefix: Mu22v3
 species: Mouse
 manufacturer: FHCRC Genomics Shared Resource
+
+
+### =========================================================================
+### RATCHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: RATCHIP.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### RATCHIP_DB > Affymetrix chips
+
+Package: rae230a.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rae230a.sqlite
+AnnObjPrefix: rae230a
+species: Rat
+manufacturer: Affymetrix
+
+Package: rae230b.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rae230b.sqlite
+AnnObjPrefix: rae230b
+species: Rat
+manufacturer: Affymetrix
+
+Package: rat2302.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rat2302.sqlite
+AnnObjPrefix: rat2302
+species: Rat
+manufacturer: Affymetrix
+
+Package: rgu34a.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rgu34a.sqlite
+AnnObjPrefix: rgu34a
+species: Rat
+manufacturer: Affymetrix
+
+Package: rgu34b.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rgu34b.sqlite
+AnnObjPrefix: rgu34b
+species: Rat
+manufacturer: Affymetrix
+
+Package: rgu34c.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rgu34c.sqlite
+AnnObjPrefix: rgu34c
+species: Rat
+manufacturer: Affymetrix
+
+Package: rnu34.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rnu34.sqlite
+AnnObjPrefix: rnu34
+species: Rat
+manufacturer: Affymetrix
+
+Package: rtu34.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rtu34.sqlite
+AnnObjPrefix: rtu34
+species: Rat
+manufacturer: Affymetrix
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### RATCHIP_DB > Agilent chips
+
+Package: rgug4105a.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rgug4105a.sqlite
+AnnObjPrefix: rgug4105a
+species: Rat
+manufacturer: Agilent
+
+Package: rgug4130a.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rgug4130a.sqlite
+AnnObjPrefix: rgug4130a
+species: Rat
+manufacturer: Agilent
+
+Package: rgug4131a.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rgug4131a.sqlite
+AnnObjPrefix: rgug4131a
+species: Rat
+manufacturer: Agilent
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### RATCHIP_DB > Clontech chips
+
+Package: rguatlas4k.db
+Version: 2.1.0
+PkgTemplate: RATCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/rguatlas4k.sqlite
+AnnObjPrefix: rguatlas4k
+species: Rat
+manufacturer: Clontech
 
 
 ### =========================================================================
@@ -712,25 +736,25 @@ manufacturer: FHCRC Genomics Shared Resource
 ### Fields marked with an (*) are required.
 
 Package: drosgenome1.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: FLYCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/drosgenome1.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/drosgenome1.sqlite
 AnnObjPrefix: drosgenome1
 species: Fly
 manufacturer: Affymetrix
 
 Package: drosophila2.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: FLYCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/drosophila2.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/drosophila2.sqlite
 AnnObjPrefix: drosophila2
 species: Fly
 manufacturer: Affymetrix
 
 Package: indac.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: FLYCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/indac.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/indac.sqlite
 AnnObjPrefix: indac
 species: Fly
 manufacturer: INDAC
@@ -760,20 +784,20 @@ manufacturer: INDAC
 ### YEASTCHIP_DB > Affymetrix chips
 ###
 ### Old path for Nianhua's sqlite files:
-###   /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/yeast/
+###   /mnt/cpb_anno/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/yeast/
 
 Package: yeast2.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: YEASTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/yeast2.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/yeast2.sqlite
 AnnObjPrefix: yeast2
 species: Yeast
 manufacturer: Affymetrix
 
 Package: ygs98.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: YEASTCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/ygs98.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/ygs98.sqlite
 AnnObjPrefix: ygs98
 species: Yeast
 manufacturer: Affymetrix
@@ -803,33 +827,33 @@ manufacturer: Affymetrix
 ### ARABIDOPSISCHIP_DB > Affymetrix chips
 ###
 ### Old path for Nianhua's sqlite files:
-###   /home/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/arabidopsis/
+###   /mnt/cpb_anno/nli/proj/ann/nli/annosrc.orig/affychip/2007-Mar5/arabidopsis/
 
 Package: ag.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: ARABIDOPSISCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/ag.sqlite 
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/ag.sqlite 
 AnnObjPrefix: ag
 species: Arabidopsis
 manufacturer: Affymetrix
 
 Package: ath1121501.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: ARABIDOPSISCHIP.DB
-DBfile: /home/mcarlson/sanctionedSqlite/ath1121501.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/ath1121501.sqlite
 AnnObjPrefix: ath1121501
 species: Arabidopsis
 manufacturer: Affymetrix
 
 
 ### =========================================================================
-### HUMAN_DB/RODENT_DB/FLY_DB/YEAST_DB schemas
-### ------------------------------------------
+### HUMAN_DB/MOUSE_DB/RAT_DB/FLY_DB/YEAST_DB schemas
+### ------------------------------------------------
 ###   Fields:
 ###     Package (*)
 ###     Title
 ###     Version (*)
-###     PkgTemplate: HUMAN.DB|RODENT.DB|FLY.DB|YEAST.DB
+###     PkgTemplate: HUMAN.DB|MOUSE.DB|RAT.DB|FLY.DB|YEAST.DB
 ###     DBfile (*)
 ###     DBschema
 ###     AnnObjPrefix (*)
@@ -840,46 +864,45 @@ manufacturer: Affymetrix
 ### Fields marked with an (*) are required.
 
 Package: org.Hs.eg.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: HUMAN.DB
-DBfile: /home/mcarlson/sanctionedSqlite/org.Hs.eg.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Hs.eg.sqlite
 AnnObjPrefix: org.Hs.eg
 AnnObjTarget: Human
 species: Human
 biocViews: AnnotationData, Homo_sapiens, humanLLMappings
 
 Package: org.Mm.eg.db
-Version: 2.0.3
-PkgTemplate: RODENT.DB
-DBfile: /home/mcarlson/sanctionedSqlite/org.Mm.eg.sqlite
+Version: 2.1.0
+PkgTemplate: MOUSE.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Mm.eg.sqlite
 AnnObjPrefix: org.Mm.eg
 AnnObjTarget: Mouse
 species: Mouse
 biocViews: AnnotationData, Mus_musculus, mouseLLMappings
 
 Package: org.Rn.eg.db
-Version: 2.0.3
-PkgTemplate: RODENT.DB
-DBfile: /home/mcarlson/sanctionedSqlite/org.Rn.eg.sqlite
+Version: 2.1.0
+PkgTemplate: RAT.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Rn.eg.sqlite
 AnnObjPrefix: org.Rn.eg
 AnnObjTarget: Rat
 species: Rat
 biocViews: AnnotationData, Rattus_norvegicus, ratLLMappings
 
 Package: org.Dm.eg.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: FLY.DB
-DBfile: /home/mcarlson/sanctionedSqlite/org.Dm.eg.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Dm.eg.sqlite
 AnnObjPrefix: org.Dm.eg
 AnnObjTarget: Fly
 species: Fly
 biocViews: AnnotationData, Drosophila_melanogaster
 
 Package: org.Sc.sgd.db
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: YEAST.DB
-### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/YEAST.sqlite (broken)
-DBfile: /home/mcarlson/sanctionedSqlite/org.Sc.sgd.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Sc.sgd.sqlite
 AnnObjPrefix: org.Sc.sgd
 AnnObjTarget: Yeast
 species: Yeast
@@ -889,9 +912,9 @@ biocViews: AnnotationData, Saccharomyces_cerevisiae
 ###TEMP just to get a YEAST classic made...
 Package: YEAST.db
 Title: SGD centric annotation maps for Yeast
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: YEASTLEGACY.DB
-DBfile: /home/mcarlson/sanctionedSqlite/YEAST.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/YEAST.sqlite
 AnnObjPrefix: YEAST
 AnnObjTarget: Yeast
 species: Yeast
@@ -915,10 +938,9 @@ biocViews: AnnotationData, Saccharomyces_cerevisiae
 
 Package: GO.db
 Title: A set of annotation maps describing the entire Gene Ontology
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: GO.DB
-### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/GO.sqlite
-DBfile: /home/mcarlson/sanctionedSqlite/GO.sqlite 
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/GO.sqlite 
 AnnObjPrefix: GO
 AnnObjTarget: GO
 biocViews: AnnotationData, FunctionalAnnotation
@@ -941,13 +963,108 @@ biocViews: AnnotationData, FunctionalAnnotation
 
 Package: KEGG.db
 Title: A set of annotation maps for KEGG
-Version: 2.0.3
+Version: 2.1.0
 PkgTemplate: KEGG.DB
-### Nianhua's file: /home/nli/proj/ann/nli/annosrc.orig/db/KEGG.sqlite
-DBfile: /home/mcarlson/sanctionedSqlite/KEGG.sqlite
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/KEGG.sqlite
 AnnObjPrefix: KEGG
 AnnObjTarget: KEGG
 biocViews: AnnotationData, FunctionalAnnotation
+
+
+### =========================================================================
+### INPARANOID_DB schema
+### ------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: INPARANOIDHOMSA.DB|INPARANOIDMUSMU.DB|INPARANOIDRATNO.DB|INPARANOIDDROME.DB|INPARANOIDSACCE.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget (*)
+###     organism
+###     species
+###     biocViews (*)
+### Fields marked with an (*) are required.
+
+Package: hom.Hs.inp.db
+Title: A set of paralogy information from Inparanoid
+Version: 0.0.1
+PkgTemplate: INPARANOIDHOMSA.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Hs.inp.sqlite
+AnnObjPrefix: hom.Hs.inp
+AnnObjTarget: Human
+species: Human
+biocViews: AnnotationData, Homo_sapiens
+
+Package: hom.Mm.inp.db
+Title: A set of paralogy information from Inparanoid
+Version: 0.0.1
+PkgTemplate: INPARANOIDMUSMU.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Mm.inp.sqlite
+AnnObjPrefix: hom.Mm.inp
+AnnObjTarget: Mouse
+species: Mouse
+biocViews: AnnotationData, Mus_musculus
+
+Package: hom.Rn.inp.db
+Title: A set of paralogy information from Inparanoid
+Version: 0.0.1
+PkgTemplate: INPARANOIDRATNO.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Rn.inp.sqlite
+AnnObjPrefix: hom.Rn.inp
+AnnObjTarget: Rat
+species: Rat
+biocViews: AnnotationData, Rattus_norvegicus
+
+Package: hom.Dm.inp.db
+Title: A set of paralogy information from Inparanoid
+Version: 0.0.1
+PkgTemplate: INPARANOIDDROME.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Dm.inp.sqlite
+AnnObjPrefix: hom.Dm.inp
+AnnObjTarget: Fly
+species: Fly
+biocViews: AnnotationData, Drosophila_melanogaster
+
+Package: hom.Sc.inp.db
+Title: A set of paralogy information from Inparanoid
+Version: 0.0.1
+PkgTemplate: INPARANOIDSACCE.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Sc.inp.sqlite
+AnnObjPrefix: hom.Sc.inp
+AnnObjTarget: Yeast
+species: Yeast
+biocViews: AnnotationData, Saccharomyces_cerevisiae
+
+
+### =========================================================================
+### PFAM_DB schema
+### ------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: PFAM.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget (*)
+###     organism
+###     species
+###     biocViews (*)
+### Fields marked with an (*) are required.
+
+Package: PFAM.db
+Title: A set of protein ID mappings for PFAM
+Version: 2.1.0
+PkgTemplate: PFAM.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/PFAM.sqlite
+AnnObjPrefix: PFAM
+AnnObjTarget: Human
+species: Human
+biocViews: AnnotationData
 
 
 ### =========================================================================

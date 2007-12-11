@@ -13,7 +13,7 @@
 ### -------------------------------------------------------------------------
 
 
-FLY_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="id")
+FLY_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id")
 
 ### Mandatory fields: objName, Class and L2Rchain
 FLY_DB_AnnDbBimap_seeds <- list(
@@ -24,7 +24,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="accessions",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="accession"
             )
         )
@@ -36,7 +36,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="alias",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="alias_symbol"
             )
         ),
@@ -49,7 +49,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="chromosomes",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="chromosome"
             )
         )
@@ -61,7 +61,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="ec",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="ec_number"
             )
         )
@@ -73,7 +73,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="gene_name"
             )
         )
@@ -85,7 +85,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="cytogenetic_locations",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="cytogenetic_location"
             )
         )
@@ -97,8 +97,8 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="kegg",
-                Lcolname="id",
-                Rcolname="kegg_id"
+                Lcolname="_id",
+                Rcolname="path_id"
             )
         )
     ),
@@ -109,7 +109,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="pubmed",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="pubmed_id"
             )
         )
@@ -121,7 +121,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="refseq",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="accession"
             )
         )
@@ -133,7 +133,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="gene_info",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="symbol"
             )
         )
@@ -145,7 +145,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="unigene",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="unigene_id"
             )
         )
@@ -157,8 +157,8 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
-                Lcolname="id",
-                tagname=c(Chromosome="{chromosome}"),
+                Lcolname="_id",
+                tagname=c(Chromosome="{seqname}"),
                 Rcolname="start_location"
             )
         ),
@@ -171,7 +171,7 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="flybase",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="flybase_id"
             )
         )
@@ -183,8 +183,20 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 tablename="flybase_cg",
-                Lcolname="id",
+                Lcolname="_id",
                 Rcolname="flybase_cg_id"
+            )
+        )
+    ),
+    list(
+        objName="FLYBASEPROT",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            FLY_DB_L2Rlink1,
+            list(
+                tablename="flybase_prot",
+                Lcolname="_id",
+                Rcolname="prot_id"
             )
         )
     ),
@@ -195,8 +207,8 @@ FLY_DB_AnnDbBimap_seeds <- list(
             FLY_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lcolname="id",
-                tagname=c(Evidence="{evidence}"),
+                Lcolname="_id",
+                tagname=c(Evidence="{relationship_type}"),
                 Rcolname="go_id",
                 Rattribnames=c(Ontology="NULL")
             )
@@ -227,6 +239,7 @@ createAnnObjs.FLY_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
     ann_objs$FLYBASE2EG <- revmap(ann_objs$FLYBASE, objName="FLYBASE2EG")
     ann_objs$FLYBASECG2EG <- revmap(ann_objs$FLYBASECG, objName="FLYBASECG2EG")
+    ann_objs$FLYBASEPROT2EG <- revmap(ann_objs$FLYBASEPROT, objName="FLYBASEPROT2EG")
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
     map <- ann_objs$GO2EG
     map@rightTables <- Go3tablenames(all=TRUE)

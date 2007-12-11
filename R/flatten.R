@@ -6,7 +6,7 @@
 ### A <colname>_CVL object is a list of character vector or NULL elements.
 ###
 
-### Flatten the GO envir found in HUMANCHIP and RODENTCHIP packages.
+### Flatten the GO envir found in HUMANCHIP, MOUSECHIP and RATCHIP packages.
 flatten.GOenvir <- function(env)
 {
     ## 'x' is a named list of "GO triplets". The names are the GO ids.
@@ -53,8 +53,8 @@ flatten.GOenvir <- function(env)
                Ontology=Ontology, stringsAsFactors=FALSE)
 }
 
-### Flatten the GO2PROBE and GO2ALLPROBES envir found in HUMANCHIP and
-### RODENTCHIP packages.
+### Flatten the GO2PROBE and GO2ALLPROBES envir found in HUMANCHIP, 
+### MOUSECHIP and RATCHIP packages.
 flatten.GO2PROBEenvir <- function(env)
 {
     ## 'x' is a named character vector of probe ids. The names are the

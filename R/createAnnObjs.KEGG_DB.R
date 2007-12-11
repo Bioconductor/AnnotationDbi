@@ -33,7 +33,7 @@ KEGG_DB_AnnDbBimap_seeds <- list(
             list(
                 tablename="pathway2gene",
                 Lcolname="pathway_id",
-                Rcolname="gene_id"
+                Rcolname="gene_or_orf_id"
             )
         )
     ),

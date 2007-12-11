@@ -7,6 +7,8 @@
 ### class and its derived classes).
 ###
 ### This file defines and implements the low-level API for AnnDbObj objects.
+### This API has the following regular function:
+###     showQCData
 ### This API consists of the following set of generics:
 ###     dbconn,
 ###     dbfile,
@@ -22,6 +24,55 @@
 ### in the AnnDbBimap-envirAPI.R file.
 ###
 ### -------------------------------------------------------------------------
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "showQCData" method.
+###
+showQCData <- function(pkgname, datacache){
+     cat(paste("Quality control information for ", pkgname, ":\n\n\n", sep=""))
+     map_counts = get(paste(pkgname, "MAPCOUNTS", sep=""))
+     cat(paste("This package has the following mappings:\n\n", sep=""))
+     for(i in 1:length(as.list(map_counts))){
+         #I need an error handler for Llength()
+         test = 0
+         test = try( Llength(get(names(as.list(map_counts)[i]))),silent=TRUE )
+         if(inherits(test,"try-error")){
+             test = 0
+         }
+         if(test > 1 && length(grep("2",names(as.list(map_counts)[i]) ,value=TRUE))==0 ){
+             cat(paste(names(as.list(map_counts)[i]), " contains ", as.list(map_counts)[[i]], " elements out of ", Llength(get(names(as.list(map_counts)[i]))), " \n", sep=""))
+         }
+         else{
+             cat(paste(names(as.list(map_counts)[i]), " contains ", as.list(map_counts)[[i]], " elements \n", sep=""))
+         }
+     }
+
+     cat(paste("\n\nAdditional Information about this package:\n\n", sep=""))
+     cat(paste("Schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n", sep=""))
+     cat(paste("Schema version: ",dbmeta(datacache, 'DBSCHEMAVERSION'), "\n", sep=""))
+     ## Things to check for (may or may not be in some packages)
+     meta = list(
+       "ORGANISM" = "Organism: ",
+       "EGSOURCEDATE" ="Date for NCBI data: ",
+       "GOSOURCEDATE" = "Date for GO data: ",
+       "KEGGSOURCEDATE" = "Date for KEGG data: ",
+       "GPSOURCEDATE" = "Date for Golden Path data: ",
+       "IPISOURCEDATE" = "Date for IPI data: ",
+       "TAIRSOURCEDATE" = "Data for TAIR data: ",
+       "YGSOURCEDATE" = "Date for SGD data: ",
+       "FBSOURCEDATE" = "Date for Flybase data: ",
+       "ENSOURCEDATE" = "Date for Ensembl data: "
+     )
+
+     for(i in 1:length(meta)){
+         test = 0
+         test = try( dbmeta(datacache, names(meta)[i]),silent=TRUE )
+         if(inherits(test,"try-error")){ test = 0 }
+         if(test != 0){ cat(paste(meta[[i]], dbmeta(datacache, names(meta)[i]), "\n", sep="")) }      
+     }     
+          
+}
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

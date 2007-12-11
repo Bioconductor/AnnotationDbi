@@ -44,7 +44,7 @@ o Make the FOREIGN KEYs portable. This means that:
         FOREIGN KEY (col) REFERENCES table (col)
       inside the CREATE TABLE statement but at the end of it (after all the
       column definitions) is compatible with SQLite (which will just ignore
-      it) MySQL+InnoDB and PostgreSQL.
+      it), MySQL+InnoDB and PostgreSQL.
     - There must be NOT NULL and UNIQUE constraints on the referenced column
       (typically a PRIMARY KEY).
     - The referencing and referenced columns must have the same type.

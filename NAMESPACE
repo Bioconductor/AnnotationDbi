@@ -27,7 +27,7 @@ exportClasses(
 )
 
 exportMethods(
-    ## from AnnDbObj-lowAPI.R
+    ## from R/AnnDbObj-lowAPI.R
     "dbconn",
     "dbfile",
     "dbmeta",
@@ -92,6 +92,9 @@ exportMethods(
 )
 
 export(
+    ## from R/AnnDbObj-lowAPI.R
+    showQCData,
+       
     ## from R/SQL.R
     debugSQL,
 
@@ -106,17 +109,25 @@ export(
 
     ## from the R/createAnnObjs.*_DB.R files
     createAnnObjs.HUMANCHIP_DB,
-    createAnnObjs.RODENTCHIP_DB,
+    createAnnObjs.MOUSECHIP_DB,
+    createAnnObjs.RATCHIP_DB,
     createAnnObjs.FLYCHIP_DB,
     createAnnObjs.YEASTCHIP_DB,
     createAnnObjs.ARABIDOPSISCHIP_DB,
     createAnnObjs.HUMAN_DB,
-    createAnnObjs.RODENT_DB,
+    createAnnObjs.MOUSE_DB,
+    createAnnObjs.RAT_DB,
     createAnnObjs.FLY_DB,
     createAnnObjs.YEAST_DB,
     createAnnObjs.YEASTLEGACY_DB,
     createAnnObjs.GO_DB,
     createAnnObjs.KEGG_DB,
+    createAnnObjs.INPARANOIDHOMSA_DB,
+    createAnnObjs.INPARANOIDMUSMU_DB,
+    createAnnObjs.INPARANOIDRATNO_DB,
+    createAnnObjs.INPARANOIDDROME_DB,
+    createAnnObjs.INPARANOIDSACCE_DB,
+    createAnnObjs.PFAM_DB,
     createAnnObjs.AFFYHUEX_DB,
 
     ## from R/AnnDbPkg-maker.R

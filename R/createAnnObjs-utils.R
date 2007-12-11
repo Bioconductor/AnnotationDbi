@@ -1,6 +1,6 @@
 ### All the createAnnObjs.*_DB() functions currently support the same DB
 ### schema version (of course, each function support its own schema).
-DBSCHEMAVERSION <- "0.9"
+DBSCHEMAVERSION <- "1.0"
 
 checkDBSCHEMA <- function(dbconn, DBSCHEMA)
 {
@@ -94,7 +94,7 @@ createREJECTORF <- function(dbconn)
 
 createMAPCOUNTS <- function(dbconn, prefix)
 {
-    data <- dbGetTable(dbconn, "qcdata", "WHERE map_name != 'TOTAL' ORDER BY map_name")
+    data <- dbGetTable(dbconn, "map_counts", "WHERE map_name != 'TOTAL' ORDER BY map_name")
     MAPCOUNTS <- data[["count"]]
     names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
     MAPCOUNTS
@@ -116,3 +116,37 @@ prefixAnnObjNames <- function(envir, prefix)
     envir
 }
 
+
+
+### Populate the huge list of tables neede by the homology packages.
+makeSeedList <- function(species, fields)
+{
+    INPARANOID_DB_AnnDbBimap_seeds <- list()
+    
+    for(i in 1:length(fields)){
+       INPARANOID_DB_AnnDbBimap_seeds[i] <- list(                                   
+           list(
+                objName=toupper(fields[i]),
+                Class="AnnDbBimap",
+                L2Rchain=list(          
+                  list(
+                       tablename=names(fields)[i],
+                       Lcolname="inp_id",
+                       Rcolname="clust_id",
+                       filter="{seed_status}='100%'",
+                       filter=as.character(paste("{species}=","'",species,"'",sep=""))
+                       ),
+                  list(
+                       tablename=names(fields)[i],
+                       Lcolname="clust_id",
+                       Rcolname="inp_id",
+                       filter="{seed_status}='100%'",
+                       filter=as.character(paste("{species}=","'",fields[i],"'",sep=""))
+                       )
+                  )
+                )
+           )
+    }
+
+    INPARANOID_DB_AnnDbBimap_seeds   
+}

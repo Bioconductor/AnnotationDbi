@@ -1,7 +1,7 @@
-### Wrap all sqlite files found under ~mcarlson/sanctionedSqlite/
+### Wrap all sqlite files found under /mnt/cpb_anno/mcarlson/sanctionedSqlite
 ### into a .db package.
 
-srcdir <- "/home/mcarlson/sanctionedSqlite"
+srcdir <- "/mnt/cpb_anno/mcarlson/sanctionedSqlite"
 exclude <- c(
     "YEAST.sqlite",
     "metadatasrc.sqlite",

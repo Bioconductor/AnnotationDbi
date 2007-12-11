@@ -25,6 +25,11 @@ CREATE TABLE ensembl (
   ensembl_id VARCHAR(20) NOT NULL,              -- Ensembl Gene ID
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
+CREATE TABLE ensembl_prot (
+  _id INTEGER NOT NULL,                         -- REFERENCES genes
+  prot_id VARCHAR(20) NOT NULL,                 -- Ensembl Protein ID
+  FOREIGN KEY (_id) REFERENCES genes(_id)
+);
 CREATE TABLE chromosomes (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
   chromosome VARCHAR(2) NOT NULL,               -- chromosome name

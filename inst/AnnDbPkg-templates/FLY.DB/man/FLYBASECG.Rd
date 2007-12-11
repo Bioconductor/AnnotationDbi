@@ -5,12 +5,12 @@
 \description{ 
   @ANNOBJPREFIX@FLYBASE is an R object that contains mappings between 
   Entrez Gene identifiers and FlyBase CG accession numbers.  These
-  accessions are used by ensemble and supported by flybase.    
+  accessions are used by ensembl and supported by flybase.    
 }
 \details{
   This object is a simple mapping of Entrez Gene identifiers
   \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene} to Flybase
-  CG Accession Numbers.
+  CG accession numbers.
 
   Mappings were based on data provided by: @FLYBASESOURCE@
 }
