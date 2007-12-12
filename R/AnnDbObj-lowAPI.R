@@ -42,7 +42,7 @@ showQCData <- function(prefix, datacache){
              test = 0
          }
          if(test > 1){
-             cat(paste(names(as.list(map_counts)[i]), " has ", map_counts[i], " mapped keys (of ", length(get(names(map_counts)[i])), " keys) \n", sep=""))
+             cat(paste(names(as.list(map_counts)[i]), " has ", map_counts[i], " mapped keys library(of ", length(get(names(map_counts)[i])), " keys) \n", sep=""))
          }
          else{
              cat(paste(names(as.list(map_counts)[i]), " has ", map_counts[i], " elements \n", sep=""))
