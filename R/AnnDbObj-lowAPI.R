@@ -40,17 +40,17 @@ showQCData <- function(pkgname, datacache){
          if(inherits(test,"try-error")){
              test = 0
          }
-         if(test > 1 && length(grep("2",names(as.list(map_counts)[i]) ,value=TRUE))==0 ){
-             cat(paste(names(as.list(map_counts)[i]), " contains ", as.list(map_counts)[[i]], " elements out of ", Llength(get(names(as.list(map_counts)[i]))), " \n", sep=""))
+         if(test > 1){ #&& length(grep("2",names(as.list(map_counts)[i]) ,value=TRUE))==0 ){
+             cat(paste(names(as.list(map_counts)[i]), " has ", as.list(map_counts)[[i]], " mapped keys (of ", Llength(get(names(as.list(map_counts)[i]))), " keys) \n", sep=""))
          }
          else{
-             cat(paste(names(as.list(map_counts)[i]), " contains ", as.list(map_counts)[[i]], " elements \n", sep=""))
+             cat(paste(names(as.list(map_counts)[i]), " has ", as.list(map_counts)[[i]], " elements \n", sep=""))
          }
      }
 
      cat(paste("\n\nAdditional Information about this package:\n\n", sep=""))
-     cat(paste("Schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n", sep=""))
-     cat(paste("Schema version: ",dbmeta(datacache, 'DBSCHEMAVERSION'), "\n", sep=""))
+     cat(paste("DB Schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n", sep=""))
+     cat(paste("DB Schema version: ",dbmeta(datacache, 'DBSCHEMAVERSION'), "\n", sep=""))
      ## Things to check for (may or may not be in some packages)
      meta = list(
        "ORGANISM" = "Organism: ",
