@@ -27,29 +27,21 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "showQCData" method.
+### The "showQCData" function.
 ###
+
 showQCData <- function(prefix, datacache){
      cat(paste("Quality control information for ", prefix, ":\n\n\n", sep=""))
      map_counts = createMAPCOUNTS(dbconn(datacache), prefix) 
      cat(paste("This package has the following mappings:\n\n", sep=""))
-     for(i in 1:length(map_counts)){
-         test = 0
-         test = try( Llength(get(names(map_counts)[i])),silent=TRUE )
-         if(inherits(test,"try-error")){
-             test = 0
-         }
-         if(test > 1){
-             cat(names(map_counts)[i], " has ", map_counts[i], " mapped keys library(of ", length(get(names(map_counts)[i])), " keys) \n", sep="")
-         }
-         else{
-             cat(names(map_counts)[i], " has ", map_counts[i], " elements \n", sep="")
-         }
+     for(i in seq_len(length(map_counts))){
+         mapname <- names(map_counts)[i]
+         cat(mapname, " has ", map_counts[i], " mapped keys (of ", length(get(mapname)), " keys)\n", sep="")
      }
      
      cat(paste("\n\nAdditional Information about this package:\n\n", sep=""))
-     cat(paste("DB Schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n", sep=""))
-     cat(paste("DB Schema version: ",dbmeta(datacache, 'DBSCHEMAVERSION'), "\n", sep=""))
+     cat(paste("DB schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n", sep=""))
+     cat(paste("DB schema version: ",dbmeta(datacache, 'DBSCHEMAVERSION'), "\n", sep=""))
      ## Things to check for (may or may not be in some packages)
      meta = list(
        "ORGANISM" = "Organism: ",
