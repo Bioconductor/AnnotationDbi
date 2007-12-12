@@ -1058,7 +1058,7 @@ biocViews: AnnotationData, Saccharomyces_cerevisiae
 
 Package: PFAM.db
 Title: A set of protein ID mappings for PFAM
-Version: 2.1.0
+Version: 0.99.0
 PkgTemplate: PFAM.DB
 DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/PFAM.sqlite
 AnnObjPrefix: PFAM
