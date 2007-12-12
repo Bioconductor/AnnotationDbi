@@ -161,4 +161,7 @@ CREATE INDEX Fflybase ON flybase (_id);
 CREATE INDEX Fpubmed ON pubmed (_id);
 CREATE INDEX Frefseq ON refseq (_id);
 CREATE INDEX Funigene ON unigene (_id);
+CREATE INDEX Fflybase ON flybase (_id);
+CREATE INDEX Fflybasecg ON flybase_cg (_id);
+CREATE INDEX Fflybasep ON flybase_prot (_id);
 

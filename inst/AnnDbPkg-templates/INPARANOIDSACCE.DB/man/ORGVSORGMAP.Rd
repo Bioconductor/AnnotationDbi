@@ -101,7 +101,7 @@
         #Start with some Human Entrez Gene IDs
         humanEGIds = c("1770","1769","4036")
 
-        #Inparanoid uses ensemble protein IDs so start with
+        #Inparanoid uses ensembl protein IDs so start with
         #those. Notice that there will be many protein IDs returned for
         #a typical gene since there are many possible translations.
         humanProtIds = list()

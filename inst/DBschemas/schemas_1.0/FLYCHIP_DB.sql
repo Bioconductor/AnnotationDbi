@@ -97,7 +97,7 @@ CREATE TABLE flybase (
 CREATE TABLE flybase_cg (
   id INTEGER NOT NULL,                          -- REFERENCES genes
   flybase_cg_id VARCHAR(10) NOT NULL,           -- FlyBase CG ID
-  FOREIGN KEY (id) REFERENCES genes (id)
+  FOREIGN KEY (_id) REFERENCES genes (_id)
 );
 CREATE TABLE pubmed (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
@@ -157,4 +157,6 @@ CREATE INDEX Fflybase ON flybase (_id);
 CREATE INDEX Fpubmed ON pubmed (_id);
 CREATE INDEX Frefseq ON refseq (_id);
 CREATE INDEX Funigene ON unigene (_id);
+CREATE INDEX Fflybase ON flybase (_id);
+CREATE INDEX Fflybasecg ON flybase_cg (_id);
 

@@ -34,6 +34,12 @@
 \alias{createAnnObjs.YEASTLEGACY_DB}
 \alias{createAnnObjs.GO_DB}
 \alias{createAnnObjs.KEGG_DB}
+\alias{createAnnObjs.INPARANOIDDROME_DB.R}
+\alias{createAnnObjs.INPARANOIDHOMSA_DB.R}
+\alias{createAnnObjs.INPARANOIDMUSMU_DB.R}
+\alias{createAnnObjs.INPARANOIDRATNO_DB.R}
+\alias{createAnnObjs.INPARANOIDSACCE_DB.R}
+\alias{createAnnObjs.PFAM_DB.R}
 \alias{createAnnObjs.AFFYHUEX_DB}
 
 \title{AnnotationDbi internals}

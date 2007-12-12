@@ -169,4 +169,6 @@ CREATE INDEX Fprosite ON prosite (_id);
 CREATE INDEX Fpubmed ON pubmed (_id);
 CREATE INDEX Frefseq ON refseq (_id);
 CREATE INDEX Funigene ON unigene (_id);
+CREATE INDEX Fensembl ON ensembl (_id);
+CREATE INDEX Fensemblp ON ensembl_prot (_id);
 
