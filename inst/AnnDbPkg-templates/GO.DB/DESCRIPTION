@@ -4,7 +4,7 @@ Description: @PKGTITLE@ assembled using data from GO
 Version: @PKGVERSION@
 Author: @AUTHOR@
 Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
-Depends: R (>= 2.6.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
+Depends: R (>= 2.7.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
 Imports: methods, AnnotationDbi
 License: @LIC@
 biocViews: @BIOCVIEWS@
