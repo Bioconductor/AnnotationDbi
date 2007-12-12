@@ -28,6 +28,6 @@ NEW FEATURES
 	Yeast).
 
     o	Support has been added for PFAM so that there can now be a 
-    	PFAM.db pacakge.
+    	PFAM.db package.
 
     o	AnnotationDbi is now compliant with the 1.0 schema definition.
