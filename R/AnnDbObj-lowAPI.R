@@ -29,9 +29,10 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "showQCData" method.
 ###
-showQCData <- function(pkgname, datacache){
-     cat(paste("Quality control information for ", pkgname, ":\n\n\n", sep=""))
-     map_counts = get(paste(pkgname, "MAPCOUNTS", sep=""))
+showQCData <- function(prefix, datacache){
+     cat(paste("Quality control information for ", prefix, ":\n\n\n", sep=""))
+     #map_counts = get(paste(prefix, "MAPCOUNTS", sep=""))
+     map_counts = createMAPCOUNTS(dbconn(datacache), prefix) 
      cat(paste("This package has the following mappings:\n\n", sep=""))
      for(i in 1:length(as.list(map_counts))){
          #I need an error handler for Llength()
@@ -40,14 +41,14 @@ showQCData <- function(pkgname, datacache){
          if(inherits(test,"try-error")){
              test = 0
          }
-         if(test > 1){ #&& length(grep("2",names(as.list(map_counts)[i]) ,value=TRUE))==0 ){
-             cat(paste(names(as.list(map_counts)[i]), " has ", as.list(map_counts)[[i]], " mapped keys (of ", Llength(get(names(as.list(map_counts)[i]))), " keys) \n", sep=""))
+         if(test > 1){
+             cat(paste(names(as.list(map_counts)[i]), " has ", map_counts[i], " mapped keys (of ", length(get(names(map_counts)[i])), " keys) \n", sep=""))
          }
          else{
-             cat(paste(names(as.list(map_counts)[i]), " has ", as.list(map_counts)[[i]], " elements \n", sep=""))
+             cat(paste(names(as.list(map_counts)[i]), " has ", map_counts[i], " elements \n", sep=""))
          }
      }
-
+     
      cat(paste("\n\nAdditional Information about this package:\n\n", sep=""))
      cat(paste("DB Schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n", sep=""))
      cat(paste("DB Schema version: ",dbmeta(datacache, 'DBSCHEMAVERSION'), "\n", sep=""))
