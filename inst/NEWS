@@ -1,0 +1,33 @@
+	**************************************************
+	*						 *
+	*	        1.1.7 SERIES NEWS		 *
+	*						 *
+	**************************************************
+
+
+		CHANGES IN AnnotationDbi VERSION 1.1.7
+
+
+NEW FEATURES
+
+    o	Annotation packages now have a function to display basic 
+    	quality control information.
+
+    o	5 Inparanoid packages have been added for use in studies 
+    	involving homology.
+
+    o	Ensembl gene ID maps have been added to all mammalian 
+    	packages.
+
+    o	MGI IDs maps have been added for all Mouse packages.
+
+    o	Protein to gene mappings have been added to appropriate 
+    	organism based packages so that it will be possible to get 
+	from the IDs in the inparanoid packages to a gene based ID 
+	for the 5 main organism types (ie. Human, Mouse, Rat, Fly, 
+	Yeast).
+
+    o	Support has been added for PFAM so that there can now be a 
+    	PFAM.db pacakge.
+
+    o	AnnotationDbi is now compliant with the 1.0 schema definition.
