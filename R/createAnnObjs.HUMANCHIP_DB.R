@@ -233,7 +233,7 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="_id",
-                tagname=c(Evidence="{relationship_type}"),
+                tagname=c(Evidence="{evidence}"),
                 Rcolname="go_id",
                 Rattribnames=c(Ontology="NULL")
             )
