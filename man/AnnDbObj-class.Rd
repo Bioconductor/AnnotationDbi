@@ -117,12 +117,12 @@
   dbListFields(hgu95av2_dbconn(), "probes")
   dbListFields(hgu95av2_dbconn(), "genes")
   dbschema(hgu95av2ENTREZID)            # same as hgu95av2_dbschema()
-  ## According to the schema, the probes.id column references the genes.id
-  ## column. Note that in all tables, the "id" column is an internal id with
+  ## According to the schema, the probes._id column references the genes._id
+  ## column. Note that in all tables, the "_id" column is an internal id with
   ## no biological meaning (provided for allowing efficient joins between
   ## tables).
   ## To retrieve the mapping between manufacturer IDs and Entrez Gene IDs:
-  dbGetQuery(hgu95av2_dbconn(), "SELECT * FROM probes INNER JOIN genes USING (id) LIMIT 10")
+  dbGetQuery(hgu95av2_dbconn(), "SELECT * FROM probes INNER JOIN genes USING (_id) LIMIT 10")
   ## This mapping is in fact the ENTREZID map:
   toTable(hgu95av2ENTREZID)[1:10, ] # only relevant columns are retrieved
 

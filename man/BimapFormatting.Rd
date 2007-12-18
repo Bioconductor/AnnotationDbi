@@ -16,7 +16,9 @@
 \title{Formatting a Bimap as a list or character vector}
 
 \description{
+  These functions format a Bimap as a list or character vector.
 }
+
 
 \usage{
   ## Formatting as a list
