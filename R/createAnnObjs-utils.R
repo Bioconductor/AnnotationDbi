@@ -82,7 +82,7 @@ createCHRLENGTHS <- function(dbconn)
 {
     data <- dbGetTable(dbconn, "chrlengths")
     CHRLENGTHS <- data[["length"]]
-    names(CHRLENGTHS) <- data[["chr"]]
+    names(CHRLENGTHS) <- data[["chromosome"]]
     CHRLENGTHS
 }
 
