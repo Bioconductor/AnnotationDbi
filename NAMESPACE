@@ -141,6 +141,20 @@ export(
     ## until pluggable maps come online
     make_eg_to_go_map,
     make_go_to_eg_map,
-    toSQLStringSet
+    toSQLStringSet,
+
+    ## help functions for making sqlite files
+    popHUMANCHIPDB,
+    popHUMANDB,
+    popMOUSECHIPDB,
+    popMOUSEDB,
+    popRATCHIPDB,
+    popRATDB,
+    popARABIDOPSISCHIPDB,
+    popFLYCHIPDB,
+    popFLYDB,
+    popYEASTCHIPDB,
+    popYEASTDB
+       
 )
 

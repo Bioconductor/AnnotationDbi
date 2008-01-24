@@ -1,0 +1,58 @@
+\name{popARABIDOPSISCHIPDB}
+
+\alias{popARABIDOPSISCHIPDB}
+
+\title{Populates an SQLite DB with and produces a schema definition}
+
+\description{
+  Creates SQLite file useful for making a SQLite based annotation
+  package.  Also produces the schema file which details the schema for
+  the database produced.
+}
+
+\usage{
+  popARABIDOPSISCHIPDB(prefix, chipMapSrc, chipSrc, metaDataSrc,
+  outputDir, printSchema)
+}
+
+\arguments{
+  \item{prefix}{
+    prefix is the first part of the eventual desired package name.
+  (ie. "prefix.sqlite")
+  }
+  \item{chipMapSrc}{
+    The path and filename to the intermediate database containing the
+  mapping data for allowed ID types and how these IDs relate to each other.    
+  }
+  \item{chipSrc}{
+    The path and filename to the intermediate database containing the
+  annotation data for the sqlite to build.
+  }
+  \item{metaDataSrc}{
+    The path and filename to the intermediate database containing the
+  metadata information for the package.
+  }
+  \item{outputDir}{
+    Where you would like the output files to be placed.
+  }
+  \item{printSchema}{
+    Boolean to indicate whether or not to produce an output of the
+    schema (default is FALSE).
+  }
+}
+
+\details{
+}
+
+\examples{
+\dontrun{
+  ##Builds the ag sqlite:
+  popARABIDOPSISCHIPDB(prefix="ag",
+                       chipMapSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipmapsrc_arabidopsis.sqlite",
+                       chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_arabidopsis.sqlite",
+                       metaDataSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/metadatasrc.sqlite",
+                       printSchema=TRUE)
+}
+}
+
+\keyword{utilities}
