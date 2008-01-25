@@ -53,12 +53,12 @@ probe2gene <- function(baseName, otherSrc,
 	metadata_sql <- paste("INSERT INTO metadata VALUES ('PKGNAME', '",
 				pkgName, "');", sep="", collapse="")
 	sqliteQuickSQL(db, metadata_sql)
-	sqliteQuickSQL(db, "CREATE TABLE curr_map (probe_id TEXT, gene_id TEXT);")
-	sqliteQuickSQL(db, "CREATE TEMP TABLE probes (probe_id TEXT);")
-	sqliteQuickSQL(db, "CREATE TABLE other (probe_id TEXT, gene_id TEXT);")
-	sqliteQuickSQL(db, "CREATE TEMP TABLE other_rank (probe_id TEXT, gene_id TEXT, vote INTEGER,  row_id INTEGER);")
-	sqliteQuickSQL(db, "CREATE TEMP TABLE probe2gene (probe_id TEXT, gene_id TEXT);")
-	sqliteQuickSQL(db, "CREATE TEMP TABLE probe2acc (probe_id TEXT, gene_id TEXT);")
+	sqliteQuickSQL(db, "CREATE TABLE curr_map (probe_id TEXT, gene_id TEXT);")  #curr_map is the baseName file
+	sqliteQuickSQL(db, "CREATE TEMP TABLE probes (probe_id TEXT);")             #all the probes from curr_map
+	sqliteQuickSQL(db, "CREATE TABLE other (probe_id TEXT, gene_id TEXT);")     #This holds the otherSrc data
+	sqliteQuickSQL(db, "CREATE TABLE other_rank (probe_id TEXT, gene_id TEXT, vote INTEGER,  row_id INTEGER);") 
+	sqliteQuickSQL(db, "CREATE TABLE probe2gene (probe_id TEXT, gene_id TEXT);") 
+	sqliteQuickSQL(db, "CREATE TABLE probe2acc (probe_id TEXT, gene_id TEXT);") 
 	sqliteQuickSQL(db, "CREATE TABLE probe_map (probe_id TEXT, gene_id TEXT, accession TEXT);")
 
 	RSQLite:::sqliteImportFile(db, "curr_map", baseName, header=F, append=T, 
@@ -143,8 +143,11 @@ probe2gene <- function(baseName, otherSrc,
 	sqliteQuickSQL(db, "INSERT INTO probe2gene SELECT probe_id, NULL FROM probes WHERE probe_id NOT IN (SELECT probe_id FROM probe2gene);")
 	sqliteQuickSQL(db, "CREATE INDEX p1 ON probe2gene(probe_id);")
 	sqliteQuickSQL(db, "INSERT INTO probe_map SELECT DISTINCT p.probe_id, p.gene_id, a.gene_id FROM probe2acc as a LEFT OUTER JOIN probe2gene as p ON a.probe_id=p.probe_id;")
-	sqliteQuickSQL(db, "DROP TABLE other;")
-	dbDisconnect(db)
+	sqliteQuickSQL(db, "DROP TABLE other_rank;")
+        sqliteQuickSQL(db, "DROP TABLE other;")
+        sqliteQuickSQL(db, "DROP TABLE probe2gene;")
+        sqliteQuickSQL(db, "DROP TABLE probe2acc;")
+        dbDisconnect(db)
 	pkgName
 }
 
@@ -170,6 +173,23 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc,
 			chipMapSrc=chipMapSrc,
 			pkgName=pkgName,
 			outputDir=outputDir)
+}
+
+getMapForOtherChipPkg <- function(filePath,
+                                pkgName,
+                                chipMapSrc,
+                                otherSrc=character(0),
+                                baseMapType="gbNRef",
+                                outputDir=".") {
+        baseName <- filePath
+        # FIXME, when you rewrite probe2gene(), change it so that it does not take a file, but instead takes a matrix of values.
+        write.table(cleanSrcMap(baseName), file="tmpBaseNameFile.txt",quote=F,sep="\t",row.names=F,col.names=F)
+        probe2gene(baseName="tmpBaseNameFile.txt",
+                        baseMapType=baseMapType,
+                        otherSrc=otherSrc,
+                        chipMapSrc=chipMapSrc,
+                        pkgName=pkgName,
+                        outputDir=outputDir)
 }
 
 getMapForYeastChipPkg <- function(csvFileName, pkgName, outputDir=".") {
@@ -221,25 +241,6 @@ getMapForArabidopsisChipPkg <- function(pkgName, chipMapSrc, outputDir=".") {
 	sqliteQuickSQL(db, "DETACH src;");			
 	dbDisconnect(db)
 	pkgName
-}
-
-
-
-getMapForOtherChipPkg <- function(filePath,
-                                pkgName,
-                                chipMapSrc,
-                                otherSrc=character(0),
-                                baseMapType="gbNRef",
-                                outputDir=".") {
-        baseName <- filePath
-        # FIXME, when you rewrite probe2gene(), change it so that it does not take a file, but instead takes a matrix of values.
-        write.table(cleanSrcMap(baseName), file="tmpBaseNameFile.txt",quote=F,sep="\t",row.names=F,col.names=F)
-        probe2gene(baseName="tmpBaseNameFile.txt",
-                        baseMapType=baseMapType,
-                        otherSrc=otherSrc,
-                        chipMapSrc=chipMapSrc,
-                        pkgName=pkgName,
-                        outputDir=outputDir)
 }
 
 

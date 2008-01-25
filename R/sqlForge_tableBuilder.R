@@ -2,44 +2,13 @@
 appendPreMeta <- function(db, subStrs, printSchema, metaDataSrc){
 
 cat("Prepending Metadata \n")
-    
-  sql <- paste("ATTACH DATABASE '",metaDataSrc,"' AS meta;",sep="")
-  sqliteQuickSQL(db, sql)
-  
+
   sql<- paste("    CREATE TABLE IF NOT EXISTS metadata (
       name VARCHAR(80) PRIMARY KEY,
       value VARCHAR(255))
     ;")
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""))}
   sqliteQuickSQL(db, sql)
-  
-  sql<- paste("
-    INSERT INTO metadata
-     SELECT 'DBSCHEMA', db_schema
-     FROM meta.metadata
-     WHERE package_name IN
-        (SELECT value FROM metadata WHERE name='PKGNAME');
-     ") 
-  sqliteQuickSQL(db, sql)
-
-  sql<- paste("
-    INSERT INTO metadata
-     SELECT 'ORGANISM', organism
-     FROM meta.metadata
-     WHERE package_name IN
-        (SELECT value FROM metadata WHERE name='PKGNAME');
-     ") 
-  sqliteQuickSQL(db, sql)
-  
-  sql<- paste("
-    INSERT INTO metadata
-     SELECT 'SPECIES', species
-     FROM meta.metadata
-     WHERE package_name IN
-        (SELECT value FROM metadata WHERE name='PKGNAME');
-     ") 
-  sqliteQuickSQL(db, sql)
-
 
   ##This is where the version number for the schema is inserted.
   sql<- paste("
@@ -48,11 +17,17 @@ cat("Prepending Metadata \n")
   sqliteQuickSQL(db, sql)
 
 
-  #these entries are only relevant for chip based packages
-  if(subStrs[["coreTab"]]=="probes"){
+  ## This handles the metadata for all the local packages
+  if(length(names(metaDataSrc)) == 0){
+
+    cat("Using metaDataSrc.sqlite \n")
+      
+    sql <- paste("ATTACH DATABASE '",metaDataSrc,"' AS meta;",sep="")
+    sqliteQuickSQL(db, sql)
+      
     sql<- paste("
       INSERT INTO metadata
-       SELECT 'MANUFACTURER', manufacturer
+       SELECT 'DBSCHEMA', db_schema
        FROM meta.metadata
        WHERE package_name IN
           (SELECT value FROM metadata WHERE name='PKGNAME');
@@ -61,32 +36,91 @@ cat("Prepending Metadata \n")
 
     sql<- paste("
       INSERT INTO metadata
-       SELECT 'CHIPNAME', chip_name
+       SELECT 'ORGANISM', organism
+       FROM meta.metadata
+       WHERE package_name IN
+          (SELECT value FROM metadata WHERE name='PKGNAME');
+       ") 
+    sqliteQuickSQL(db, sql)
+  
+    sql<- paste("
+      INSERT INTO metadata
+       SELECT 'SPECIES', species
        FROM meta.metadata
        WHERE package_name IN
           (SELECT value FROM metadata WHERE name='PKGNAME');
        ") 
     sqliteQuickSQL(db, sql)
 
-    sql<- paste("
-      INSERT INTO metadata
-       SELECT 'MANUFACTURERURL', manufacture_url
-       FROM meta.metadata
-       WHERE package_name IN
+    #these entries are only relevant for chip based packages
+    if(subStrs[["coreTab"]]=="probes"){
+      sql<- paste("
+        INSERT INTO metadata
+         SELECT 'MANUFACTURER', manufacturer
+         FROM meta.metadata
+         WHERE package_name IN
+            (SELECT value FROM metadata WHERE name='PKGNAME');
+         ") 
+      sqliteQuickSQL(db, sql)
+
+      sql<- paste("
+        INSERT INTO metadata
+         SELECT 'CHIPNAME', chip_name
+         FROM meta.metadata
+         WHERE package_name IN
+            (SELECT value FROM metadata WHERE name='PKGNAME');
+         ") 
+      sqliteQuickSQL(db, sql)
+
+      sql<- paste("
+        INSERT INTO metadata
+         SELECT 'MANUFACTURERURL', manufacture_url
+         FROM meta.metadata
+         WHERE package_name IN
           (SELECT value FROM metadata WHERE name='PKGNAME');
+         ") 
+      sqliteQuickSQL(db, sql)
+    }
+    
+    sql<- paste("
+      DETACH DATABASE meta;
        ") 
     sqliteQuickSQL(db, sql)
   }
-
+  else{  #user is using a named vector:
+    cat("Using named Vector \n")
+    sql<- paste("
+      INSERT INTO metadata VALUES('DBSCHEMA', '",metaDataSrc["DBSCHEMA"],"');
+       ") 
+    sqliteQuickSQL(db, sql)
+    sql<- paste("
+      INSERT INTO metadata VALUES('ORGANISM', '",metaDataSrc["ORGANISM"],"');
+       ") 
+    sqliteQuickSQL(db, sql)
+    sql<- paste("
+      INSERT INTO metadata VALUES('SPECIES', '",metaDataSrc["SPECIES"],"');
+       ") 
+    sqliteQuickSQL(db, sql)
+    sql<- paste("
+      INSERT INTO metadata VALUES('MANUFACTURER', '",metaDataSrc["MANUFACTURER"],"');
+       ") 
+    sqliteQuickSQL(db, sql)
+    sql<- paste("
+      INSERT INTO metadata VALUES('CHIPNAME', '",metaDataSrc["CHIPNAME"],"');
+       ") 
+    sqliteQuickSQL(db, sql)
+    sql<- paste("
+      INSERT INTO metadata VALUES('MANUFACTURERURL', '",metaDataSrc["MANUFACTURERURL"],"');
+       ") 
+    sqliteQuickSQL(db, sql)    
+  }
+    
   sql<- paste("
     DELETE FROM metadata WHERE name='PKGNAME';
      ") 
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("
-    DETACH DATABASE meta;
-     ") 
-  sqliteQuickSQL(db, sql)
+
   
   sql<- paste("    CREATE TABLE map_metadata (
       map_name VARCHAR(80) NOT NULL,

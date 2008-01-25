@@ -42,8 +42,20 @@
   annotation data for the sqlite to build.
   }
   \item{metaDataSrc}{
-    The path and filename to the intermediate database containing the
-  metadata information for the package.
+    Either a named character vector containing pertinent information
+  about the metadata OR the path and filename to the intermediate
+  database containing the metadata information for the package.
+
+  If this is a custom package, then it must be a named vector with the
+  following fields:
+
+  metaDataSrc <- c( DBSCHEMA="the DB schema",
+                    ORGANISM="the organism",
+                    SPECIES="the species",
+                    MANUFACTURER="the manufacturer",
+                    CHIPNAME="the chipName",
+                    MANUFACTURERURL="the manufacturerUrl")
+
   }
   \item{otherSrc}{
     The path and filenames to any other lists of IDs which might add
@@ -67,7 +79,27 @@
 
 \examples{
 \dontrun{
-  ##Builds the hgu95av2 sqlite:
+  ##Set up the metadata
+  my_metaDataSrc <- c( DBSCHEMA="the DB schema",
+                    ORGANISM="the organism",
+                    SPECIES="the species",
+                    MANUFACTURER="the manufacturer",
+                    CHIPNAME="the chipName",
+                    MANUFACTURERURL="the manufacturerUrl")  
+
+  ##Builds the org.Hs.eg sqlite:
+  popHUMANCHIPDB(affy=TRUE,
+                 prefix="hgu95av2",
+                 fileName="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/hgu95av2/HG_U95Av2_annot.csv.070824",
+                 chipMapSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipmapsrc_human.sqlite",
+                 chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_human.sqlite",
+                 metaDataSrc = my_metaDataSrc,
+                 otherSrc=c(
+                   EA="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/hgu95av2/hgu95av2.EA.txt",
+                   UMICH="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/hgu95av2/hgu95av2_UMICH.txt"),
+                 printSchema=TRUE)
+
+  ##Or if the package is a standard package (it probably isn't):
   popHUMANCHIPDB(affy=TRUE,
                  prefix="hgu95av2",
                  fileName="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/hgu95av2/HG_U95Av2_annot.csv.070824",

@@ -29,8 +29,19 @@
   annotation data for the sqlite to build.
   }
   \item{metaDataSrc}{
-    The path and filename to the intermediate database containing the
-  metadata information for the package.
+    Either a named character vector containing pertinent information
+  about the metadata OR the path and filename to the intermediate
+  database containing the metadata information for the package.
+
+  If this is a custom package, then it must be a named vector with the
+  following fields:
+
+  metaDataSrc <- c( DBSCHEMA="the DB schema",
+                    ORGANISM="the organism",
+                    SPECIES="the species",
+                    MANUFACTURER="the manufacturer",
+                    CHIPNAME="the chipName",
+                    MANUFACTURERURL="the manufacturerUrl")
   }
   \item{outputDir}{
     Where you would like the output files to be placed.
@@ -46,7 +57,22 @@
 
 \examples{
 \dontrun{
+  ##Set up the metadata
+  my_metaDataSrc <- c( DBSCHEMA="the DB schema",
+                    ORGANISM="the organism",
+                    SPECIES="the species",
+                    MANUFACTURER="the manufacturer",
+                    CHIPNAME="the chipName",
+                    MANUFACTURERURL="the manufacturerUrl")  
+
   ##Builds the ag sqlite:
+  popARABIDOPSISCHIPDB(prefix="ag",
+                       chipMapSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipmapsrc_arabidopsis.sqlite",
+                       chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_arabidopsis.sqlite",
+                       metaDataSrc = my_metaDataSrc,
+                       printSchema=TRUE)
+
+  ##Or if the package is a standard package (it probably isn't):
   popARABIDOPSISCHIPDB(prefix="ag",
                        chipMapSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipmapsrc_arabidopsis.sqlite",
                        chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_arabidopsis.sqlite",
