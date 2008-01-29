@@ -15,7 +15,7 @@
 }
 
 \usage{
-  popHUMANDB(prefix, chipSrc, metaDataSrc, printSchema)
+  popHUMANDB(prefix, chipSrc, metaDataSrc, outputDir, printSchema)
 }
 
 \arguments{
@@ -43,14 +43,15 @@
                     MANUFACTURERURL="the manufacturerUrl")
 
   }
+  \item{outputDir}{
+    Where you would like the output files to be placed.
+  }
   \item{printSchema}{
     Boolean to indicate whether or not to produce an output of the
   schema (default is FALSE).
   }
 }
 
-\details{
-}
 
 \examples{
 \dontrun{

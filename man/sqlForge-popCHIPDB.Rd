@@ -74,8 +74,6 @@
   }
 }
 
-\details{
-}
 
 \examples{
 \dontrun{

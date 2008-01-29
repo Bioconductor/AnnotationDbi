@@ -154,7 +154,14 @@ export(
     popFLYCHIPDB,
     popFLYDB,
     popYEASTCHIPDB,
-    popYEASTDB
-       
+    popYEASTDB,
+
+    ## wrapper functions for making chip packages
+    makeHUMANCHIP_DB,
+    makeMOUSECHIP_DB,
+    makeRATCHIP_DB,
+    makeFLYCHIP_DB,
+    makeARABIDOPSISCHIP_DB,
+    makeYEASTCHIP_DB
 )
 

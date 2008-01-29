@@ -91,27 +91,27 @@ cat("Prepending Metadata \n")
     cat("Using named Vector \n")
     sql<- paste("
       INSERT INTO metadata VALUES('DBSCHEMA', '",metaDataSrc["DBSCHEMA"],"');
-       ") 
+       ", sep="") 
     sqliteQuickSQL(db, sql)
     sql<- paste("
       INSERT INTO metadata VALUES('ORGANISM', '",metaDataSrc["ORGANISM"],"');
-       ") 
+       ", sep="") 
     sqliteQuickSQL(db, sql)
     sql<- paste("
       INSERT INTO metadata VALUES('SPECIES', '",metaDataSrc["SPECIES"],"');
-       ") 
+       ", sep="") 
     sqliteQuickSQL(db, sql)
     sql<- paste("
       INSERT INTO metadata VALUES('MANUFACTURER', '",metaDataSrc["MANUFACTURER"],"');
-       ") 
+       ", sep="") 
     sqliteQuickSQL(db, sql)
     sql<- paste("
       INSERT INTO metadata VALUES('CHIPNAME', '",metaDataSrc["CHIPNAME"],"');
-       ") 
+       ", sep="") 
     sqliteQuickSQL(db, sql)
     sql<- paste("
       INSERT INTO metadata VALUES('MANUFACTURERURL', '",metaDataSrc["MANUFACTURERURL"],"');
-       ") 
+       ", sep="") 
     sqliteQuickSQL(db, sql)    
   }
     

@@ -53,8 +53,6 @@
   }
 }
 
-\details{
-}
 
 \examples{
 \dontrun{

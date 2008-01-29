@@ -36,7 +36,7 @@ popHUMANCHIPDB <- function(affy,
     subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="human","cntrTab"="genes", "prefix"=prefix)    
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
     
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -71,6 +71,7 @@ popHUMANCHIPDB <- function(affy,
 popHUMANDB <- function(prefix,
                        chipSrc,
                        metaDataSrc,
+                       outputDir=".",
                        printSchema=FALSE){
 
     makeUniversalMapping(
@@ -82,7 +83,7 @@ popHUMANDB <- function(prefix,
     subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="human","cntrTab"="genes", "prefix"=prefix)
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
 
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -152,7 +153,7 @@ popMOUSECHIPDB <- function(affy,
     subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="mouse","cntrTab"="genes", "prefix"=prefix)
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
     
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -187,6 +188,7 @@ popMOUSECHIPDB <- function(affy,
 popMOUSEDB <- function(prefix,
                        chipSrc,
                        metaDataSrc,
+                       outputDir=".",
                        printSchema=FALSE){
 
     makeUniversalMapping(
@@ -198,7 +200,7 @@ popMOUSEDB <- function(prefix,
     subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="mouse","cntrTab"="genes", "prefix"=prefix)
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
 
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -267,7 +269,7 @@ popRATCHIPDB <- function(affy,
     subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="rat","cntrTab"="genes", "prefix"=prefix)    
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
     
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -300,6 +302,7 @@ popRATCHIPDB <- function(affy,
 popRATDB <- function(prefix,
                      chipSrc,
                      metaDataSrc,
+                     outputDir=".",
                      printSchema=FALSE){
 
     makeUniversalMapping(
@@ -311,7 +314,7 @@ popRATDB <- function(prefix,
     subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="rat","cntrTab"="genes", "prefix"=prefix)
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
 
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -361,7 +364,7 @@ popARABIDOPSISCHIPDB <- function(prefix,
     subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix)    
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
     
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -424,7 +427,7 @@ popFLYCHIPDB <- function(affy,
     subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="fly","cntrTab"="genes", "prefix"=prefix)    
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
     
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -459,6 +462,7 @@ popFLYCHIPDB <- function(affy,
 popFLYDB <- function(prefix,
                      chipSrc,
                      metaDataSrc,
+                     outputDir=".",
                      printSchema=FALSE){
 
     makeUniversalMapping(
@@ -470,7 +474,7 @@ popFLYDB <- function(prefix,
     subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="fly","cntrTab"="genes", "prefix"=prefix)
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
 
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -523,7 +527,7 @@ popYEASTCHIPDB <- function(prefix,
     subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="yeast","cntrTab"="sgd", "prefix"=prefix)    
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
     
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
@@ -554,13 +558,14 @@ popYEASTCHIPDB <- function(prefix,
 popYEASTDB <- function(prefix,
                        chipSrc,
                        metaDataSrc,
+                       outputDir=".",
                        printSchema=FALSE){
     
     #define the substitution needed by the support functions.
     subStrs <- c("coreTab"="sgd","coreID"="systematic_name","suffix"="ORF","org"="yeast","cntrTab"="sgd", "prefix"=prefix)    
     
     drv <- dbDriver("SQLite")
-    db <- dbConnect(drv,dbname=paste(prefix,".sqlite", sep=""))
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
 
     sqliteQuickSQL(db, "CREATE TABLE probe_map (probe_id TEXT, gene_id TEXT, accession TEXT);")
