@@ -11,11 +11,17 @@
 }
 
 \usage{
-  popYEASTCHIPDB(prefix, fileName, chipSrc, metaDataSrc, outputDir,
-  printSchema)
+  popYEASTCHIPDB(affy, prefix, fileName, chipSrc, metaDataSrc,
+  outputDir, printSchema)
 }
 
 \arguments{
+  \item{affy}{
+    Boolean to indicate if this is starting from an affy csv file or
+  not.  If it is, then that will be parsed to make the sqlite file, if
+  not, then you can feed a tab delimited file with IDs as was done
+  before with AnnBuilder.
+  }
   \item{prefix}{
     prefix is the first part of the eventual desired package name.
   (ie. "prefix.sqlite")
@@ -65,14 +71,16 @@
                     MANUFACTURERURL="the manufacturerUrl")  
 
   ##Builds the ag sqlite:
-  popYEASTCHIPDB(fileName="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/yeast2/Yeast_2_annot.csv.070824",
+  popYEASTCHIPDB(affy=TRUE,
+                 fileName="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/yeast2/Yeast_2_annot.csv.070824",
                  prefix="yeast2",
                  chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_yeast.sqlite",
                  metaDataSrc = my_metaDataSrc,
                  printSchema=TRUE)
 
   ##Or if the package is a standard package (it probably isn't):
-  popYEASTCHIPDB(fileName="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/yeast2/Yeast_2_annot.csv.070824",
+  popYEASTCHIPDB(affy=TRUE,
+                 fileName="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/yeast2/Yeast_2_annot.csv.070824",
                  prefix="yeast2",
                  chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_yeast.sqlite",
                  metaDataSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/metadatasrc.sqlite",

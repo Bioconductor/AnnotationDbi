@@ -348,7 +348,9 @@ popRATDB <- function(prefix,
 
 
 #presently this is the formula for ARABIDOPSISCHIP_DB
-popARABIDOPSISCHIPDB <- function(prefix,
+popARABIDOPSISCHIPDB <- function(affy,
+                                 prefix,
+                                 fileName,
                                  chipMapSrc,
                                  chipSrc,
                                  metaDataSrc,
@@ -357,8 +359,11 @@ popARABIDOPSISCHIPDB <- function(prefix,
 
     #This function needs some more work if we want it to be able to have other people use it
     #specifically the code for the next line must be generalized.
-    getMapForArabidopsisChipPkg(pkgName=prefix,
-                                chipMapSrc=chipMapSrc)
+    getMapForArabidopsisChipPkg(affy = affy,
+                                fileName = fileName,
+                                pkgName = prefix,
+                                chipMapSrc = chipMapSrc,
+                                outputDir = outputDir)
     
     #define the substitution needed by the support functions.
     subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix)    
@@ -512,16 +517,16 @@ popFLYDB <- function(prefix,
 
 #presently this is the formula for YEASTCHIP_DB
 #Like popARABIDOPSISCHIDB(), popYEASTCHIPDB() is only really ready to run with affy chips though we can update this in future as needed.
-popYEASTCHIPDB <- function(prefix,
+popYEASTCHIPDB <- function(affy,
+                           prefix,
                            fileName,
                            chipSrc,
                            metaDataSrc,
                            outputDir=".",
                            printSchema=FALSE){
 
-    #This function needs some more work if we want it to be able to have other people use it
-    #specifically the code for the next line must be generalized.
-    getMapForYeastChipPkg(csvFileName=fileName, pkgName=prefix)    
+    #the following function makes a decision based on the value in the affy parameter:
+    getMapForYeastChipPkg(affy, fileName=fileName, pkgName=prefix)    
     
     #define the substitution needed by the support functions.
     subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="yeast","cntrTab"="sgd", "prefix"=prefix)    

@@ -20,7 +20,7 @@ cat("Prepending Metadata \n")
   ## This handles the metadata for all the local packages
   if(length(names(metaDataSrc)) == 0){
 
-    cat("Using metaDataSrc.sqlite \n")
+    #cat("Using metaDataSrc.sqlite for Metadata \n")
       
     sql <- paste("ATTACH DATABASE '",metaDataSrc,"' AS meta;",sep="")
     sqliteQuickSQL(db, sql)
@@ -88,7 +88,7 @@ cat("Prepending Metadata \n")
     sqliteQuickSQL(db, sql)
   }
   else{  #user is using a named vector:
-    cat("Using named Vector \n")
+    #cat("Using named Vector for Metadata \n")
     sql<- paste("
       INSERT INTO metadata VALUES('DBSCHEMA', '",metaDataSrc["DBSCHEMA"],"');
        ", sep="") 

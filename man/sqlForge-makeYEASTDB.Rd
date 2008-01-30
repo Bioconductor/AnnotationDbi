@@ -13,11 +13,17 @@
 }
 
 \usage{
-  makeYEASTCHIP_DB(prefix, fileName, chipSrc, outputDir, version,
+  makeYEASTCHIP_DB(affy, prefix, fileName, chipSrc, outputDir, version,
   manufacturer, chipName, manufacturerUrl)
 }
 
 \arguments{
+  \item{affy}{
+    Boolean to indicate if this is starting from an affy csv file or
+  not.  If it is, then that will be parsed to make the sqlite file, if
+  not, then you can feed a tab delimited file with IDs as was done
+  before with AnnBuilder.
+  }
   \item{prefix}{
     prefix is the first part of the eventual desired package name.
   (ie. "prefix.db")
@@ -50,19 +56,7 @@
 
 \examples{
 \dontrun{
-makeHUMANCHIP_DB(affy = TRUE,
-                 prefix = "hgu95av2",
-                 fileName = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/hgu95av2/HG_U95Av2_annot.csv.070824",
-                 otherSrc = c(
-                   EA="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/hgu95av2/hgu95av2.EA.txt",
-                   UMICH="/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/hgu95av2/hgu95av2_UMICH.txt"),
-                 chipMapSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipmapsrc_human.sqlite",
-                 chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_human.sqlite",
-                 baseMapType = "gbNRef",
-                 version = "1.0.0",
-                 manufacturer = "Affymetrix",
-                 chipName = "hgu95av2",
-                 manufacturerUrl = "http://www.affymetrix.com")
+
 }
 }
 

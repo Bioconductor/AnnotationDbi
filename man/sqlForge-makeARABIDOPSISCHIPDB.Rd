@@ -13,11 +13,17 @@
 }
 
 \usage{
-  makeARABIDOPSISCHIP_DB(prefix, fileName, chipSrc, outputDir, version,
-  manufacturer, chipName, manufacturerUrl)
+  makeARABIDOPSISCHIP_DB(affy, prefix, fileName, chipMapSrc, chipSrc,
+  outputDir, version, manufacturer, chipName, manufacturerUrl)
 }
 
 \arguments{
+  \item{affy}{
+    Boolean to indicate if this is starting from an affy csv file or
+  not.  If it is, then that will be parsed to make the sqlite file, if
+  not, then you can feed a tab delimited file with IDs as was done
+  before with AnnBuilder.
+  }
   \item{prefix}{
     prefix is the first part of the eventual desired package name.
   (ie. "prefix.db")
@@ -25,6 +31,10 @@
   \item{fileName}{
     The path and filename for the file to be parsed.  This can either be
   an affy csv file or it can be a more classic file type.
+  }
+  \item{chipMapSrc}{
+    The path and filename to the intermediate database containing the
+  mapping data for allowed ID types and how these IDs relate to each other.
   }
   \item{chipSrc}{
     The path and filename to the intermediate database containing the

@@ -11,14 +11,24 @@
 }
 
 \usage{
-  popARABIDOPSISCHIPDB(prefix, chipMapSrc, chipSrc, metaDataSrc,
+  popARABIDOPSISCHIPDB(affy, prefix, fileName, chipMapSrc, chipSrc, metaDataSrc,
   outputDir, printSchema)
 }
 
 \arguments{
+  \item{affy}{
+    Boolean to indicate if this is starting from an affy csv file or
+  not.  If it is, then that will be parsed to make the sqlite file, if
+  not, then you can feed a tab delimited file with IDs as was done
+  before with AnnBuilder.
+  }
   \item{prefix}{
     prefix is the first part of the eventual desired package name.
   (ie. "prefix.sqlite")
+  }
+  \item{fileName}{
+    The path and filename for the file to be parsed.  This can either be
+  an affy csv file or it can be a more classic file type.
   }
   \item{chipMapSrc}{
     The path and filename to the intermediate database containing the
@@ -64,18 +74,22 @@
                     MANUFACTURERURL="the manufacturerUrl")  
 
   ##Builds the ag sqlite:
-  popARABIDOPSISCHIPDB(prefix="ag",
+  popARABIDOPSISCHIPDB(affy = TRUE,
+                       prefix = "ag",
+                       fileName = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/ag/AG_annot.csv.070824",
                        chipMapSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipmapsrc_arabidopsis.sqlite",
                        chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_arabidopsis.sqlite",
                        metaDataSrc = my_metaDataSrc,
                        printSchema=TRUE)
 
   ##Or if the package is a standard package (it probably isn't):
-  popARABIDOPSISCHIPDB(prefix="ag",
+  popARABIDOPSISCHIPDB(affy = TRUE,
+                       prefix = "ag",
+                       fileName = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/srcFiles/ag/AG_annot.csv.070824",
                        chipMapSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipmapsrc_arabidopsis.sqlite",
                        chipSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/chipsrc_arabidopsis.sqlite",
                        metaDataSrc = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/metadatasrc.sqlite",
-                       printSchema=TRUE)
+                       printSchema = TRUE)
 }
 }
 

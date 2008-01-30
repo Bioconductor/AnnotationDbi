@@ -176,26 +176,31 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc,
 }
 
 getMapForOtherChipPkg <- function(filePath,
-                                pkgName,
-                                chipMapSrc,
-                                otherSrc=character(0),
-                                baseMapType="gbNRef",
-                                outputDir=".") {
+                                  pkgName,
+                                  chipMapSrc,
+                                  otherSrc=character(0),
+                                  baseMapType="gbNRef",
+                                  outputDir=".") {
         baseName <- filePath
         # FIXME, when you rewrite probe2gene(), change it so that it does not take a file, but instead takes a matrix of values.
-        write.table(cleanSrcMap(baseName), file="tmpBaseNameFile.txt",quote=F,sep="\t",row.names=F,col.names=F)
-        probe2gene(baseName="tmpBaseNameFile.txt",
-                        baseMapType=baseMapType,
-                        otherSrc=otherSrc,
-                        chipMapSrc=chipMapSrc,
-                        pkgName=pkgName,
-                        outputDir=outputDir)
+        mapFile = paste(pkgName,"BaseMap.txt",sep="")
+        write.table(cleanSrcMap(baseName), file=mapFile,quote=F,sep="\t",row.names=F,col.names=F)
+        probe2gene(baseName=mapFile,
+                   baseMapType=baseMapType,
+                   otherSrc=otherSrc,
+                   chipMapSrc=chipMapSrc,
+                   pkgName=pkgName,
+                   outputDir=outputDir)
 }
 
-getMapForYeastChipPkg <- function(csvFileName, pkgName, outputDir=".") {
-        makeBaseFiles (csvFileName=csvFileName,
+
+getMapForYeastChipPkg <- function(affy, fileName, pkgName, outputDir=".") {
+
+    if(affy==TRUE){
+        makeBaseFiles (csvFileName=fileName,
                         targetDir=outputDir,
                         outputPrefix=pkgName)
+    }
 	drv <- dbDriver("SQLite")
 	outputFile <- file.path(outputDir, paste(pkgName, "sqlite", sep="."))	
 	db <- dbConnect(drv, outputFile)
@@ -206,16 +211,30 @@ getMapForYeastChipPkg <- function(csvFileName, pkgName, outputDir=".") {
 	sqliteQuickSQL(db, metadata_sql)
 	sqliteQuickSQL(db, 
 		"CREATE TABLE probe_map (probe_id TEXT NOT NULL, systematic_name TEXT);");
+    if(affy==TRUE){
 	RSQLite:::sqliteImportFile(db, "probe_map", paste(pkgName, ".GenBankID",sep=""), 
-			 header=F, append=T, row.names=F, sep="\t") 
+			 header=F, append=T, row.names=F, sep="\t")
+    }else
+    {
+        RSQLite:::sqliteImportFile(db, "probe_map", fileName, 
+			 header=F, append=T, row.names=F, sep="\t")
+    }
 	sqliteQuickSQL(db,
 		"UPDATE probe_map SET systematic_name=NULL WHERE systematic_name='NA';")
 	dbDisconnect(db)
+    
 	pkgName
 }
 
-getMapForArabidopsisChipPkg <- function(pkgName, chipMapSrc, outputDir=".") {
-			
+
+#Need to add fileName and affy param here
+getMapForArabidopsisChipPkg <- function(affy, fileName, pkgName, chipMapSrc, outputDir=".") {
+
+    #Note: this function and the associated chipmapsrc database for Arabidopsis both assume that affy will only
+    #ever make two arrays for arabidposis.
+    #if this changes, then the database and this function will need to be updated (this is unlikely however)
+    #for non-affy functions, the map will be read in "as is" and used to make a package.
+    
 	drv <- dbDriver("SQLite")
 	outputFile <- file.path(outputDir, paste(pkgName, "sqlite", sep="."))	
 	db <- dbConnect(drv, outputFile)
@@ -227,17 +246,22 @@ getMapForArabidopsisChipPkg <- function(pkgName, chipMapSrc, outputDir=".") {
 	sqliteQuickSQL(db, 
 		"CREATE TABLE probe_map (probe_id TEXT NOT NULL, gene_id TEXT);");
         sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipMapSrc,"' AS src;",sep=""))
-	if (pkgName == "ag")
-		url_name="TAIRAGURL"
-	else if (pkgName == "ath1121501")
-		url_name="TAIRATHURL"
-	else
-		url_name="TAIRSOURCEURL"
-	insert_sql <- paste("INSERT INTO metadata SELECT 'TAIRCHIPMAPURL', value FROM src.metadata WHERE name='", url_name, "';", sep="")
-	sqliteQuickSQL(db, insert_sql);
 
-	insert_sql <- paste("INSERT INTO probe_map SELECT * FROM src.", pkgName, ";", sep="")
+    if(affy==TRUE){#Warning: This will only work if the arabidopsis package is one of "the" TWO affy packages.
+
+	if (pkgName == "ag"){url_name="TAIRAGURL"}
+	else if (pkgName == "ath1121501"){url_name="TAIRATHURL"}
+
+        insert_sql <- paste("INSERT INTO metadata SELECT 'TAIRCHIPMAPURL', value FROM src.metadata WHERE name='", url_name, "';", sep="")
 	sqliteQuickSQL(db, insert_sql);
+                
+      	insert_sql <- paste("INSERT INTO probe_map SELECT * FROM src.", pkgName, ";", sep="")
+    }else
+    {        
+        RSQLite:::sqliteImportFile(db, "probe_map", fileName, 
+			 header=F, append=T, row.names=F, sep="\t")
+    }
+       	sqliteQuickSQL(db, insert_sql);
 	sqliteQuickSQL(db, "DETACH src;");			
 	dbDisconnect(db)
 	pkgName
