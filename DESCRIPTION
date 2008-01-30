@@ -50,5 +50,5 @@ Collate: 00RTobjs.R
 	 sqlForge_tableBuilder.R
 	 sqlForge_makeAnnPkgs.R
          zzz.R
-License: The Artistic License, Version 2.0
+License: Artistic-2.0
 biocViews: Annotation, Infrastructure
