@@ -350,7 +350,7 @@ popRATDB <- function(prefix,
 #presently this is the formula for ARABIDOPSISCHIP_DB
 popARABIDOPSISCHIPDB <- function(affy,
                                  prefix,
-                                 fileName,
+                                 fileName="myFile.txt",
                                  chipMapSrc,
                                  chipSrc,
                                  metaDataSrc,

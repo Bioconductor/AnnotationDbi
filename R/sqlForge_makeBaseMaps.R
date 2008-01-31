@@ -256,12 +256,12 @@ getMapForArabidopsisChipPkg <- function(affy, fileName, pkgName, chipMapSrc, out
 	sqliteQuickSQL(db, insert_sql);
                 
       	insert_sql <- paste("INSERT INTO probe_map SELECT * FROM src.", pkgName, ";", sep="")
+       	sqliteQuickSQL(db, insert_sql);
     }else
     {        
         RSQLite:::sqliteImportFile(db, "probe_map", fileName, 
 			 header=F, append=T, row.names=F, sep="\t")
     }
-       	sqliteQuickSQL(db, insert_sql);
 	sqliteQuickSQL(db, "DETACH src;");			
 	dbDisconnect(db)
 	pkgName

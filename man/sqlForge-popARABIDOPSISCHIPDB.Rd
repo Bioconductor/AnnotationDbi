@@ -27,8 +27,9 @@
   (ie. "prefix.sqlite")
   }
   \item{fileName}{
-    The path and filename for the file to be parsed.  This can either be
-  an affy csv file or it can be a more classic file type.
+    The path and filename for the file to be parsed.  This field can be
+  ommitted if affy is set to TRUE.  For all other arabidopsis chips, the
+  IDs that match to the probes MUST be TAIR IDs.
   }
   \item{chipMapSrc}{
     The path and filename to the intermediate database containing the

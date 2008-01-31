@@ -177,7 +177,7 @@ makeFLYCHIP_DB <- function(affy,
 
 makeARABIDOPSISCHIP_DB <- function(affy,
                                    prefix,
-                                   fileName,
+                                   fileName = "myFile.txt",
                                    chipMapSrc,
                                    chipSrc,
                                    outputDir = ".",

@@ -1492,8 +1492,8 @@ appendFlyBase <- function(db, subStrs, printSchema){
 
   sql<- paste("
     INSERT INTO map_counts
-     SELECT 'FLYBASE', count(DISTINCT gene_id)
-     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN flybase as f
+     SELECT 'FLYBASE', count(DISTINCT ",subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," as g INNER JOIN flybase as f
      WHERE g._id=f._id;
     ") 
   sqliteQuickSQL(db, sql)
@@ -1501,7 +1501,7 @@ appendFlyBase <- function(db, subStrs, printSchema){
   sql<- paste("
     INSERT INTO map_counts
      SELECT 'FLYBASE2",subStrs[["suffix"]],"', count(DISTINCT flybase_id)
-     FROM ", subStrs[["cntrTab"]]," AS g INNER JOIN flybase AS f
+     FROM ", subStrs[["coreTab"]]," AS g INNER JOIN flybase AS f
      WHERE g._id=f._id;
     ", sep="") 
   sqliteQuickSQL(db, sql)  
@@ -1557,8 +1557,8 @@ appendFlyBaseCG <- function(db, subStrs, printSchema){
 
   sql<- paste("
     INSERT INTO map_counts
-     SELECT 'FLYBASECG', count(DISTINCT gene_id)
-     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN flybase_cg as f
+     SELECT 'FLYBASECG', count(DISTINCT ",subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," as g INNER JOIN flybase_cg as f
      WHERE g._id=f._id;
     ") 
   sqliteQuickSQL(db, sql)
@@ -1566,7 +1566,7 @@ appendFlyBaseCG <- function(db, subStrs, printSchema){
   sql<- paste("
     INSERT INTO map_counts
      SELECT 'FLYBASECG2",subStrs[["suffix"]],"', count(DISTINCT flybase_cg_id)
-     FROM ", subStrs[["cntrTab"]]," AS g INNER JOIN flybase_cg AS f
+     FROM ", subStrs[["coreTab"]]," AS g INNER JOIN flybase_cg AS f
      WHERE g._id=f._id;
     ", sep="") 
   sqliteQuickSQL(db, sql)  
@@ -1808,13 +1808,24 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("
-    INSERT INTO map_metadata
-     SELECT * FROM anno.map_metadata
-     WHERE map_name = 'ACCNUM';
-     ") 
-  sqliteQuickSQL(db, sql)
-
+  if(subStrs[["prefix"]] == "ag" || subStrs[["prefix"]] == "ath1121501"){
+    sql<- paste("
+      INSERT INTO map_metadata
+       SELECT 'ACCNUM', source_name, source_url, source_date
+       FROM anno.map_metadata
+       WHERE map_name = '",subStrs[["prefix"]],"ACCNUM';
+       ", sep="") 
+    sqliteQuickSQL(db, sql)
+  }
+  else{
+    sql<- paste("
+      INSERT INTO map_metadata
+       SELECT * FROM anno.map_metadata
+       WHERE map_name = 'ACCNUM';
+       ", sep="") 
+    sqliteQuickSQL(db, sql)
+  }
+  
   sql<- paste("
     INSERT INTO map_counts
      SELECT 'ACCNUM', count(DISTINCT probe_id)
@@ -1823,13 +1834,25 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
     ") 
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("
-    INSERT INTO map_metadata
-     SELECT * FROM anno.map_metadata
-     WHERE map_name = 'MULTIHIT';
-    ") 
-  sqliteQuickSQL(db, sql)
-
+  if(subStrs[["prefix"]] == "ag" || subStrs[["prefix"]] == "ath1121501"){  
+    sql<- paste("
+      INSERT INTO map_metadata
+       SELECT 'MULTIHIT', source_name, source_url, source_date
+       FROM anno.map_metadata
+       WHERE map_name = '",subStrs[["prefix"]],"ACCNUM';
+      ", sep="") 
+    sqliteQuickSQL(db, sql)
+  }
+  else{
+    sql<- paste("
+      INSERT INTO map_metadata
+       SELECT 'MULTIHIT', source_name, source_url, source_date
+       FROM anno.map_metadata
+       WHERE map_name = 'ACCNUM';
+       ", sep="") 
+    sqliteQuickSQL(db, sql)
+  }
+  
   sql<- paste("
     INSERT INTO map_counts
      SELECT 'MULTIHIT', count(DISTINCT probe_id)
@@ -1837,7 +1860,6 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
      WHERE is_multiple=1;
     ") 
   sqliteQuickSQL(db, sql)
-
   
 }
 
@@ -1901,6 +1923,12 @@ appendArabidopsisGeneInfo <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'CHR';   ",sep="") 
+  sqliteQuickSQL(db, sql)  
+  
+  sql<- paste("
     INSERT INTO map_counts
      SELECT 'CHR', count(DISTINCT ",subStrs[["coreID"]],")
      FROM ",subStrs[["coreTab"]],", gene_info
@@ -1909,8 +1937,6 @@ appendArabidopsisGeneInfo <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
   
 }
-
-
 
 
 
