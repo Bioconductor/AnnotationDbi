@@ -162,6 +162,9 @@ export(
     makeRATCHIP_DB,
     makeFLYCHIP_DB,
     makeARABIDOPSISCHIP_DB,
-    makeYEASTCHIP_DB
+    makeYEASTCHIP_DB,
+
+    #Convenience function to make the intermediate DB pkgs
+    wrapBaseDBPackages
 )
 

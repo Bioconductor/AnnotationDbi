@@ -1,0 +1,12 @@
+Package: @PKGNAME@
+Title: Base Level Annotation databases for @SPECIES@
+Description: Base annotation databases for @SPECIES@, intended ONLY to be used by AnnotationDbi to produce regular annotation packages.
+Version: @PKGVERSION@
+Author: @AUTHOR@
+Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
+Depends: R (>= 2.7.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
+Imports: methods, AnnotationDbi
+License: @LIC@
+organism: @ORGANISM@
+species: @SPECIES@
+biocViews: @BIOCVIEWS@
