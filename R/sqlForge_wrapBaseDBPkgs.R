@@ -1,6 +1,6 @@
 wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/",
                                 destDir = ".",
-                                version = "1.1.1"){
+                                version ){
 
   #human.db0
   vals <- list(ANNOBJPREFIX="human",
