@@ -192,7 +192,7 @@
 .toListOfLists <- function(x, mode, FUN)
 {
     keys <- keys(x)
-    ans <- as.list(rep(as.character(NA), length(keys)))
+    ans <- as.list(rep.int(as.character(NA), length(keys)))
     names(ans) <- keys
     if (nrow(x) == 0)
         return(ans)
@@ -291,7 +291,7 @@ setMethod("as.list", "GoAnnDbBimap",
         if (direction(y) == -1)
             return(as.list(y))
         keys <- keys(y)
-        ann_list <- as.list(rep(as.character(NA), length(keys)))
+        ann_list <- as.list(rep.int(as.character(NA), length(keys)))
         names(ann_list) <- keys
         if (nrow(y@data) != 0) {
             makeGOList <- function(GOIDs, Evidences, Ontologies)
@@ -306,17 +306,13 @@ setMethod("as.list", "GoAnnDbBimap",
             Ontologies <- split(y@data[["Ontology"]], fromCol)
             ## The 'GOIDs', 'Evidences' and 'Ontologies' lists have the same
             ## names in the same order.
-            mapped_keys <- names(GOIDs)
-            ii <- match(mapped_keys, keys, nomatch=0L)
-            for (i1 in seq_len(length(ii))) {
+            found_keys <- names(GOIDs) # same as 'names(Evidences)' and 'names(Ontologies)'
+            ii <- match(keys, found_keys)
+            for (i1 in seq_len(length(keys))) {
                 i2 <- ii[i1]
-                ## 'mapped_keys' should always be a subset of 'keys'
-                ## hence 'i2 == 0L' should never happen. So maybe we should
-                ## raise something like "AnnotationDbi internal error" instead
-                ## of just ignoring this...
-                if (i2 == 0L) next
-                ann_list[[i2]] <- makeGOList(GOIDs[[i1]], Evidences[[i1]],
-                                                 Ontologies[[i1]])
+                if (is.na(i2)) next
+                ann_list[[i1]] <- makeGOList(GOIDs[[i2]], Evidences[[i2]],
+                                             Ontologies[[i2]])
             }
         }
         ann_list

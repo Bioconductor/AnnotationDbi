@@ -44,7 +44,7 @@ flatten.GOenvir <- function(env)
     Ontology_CVL <- eapply(env, toCV.Ontology, all.names=TRUE)
 
     lens <- sapply(go_id_CVL, length)    
-    probe_id <- rep(names(go_id_CVL), lens)
+    probe_id <- rep.int(names(go_id_CVL), lens)
     go_id <- unlist(go_id_CVL, recursive=FALSE, use.names=FALSE)
     Evidence <- unlist(Evidence_CVL, recursive=FALSE, use.names=FALSE)
     Ontology <- unlist(Ontology_CVL, recursive=FALSE, use.names=FALSE)
@@ -76,7 +76,7 @@ flatten.GO2PROBEenvir <- function(env)
     Evidence_CVL <- eapply(env, toCV.Evidence, all.names=TRUE)
 
     lens <- sapply(probe_id_CVL, length)
-    go_id <- rep(names(probe_id_CVL), lens)
+    go_id <- rep.int(names(probe_id_CVL), lens)
     probe_id <- unlist(probe_id_CVL, recursive=FALSE, use.names=FALSE)
     Evidence <- unlist(Evidence_CVL, recursive=FALSE, use.names=FALSE)
     
