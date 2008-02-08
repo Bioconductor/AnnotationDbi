@@ -13,6 +13,8 @@ makeHUMANCHIP_DB <- function(affy,
                              manufacturer = "Manufacturer not specified",
                              chipName = "ChipName not specified",
                              manufacturerUrl = "Manufacturer Url not specified"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
     metaDataSrc <- c(DBSCHEMA="HUMANCHIP_DB",
                      ORGANISM="Homo sapiens",
@@ -56,6 +58,8 @@ makeMOUSECHIP_DB <- function(affy,
                              manufacturer = "Manufacturer not specified",
                              chipName = "ChipName not specified",
                              manufacturerUrl = "Manufacturer Url not specified"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
     metaDataSrc <- c(DBSCHEMA="MOUSECHIP_DB",
                      ORGANISM="Mus musculus",
@@ -99,6 +103,8 @@ makeRATCHIP_DB <- function(affy,
                            manufacturer = "Manufacturer not specified",
                            chipName = "ChipName not specified",
                            manufacturerUrl = "Manufacturer Url not specified"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
     metaDataSrc <- c(DBSCHEMA="RATCHIP_DB",
                      ORGANISM="Rattus norvegicus",
@@ -143,6 +149,8 @@ makeFLYCHIP_DB <- function(affy,
                            manufacturer = "Manufacturer not specified",
                            chipName = "ChipName not specified",
                            manufacturerUrl = "Manufacturer Url not specified"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
     metaDataSrc <- c(DBSCHEMA="FLYCHIP_DB",
                      ORGANISM="Drosophila melanogaster",
@@ -185,6 +193,8 @@ makeARABIDOPSISCHIP_DB <- function(affy,
                                    manufacturer = "Manufacturer not specified",
                                    chipName = "ChipName not specified",
                                    manufacturerUrl = "Manufacturer Url not specified"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
     metaDataSrc <- c(DBSCHEMA="ARABIDOPSISCHIP_DB",
                      ORGANISM="Arabidopsis thaliana",
@@ -223,6 +233,8 @@ makeYEASTCHIP_DB <- function(affy,
                              manufacturer = "Manufacturer not specified",
                              chipName = "ChipName not specified",
                              manufacturerUrl = "Manufacturer Url not specified"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
     metaDataSrc <- c(DBSCHEMA="YEASTCHIP_DB",
                      ORGANISM="Saccharomyces cerevisiae",

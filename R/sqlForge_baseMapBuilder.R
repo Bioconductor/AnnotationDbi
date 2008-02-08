@@ -83,7 +83,7 @@ probe2gene <- function(baseName, otherSrc,
 		sqliteQuickSQL(db, sql)
 	} else if (baseMapType=='refseq') {
 		sqliteQuickSQL(db, "CREATE INDEX cm1 ON curr_map(probe_id);")
-		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.pselecrobe_id GROUP BY p.probe_id;")
+		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
 		sql <- paste("INSERT INTO probe2gene", 
 			    "SELECT DISTINCT c.probe_id, a.gene_id",
 			    "FROM curr_map as c, src.refseq as a",
