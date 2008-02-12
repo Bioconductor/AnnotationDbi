@@ -749,6 +749,10 @@ appendGO <- function(db,subStrs, printSchema){
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
+  sql<- paste("    CREATE INDEX Fgo_bp_go_id ON go_bp (go_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+  
   
   sql<- paste("    CREATE TABLE go_mf (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -772,6 +776,10 @@ appendGO <- function(db,subStrs, printSchema){
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
+  sql<- paste("    CREATE INDEX Fgo_mf_go_id ON go_mf (go_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
   
   sql<- paste("    CREATE TABLE go_cc (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -792,6 +800,10 @@ appendGO <- function(db,subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_cc ON go_cc (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fgo_cc_go_id ON go_cc (go_id);") 
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
@@ -868,6 +880,11 @@ appendGOALL <- function(db, subStrs, printSchema){
   sql<- paste("    CREATE INDEX Fgo_bp_all ON go_bp_all (_id);") 
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fgo_bp_all_go_id ON go_bp_all (go_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
   
   sql<- paste("    CREATE TABLE go_mf_all (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -891,6 +908,11 @@ appendGOALL <- function(db, subStrs, printSchema){
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
+  sql<- paste("    CREATE INDEX Fgo_mf_all_go_id ON go_mf_all (go_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  
   sql<- paste("    CREATE TABLE go_cc_all (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
       go_id CHAR(10) NOT NULL,                      -- GO ID
@@ -913,6 +935,11 @@ appendGOALL <- function(db, subStrs, printSchema){
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
+  sql<- paste("    CREATE INDEX Fgo_cc_all_go_id ON go_cc_all (go_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  
   sql<- paste("
     INSERT INTO map_metadata
      SELECT * FROM anno.map_metadata
