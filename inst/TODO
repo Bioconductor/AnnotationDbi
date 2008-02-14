@@ -1,0 +1,6 @@
+Some todos:
+
+ 1) links, toTable etc need to be better documented
+
+ 2) hgu95av2_dbschema() should not just cat its output across 
+  the screen - it should return something that could be processed
