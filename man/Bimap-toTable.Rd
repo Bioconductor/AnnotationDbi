@@ -41,6 +41,48 @@
   These methods are part of the \link{Bimap} interface.
 
   They can be used to extract data from a \link{Bimap} object.
+
+  The function \code{links()} will in many cases give very similar output to
+  the function \code{toTable()}, but these functions are not the same.  Both of
+  these functions aim to describe the data that is in a \link{Bimap}
+  object, but while the \code{toTable()} function will output all of the data
+  in the map, the \code{links()} function will only output the data that is
+  tied directly to the links \preformatted{(edges)} of the \link{Bimap}.
+
+  To understand exactly what this means, it is important to consider
+  that a Bimap is composed of 3 different kinds of elements.  The Lkeys
+  and Rkeys style of element define the left and right values that
+  compose the basic \link{Bimap} mapping.  In addition to the Lkeys and
+  Rkeys, it is also possible to label the edges themselves with a
+  tagname variable.  This tagname is the second kind of element and is
+  meant to represent data that about the relationship between a pair of
+  keys.  A classic example of this would be an evidence code used to map
+  a GO term to a gene or probe.  Finally, the third kind of element is
+  the attribute \preformatted{(Lattribute or Rattribute)} which can be used to label
+  additional information onto the Lkeys or Rkeys.  This third kind of
+  element is meant to capture information about the individual Lkeys and
+  Rkeys that is independent of the relationship between a pair of keys
+  such as the ontology that a term was gathered from.
+
+  Therefore, the \code{links()} function will output the Lkeys, and Rkeys along
+  with any tagname values but leave out any of the attribute
+  information.
+
+  Related to these functions, the \code{count.links()} function will return
+  only the total number of edges in a \link{Bimap}.  This migth be
+  more useful than the \code{nrows()} function which just gives you the number
+  of rows you would get if you had called \code{toTable()}.  The reason
+  \code{count.links()} migth be better is for Bimaps where there are multiple right
+  attributes attached to an individual link.  In these cases, \code{nrows()}
+  will count many rows that represent the same essential relationship
+  between the left and right keys, whereas \code{count.links()} will just give
+  you one count for each relationship.
+
+  Finally, \code{nhit()} returns a named integer vector containing the number
+  of hits for every left key in a \link{Bimap}.  The number of hits for
+  a given left key is equal to the number of links \preformatted{(edges)} mapping from
+  that key to a corresponding right key.  This function is useful for
+  determining whether or not a map is a many to one or a many to many map.
 }
 
 \usage{

@@ -117,7 +117,7 @@ reverse mappings.
 <<show.revmap>>=
 system.time(sym2p <- revmap(hgu95av2SYMBOL))
 
-unlist(mget(syms, revmap(hgu95av2SYMBOL)))
+unlist(mget(syms[!is.na(syms)], revmap(hgu95av2SYMBOL)))
 @ 
 
 Another area where the SQLite-based packages provide some advantages
