@@ -2,16 +2,11 @@
 #Just a utility to prevent empty IDs from ever causing any more mayhem
 cleanSrcMap <- function(file) {
     insVals <- read.delim(file=file, header=FALSE, sep="\t", quote="")
-    blnkLines <- insVals[insVals[,1]=='',]
-    if(dim(as.matrix(blnkLines))[1] > 0){
-        print(paste("ID Source TABLE FLAW.  There were ",dim(as.matrix(blnkLines))[1],
-        " blank values inside the file named ", file,'\n',sep="") )
-    }
     insVals <- insVals[insVals[,1]!='',]
 }
 
 
-makeBaseFiles <- function(csvFileName, outputPrefix,
+makeBaseMaps <- function(csvFileName,
                           GenBankIDName="Representative.Public.ID",
                           EntrezGeneIDName="Entrez.Gene",
                           targetDir="."
@@ -23,27 +18,24 @@ makeBaseFiles <- function(csvFileName, outputPrefix,
     eg <- csvFile[, EntrezGeneIDName]
     rm(csvFile)
     gb <- lapply(unlist(gb), function(x) toupper(strsplit(x,"\\.")[[1]][1]))
-    gb_file <- paste(probe, gb, sep="\t", collapse="\n")
-    gb_file <- paste(gb_file, "\n", sep="")
-
+    gb <- unlist(gb)
     eg <- strsplit(eg, split=" /// ", fix=T)
     eg_count <- sapply(eg, length)
     eg_probe <- rep(probe, eg_count)
     eg <- unlist(eg)
-    eg_file <-  paste(eg_probe, eg, sep="\t", collapse="\n")
-    eg_file <- paste(eg_file, "\n", sep="")
     
-    gb_out <- file.path(targetDir, paste(outputPrefix,".GenBankID"  ,sep=""))
-    eg_out <- file.path(targetDir,paste(outputPrefix,".EntrezGeneID",sep=""))
-   
-    cat(gb_file, file=gb_out)
-    cat(eg_file, file=eg_out) 
+    baseFiles = list()
+    
+    baseFiles[[1]] = cbind(probe, gb)
+    baseFiles[[2]] = cbind(eg_probe, eg)
+    
+    baseFiles
 }
 
 
-probe2gene <- function(baseName, otherSrc,
+probe2gene <- function(baseMap, otherSrc,
 			baseMapType=c("gb", "ug", "ll", "refseq", "gbNRef"), 
-			chipMapSrc, pkgName, outputDir=".", allowHomologyGene=F) {
+			chipMapSrc, pkgName, outputDir=".", allowHomologyGene=FALSE) {
 	baseMapType <- match.arg(baseMapType)
 	drv <- dbDriver("SQLite")
 	outputFile <- file.path(outputDir, paste(pkgName, "sqlite", sep="."))	
@@ -53,7 +45,7 @@ probe2gene <- function(baseName, otherSrc,
 	metadata_sql <- paste("INSERT INTO metadata VALUES ('PKGNAME', '",
 				pkgName, "');", sep="", collapse="")
 	sqliteQuickSQL(db, metadata_sql)
-	sqliteQuickSQL(db, "CREATE TABLE curr_map (probe_id TEXT, gene_id TEXT);")  #curr_map is the baseName file
+	sqliteQuickSQL(db, "CREATE TABLE curr_map (probe_id TEXT, gene_id TEXT);")  #curr_map is the baseMap file
 	sqliteQuickSQL(db, "CREATE TEMP TABLE probes (probe_id TEXT);")             #all the probes from curr_map
 	sqliteQuickSQL(db, "CREATE TABLE other (probe_id TEXT, gene_id TEXT);")     #This holds the otherSrc data
 	sqliteQuickSQL(db, "CREATE TABLE other_rank (probe_id TEXT, gene_id TEXT, vote INTEGER,  row_id INTEGER);") 
@@ -61,8 +53,14 @@ probe2gene <- function(baseName, otherSrc,
 	sqliteQuickSQL(db, "CREATE TABLE probe2acc (probe_id TEXT, gene_id TEXT);") 
 	sqliteQuickSQL(db, "CREATE TABLE probe_map (probe_id TEXT, gene_id TEXT, accession TEXT);")
 
-	RSQLite:::sqliteImportFile(db, "curr_map", baseName, header=F, append=T, 
-			row.names=F, sep="\t") 
+        #populate the contents of baseMap int curr_map
+        clnVals <-baseMap
+        sqlIns <- "INSERT INTO curr_map VALUES(?,?);"
+        dbBeginTransaction(db)
+        rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
+        dbClearResult(rset)
+        dbCommit(db)
+
 	sqliteQuickSQL(db, "INSERT INTO probes SELECT DISTINCT probe_id FROM curr_map;")
 	sqliteQuickSQL(db,
 		"DELETE FROM curr_map WHERE gene_id='NA' OR gene_id='';")
@@ -106,31 +104,45 @@ probe2gene <- function(baseName, otherSrc,
 			    "WHERE c.gene_id=a.accession GROUP BY c.probe_id;", sep=" ", collapse="") 
 		sqliteQuickSQL(db, sql)
 	}
-	sqliteQuickSQL(db, "DETACH DATABASE src;")
+	#sqliteQuickSQL(db, "DETACH DATABASE src;")
+        #At the present time allowHomologyGene is deactivated and has been for
+        #as long as I have been using this code. (-Marc) The use of this seems
+        #a little risky (since the src tables are not filtered by organism
+        #first) and we would also be increasing the size of the intermediate
+        #DBs by about 50% since we would be adding two ENORMOUS tables to all
+        #of these packages (that contain all the refseqs and genbanks ever
+        #matched to an entrez ID)
 	if (allowHomologyGene && baseMapType %in% c('refseq', 'gb', 'gbNRef')) {
-		sqliteQuickSQL(db, "ATTACH DATABASE 'chipmapsrc_all.sqlite' AS src;")
+                cat("Searching for other useful ID's from the \"all\" indices \n")
+		#sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipmapsrc,"' AS src;",sep=""))
 		sqliteQuickSQL(db,
 			"DELETE FROM curr_map WHERE probe_id IN (SELECT probe_id FROM probe2gene);")
 		if (baseMapType=='refseq') { 
 			sql <- paste("INSERT INTO probe2gene",
                             "SELECT DISTINCT c.probe_id, a.gene_id",
-                            "FROM curr_map as c, src.refseq as a",
+                            "FROM curr_map as c, src.refseq_all as a",
                             "WHERE c.gene_id=a.accession GROUP BY c.probe_id;", 
 				sep=" ", collapse="")
 		} else { ## type='gb' or 'gbNRef'
 			sql <- paste("INSERT INTO probe2gene",
                             "SELECT DISTINCT c.probe_id, a.gene_id",
-                            "FROM curr_map as c, src.accession as a",
+                            "FROM curr_map as c, src.accession_all as a",
                             "WHERE c.gene_id=a.accession GROUP BY c.probe_id;", 
 				sep=" ", collapse="")
 		}
 		sqliteQuickSQL(db, sql)
 		sqliteQuickSQL(db, "DETACH DATABASE src;")
-	}
+	}else{
+            sqliteQuickSQL(db, "DETACH DATABASE src;")
+        }
 	sqliteQuickSQL(db, "DROP TABLE curr_map;")
 	lapply(otherSrc, function(thisOtherName) {
-		RSQLite:::sqliteImportFile(db, "other", thisOtherName, header=F, 
-			append=T, row.names=F, sep="\t") 
+            clnVals <- thisOtherName
+            sqlIns <- "INSERT INTO other VALUES(?,?);"
+            dbBeginTransaction(db)
+            rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
+            dbClearResult(rset)
+            dbCommit(db)
 	})
 	sqliteQuickSQL(db, "DELETE FROM other WHERE gene_id IN ('NA', '');")
 	sqliteQuickSQL(db, "DELETE FROM other WHERE probe_id IN (SELECT probe_id FROM probe2gene);")
@@ -155,24 +167,37 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc,
 				otherSrc=character(0),
 				baseMapType="gbNRef", 
 				outputDir=".",
-				allowHomologyGene=T) {
-	makeBaseFiles (csvFileName=csvFileName,
-			targetDir=outputDir,
-			outputPrefix=pkgName)
-	egMapFile <- file.path(outputDir, paste(pkgName, ".EntrezGeneID", sep=""))
-	gbMapFile <- file.path(outputDir, paste(pkgName, ".GenBankID", sep=""))
-	if (baseMapType == "ll"){
-		baseName <- egMapFile
-	} else {
-		baseName <- gbMapFile
-		otherSrc <- c(egMapFile, otherSrc)
-	}
-	probe2gene(baseName=baseName, 
-			baseMapType=baseMapType, 
-			otherSrc=otherSrc,
-			chipMapSrc=chipMapSrc,
-			pkgName=pkgName,
-			outputDir=outputDir)
+				allowHomologyGene=FALSE) {
+    baseMaps = makeBaseMaps (csvFileName=csvFileName,
+          targetDir=outputDir)
+    
+    #pre-clean the otherSrc's and pass them along as lists of lists:  #TODO: this fails if there are not any otherSrc's
+    otherSrcObjs = list()
+    if(length(otherSrc)==0){
+        otherSrc = otherSrcObjs
+    }else{
+        for(i in 1:length(otherSrc)){
+            otherSrcObjs[[i]] = cleanSrcMap(otherSrc[[i]])
+        }
+    }
+    #The 1st item in baseMaps is always the genbank ID
+    if (baseMapType == "ll"){
+        ##baseMap <- cleanSrcMap(egMapFile)
+        baseMap <- as.data.frame(baseMaps[[2]])
+    } else {
+        ##baseMap <- cleanSrcMap(gbMapFile)
+        baseMap <- as.data.frame(baseMaps[[1]])
+        ##otherSrc <- c(egMapFile, otherSrc)
+        ##this part should be ok, but an issue is creeping in from above...
+        otherSrcObjs[[length(otherSrcObjs) + 1]] <- as.data.frame(baseMaps[[2]])
+    }
+    probe2gene(baseMap=baseMap, 
+               baseMapType=baseMapType, 
+               otherSrc=otherSrcObjs,
+               chipMapSrc=chipMapSrc,
+               pkgName=pkgName,
+               outputDir=outputDir,
+               allowHomologyGene=allowHomologyGene)
 }
 
 getMapForOtherChipPkg <- function(filePath,
@@ -180,26 +205,35 @@ getMapForOtherChipPkg <- function(filePath,
                                   chipMapSrc,
                                   otherSrc=character(0),
                                   baseMapType="gbNRef",
-                                  outputDir=".") {
-        baseName <- filePath
-        # FIXME, when you rewrite probe2gene(), change it so that it does not take a file, but instead takes a matrix of values.
-        mapFile = paste(pkgName,"BaseMap.txt",sep="")
-        write.table(cleanSrcMap(baseName), file=mapFile,quote=F,sep="\t",row.names=F,col.names=F)
-        probe2gene(baseName=mapFile,
-                   baseMapType=baseMapType,
-                   otherSrc=otherSrc,
-                   chipMapSrc=chipMapSrc,
-                   pkgName=pkgName,
-                   outputDir=outputDir)
+                                  outputDir=".",
+                                  allowHomologyGene=FALSE) {
+    #pre-clean the otherSrc's and pass them along as lists of lists:  TODO: fix no otherSrc bug here too
+    otherSrcObjs = list()
+    if(length(otherSrc)==0){
+        otherSrc = otherSrcObjs
+    }else{
+        for(i in 1:length(otherSrc)){
+            otherSrcObjs[[i]] = cleanSrcMap(otherSrc[[i]])
+        }
+    }
+    baseMap = cleanSrcMap(filePath)
+    probe2gene(baseMap=baseMap,
+               baseMapType=baseMapType,
+               otherSrc=otherSrcObjs,
+               chipMapSrc=chipMapSrc,
+               pkgName=pkgName,
+               outputDir=outputDir,
+               allowHomologyGene=allowHomologyGene)
 }
 
 
 getMapForYeastChipPkg <- function(affy, fileName, pkgName, outputDir=".") {
 
+    baseMaps = data.frame()
     if(affy==TRUE){
-        makeBaseFiles (csvFileName=fileName,
-                        targetDir=outputDir,
-                        outputPrefix=pkgName)
+        baseMaps = makeBaseMaps (csvFileName=fileName,
+                        targetDir=outputDir) ##,
+                        ##outputPrefix=pkgName)
     }
 	drv <- dbDriver("SQLite")
 	outputFile <- file.path(outputDir, paste(pkgName, "sqlite", sep="."))	
@@ -212,12 +246,20 @@ getMapForYeastChipPkg <- function(affy, fileName, pkgName, outputDir=".") {
 	sqliteQuickSQL(db, 
 		"CREATE TABLE probe_map (probe_id TEXT NOT NULL, systematic_name TEXT);");
     if(affy==TRUE){
-	RSQLite:::sqliteImportFile(db, "probe_map", paste(pkgName, ".GenBankID",sep=""), 
-			 header=F, append=T, row.names=F, sep="\t")
+        clnVals <- as.data.frame(baseMaps[[1]])
+        sqlIns <- "INSERT INTO probe_map VALUES(?,?);"
+        dbBeginTransaction(db)
+        rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
+        dbClearResult(rset)
+        dbCommit(db)        
     }else
     {
-        RSQLite:::sqliteImportFile(db, "probe_map", fileName, 
-			 header=F, append=T, row.names=F, sep="\t")
+        clnVals <- cleanSrcMap(fileName)
+        sqlIns <- "INSERT INTO probe_map VALUES(?,?);"
+        dbBeginTransaction(db)
+        rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
+        dbClearResult(rset)
+        dbCommit(db)
     }
 	sqliteQuickSQL(db,
 		"UPDATE probe_map SET systematic_name=NULL WHERE systematic_name='NA';")
@@ -259,8 +301,13 @@ getMapForArabidopsisChipPkg <- function(affy, fileName, pkgName, chipMapSrc, out
        	sqliteQuickSQL(db, insert_sql);
     }else
     {        
-        RSQLite:::sqliteImportFile(db, "probe_map", fileName, 
-			 header=F, append=T, row.names=F, sep="\t")
+        clnVals <- cleanSrcMap(fileName)
+        sqlIns <- "INSERT INTO probe_map VALUES(?,?);"
+        dbBeginTransaction(db)
+        rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
+        dbClearResult(rset)
+        dbCommit(db)
+        
     }
 	sqliteQuickSQL(db, "DETACH src;");			
 	dbDisconnect(db)

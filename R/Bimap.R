@@ -514,7 +514,7 @@ setMethod("keys", "Bimap",
     if (length(ifnotfound) == 0) {
         not_found <- which(!(keys %in% valid.keys))
         if (length(not_found) != 0)
-            stop("invalid key \"", keys[not_found[1]], "\"")
+            stop("value for \"", keys[not_found[1]], "\" not found")
     }
 }
 

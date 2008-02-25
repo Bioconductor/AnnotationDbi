@@ -276,9 +276,11 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
 	dest_dbfile <- file.path(dest_db_dir, dbfile_basename)
         if (!file.copy(dbfile, dest_dbfile))
             stop("cannot copy file '", dbfile, "' to '", dest_dbfile, "'")
-        command <- paste("chmod 444", dest_dbfile)
-        if (system(command) != 0)
-            warning(command, " failed")
+        if(.Platform$OS.type != 'windows'){
+            command <- paste("chmod 444", dest_dbfile)
+            if (system(command) != 0)
+              warning(command, " failed")
+        }
         return(invisible(TRUE))
     }
 )
