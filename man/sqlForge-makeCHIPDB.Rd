@@ -53,7 +53,7 @@
   fileName.  This can be any of the following values:
   "gb" = for genbank IDs
   "ug" = unigene IDs
-  "ll" = locusLink IDss (now called Entrez Gene IDs)
+  "eg" = Entrez Gene IDs
   "refseq" = refseq IDs
   "gbNRef" = mixture of genbank and refseq IDs
   }

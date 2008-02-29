@@ -5,6 +5,15 @@ cleanSrcMap <- function(file) {
     insVals <- insVals[insVals[,1]!='',]
 }
 
+cleanRefSeqs <- function(baseMap){
+    baseMap = as.matrix(baseMap)
+    for(i in 1:length(baseMap[,1])){
+        baseMap[i,2] = gsub(".\\d+?$", "", baseMap[i,2], perl=TRUE)
+    }
+    baseMap = cbind(baseMap[,1],baseMap[,2])
+    baseMap = as.data.frame(baseMap)
+    baseMap
+}
 
 makeBaseMaps <- function(csvFileName,
                           GenBankIDName="Representative.Public.ID",
@@ -34,7 +43,7 @@ makeBaseMaps <- function(csvFileName,
 
 
 probe2gene <- function(baseMap, otherSrc,
-			baseMapType=c("gb", "ug", "ll", "refseq", "gbNRef"), 
+			baseMapType=c("gb", "ug", "eg", "refseq", "gbNRef"), 
 			chipMapSrc, pkgName, outputDir=".", allowHomologyGene=FALSE) {
 	baseMapType <- match.arg(baseMapType)
 	drv <- dbDriver("SQLite")
@@ -53,6 +62,12 @@ probe2gene <- function(baseMap, otherSrc,
 	sqliteQuickSQL(db, "CREATE TABLE probe2acc (probe_id TEXT, gene_id TEXT);") 
 	sqliteQuickSQL(db, "CREATE TABLE probe_map (probe_id TEXT, gene_id TEXT, accession TEXT);")
 
+        #If there might be refseq IDs, then they might have unwanted .<digit> extensions which must be removed.
+        #This (unfortunately cannot be done for the otherSrc files since I won't know what I am getting in that case).
+        if(baseMapType=='refseq' || baseMapType=='gbNRef'){
+            baseMap=cleanRefSeqs(baseMap)
+        }
+        
         #populate the contents of baseMap int curr_map
         clnVals <-baseMap
         sqlIns <- "INSERT INTO curr_map VALUES(?,?);"
@@ -66,7 +81,7 @@ probe2gene <- function(baseMap, otherSrc,
 		"DELETE FROM curr_map WHERE gene_id='NA' OR gene_id='';")
 	attach_sql <- paste("ATTACH DATABASE '",chipMapSrc,"' AS src;", sep="", collapse="")
 	sqliteQuickSQL(db, attach_sql)
-	if(baseMapType=='ll') {
+	if(baseMapType=='eg') {
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes;")
 		sql <- paste("INSERT INTO probe2gene",
 			   "SELECT DISTINCT probe_id, gene_id",
@@ -181,7 +196,7 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc,
         }
     }
     #The 1st item in baseMaps is always the genbank ID
-    if (baseMapType == "ll"){
+    if (baseMapType == "eg"){
         ##baseMap <- cleanSrcMap(egMapFile)
         baseMap <- as.data.frame(baseMaps[[2]])
     } else {
@@ -317,7 +332,7 @@ getMapForArabidopsisChipPkg <- function(affy, fileName, pkgName, chipMapSrc, out
 
 makeUniversalMapping <- function(pkgName,
                                 chipSrc,
-                                baseMapType="ll",
+                                baseMapType="eg",
                                 outputDir=".") {
 
 	## The rest of this will just make a map of ALL the EGs

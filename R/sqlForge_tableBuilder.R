@@ -1,7 +1,7 @@
 
 appendPreMeta <- function(db, subStrs, printSchema, metaDataSrc){
 
-cat("Prepending Metadata \n")
+message(cat("Prepending Metadata"))
 
   sql<- paste("    CREATE TABLE IF NOT EXISTS metadata (
       name VARCHAR(80) PRIMARY KEY,
@@ -20,7 +20,7 @@ cat("Prepending Metadata \n")
   ## This handles the metadata for all the local packages
   if(length(names(metaDataSrc)) == 0){
 
-    #cat("Using metaDataSrc.sqlite for Metadata \n")
+    #message(cat("Using metaDataSrc.sqlite for Metadata \n"))
       
     sql <- paste("ATTACH DATABASE '",metaDataSrc,"' AS meta;",sep="")
     sqliteQuickSQL(db, sql)
@@ -88,7 +88,7 @@ cat("Prepending Metadata \n")
     sqliteQuickSQL(db, sql)
   }
   else{  #user is using a named vector:
-    #cat("Using named Vector for Metadata \n")
+    #message(cat("Using named Vector for Metadata \n"))
     sql<- paste("
       INSERT INTO metadata VALUES('DBSCHEMA', '",metaDataSrc["DBSCHEMA"],"');
        ", sep="") 
@@ -147,7 +147,7 @@ cat("Prepending Metadata \n")
 ##  The genes table is (almost) always the central table (cntrTab)
 appendGenes <- function(db, subStrs, printSchema){
 
-  cat("Creating Genes table \n")
+  message(cat("Creating Genes table"))
 
   sql<- paste("    CREATE TABLE genes (
       _id INTEGER PRIMARY KEY,
@@ -194,7 +194,7 @@ appendGenes <- function(db, subStrs, printSchema){
 ## Make the probes table (only used by chip packages)
 appendProbes <- function(db, subStrs, printSchema){
 
-  cat("Appending Probes \n")
+  message(cat("Appending Probes"))
     
   sql<- paste("    CREATE TABLE probes (
       probe_id VARCHAR(80) PRIMARY KEY,             -- manufacturer ID
@@ -236,7 +236,9 @@ appendProbes <- function(db, subStrs, printSchema){
      WHERE accession NOT NULL;
     ") 
   sqliteQuickSQL(db, sql)
-    
+
+##   probeCount = as.integer(sqliteQuickSQL(db,"SELECT count(DISTINCT probe_id) FROM probes WHERE accession NOT NULL;" ))
+##   message(cat("Found ",probeCount," Probes"))
 }
 
 
@@ -244,7 +246,7 @@ appendProbes <- function(db, subStrs, printSchema){
 ## Make the accessions table (only used by the EG packages)
 appendAccessions <- function(db, subStrs, printSchema){
 
-  cat("Appending Accessions \n")
+  message(cat("Appending Accessions"))
     
   sql<- paste("    CREATE TABLE accessions (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -298,7 +300,7 @@ appendAccessions <- function(db, subStrs, printSchema){
 ## Make the gene info table
 appendGeneInfo <- function(db, subStrs, printSchema){
 
-  cat("Appending Gene Info \n")
+  message(cat("Appending Gene Info"))
             
   sql<- paste("    CREATE TABLE gene_info (
       _id INTEGER NOT NULL UNIQUE,                  -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -369,7 +371,7 @@ appendGeneInfo <- function(db, subStrs, printSchema){
 ## Make the chromosomes table
 appendChromosomes <- function(db, subStrs, printSchema){
     
-  cat("Appending Chromosomes \n")
+  message(cat("Appending Chromosomes"))
 
     sql<- paste("    CREATE TABLE chromosomes (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -414,7 +416,7 @@ appendChromosomes <- function(db, subStrs, printSchema){
 ## Make the cytogenic locations table
 appendCytogenicLocs <- function(db, subStrs, printSchema){
     
-  cat("Appending Cytogenetic Locations \n")
+  message(cat("Appending Cytogenetic Locations"))
     
   sql<- paste("    CREATE TABLE cytogenetic_locations (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -469,7 +471,7 @@ appendCytogenicLocs <- function(db, subStrs, printSchema){
 ## Make the omim table
 appendOmim <- function(db, subStrs, printSchema){
 
-  cat("Appending Omim \n")
+  message(cat("Appending Omim"))
         
   sql<- paste("    CREATE TABLE omim (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -523,7 +525,7 @@ appendOmim <- function(db, subStrs, printSchema){
 ## Make the refseq table
 appendRefseq <- function(db, subStrs, printSchema){
 
-  cat("Appending RefSeq \n")
+  message(cat("Appending RefSeq"))
   
   sql<- paste("    CREATE TABLE refseq (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -576,7 +578,7 @@ appendRefseq <- function(db, subStrs, printSchema){
 ## Make the pubmed table
 appendPubmed <- function(db, subStrs, printSchema){
 
-  cat("Appending Pubmed \n")
+  message(cat("Appending Pubmed"))
     
   sql<- paste("    CREATE TABLE pubmed (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -635,7 +637,7 @@ appendPubmed <- function(db, subStrs, printSchema){
 ## Make the unigene table
 appendUnigene <- function(db, subStrs, printSchema){
 
-  cat("Appending Unigene \n")
+  message(cat("Appending Unigene"))
         
   sql<- paste("    CREATE TABLE unigene (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -688,7 +690,7 @@ appendUnigene <- function(db, subStrs, printSchema){
 ## Make the chrlengths table (table is tiny, so no need for an index)
 appendChrlengths <- function(db, subStrs, printSchema){
 
-cat("Appending ChrLengths \n")
+message(cat("Appending ChrLengths"))
     
   sql<- paste("    CREATE TABLE chrlengths (
       chromosome VARCHAR(2) PRIMARY KEY,                   -- chromosome name
@@ -725,7 +727,7 @@ cat("Appending ChrLengths \n")
 ## Make the go tables
 appendGO <- function(db,subStrs, printSchema){
 
-  cat("Appending 3 GO tables \n")
+  message(cat("Appending 3 GO tables"))
             
   sql<- paste("    CREATE TABLE go_bp (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -857,7 +859,7 @@ appendGO <- function(db,subStrs, printSchema){
 ## Make the go all tables
 appendGOALL <- function(db, subStrs, printSchema){
 
-  cat("Appending 3 GO ALL tables \n")
+  message(cat("Appending 3 GO ALL tables"))
         
   sql<- paste("    CREATE TABLE go_bp_all (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -969,7 +971,7 @@ appendGOALL <- function(db, subStrs, printSchema){
 ## Make the KEGG table
 appendKEGG <- function(db, subStrs, printSchema){
 
-  cat("Appending KEGG \n")
+  message(cat("Appending KEGG"))
         
   sql<- paste("    CREATE TABLE kegg (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1033,7 +1035,7 @@ appendKEGG <- function(db, subStrs, printSchema){
 ## Make the ec table
 appendEC <- function(db, subStrs, printSchema){
 
-  cat("Appending EC \n")
+  message(cat("Appending EC"))
         
   sql<- paste("    CREATE TABLE ec (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1098,7 +1100,7 @@ appendEC <- function(db, subStrs, printSchema){
 ## Make the chromosome_locations table
 appendChromsomeLocs <- function(db, subStrs, printSchema){
 
-  cat("Appending Chromosome Locations \n")
+  message(cat("Appending Chromosome Locations"))
     
   sql<- paste("    CREATE TABLE chromosome_locations (
       _id INTEGER NOT NULL,                      -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1143,7 +1145,7 @@ appendChromsomeLocs <- function(db, subStrs, printSchema){
 ## Make the pfam table
 appendPfam <- function(db, subStrs, printSchema){
 
-  cat("Appending Pfam \n")
+  message(cat("Appending Pfam"))
     
   sql<- paste("    CREATE TABLE pfam (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1189,7 +1191,7 @@ appendPfam <- function(db, subStrs, printSchema){
 ## Make the prosite table
 appendProsite <- function(db, subStrs, printSchema){
 
-  cat("Appending Prosite \n")
+  message(cat("Appending Prosite"))
     
   sql<- paste("    CREATE TABLE prosite (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1236,7 +1238,7 @@ appendProsite <- function(db, subStrs, printSchema){
 ## Make the alias table
 appendAlias <- function(db, subStrs, printSchema){
 
-  cat("Appending Alias \n")
+  message(cat("Appending Alias"))
     
   sql<- paste("    CREATE TABLE alias (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1287,7 +1289,7 @@ appendAlias <- function(db, subStrs, printSchema){
 ## Make the ensembl table
 appendEnsembl <- function(db, subStrs, printSchema){
 
-  cat("Appending Ensembl \n")
+  message(cat("Appending Ensembl"))
     
   sql<- paste("    CREATE TABLE ensembl (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1353,7 +1355,7 @@ appendEnsembl <- function(db, subStrs, printSchema){
 ## Make the ensembl protein IDs table 
 appendEnsemblProt <- function(db, subStrs, printSchema){
 
-  cat("Appending Ensembl Protein IDs \n")
+  message(cat("Appending Ensembl Protein IDs"))
     
   sql<- paste("    CREATE TABLE ensembl_prot (
       _id INTEGER NOT NULL,                          -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1423,7 +1425,7 @@ appendEnsemblProt <- function(db, subStrs, printSchema){
 ## Make an MGI table
 appendMGI <- function(db, subStrs, printSchema){
 
-  cat("Appending MGI \n")
+  message(cat("Appending MGI"))
 
   sql<- paste("    CREATE TABLE mgi (
       _id INTEGER NOT NULL,                     -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1488,7 +1490,7 @@ appendMGI <- function(db, subStrs, printSchema){
 ## Make the flybase table
 appendFlyBase <- function(db, subStrs, printSchema){
 
-  cat("Appending FlyBase \n")
+  message(cat("Appending FlyBase"))
     
   sql<- paste("    CREATE TABLE flybase (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1539,7 +1541,7 @@ appendFlyBase <- function(db, subStrs, printSchema){
 ## Make the flybase_cg table
 appendFlyBaseCG <- function(db, subStrs, printSchema){
 
-  cat("Appending FlyBase CG IDs \n")
+  message(cat("Appending FlyBase CG IDs"))
     
   sql<- paste("    CREATE TABLE flybase_cg (
       _id INTEGER NOT NULL,                          -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1605,7 +1607,7 @@ appendFlyBaseCG <- function(db, subStrs, printSchema){
 ## Make the flybase_prot table
 appendFlyBaseProt <- function(db, subStrs, printSchema){
 
-  cat("Appending Flybase Protein IDs \n")
+  message(cat("Appending Flybase Protein IDs"))
     
   sql<- paste("    CREATE TABLE flybase_prot (
       _id INTEGER NOT NULL,                          -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1673,7 +1675,7 @@ appendFlyBaseProt <- function(db, subStrs, printSchema){
 ## Make the aracyc table
 appendAraCyc <- function(db, subStrs, printSchema){
 
-  cat("Appending AraCyc \n")
+  message(cat("Appending AraCyc"))
     
   sql<- paste("    CREATE TABLE aracyc (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1716,7 +1718,7 @@ appendAraCyc <- function(db, subStrs, printSchema){
 ## Make the "aracyc" enzyme table
 appendAraCycEnzyme <- function(db, subStrs, printSchema){
 
-  cat("Appending AraCyc Enzyme IDs \n")
+  message(cat("Appending AraCyc Enzyme IDs"))
     
   sql<- paste("    CREATE TABLE enzyme (
       _id INTEGER NOT NULL,                          -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1754,7 +1756,7 @@ appendAraCycEnzyme <- function(db, subStrs, printSchema){
 ## For Arabidopsis the ", subStrs[["cntrTab"]]," table is still the central table
 appendArabidopsisGenes <- function(db, subStrs, printSchema){
 
-  cat("Creating Genes table \n")
+  message(cat("Creating Genes table"))
 
   sql<- paste("    CREATE TABLE genes (
       _id INTEGER PRIMARY KEY,
@@ -1784,7 +1786,7 @@ appendArabidopsisGenes <- function(db, subStrs, printSchema){
 ## Make the probes table for Arabidopsis (only used by chip packages)
 appendArabidopsisProbes <- function(db, subStrs, printSchema){
 
-  cat("Appending Probes \n")
+  message(cat("Appending Probes"))
     
   sql<- paste("    CREATE TEMP TABLE match_count (
       probe_id TEXT,
@@ -1895,7 +1897,7 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
 ## Make the Arabidopsis gene info table
 appendArabidopsisGeneInfo <- function(db, subStrs, printSchema){
 
-  cat("Appending Gene Info \n")
+  message(cat("Appending Gene Info"))
             
   sql<- paste("    CREATE TABLE gene_info (
       _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1970,7 +1972,7 @@ appendArabidopsisGeneInfo <- function(db, subStrs, printSchema){
 ## For Yeast the ", subStrs[["cntrTab"]]," table is still the central table
 appendYeastSGD <- function(db, subStrs, printSchema){
 
-  cat("Creating SGD table \n")
+  message(cat("Creating SGD table"))
 
   sql<- paste("    CREATE TABLE sgd (
       _id INTEGER PRIMARY KEY,
@@ -2010,7 +2012,7 @@ appendYeastSGD <- function(db, subStrs, printSchema){
 ## Make the probes table for Yeast (only used by chip packages)
 appendYeastProbes <- function(db, subStrs, printSchema){
 
-  cat("Appending Probes \n")
+  message(cat("Appending Probes"))
     
   sql<- paste("    CREATE TABLE probes (
       probe_id VARCHAR(80) PRIMARY KEY,              -- manufacturer ID
@@ -2059,7 +2061,7 @@ appendYeastProbes <- function(db, subStrs, printSchema){
 ## Make the Yeast chromosomes table
 appendYeastOrphanMeta <- function(db, subStrs){
     
-  cat("Appending Orphaned Meta Data \n")
+  message(cat("Appending Orphaned Meta Data"))
 
     sql<- paste("
     INSERT INTO map_metadata
@@ -2092,7 +2094,7 @@ appendYeastOrphanMeta <- function(db, subStrs){
 ## Make the Yeast chromosomes table
 appendYeastChromosomeFeatures <- function(db, subStrs, printSchema){
     
-  cat("Appending Chromosome Features \n")
+  message(cat("Appending Chromosome Features"))
 
     sql<- paste("      CREATE TABLE chromosome_features (
         _id INTEGER NOT NULL,                         -- REFERENCES sgd
@@ -2169,7 +2171,7 @@ appendYeastChromosomeFeatures <- function(db, subStrs, printSchema){
 ## Make the Yeast alias table
 appendYeastAlias <- function(db, subStrs, printSchema){
 
-  cat("Appending Alias \n")
+  message(cat("Appending Alias"))
     
   sql<- paste("    CREATE TABLE gene2alias (
       _id INTEGER NOT NULL,                         -- REFERENCES sgd
@@ -2220,7 +2222,7 @@ appendYeastAlias <- function(db, subStrs, printSchema){
 ## Make the Yeast pfam table (different schema for table)
 appendYeastPfam <- function(db, subStrs, printSchema){
 
-  cat("Appending Pfam \n")
+  message(cat("Appending Pfam"))
     
   sql<- paste("    CREATE TABLE pfam (
       _id INTEGER NOT NULL,                         -- REFERENCES sgd
@@ -2263,7 +2265,7 @@ appendYeastPfam <- function(db, subStrs, printSchema){
 ## Make the Yeast Interpro table
 appendYeastInterpro <- function(db, subStrs, printSchema){
 
-  cat("Appending Interpro \n")
+  message(cat("Appending Interpro"))
     
   sql<- paste("    CREATE TABLE interpro (
       _id INTEGER NOT NULL,                         -- REFERENCES sgd
@@ -2305,7 +2307,7 @@ appendYeastInterpro <- function(db, subStrs, printSchema){
 ## Make the Yeast Smart table
 appendYeastSmart <- function(db, subStrs, printSchema){
 
-  cat("Appending Smart \n")
+  message(cat("Appending Smart"))
     
   sql<- paste("    CREATE TABLE smart (
       _id INTEGER NOT NULL,                         -- REFERENCES sgd 
@@ -2347,7 +2349,7 @@ appendYeastSmart <- function(db, subStrs, printSchema){
 ## Make the Yeast Smart table
 appendYeastRejectORF <- function(db, subStrs, printSchema){
 
-  cat("Appending RejectOrf \n")
+  message(cat("Appending RejectOrf"))
     
   sql<- paste("    CREATE TABLE reject_orf (
       systematic_name VARCHAR(14) PRIMARY KEY)     -- Yeast gene systematic name
@@ -2377,7 +2379,7 @@ appendYeastRejectORF <- function(db, subStrs, printSchema){
 ## Make the Yeast Smart table
 appendYeastGene2Systematic <- function(db, subStrs, printSchema){
 
-  cat("Appending Gene2Systematic \n")
+  message(cat("Appending Gene2Systematic"))
     
   sql<- paste("    CREATE TABLE gene2systematic (
       gene_name VARCHAR(14) NULL,                     -- Yeast gene name
@@ -2419,7 +2421,7 @@ appendYeastGene2Systematic <- function(db, subStrs, printSchema){
 ## Append on metadata that CANNOT easily go next to the table it describes.
 appendPostMeta <- function(db, subStrs){
 
-  cat("Appending Metadata \n\n")
+  message(cat("Appending Metadata \n\n"))
   
   sql<- paste("
     INSERT INTO metadata SELECT * FROM anno.metadata
@@ -2478,7 +2480,7 @@ appendGeneric <- function(db, subStrs, printSchema, table, matchID, field, fileN
 
   #CONSTRAINT: matchID *MUST* match the id of one of the fields in the DB
     
-  cat("Appending ",table," \n")
+  message(cat("Appending ",table,""))
 
   #need to make a temp table to start
   sql<- paste("    CREATE TEMP TABLE tempTable (
@@ -2547,7 +2549,7 @@ appendGeneric <- function(db, subStrs, printSchema, table, matchID, field, fileN
 #Append probes Generic is the same as appendGeneric, EXCEPT that it needs special mapcounts queries.
 appendProbesGeneric <- function(db, subStrs, printSchema, table, matchID, field, fileName, mapCounts ){
     
-  cat("Appending ",table," \n")
+  message(cat("Appending ",table,""))
 
   #need to make a temp table to start
   sql<- paste("    CREATE TEMP TABLE tempTable (
@@ -2620,7 +2622,7 @@ createCntrTableGeneric <- function(db, subStrs, printSchema, table, field, fileN
 
   #CONSTRAINT: matchID *MUST* match the id of one of the fields in the DB
     
-  cat("Appending ",table," \n")
+  message(cat("Appending ",table,""))
   
   sql<- paste("    CREATE TEMP TABLE tempTable (
       ",field," VARCHAR NOT NULL               -- ",field," accession number
