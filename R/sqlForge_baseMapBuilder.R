@@ -8,11 +8,18 @@ cleanSrcMap <- function(file) {
 cleanRefSeqs <- function(baseMap){
     baseMap = as.matrix(baseMap)
     for(i in 1:length(baseMap[,1])){
-        baseMap[i,2] = gsub(".\\d+?$", "", baseMap[i,2], perl=TRUE)
+        baseMap[i,2] = gsub("\\.\\d+?$", "", baseMap[i,2], perl=TRUE)
     }
     baseMap = cbind(baseMap[,1],baseMap[,2])
     baseMap = as.data.frame(baseMap)
     baseMap
+}
+
+printOutBaseMaps <- function(baseMap, pkgName, otherSrcObjs){
+    write.table(baseMap, paste(pkgName,"_baseMap.txt", sep=""), quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
+    for(i in 1:length(otherSrcObjs)){
+        write.table(otherSrcObjs[i], paste(pkgName,"_otherSrcMap_",i,".txt", sep=""), quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
+    }
 }
 
 makeBaseMaps <- function(csvFileName,
@@ -37,7 +44,6 @@ makeBaseMaps <- function(csvFileName,
     
     baseFiles[[1]] = cbind(probe, gb)
     baseFiles[[2]] = cbind(eg_probe, eg)
-    
     baseFiles
 }
 
@@ -55,7 +61,7 @@ probe2gene <- function(baseMap, otherSrc,
 				pkgName, "');", sep="", collapse="")
 	sqliteQuickSQL(db, metadata_sql)
 	sqliteQuickSQL(db, "CREATE TABLE curr_map (probe_id TEXT, gene_id TEXT);")  #curr_map is the baseMap file
-	sqliteQuickSQL(db, "CREATE TEMP TABLE probes (probe_id TEXT);")             #all the probes from curr_map
+	sqliteQuickSQL(db, "CREATE TABLE probes_ori (probe_id TEXT);")             #all the probes from curr_map
 	sqliteQuickSQL(db, "CREATE TABLE other (probe_id TEXT, gene_id TEXT);")     #This holds the otherSrc data
 	sqliteQuickSQL(db, "CREATE TABLE other_rank (probe_id TEXT, gene_id TEXT, vote INTEGER,  row_id INTEGER);") 
 	sqliteQuickSQL(db, "CREATE TABLE probe2gene (probe_id TEXT, gene_id TEXT);") 
@@ -64,31 +70,32 @@ probe2gene <- function(baseMap, otherSrc,
 
         #If there might be refseq IDs, then they might have unwanted .<digit> extensions which must be removed.
         #This (unfortunately cannot be done for the otherSrc files since I won't know what I am getting in that case).
-        if(baseMapType=='refseq' || baseMapType=='gbNRef'){
+        if(baseMapType=='refseq' || baseMapType=='gbNRef'){  #need to verify that this function is not destructive to genbank IDs
+#        if(baseMapType=='refseq'){
             baseMap=cleanRefSeqs(baseMap)
         }
         
         #populate the contents of baseMap int curr_map
         clnVals <-baseMap
-        sqlIns <- "INSERT INTO curr_map VALUES(?,?);"
+        sqlIns <- "INSERT INTO curr_map (probe_id,gene_id) VALUES (?,?);"
         dbBeginTransaction(db)
         rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
         dbClearResult(rset)
         dbCommit(db)
 
-	sqliteQuickSQL(db, "INSERT INTO probes SELECT DISTINCT probe_id FROM curr_map;")
+        sqliteQuickSQL(db, "INSERT INTO probes_ori SELECT DISTINCT probe_id FROM curr_map;")
 	sqliteQuickSQL(db,
 		"DELETE FROM curr_map WHERE gene_id='NA' OR gene_id='';")
 	attach_sql <- paste("ATTACH DATABASE '",chipMapSrc,"' AS src;", sep="", collapse="")
 	sqliteQuickSQL(db, attach_sql)
 	if(baseMapType=='eg') {
-		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes;")
+		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes_ori;")
 		sql <- paste("INSERT INTO probe2gene",
 			   "SELECT DISTINCT probe_id, gene_id",
 			    "FROM curr_map GROUP BY probe_id;", sep=" ", collapse="")
 		sqliteQuickSQL(db, sql)
 	} else if (baseMapType=='ug') {
-		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes;")
+		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes_ori;")
 		sql <- paste("INSERT INTO probe2gene",
 			    "SELECT DISTINCT c.probe_id, u.gene_id",
 			    "FROM curr_map as c, src.unigene as u",
@@ -96,7 +103,7 @@ probe2gene <- function(baseMap, otherSrc,
 		sqliteQuickSQL(db, sql)
 	} else if (baseMapType=='refseq') {
 		sqliteQuickSQL(db, "CREATE INDEX cm1 ON curr_map(probe_id);")
-		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
+		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes_ori AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
 		sql <- paste("INSERT INTO probe2gene", 
 			    "SELECT DISTINCT c.probe_id, a.gene_id",
 			    "FROM curr_map as c, src.refseq as a",
@@ -104,7 +111,7 @@ probe2gene <- function(baseMap, otherSrc,
 		sqliteQuickSQL(db, sql)
 	} else 	{ ### type='gb' or 'gbNRef'
 		sqliteQuickSQL(db, "CREATE INDEX cm1 ON curr_map(probe_id);")
-		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
+		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes_ori AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
 		sql <- paste("INSERT INTO probe2gene", 
 			    "SELECT DISTINCT c.probe_id, a.gene_id",
 			    "FROM curr_map as c, src.accession as a",
@@ -153,7 +160,7 @@ probe2gene <- function(baseMap, otherSrc,
 	sqliteQuickSQL(db, "DROP TABLE curr_map;")
 	lapply(otherSrc, function(thisOtherName) {
             clnVals <- thisOtherName
-            sqlIns <- "INSERT INTO other VALUES(?,?);"
+            sqlIns <- "INSERT INTO other (probe_id,gene_id) VALUES(?,?);"
             dbBeginTransaction(db)
             rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
             dbClearResult(rset)
@@ -167,13 +174,14 @@ probe2gene <- function(baseMap, otherSrc,
 		"INSERT INTO other_rank (probe_id, gene_id, vote, row_id) SELECT DISTINCT o.probe_id AS Probe, o.gene_id AS Gene, s.vote AS Vote, o.rowid AS Row FROM other AS o, other_stat AS s WHERE o.probe_id=s.probe_id AND o.gene_id=s.gene_id ORDER BY Probe asc, Vote desc, Row asc;")
 	sqliteQuickSQL(db,
 		"INSERT INTO probe2gene SELECT DISTINCT probe_id, gene_id FROM other_rank WHERE rowid IN (SELECT min(rowid) FROM other_rank GROUP BY probe_id);")
-	sqliteQuickSQL(db, "INSERT INTO probe2gene SELECT probe_id, NULL FROM probes WHERE probe_id NOT IN (SELECT probe_id FROM probe2gene);")
+	sqliteQuickSQL(db, "INSERT INTO probe2gene SELECT probe_id, NULL FROM probes_ori WHERE probe_id NOT IN (SELECT probe_id FROM probe2gene);")
 	sqliteQuickSQL(db, "CREATE INDEX p1 ON probe2gene(probe_id);")
 	sqliteQuickSQL(db, "INSERT INTO probe_map SELECT DISTINCT p.probe_id, p.gene_id, a.gene_id FROM probe2acc as a LEFT OUTER JOIN probe2gene as p ON a.probe_id=p.probe_id;")
 	sqliteQuickSQL(db, "DROP TABLE other_rank;")
         sqliteQuickSQL(db, "DROP TABLE other;")
         sqliteQuickSQL(db, "DROP TABLE probe2gene;")
         sqliteQuickSQL(db, "DROP TABLE probe2acc;")
+        sqliteQuickSQL(db, "DROP TABLE probes_ori;")
         dbDisconnect(db)
 	pkgName
 }
@@ -183,8 +191,7 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc,
 				baseMapType="gbNRef", 
 				outputDir=".",
 				allowHomologyGene=FALSE) {
-    baseMaps = makeBaseMaps (csvFileName=csvFileName,
-          targetDir=outputDir)
+    baseMaps = makeBaseMaps(csvFileName=csvFileName, targetDir=outputDir)
     
     #pre-clean the otherSrc's and pass them along as lists of lists:  #TODO: this fails if there are not any otherSrc's
     otherSrcObjs = list()
@@ -206,6 +213,12 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc,
         ##this part should be ok, but an issue is creeping in from above...
         otherSrcObjs[[length(otherSrcObjs) + 1]] <- as.data.frame(baseMaps[[2]])
     }
+    
+    ##just for debugging (disable the rest of the time)
+    if(FALSE){
+        printOutBaseMaps(baseMap, pkgName, otherSrcObjs)
+    }
+    
     probe2gene(baseMap=baseMap, 
                baseMapType=baseMapType, 
                otherSrc=otherSrcObjs,
@@ -232,6 +245,12 @@ getMapForOtherChipPkg <- function(filePath,
         }
     }
     baseMap = cleanSrcMap(filePath)
+
+    ##just for debugging (disable the rest of the time)
+    if(FALSE){
+        printOutBaseMaps(baseMap, pkgName, otherSrcObjs)
+    }
+
     probe2gene(baseMap=baseMap,
                baseMapType=baseMapType,
                otherSrc=otherSrcObjs,

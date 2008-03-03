@@ -229,16 +229,17 @@ appendProbes <- function(db, subStrs, printSchema){
      ") 
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("
-    INSERT INTO map_counts
-     SELECT 'ACCNUM', count(DISTINCT probe_id)
+  sqlCount<- paste("
+    SELECT 'ACCNUM', count(DISTINCT probe_id)
      FROM probes
      WHERE accession NOT NULL;
-    ") 
+    ")   
+  
+  sql<- paste("INSERT INTO map_counts",sqlCount)
   sqliteQuickSQL(db, sql)
 
-##   probeCount = as.integer(sqliteQuickSQL(db,"SELECT count(DISTINCT probe_id) FROM probes WHERE accession NOT NULL;" ))
-##   message(cat("Found ",probeCount," Probes"))
+  count = as.integer(sqliteQuickSQL(db,sqlCount)[2])
+  message(cat("Found",count,"Probe Accessions"))
 }
 
 
@@ -277,13 +278,14 @@ appendAccessions <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   #map_counts
-  sql<- paste("
-    INSERT INTO map_counts
-     SELECT 'ACCNUM', COUNT(DISTINCT gene_id)
-     FROM ", subStrs[["cntrTab"]]," AS g INNER JOIN accessions AS a
-     WHERE g._id=a._id;
-    ") 
-  sqliteQuickSQL(db, sql)
+
+##   sql<- paste("
+##     INSERT INTO map_counts
+##      SELECT 'ACCNUM', COUNT(DISTINCT gene_id)
+##      FROM ", subStrs[["cntrTab"]]," AS g INNER JOIN accessions AS a
+##      WHERE g._id=a._id;
+##     ") 
+##   sqliteQuickSQL(db, sql)
 
   sql<- paste("
     INSERT INTO map_counts
@@ -292,7 +294,19 @@ appendAccessions <- function(db, subStrs, printSchema){
      WHERE a._id=g._id;
     ") 
   sqliteQuickSQL(db, sql)
+
+
+  sqlCount<- paste("
+     SELECT 'ACCNUM', COUNT(DISTINCT gene_id)
+     FROM ", subStrs[["cntrTab"]]," AS g INNER JOIN accessions AS a
+     WHERE g._id=a._id;
+    ")
   
+  sql<- paste("INSERT INTO map_counts",sqlCount)
+  sqliteQuickSQL(db, sql)
+
+  count = as.integer(sqliteQuickSQL(db,sqlCount)[2])
+  message(cat("Found",count,"Entrez Gene Accessions"))  
 }
 
 
@@ -338,22 +352,21 @@ appendGeneInfo <- function(db, subStrs, printSchema){
      ") 
   sqliteQuickSQL(db, sql)
   
-  
-  sql<- paste("
-    INSERT INTO map_counts
-     SELECT 'GENENAME', count(DISTINCT ",subStrs[["coreID"]],")
-     FROM ", subStrs[["coreTab"]],", gene_info
-     WHERE ", subStrs[["coreTab"]],"._id=gene_info._id AND gene_info.gene_name NOT NULL;
-    ", sep="") 
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("
+##     INSERT INTO map_counts
+##      SELECT 'GENENAME', count(DISTINCT ",subStrs[["coreID"]],")
+##      FROM ", subStrs[["coreTab"]],", gene_info
+##      WHERE ", subStrs[["coreTab"]],"._id=gene_info._id AND gene_info.gene_name NOT NULL;
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)
 
-  sql<- paste("
-    INSERT INTO map_counts
-     SELECT 'SYMBOL', count(DISTINCT ",subStrs[["coreID"]],")
-     FROM ", subStrs[["coreTab"]],", gene_info
-     WHERE ", subStrs[["coreTab"]],"._id =gene_info._id AND gene_info.symbol NOT NULL;
-    ", sep="") 
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("
+##     INSERT INTO map_counts
+##      SELECT 'SYMBOL', count(DISTINCT ",subStrs[["coreID"]],")
+##      FROM ", subStrs[["coreTab"]],", gene_info
+##      WHERE ", subStrs[["coreTab"]],"._id =gene_info._id AND gene_info.symbol NOT NULL;
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)
 
   if(subStrs[["coreTab"]]=="genes"){
     sql<- paste("
@@ -364,6 +377,28 @@ appendGeneInfo <- function(db, subStrs, printSchema){
     ", sep="") 
     sqliteQuickSQL(db, sql)
   }  
+
+  sqlCount<- paste("
+     SELECT 'GENENAME', count(DISTINCT ",subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]],", gene_info
+     WHERE ", subStrs[["coreTab"]],"._id=gene_info._id AND gene_info.gene_name NOT NULL;
+    ", sep="") 
+  sql<- paste("INSERT INTO map_counts",sqlCount)
+  sqliteQuickSQL(db, sql)
+  
+  count = as.integer(sqliteQuickSQL(db,sqlCount)[2])
+  message(cat("Found",count,"Gene Names"))
+
+  sqlCount<- paste("
+     SELECT 'SYMBOL', count(DISTINCT ",subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]],", gene_info
+     WHERE ", subStrs[["coreTab"]],"._id =gene_info._id AND gene_info.symbol NOT NULL;
+    ", sep="") 
+  sql<- paste("INSERT INTO map_counts",sqlCount)
+  sqliteQuickSQL(db, sql)
+  
+  count = as.integer(sqliteQuickSQL(db,sqlCount)[2])
+  message(cat("Found",count,"Gene Symbols"))
 }
 
 
@@ -463,7 +498,7 @@ appendCytogenicLocs <- function(db, subStrs, printSchema){
      ", sep="")
   sqliteQuickSQL(db, sql)      
   }  
-  
+
 }
 
 
@@ -518,6 +553,7 @@ appendOmim <- function(db, subStrs, printSchema){
     ", sep="") 
     sqliteQuickSQL(db, sql)
   }
+
 }
 
 
@@ -572,6 +608,7 @@ appendRefseq <- function(db, subStrs, printSchema){
     ", sep="") 
     sqliteQuickSQL(db, sql)
   }
+
 }
 
 
@@ -630,7 +667,7 @@ appendPubmed <- function(db, subStrs, printSchema){
     FROM pubmed;
     ", sep="") 
   sqliteQuickSQL(db, sql)
-   
+  
 }
 
 
@@ -684,6 +721,7 @@ appendUnigene <- function(db, subStrs, printSchema){
     ", sep="") 
     sqliteQuickSQL(db, sql)    
   }  
+
 }
 
 
@@ -718,7 +756,7 @@ message(cat("Appending ChrLengths"))
      FROM chrlengths;
     ") 
   sqliteQuickSQL(db, sql)
-  
+
 }
 
 
@@ -941,7 +979,6 @@ appendGOALL <- function(db, subStrs, printSchema){
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
-  
   sql<- paste("
     INSERT INTO map_metadata
      SELECT * FROM anno.map_metadata
@@ -954,7 +991,6 @@ appendGOALL <- function(db, subStrs, printSchema){
      SET map_name='GO2ALL",subStrs[["suffix"]],"S' WHERE map_name='GO2ALLGENES';
     ", sep="") 
   sqliteQuickSQL(db, sql)
-
   
   sql<- paste("
     INSERT INTO map_counts
@@ -963,8 +999,7 @@ appendGOALL <- function(db, subStrs, printSchema){
             SELECT DISTINCT go_id FROM go_mf_all UNION
             SELECT DISTINCT go_id FROM go_cc_all);
     ", sep="") 
-  sqliteQuickSQL(db, sql)
- 
+  sqliteQuickSQL(db, sql)  
 }
 
 
@@ -1028,7 +1063,7 @@ appendKEGG <- function(db, subStrs, printSchema){
      FROM kegg;
     ", sep="") 
   sqliteQuickSQL(db, sql)  
-  
+
 }
 
 
