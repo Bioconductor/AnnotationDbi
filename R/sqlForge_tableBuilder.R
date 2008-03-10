@@ -7,8 +7,9 @@ message(cat("Prepending Metadata"))
       name VARCHAR(80) PRIMARY KEY,
       value VARCHAR(255))
     ;")
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""))}
-  sqliteQuickSQL(db, sql)
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""))}
+#  sqliteQuickSQL(db, sql) This table was set up in the previous step (was always set up before this)
+# TODO: move this printschema statement to the makeBaseMaps section.
 
   ##This is where the version number for the schema is inserted.
   sql<- paste("
@@ -121,21 +122,21 @@ message(cat("Prepending Metadata"))
   sqliteQuickSQL(db, sql)
 
 
-  
+
   sql<- paste("    CREATE TABLE map_metadata (
       map_name VARCHAR(80) NOT NULL,
       source_name VARCHAR(80) NOT NULL,
       source_url VARCHAR(255) NOT NULL,
       source_date VARCHAR(20) NOT NULL
     );")
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE TABLE map_counts (
       map_name VARCHAR(80) PRIMARY KEY,
       count INTEGER NOT NULL
     );")
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
   
 }
@@ -153,7 +154,7 @@ appendGenes <- function(db, subStrs, printSchema){
       _id INTEGER PRIMARY KEY,
       gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -174,7 +175,7 @@ appendGenes <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgenes ON genes(gene_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sqliteQuickSQL(db, "ANALYZE;")
@@ -202,7 +203,7 @@ appendProbes <- function(db, subStrs, printSchema){
       _id INTEGER NULL,                             -- REFERENCES ", subStrs[["cntrTab"]],"
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );")
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -215,11 +216,11 @@ appendProbes <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fprobes ON probes (_id);") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fprobes_probe_id ON probes (probe_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -254,7 +255,7 @@ appendAccessions <- function(db, subStrs, printSchema){
       accession VARCHAR(20) NOT NULL,               -- GenBank accession number
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -266,7 +267,7 @@ appendAccessions <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Faccessions ON accessions (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   #map_metadata
@@ -322,7 +323,7 @@ appendGeneInfo <- function(db, subStrs, printSchema){
       symbol VARCHAR(80) NOT NULL,                  -- gene symbol
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -335,7 +336,7 @@ appendGeneInfo <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgene_info ON gene_info(_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -413,7 +414,7 @@ appendChromosomes <- function(db, subStrs, printSchema){
       chromosome VARCHAR(2) NOT NULL,               -- chromosome name
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -426,7 +427,7 @@ appendChromosomes <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fchromosomes ON chromosomes (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -458,7 +459,7 @@ appendCytogenicLocs <- function(db, subStrs, printSchema){
       cytogenetic_location VARCHAR(20) NOT NULL,    -- cytoband location
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -471,7 +472,7 @@ appendCytogenicLocs <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fcytogenetic_locations ON cytogenetic_locations (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -513,7 +514,7 @@ appendOmim <- function(db, subStrs, printSchema){
       omim_id CHAR(6) NOT NULL,                     -- OMIM ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -526,7 +527,7 @@ appendOmim <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fomim ON omim (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -568,7 +569,7 @@ appendRefseq <- function(db, subStrs, printSchema){
       accession VARCHAR(20) NOT NULL,               -- RefSeq accession number
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -581,7 +582,7 @@ appendRefseq <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Frefseq ON refseq (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -622,7 +623,7 @@ appendPubmed <- function(db, subStrs, printSchema){
       pubmed_id VARCHAR(10) NOT NULL,               -- PubMed ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -635,7 +636,7 @@ appendPubmed <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fpubmed ON pubmed (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -681,7 +682,7 @@ appendUnigene <- function(db, subStrs, printSchema){
       unigene_id VARCHAR(10) NOT NULL,              -- UniGene ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -694,7 +695,7 @@ appendUnigene <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Funigene ON unigene (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -734,7 +735,7 @@ message(cat("Appending ChrLengths"))
       chromosome VARCHAR(2) PRIMARY KEY,                   -- chromosome name
       length INTEGER NOT NULL
     );") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -773,7 +774,7 @@ appendGO <- function(db,subStrs, printSchema){
       evidence CHAR(3) NOT NULL,                    -- GO evidence code
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -786,11 +787,11 @@ appendGO <- function(db,subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_bp ON go_bp (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_bp_go_id ON go_bp (go_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
   
   
@@ -800,7 +801,7 @@ appendGO <- function(db,subStrs, printSchema){
       evidence CHAR(3) NOT NULL,                    -- GO evidence code
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -813,11 +814,11 @@ appendGO <- function(db,subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_mf ON go_mf (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_mf_go_id ON go_mf (go_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   
@@ -827,7 +828,7 @@ appendGO <- function(db,subStrs, printSchema){
       evidence CHAR(3) NOT NULL,                    -- GO evidence code
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -840,11 +841,11 @@ appendGO <- function(db,subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_cc ON go_cc (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_cc_go_id ON go_cc (go_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
 
@@ -905,7 +906,7 @@ appendGOALL <- function(db, subStrs, printSchema){
       evidence CHAR(3) NOT NULL,                    -- GO evidence code
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -918,11 +919,11 @@ appendGOALL <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_bp_all ON go_bp_all (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_bp_all_go_id ON go_bp_all (go_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   
@@ -932,7 +933,7 @@ appendGOALL <- function(db, subStrs, printSchema){
       evidence CHAR(3) NOT NULL,                    -- GO evidence code
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -945,11 +946,11 @@ appendGOALL <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_mf_all ON go_mf_all (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_mf_all_go_id ON go_mf_all (go_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   
@@ -959,7 +960,7 @@ appendGOALL <- function(db, subStrs, printSchema){
       evidence CHAR(3) NOT NULL,                    -- GO evidence code
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -972,11 +973,11 @@ appendGOALL <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_cc_all ON go_cc_all (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgo_cc_all_go_id ON go_cc_all (go_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1013,7 +1014,7 @@ appendKEGG <- function(db, subStrs, printSchema){
       path_id CHAR(5) NOT NULL,                     -- KEGG pathway short ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1026,7 +1027,7 @@ appendKEGG <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fkegg ON kegg (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1077,7 +1078,7 @@ appendEC <- function(db, subStrs, printSchema){
       ec_number VARCHAR(13) NOT NULL,               -- EC number 
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1090,7 +1091,7 @@ appendEC <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fec ON ec (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1143,7 +1144,7 @@ appendChromsomeLocs <- function(db, subStrs, printSchema){
       start_location INTEGER NOT NULL,
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1156,7 +1157,7 @@ appendChromsomeLocs <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fchromosome_locations ON chromosome_locations (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1188,7 +1189,7 @@ appendPfam <- function(db, subStrs, printSchema){
       pfam_id CHAR(7) NULL,                         -- Pfam ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1201,7 +1202,7 @@ appendPfam <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fpfam ON pfam (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1234,7 +1235,7 @@ appendProsite <- function(db, subStrs, printSchema){
       prosite_id CHAR(7) NULL,                      -- PROSITE ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1247,7 +1248,7 @@ appendProsite <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fprosite ON prosite (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1280,7 +1281,7 @@ appendAlias <- function(db, subStrs, printSchema){
       alias_symbol VARCHAR(80) NOT NULL,            -- gene symbol or alias
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1292,7 +1293,7 @@ appendAlias <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Falias ON alias (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1331,7 +1332,7 @@ appendEnsembl <- function(db, subStrs, printSchema){
       ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1343,7 +1344,7 @@ appendEnsembl <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fensembl ON ensembl (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1397,7 +1398,7 @@ appendEnsemblProt <- function(db, subStrs, printSchema){
       prot_id VARCHAR(20) NOT NULL,                  -- Ensembl Protein ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1409,7 +1410,7 @@ appendEnsemblProt <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fensemblp ON ensembl_prot (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   
@@ -1467,7 +1468,7 @@ appendMGI <- function(db, subStrs, printSchema){
       mgi_id VARCHAR(20) NOT NULL,              -- ensembl id
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1479,7 +1480,7 @@ appendMGI <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fmgi ON mgi (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1532,7 +1533,7 @@ appendFlyBase <- function(db, subStrs, printSchema){
       flybase_id VARCHAR(80) NOT NULL,              -- FlyBase ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1544,7 +1545,7 @@ appendFlyBase <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fflybase ON flybase (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1583,7 +1584,7 @@ appendFlyBaseCG <- function(db, subStrs, printSchema){
       flybase_cg_id VARCHAR(10) NOT NULL,            -- FlyBase CG ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1595,7 +1596,7 @@ appendFlyBaseCG <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fflybasecg ON flybase_cg (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   
@@ -1649,7 +1650,7 @@ appendFlyBaseProt <- function(db, subStrs, printSchema){
       prot_id VARCHAR(20) NOT NULL,                  -- Flybase Protein ID
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]],"(_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1661,7 +1662,7 @@ appendFlyBaseProt <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fflybasep ON flybase_prot (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1717,7 +1718,7 @@ appendAraCyc <- function(db, subStrs, printSchema){
       pathway_name VARCHAR(255) NOT NULL,           -- AraCyc pathway name
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1729,7 +1730,7 @@ appendAraCyc <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Faracyc ON aracyc (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1760,7 +1761,7 @@ appendAraCycEnzyme <- function(db, subStrs, printSchema){
       ec_name VARCHAR(255) NOT NULL,                -- EC name
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1772,7 +1773,7 @@ appendAraCycEnzyme <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fenzyme ON enzyme (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   #TODO: investigate why there is no map_metadata for the enzyme table
@@ -1797,7 +1798,7 @@ appendArabidopsisGenes <- function(db, subStrs, printSchema){
       _id INTEGER PRIMARY KEY,
       gene_id CHAR(9) NOT NULL UNIQUE               -- AGI locus ID
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1809,7 +1810,7 @@ appendArabidopsisGenes <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgenes ON genes(gene_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sqliteQuickSQL(db, "ANALYZE;")
@@ -1847,7 +1848,7 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
       _id INTEGER NULL,                             -- REFERENCES ", subStrs[["cntrTab"]],"
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1865,11 +1866,11 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fprobes ON probes (_id);") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fprobes_probe_id ON probes (probe_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   if(subStrs[["prefix"]] == "ag" || subStrs[["prefix"]] == "ath1121501"){
@@ -1941,7 +1942,7 @@ appendArabidopsisGeneInfo <- function(db, subStrs, printSchema){
       chromosome CHAR(1) NULL,                      -- Arabidopsis chromosome
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id))
     ;") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -1953,7 +1954,7 @@ appendArabidopsisGeneInfo <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgene_info ON gene_info (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2015,7 +2016,7 @@ appendYeastSGD <- function(db, subStrs, printSchema){
       gene_name VARCHAR(14) NULL UNIQUE,            -- Yeast gene name
       sgd_id CHAR(10) NOT NULL UNIQUE               -- SGD ID
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   if( subStrs[["coreTab"]] == "probes" ){
@@ -2035,7 +2036,7 @@ appendYeastSGD <- function(db, subStrs, printSchema){
     sqliteQuickSQL(db, sql) 
   }
   sql<- paste("    CREATE INDEX Fsgd ON sgd(systematic_name);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sqliteQuickSQL(db, "ANALYZE;")
@@ -2054,7 +2055,7 @@ appendYeastProbes <- function(db, subStrs, printSchema){
       _id INTEGER NULL,                              -- REFERENCES sgd
       FOREIGN KEY (_id) REFERENCES sgd (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2067,11 +2068,11 @@ appendYeastProbes <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fprobes ON probes (_id);") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fprobes_probe_id ON probes (probe_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2138,7 +2139,7 @@ appendYeastChromosomeFeatures <- function(db, subStrs, printSchema){
         feature_description TEXT NULL,                -- Yeast feature description
         FOREIGN KEY (_id) REFERENCES sgd (_id)
       );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2150,7 +2151,7 @@ appendYeastChromosomeFeatures <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fchromosome_features ON chromosome_features (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2213,7 +2214,7 @@ appendYeastAlias <- function(db, subStrs, printSchema){
       alias VARCHAR(13) NOT NULL,                   -- Yeast gene alias
       FOREIGN KEY (_id) REFERENCES sgd (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2225,7 +2226,7 @@ appendYeastAlias <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fgene2alias ON gene2alias(_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2264,7 +2265,7 @@ appendYeastPfam <- function(db, subStrs, printSchema){
       pfam_id CHAR(7) NOT NULL,                     -- Pfam ID
       FOREIGN KEY (_id) REFERENCES sgd (_id))
     ;") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2275,7 +2276,7 @@ appendYeastPfam <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fpfam ON pfam (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2307,7 +2308,7 @@ appendYeastInterpro <- function(db, subStrs, printSchema){
       interpro_id CHAR(9) NOT NULL,                 -- InterPro ID
       FOREIGN KEY (_id) REFERENCES sgd (_id))
     ;") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2318,7 +2319,7 @@ appendYeastInterpro <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Finterpro ON interpro (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2349,7 +2350,7 @@ appendYeastSmart <- function(db, subStrs, printSchema){
       smart_id CHAR(7) NOT NULL,                    -- SMART ID
       FOREIGN KEY (_id) REFERENCES sgd (_id))\
     ;") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2360,7 +2361,7 @@ appendYeastSmart <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX Fsmart ON smart (_id);") 
-  if(printSchema==TRUE){write(paste(paste(sql,"\n"),"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(paste(sql,"\n"),"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2389,7 +2390,7 @@ appendYeastRejectORF <- function(db, subStrs, printSchema){
   sql<- paste("    CREATE TABLE reject_orf (
       systematic_name VARCHAR(14) PRIMARY KEY)     -- Yeast gene systematic name
     ;") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2420,7 +2421,7 @@ appendYeastGene2Systematic <- function(db, subStrs, printSchema){
       gene_name VARCHAR(14) NULL,                     -- Yeast gene name
       systematic_name VARCHAR(14) NULL)               -- Yeast gene systematic name
     ;") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2460,7 +2461,7 @@ appendPostMeta <- function(db, subStrs){
   
   sql<- paste("
     INSERT INTO metadata SELECT * FROM anno.metadata
-     WHERE name!='DBSCHEMA' AND name!='ORGANISM' AND name!='SPECIES';
+     WHERE name!='DBSCHEMA' AND name!='ORGANISM' AND name!='SPECIES' AND name!='DBSCHEMAVERSION';
    ",sep="") 
   sqliteQuickSQL(db, sql)
   
@@ -2541,7 +2542,7 @@ appendGeneric <- function(db, subStrs, printSchema, table, matchID, field, fileN
       ",field," VARCHAR NOT NULL,               -- ",field," accession number
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2554,7 +2555,7 @@ appendGeneric <- function(db, subStrs, printSchema, table, matchID, field, fileN
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX F",table," ON ",table," (_id);", sep ="") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   #Put a forward and reverse map into map_counts
@@ -2610,7 +2611,7 @@ appendProbesGeneric <- function(db, subStrs, printSchema, table, matchID, field,
       ",field," VARCHAR NOT NULL,               -- ",field," accession number
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2623,7 +2624,7 @@ appendProbesGeneric <- function(db, subStrs, printSchema, table, matchID, field,
   sqliteQuickSQL(db, sql)
 
   sql<- paste("    CREATE INDEX F",table," ON ",table," (_id);", sep ="") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   #Put a forward and reverse map into map_counts
@@ -2687,7 +2688,7 @@ createCntrTableGeneric <- function(db, subStrs, printSchema, table, field, fileN
       _id INTEGER PRIMARY KEY,                         
      ",field," VARCHAR NOT NULL               -- ",field," accession number
     );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
@@ -2699,7 +2700,7 @@ createCntrTableGeneric <- function(db, subStrs, printSchema, table, field, fileN
   sqliteQuickSQL(db, sql)
   
   sql<- paste("    CREATE INDEX F",table," ON ",table," (",field,");", sep = "") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
   
   #since we are making a central DB here we should probably check whether a map_counts table exists or not etc.
@@ -2707,7 +2708,7 @@ createCntrTableGeneric <- function(db, subStrs, printSchema, table, field, fileN
       map_name VARCHAR(80) PRIMARY KEY,
       count INTEGER NOT NULL
     );")
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
   
 }

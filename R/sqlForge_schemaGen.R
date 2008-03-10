@@ -33,7 +33,7 @@ popHUMANCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="human","cntrTab"="genes", "prefix"=prefix)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -74,13 +74,12 @@ popHUMANDB <- function(prefix,
                        outputDir=".",
                        printSchema=FALSE){
 
-    makeUniversalMapping(
-                pkgName=prefix,
-                chipSrc=chipSrc
-                )
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="human","cntrTab"="genes", "prefix"=prefix)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -150,7 +149,7 @@ popMOUSECHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="mouse","cntrTab"="genes", "prefix"=prefix)
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="mouse","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -191,13 +190,12 @@ popMOUSEDB <- function(prefix,
                        outputDir=".",
                        printSchema=FALSE){
 
-    makeUniversalMapping(
-                pkgName=prefix,
-                chipSrc=chipSrc
-                )
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="mouse","cntrTab"="genes", "prefix"=prefix)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="mouse","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -266,7 +264,7 @@ popRATCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="rat","cntrTab"="genes", "prefix"=prefix)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="rat","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
@@ -305,13 +303,12 @@ popRATDB <- function(prefix,
                      outputDir=".",
                      printSchema=FALSE){
 
-    makeUniversalMapping(
-                pkgName=prefix,
-                chipSrc=chipSrc
-                )
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="rat","cntrTab"="genes", "prefix"=prefix)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="rat","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -366,7 +363,7 @@ popARABIDOPSISCHIPDB <- function(affy,
                                 outputDir = outputDir)
     
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -429,7 +426,7 @@ popFLYCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="fly","cntrTab"="genes", "prefix"=prefix)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="fly","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
@@ -470,13 +467,12 @@ popFLYDB <- function(prefix,
                      outputDir=".",
                      printSchema=FALSE){
 
-    makeUniversalMapping(
-                pkgName=prefix,
-                chipSrc=chipSrc
-                )
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="fly","cntrTab"="genes", "prefix"=prefix)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="fly","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
@@ -526,10 +522,10 @@ popYEASTCHIPDB <- function(affy,
                            printSchema=FALSE){
 
     #the following function makes a decision based on the value in the affy parameter:
-    getMapForYeastChipPkg(affy, fileName=fileName, pkgName=prefix)    
+    getMapForYeastChipPkg(affy, fileName=fileName, pkgName=prefix, outputDir=outputDir)    
     
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="yeast","cntrTab"="sgd", "prefix"=prefix)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="yeast","cntrTab"="sgd", "prefix"=prefix, "outDir"=outputDir)    
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -567,7 +563,7 @@ popYEASTDB <- function(prefix,
                        printSchema=FALSE){
     
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="sgd","coreID"="systematic_name","suffix"="ORF","org"="yeast","cntrTab"="sgd", "prefix"=prefix)    
+    subStrs <- c("coreTab"="sgd","coreID"="systematic_name","suffix"="ORF","org"="yeast","cntrTab"="sgd", "prefix"=prefix, "outDir"=outputDir)    
     
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -608,7 +604,7 @@ popYEASTDB <- function(prefix,
 
 makeFooPkg <- function(){
 
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="human","cntrTab"="genes", "prefix"="pkgFoo")    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="human","cntrTab"="genes", "prefix"="pkgFoo", "outDir"=".")    
     drv <- dbDriver("SQLite")
 
     db <- dbConnect(drv,dbname=paste(subStrs[["prefix"]],".sqlite", sep="")) 
