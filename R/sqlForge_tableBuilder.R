@@ -174,9 +174,9 @@ appendGenes <- function(db, subStrs, printSchema){
      ") 
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("    CREATE INDEX Fgenes ON genes(gene_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("    CREATE INDEX Fgenes ON genes(gene_id);") 
+##   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+##   sqliteQuickSQL(db, sql)
 
   sqliteQuickSQL(db, "ANALYZE;")
 
@@ -219,9 +219,9 @@ appendProbes <- function(db, subStrs, printSchema){
   if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("    CREATE INDEX Fprobes_probe_id ON probes (probe_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("    CREATE INDEX Fprobes_probe_id ON probes (probe_id);") 
+##   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+##   sqliteQuickSQL(db, sql)
 
   sql<- paste("
     INSERT INTO map_metadata
@@ -335,9 +335,9 @@ appendGeneInfo <- function(db, subStrs, printSchema){
      ") 
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("    CREATE INDEX Fgene_info ON gene_info(_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("    CREATE INDEX Fgene_info ON gene_info(_id);") 
+##   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+##   sqliteQuickSQL(db, sql)
 
   sql<- paste("
     INSERT INTO map_metadata
@@ -1809,9 +1809,9 @@ appendArabidopsisGenes <- function(db, subStrs, printSchema){
      ") 
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("    CREATE INDEX Fgenes ON genes(gene_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("    CREATE INDEX Fgenes ON genes(gene_id);") 
+##   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+##   sqliteQuickSQL(db, sql)
 
   sqliteQuickSQL(db, "ANALYZE;")
 
@@ -2035,9 +2035,9 @@ appendYeastSGD <- function(db, subStrs, printSchema){
        ") 
     sqliteQuickSQL(db, sql) 
   }
-  sql<- paste("    CREATE INDEX Fsgd ON sgd(systematic_name);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("    CREATE INDEX Fsgd ON sgd(systematic_name);") 
+##   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+##   sqliteQuickSQL(db, sql)
 
   sqliteQuickSQL(db, "ANALYZE;")
 
@@ -2071,9 +2071,9 @@ appendYeastProbes <- function(db, subStrs, printSchema){
   if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("    CREATE INDEX Fprobes_probe_id ON probes (probe_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("    CREATE INDEX Fprobes_probe_id ON probes (probe_id);") 
+##   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+##   sqliteQuickSQL(db, sql)
 
   sql<- paste("
     INSERT INTO map_metadata
