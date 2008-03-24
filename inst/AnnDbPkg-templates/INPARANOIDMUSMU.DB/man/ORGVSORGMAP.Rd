@@ -53,6 +53,15 @@
 
     Reversal can be made of ANY map by using the function revmap (see
     examples below).
+
+    Names for these maps are done in the "INPARANOID style" which means
+    that they are normally the 1st three letters of the genus followed
+    by the 1st two letters of the species.  For example: "Mus musculus"
+    becomes "MUSMU", "Homo sapiens" becomes "HOMSA", "Monodelphis
+    domestica" becomes "MONDO" etc. This means that for most of these
+    organisms it will be possible to easily guess the abbreviations
+    used.  An exception may occur in the future if a new model organism
+    has a very similar genus and species name to an existing one.
 }
 \references{
 \url{http://inparanoid.sbc.su.se/download/current/sqltables}

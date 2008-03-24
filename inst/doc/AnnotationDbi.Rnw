@@ -1,0 +1,518 @@
+%\VignetteIndexEntry{AnnotationDbi}
+%\VignetteDepends{hgu95av2.db}
+%\VignetteKeywords{annotation, database}
+%\VignettePackage{AnnotationDbi}
+\documentclass[11pt]{article}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+
+
+\title{AnnotationDbi}
+\author{Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li}
+
+\SweaveOpts{keep.source=TRUE}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\subsubsection{General remarks}
+
+AnnotationDbi is used primarily to create maps that allow easy access
+from R to underlying annotation databases.  AnnotationDbi introduces a
+new future for the Bioconductor annotation data packages by changing
+the paradigm that is used for exchanging annotations.
+
+The largest difference between the older style of annotation packages
+and the newer ones is the decision to place a real database inside of
+each package.  This is an improved design, because ultimately, the
+amount of annotation as well as the complexity of this information is
+likely to increase with time.  And perhaps more importantly, this
+large amount of information needs to be organized in a flexible way in
+order to maximise its usefulness in a wide array of different
+circumstances.  Since databases were created to solve problems just
+like this, the benefits of using real databases as the ultimate data
+structures for annotation packages is self evident.
+
+For this remake of these classic annotation packages, the decision has
+been made to keep these databases gene centric rather than transcript
+centric or protein centric.  
+
+
+\subsubsection{Database Schemas}
+
+For developers, a lot of the benefits of having the information loaded
+into a real database will require some knowledge about the database
+schema.  For this reason the schemas that were used in the creation of
+each database type are included in AnnotationDbi.  The currently
+supported schemas are listed in the DBschemas directory of
+AnnotationDbi.  But it is also possible to simply print out the schema
+that a give package is currently using by using its "\_dbschema"
+method.
+
+Please note that there is one schema for each kind of package.  These
+schemas specify which tables and indices will be present for each
+package of that type.  The schema that a particular package is using
+is also listed when you type the name of the package as a function to
+obtain quality control information.
+
+The code to make most kinds of the new database packages is also
+included in AnnotationDbi. Please see the vignette on SQLForge
+for more details on how to make additional database packages.
+
+
+\subsubsection{Internal Design}
+
+The current design of these packages is as deliberatly simple as it is
+gene centric.  Each table in the database contains a unique kind of
+information and also an internal identifier called \_id.  The internal
+\_id has no meaning outside of the context of a single database.  But
+\_id does connect all the data within a single database.
+
+As an example if we wanted to connect the values in the genes table
+with the values in the kegg table, we could simply join the two tables
+using the internal \_id column.  It is very important to note however
+that \_id does not have any absolute significance.  That is, it has no
+meaning outside of the context of the database where it is used.  It
+is tempting to think that an \_id could have such significance because
+within a single database, it looks and behaves similarly to an entrez
+gene ID. But \_id is definitely NOT an entrez gene ID. The entrez gene
+IDs are in another table entirely, and can be connected to using the
+internal \_id just like all the other meaningful information inside
+these databases.
+
+
+
+
+
+\section{Examples}
+
+\subsubsection{Basic information}
+
+The \Rpackage{AnnotationDbi} package provides an interface to
+SQLite-based annotation packages.  Each SQLite-based annotation
+package (identified by a ``.db'' suffix in the package name) contains
+a number of \Rclass{AnnDbBimap} objects in place of the
+\Rclass{environment} objects found in the old-style environment-based
+annotation packages.  The API provided by \Rpackage{AnnotationDbi}
+allows you to treat the \Rclass{AnnDbBimap} objects like
+\Rclass{environment} instances.  For example, the functions \verb+[[+,
+\Rfunction{get}, \Rfunction{mget}, and \Rfunction{ls} all behave the
+same as with the old-style packages.  In addition, new methods like
+\Rfunction{[}, \Rfunction{toTable}, \Rfunction{subset} and others
+provide some additional flexibility in accessing the annotation data.
+
+<<setup0, results=hide, echo=FALSE>>=
+options(continue=" ", prompt="R> ", width=72L)
+@ 
+
+<<setup, results=hide>>=
+library("hgu95av2.db")
+@ 
+
+The same basic set of objects is provided with the db packages:
+
+<<objects>>=
+ls("package:hgu95av2.db")
+@ 
+
+As before, it is possible to call the package name as a function to
+get some QC information about it.
+
+<<QAlisting>>=
+qcdata = capture.output(hgu95av2())
+head(qcdata, 20)
+@
+
+Alternatively, you can get similar information on how many items are in each
+of the provided maps by looking at the MAPCOUNTs:
+
+<<mapcounts, eval=FALSE>>=
+hgu95av2MAPCOUNTS
+@
+
+To demonstrate the \Rclass{environment} API, we'll start with a random
+sample of probe set IDs.
+
+<<envApiDemo1>>=
+all_probes <- ls(hgu95av2ENTREZID)
+length(all_probes)
+
+set.seed(0xa1beef)
+probes <- sample(all_probes, 5)
+probes
+@ 
+
+The usual ways of accessing annotation data are also available.
+
+<<envApiDemo2>>=
+hgu95av2ENTREZID[[probes[1]]]
+hgu95av2ENTREZID$"31882_at"
+
+syms <- unlist(mget(probes, hgu95av2SYMBOL))
+syms
+
+@ 
+
+\subsubsection{Manipulating Bimap Objects}
+
+Many filtering operations on the annotation \Rclass{environment}
+objects require conversion of the \Rclass{environment} into a
+\Rclass{list}.  There is an \Rfunction{as.list} method for
+\Rclass{AnnDbBimap} objects.  In general, converting to lists will not be
+the most efficient way to filter the annotation data when using a
+SQLite-based package.
+
+<<as.list, eval=FALSE>>=
+zz <- as.list(hgu95av2SYMBOL)
+@ 
+
+In an environment-based package, each mapping is its own object.  To
+save disk and memory resources, not all reverse mappings are included
+in the environment-based packages.  Here is the common idiom for
+creating a list that serves as the reverse map of a given environment.
+
+<<oldRevMap>>=
+library("hgu95av2", warn.conflicts=FALSE)
+## we load the environment so as not
+## to include the load time in the timing
+class(hgu95av2SYMBOL)
+system.time({
+    p2sym <- as.list(hgu95av2SYMBOL)
+    lens <- sapply(p2sym, length)
+    nms <- rep(names(p2sym), lens)
+    sym2p <- split(unlist(p2sym), nms)
+    })
+
+## in fact, there is a convenience function
+## for this operation in Biobase
+system.time({
+    p2sym <- as.list(hgu95av2SYMBOL)
+    sym2p <- reverseSplit(p2sym)
+    })
+detach("package:hgu95av2")
+@ 
+
+The SQLite-based package provide the same reverse maps as objects in
+the package name space for backwards compatibility, but the reverse
+mappings of any map is available using \Rfunction{revmap}.  Since the
+data are stored as tables, no extra disk space is needed to provide
+reverse mappings.
+
+<<show.revmap>>=
+system.time(sym2p <- revmap(hgu95av2SYMBOL))
+
+unlist(mget(syms, revmap(hgu95av2SYMBOL)))
+@ 
+
+So now that you know about the \Rfunction{revmap} function you might
+try something like this:
+
+<<thisworks>>=
+as.list(revmap(hgu95av2PATH)["00300"])
+@ 
+
+But in the case of the PATH map, we don't need to use revmap(x)
+because hgu95av2.db already provides the PATH2PROBE map:
+
+<<revmap2>>=
+x <- hgu95av2PATH
+## except for the name, this is exactly revmap(x)
+revx <- hgu95av2PATH2PROBE
+revx2 <- revmap(x, objName="PATH2PROBE")
+revx2
+identical(revx, revx2)
+
+as.list(revx["00300"])
+@ 
+
+
+\subsubsection{Displaying the Contents and Structure or Bimap Objects}
+
+Sometimes you may just want to know what elements are in an individual
+map. A \Rclass{Bimap} interface is available to access the data in
+table (\Rclass{data.frame}) format using \Rfunction{[} and
+\Rfunction{toTable}.
+
+<<toTable>>=
+toTable(hgu95av2GO[probes[1:3]])
+@ 
+
+The \Rfunction{toTable} function will display all of the information
+in a \Rclass{Bimap}.  This includes both the left and right values
+along with any other attributes that might be attached to those
+values.  The left and right keys of the \Rclass{Bimap} can be
+extracted using \Rfunction{Lkeys} and \Rfunction{Rkeys}.  If is is
+necessary to only display information that is directly associated with
+the left to right links in a \Rclass{Bimap}, then the
+\Rfunction{links} function can be used.  The \Rfunction{links} returns
+a data frame with one row for each link in the bimap that it is
+applied to.  It only reports the left and right keys along with any
+attributes that are attached to the edge between these two values.
+
+
+Note that the order of the cols returned by \Rfunction{toTable} does
+not depend on the direction of the map ("undirected method"):
+
+<<undirectedMethod>>=
+toTable(x)[1:6, ]
+toTable(revx)[1:6, ]
+@ 
+
+Note however that the Lkeys are always on the left (1st col), the Rkeys
+always in the 2nd col
+
+There can be more than 2 columns in the returned data frame:
+
+  3 cols:
+<<threecols>>=
+toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
+as.list(hgu95av2PFAM["1000_at"])
+@ 
+
+But the Rkeys are ALWAYS in the 2nd col.
+
+For length() and keys(), the result does depend on the direction
+("directed methods"):
+
+<<directedMethods>>=
+length(x)
+length(revx)
+allProbeSetIds <- keys(x)
+allKEGGIds <- keys(revx)
+@ 
+
+There are more "undirected" methods listed below:
+<<moreUndirectedMethods>>=
+junk <- Lkeys(x)        # same for all maps in hgu95av2.db (except pseudo-map
+                        # MAPCOUNTS)
+Llength(x)              # nb of Lkeys
+junk <- Rkeys(x)        # KEGG ids for PATH/PATH2PROBE maps, GO ids for
+                        # GO/GO2PROBE/GO2ALLPROBES maps, etc...
+Rlength(x)              # nb of Rkeys
+@
+
+Notice how they give the same result for x and revmap(x)
+
+
+
+\subsubsection{Advantages of using revmap}
+
+
+Using revmap can be very efficient in some use cases:
+<<revmapUseCases>>=
+x <- hgu95av2CHR
+Rkeys(x)
+chroms <- Rkeys(x)[23:24]
+chroms
+Rkeys(x) <- chroms
+toTable(x)[1:10, ]
+@ 
+
+To get this in the classic named-list format:
+<<easy>>=
+z <- as.list(revmap(x)[chroms])
+names(z)
+z[["Y"]][1:5]
+@ 
+
+Compare to what you need to do this with the current envir-based package:
+
+<<hard, eval=FALSE>>=
+  library(hgu95av2)
+  u <- unlist(as.list(hgu95av2CHR))
+  u <- u[u %in% chroms]
+  split(names(u), u)
+@ 
+
+A last example with cytogenetic locations:
+<<cytogenicLoc>>=
+x <- hgu95av2MAP
+toTable(hgu95av2MAP)[1:6, ]
+as.list(revmap(x)["8p22"])
+@ 
+
+Are the probes in 'pbids' mapped to cytogenetic location "6p21.3"?
+
+<<cytogenetic2>>=
+pbids <- c("38912_at", "41654_at", "907_at", "2053_at", "2054_g_at", 
+           "40781_at")
+x <- subset(x, Lkeys=pbids, Rkeys="18q11.2")
+toTable(x)
+@ 
+
+To coerce this map to a named vector:
+
+<<coerce>>=
+  pb2cyto <- as.character(x)
+  pb2cyto[pbids]
+@ 
+
+The coercion of the reverse map works too but issues a warning because
+of the duplicated names:
+
+<<hmm>>=
+  cyto2pb <- as.character(revmap(x))
+@ 
+
+
+\subsubsection{Using SQL to speed things up}
+
+Another area where the SQLite-based packages provide some advantages
+is when one wishes to filter the available annotation data in a
+complex fashion.  For example, consider the task of obtaining all gene
+symbols on which are probed on a chip that have at least one GO BP ID
+annotation with evidence code IMP, IGI, IPI, or IDA.  Here is one way
+to extract this using the environment-based packages:
+
+<<complexEnv>>=
+## Obtain SYMBOLS with at least one GO BP
+## annotation with evidence IMP, IGI, IPI, or IDA.
+probes <- sample(all_probes, 500)
+
+library("hgu95av2", warn.conflicts=FALSE)
+system.time({
+bpids <- eapply(hgu95av2GO, function(x) {
+    if (length(x) == 1 && is.na(x))
+      NA
+    else {
+        sapply(x, function(z) {
+            if (z$Ontology == "BP")
+              z$GOID
+            else
+              NA
+            })
+    }
+})
+bpids <- unlist(bpids)
+bpids <- unique(bpids[!is.na(bpids)])
+g2p <- mget(bpids, hgu95av2GO2PROBE)
+wantedp <- lapply(g2p, function(x) {
+    x[names(x) %in% c("IMP", "IGI", "IPI", "IDA")]
+})
+wantedp <- wantedp[sapply(wantedp, length) > 0]
+wantedp <- unique(unlist(wantedp))
+ans <- unlist(mget(wantedp, hgu95av2SYMBOL))
+})
+detach("package:hgu95av2")
+length(ans)
+ans[1:10]
+@ 
+
+All of the above code could have been reduced to a single SQL query
+with the SQLite-based packages. But to put together this query, you
+would need to look 1st at the schema to know what tables are present:
+
+<<schema, results=hide>>=
+hgu95av2_dbschema() 
+@
+
+This function will give you an output of all the create table
+statements that were used to generate the hgu5av2 database.  Then you
+could assemble the sql query and use the helper function
+\Rfunction{hgu95av2\_dbconn} to get a connection object for the
+database as follows:
+
+<<complexDb>>=
+system.time({
+SQL <- "SELECT symbol FROM go_bp INNER JOIN gene_info USING(_id)
+        WHERE go_bp.evidence in ('IPI', 'IDA', 'IMP', 'IGI')"
+zz <- dbGetQuery(hgu95av2_dbconn(), SQL)
+})
+@
+
+
+
+
+\subsubsection{Combining data from separate annotation packages}
+
+Sometimes a user may wish to combine data that is found in two
+different annotation packages.  One nice thing about the new packages
+is a side benefit of the fact that they are sqlite databases.  This
+means that they can be attached into the same session, allowing easy
+joining of tables across otherwise separate databases. Being able to
+select items from multiple tables requires that their be a common
+value that can be used to identify those entries which are
+identical. It is also important to note that the internal IDs used in
+the \Rpackage{AnnotationDbi} packages cannot be used to map between
+packages since they have no meaning outside of the databases where
+they are defined.
+
+In this example, we will join tables from \Rpackage{hgu95av2.db} and
+\Rpackage{GO.db}.  To do this, we will attach the GO database to the
+HGU95-Av2 database to allow access to tables from both databases.  We
+can then use GO identifiers as the link across the two data packages
+to create the join.  In this section we are using the term
+\textit{attach} to mean attaching using the SQL function
+\texttt{ATTACH}, and not the R function, or concept, of
+attaching. Before we begin, it is important to understand a little
+about where the GO database is located and its name.  We use this
+information with the \Rfunction{system.file} function to construct a
+path to that database.  In contrast, the \Rfunction{hgu95av2.db}
+package is already attached and we can use our predefined
+AnnotationDbi connection to it, \Rfunction{hgu95av2\_dbconn()} to pass
+the SQL query that will attach the other database.
+
+<<GO_hgu95av2_join, keep.source=TRUE>>=
+
+goDBLoc = system.file("extdata", "GO.sqlite", package="GO.db")
+attachSQL = paste("ATTACH '", goDBLoc, "' as goDB;", sep = "")
+dbGetQuery(hgu95av2_dbconn(), attachSQL)
+@
+
+Next, we are going to select some data, based on the GO ID, from two
+tables, one table from the HGU95-Av2 database and one from the GO
+database.  Fro brevity of output we will limit the query to 10 values.
+The \texttt{WHERE} clause on the last line of the SQL query sqecifies
+that the GO identifiers are the same.  The first five lines of the
+query set up what variables to extract and what they will be named in
+the output.
+
+
+<<crossDBQuery, keep.source = TRUE>>=
+selectSQL = paste("SELECT DISTINCT a.go_id AS 'hgu95av2.go_id',",
+            "a._id AS 'hgu95av2._id',",
+            "g.go_id AS 'GO.go_id', g._id AS 'GO._id',",
+            "g.ontology",
+            "FROM go_bp_all AS a, goDB.go_term AS g",
+            "WHERE a.go_id = g.go_id LIMIT 10;")
+dataOut = dbGetQuery(hgu95av2_dbconn(), selectSQL)
+dataOut
+#just to clean up we can now detach the GO database...
+detachSQL = paste("DETACH goDB")
+dbGetQuery(hgu95av2_dbconn(), detachSQL)
+@
+
+This query combines the \verb+go_bp_all+ table from the HGU95-Av2
+database with the \verb+go_term+ table from the GO database.  They are
+joined based on their \verb+go_id+ collumns.  For illustration
+purposes, the internal ID \verb+_id+ and the \verb+go_id+ from both
+tables are included in the output. This demonstrates that the
+\verb+go_ids+ can be used to join these tables while the internal IDs
+cannot.  The internal IDs, \verb+_id+, are suitable for joins within a
+single database, but cannot be used across databases.
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

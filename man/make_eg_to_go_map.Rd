@@ -32,5 +32,3 @@ go2eg = make_go_to_eg_map("hgu95av2.db")
 sample(go2eg, 2)
 
 }
-
-\keyword{  }
