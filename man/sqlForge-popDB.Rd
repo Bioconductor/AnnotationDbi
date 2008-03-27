@@ -1,6 +1,7 @@
 \name{popHUMANDB}
 
 \alias{popHUMANDB}
+\alias{popMALARIADB}
 \alias{popMOUSEDB}
 \alias{popRATDB}
 \alias{popFLYDB}

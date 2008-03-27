@@ -27,6 +27,7 @@
 \alias{createAnnObjs.YEASTCHIP_DB}
 \alias{createAnnObjs.ARABIDOPSISCHIP_DB}
 \alias{createAnnObjs.HUMAN_DB}
+\alias{createAnnObjs.MALARIA_DB}
 \alias{createAnnObjs.MOUSE_DB}
 \alias{createAnnObjs.RAT_DB}
 \alias{createAnnObjs.FLY_DB}

@@ -115,6 +115,7 @@ export(
     createAnnObjs.YEASTCHIP_DB,
     createAnnObjs.ARABIDOPSISCHIP_DB,
     createAnnObjs.HUMAN_DB,
+    createAnnObjs.MALARIA_DB,
     createAnnObjs.MOUSE_DB,
     createAnnObjs.RAT_DB,
     createAnnObjs.FLY_DB,
@@ -155,6 +156,7 @@ export(
     popFLYDB,
     popYEASTCHIPDB,
     popYEASTDB,
+    popMALARIADB,
 
     ## wrapper functions for making chip packages
     makeHUMANCHIP_DB,

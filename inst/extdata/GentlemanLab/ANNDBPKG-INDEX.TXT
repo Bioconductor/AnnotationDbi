@@ -872,6 +872,15 @@ AnnObjTarget: Human
 species: Human
 biocViews: AnnotationData, Homo_sapiens, humanLLMappings
 
+Package: org.Pf.plasmo.db
+Version: 2.1.4
+PkgTemplate: MALARIA.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Pf.plasmo.sqlite
+AnnObjPrefix: org.Pf.plasmo
+AnnObjTarget: Malaria
+species: Malaria
+biocViews: AnnotationData, Plasmodium_falciparum
+
 Package: org.Mm.eg.db
 Version: 2.1.4
 PkgTemplate: MOUSE.DB

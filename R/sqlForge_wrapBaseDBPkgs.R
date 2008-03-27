@@ -87,8 +87,9 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
   template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
 
   chipSrcFile = paste(dbPath,"chipsrc_yeast.sqlite",sep="")
-  chipMapSrcFile = paste(dbPath,"chipmapsrc_yeast.sqlite",sep="")
-
+#  chipMapSrcFile = paste(dbPath,"chipmapsrc_yeast.sqlite",sep="")
+  chipMapSrcFile = NULL
+  
   makeBasePackage(chipSrcFile, pkgName=pkgName, destDir=destDir, template=template, vals=vals)
   
 
@@ -107,7 +108,26 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
   chipSrcFile = paste(dbPath,"chipsrc_arabidopsis.sqlite",sep="")
   chipMapSrcFile = paste(dbPath,"chipmapsrc_arabidopsis.sqlite",sep="")
 
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)
+
+  
+  #malaria.db0 
+  vals <- list(ANNOBJPREFIX="malaria",
+               ORGANISM="Plasmodium falciparum",
+               SPECIES="malaria",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Plasmodium_falciparum",
+               ANNDBIVERSION="1.1.28")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_malaria.sqlite",sep="")
+  chipMapSrcFile = NULL
+
   makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+  
 }
 
 #makeBase Package is just a utility function to minimize code bloat.

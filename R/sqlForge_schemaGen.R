@@ -599,6 +599,43 @@ popYEASTDB <- function(prefix,
 }
 
 
+#This is the formula for MALARIA_DB  
+popMALARIADB <- function(prefix,
+                        chipSrc = system.file("extdata", "chipsrc_malaria.sqlite", package="malaria.db0"),
+                        metaDataSrc,
+                        outputDir=".",
+                        printSchema=FALSE){
+
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="ORF","org"="malaria","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendAlias(db, subStrs=subStrs, printSchema=printSchema)    
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+
+
 
 #Test formula to just see if my generic functions work:
 
