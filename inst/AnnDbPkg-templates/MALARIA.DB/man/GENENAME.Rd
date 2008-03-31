@@ -1,13 +1,13 @@
 \name{@ANNOBJPREFIX@GENENAME}
 \alias{@ANNOBJPREFIX@GENENAME}
-\title{Map between Entrez Gene IDs and Genes}
+\title{Map between ORF IDs and Genes}
 \description{
-  @ANNOBJPREFIX@GENENAME is an R object that maps entrez gene
+  @ANNOBJPREFIX@GENENAME is an R object that maps ORF
   identifiers to the corresponding gene name.
 }
 \details{
-  Each entrez gene identifier maps to a named vector containing the gene
-  name. The vector name corresponds to the entrez gene identifier. If the 
+  Each ORF identifier maps to a named vector containing the gene
+  name. The vector name corresponds to the ORF identifier. If the 
   gene name is unknown, the vector will contain an \code{NA}.
   
   Gene names currently include both the official (validated by a
@@ -21,7 +21,7 @@
 
 \examples{
         x <- @ANNOBJPREFIX@GENENAME
-        # Get the gene names that are mapped to an entrez gene identifier
+        # Get the gene names that are mapped to an ORF identifier
         mapped_genes <- mappedkeys(x)
         # Convert to a list
         xx <- as.list(x[mapped_genes])

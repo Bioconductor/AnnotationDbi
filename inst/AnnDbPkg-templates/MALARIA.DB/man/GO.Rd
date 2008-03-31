@@ -1,14 +1,14 @@
 \name{@ANNOBJPREFIX@GO}
 \alias{@ANNOBJPREFIX@GO}
 \alias{@ANNOBJPREFIX@GO2ORF}
-\title{Map between Entrez Gene IDs and Gene Ontology (GO)}
+\title{Map between ORF IDs and Gene Ontology (GO)}
 \description{
   @ANNOBJPREFIX@GO is an R object that provides mappings between
-  entrez gene identifiers and the GO identifiers that they are 
+  ORF identifiers and the GO identifiers that they are 
   directly associated with. 
 }
 \details{
-     Each Entrez Gene identifier is mapped to a list of lists.  The names on
+     Each ORF identifier is mapped to a list of lists.  The names on
      the outer list are GO identifiers.  Each inner list consists of three
      named elements: GOID, Ontology, and Evidence.
 
@@ -21,7 +21,7 @@
      function (MF).
 
      The Evidence element contains a code indicating what kind of
-     evidence supports the association of the GO identifier to the Entrez Gene
+     evidence supports the association of the GO identifier to the ORF
      id. The evidence codes in use include:
 
   IMP: inferred from mutant phenotype  
@@ -46,8 +46,8 @@
 
   IC: inferred by curator
   
-  Mappings between entrez gene identifiers and GO information were obtained through
-  their mappings to Entrez Gene identifiers. NAs are assigned to entrez gene identifiers
+  Mappings between ORF identifiers and GO information were obtained through
+  their mappings to ORF identifiers. NAs are assigned to ORF identifiers
   that can not be mapped to any Gene Ontology information. Mappings
   between Gene Ontology identifiers an Gene Ontology terms and other information
   are available in a separate data package named GO.
@@ -57,8 +57,8 @@
 
   
   For the reverse map GO2ORF, each GO term maps to a named vector of
-  entrez gene identifiers. A GO identifier may be mapped to the same
-  entrez gene identifier more than once but the evidence code can be
+  ORF identifiers. A GO identifier may be mapped to the same
+  ORF identifier more than once but the evidence code can be
   different. Mappings between Gene Ontology identifiers and Gene Ontology
   terms and other information are available in a separate data package
   named GO.
@@ -68,7 +68,7 @@
 }
 \examples{
     x <- @ANNOBJPREFIX@GO
-    # Get the entrez gene identifiers that are mapped to a GO ID
+    # Get the ORF identifiers that are mapped to a GO ID
     mapped_genes <- mappedkeys(x)
     # Convert to a list
     xx <- as.list(x[mapped_genes])
@@ -83,9 +83,9 @@
     # Convert to a list
     xx <- as.list(@ANNOBJPREFIX@GO2ORF)
     if(length(xx) > 0){
-        # Gets the entrez gene ids for the top 2nd and 3nd GO identifiers
+        # Gets the ORF ids for the top 2nd and 3nd GO identifiers
         goids <- xx[2:3]
-        # Gets the entrez gene ids for the first element of goids
+        # Gets the ORF ids for the first element of goids
         goids[[1]]
         # Evidence code for the mappings
         names(goids[[1]])

@@ -1,10 +1,10 @@
 \name{@ANNOBJPREFIX@PATH}
 \alias{@ANNOBJPREFIX@PATH}
 \alias{@ANNOBJPREFIX@PATH2ORF}
-\title{Mappings between Entrez Gene identifiers and KEGG pathway identifiers}
+\title{Mappings between ORF identifiers and KEGG pathway identifiers}
 \description{
   KEGG (Kyoto Encyclopedia of Genes and Genomes) maintains pathway data
-  for various organisms. @ANNOBJPREFIX@PATH maps entrez gene identifiers to the
+  for various organisms. @ANNOBJPREFIX@PATH maps ORF identifiers to the
   identifiers used by KEGG for pathways
 }
 \details{
@@ -25,7 +25,7 @@
 }
 \examples{
     x <- @ANNOBJPREFIX@PATH
-    # Get the entrez gene identifiers that are mapped to a KEGG pathway ID
+    # Get the ORF identifiers that are mapped to a KEGG pathway ID
     mapped_genes <- mappedkeys(x)
     # Convert to a list
     xx <- as.list(x[mapped_genes])
@@ -39,10 +39,10 @@
     # For the reverse map:
     # Convert the object to a list
     xx <- as.list(@ANNOBJPREFIX@PATH2ORF)
-    # Remove pathway identifiers that do not map to any entrez gene id
+    # Remove pathway identifiers that do not map to any ORF id
     xx <- xx[!is.na(xx)]
     if(length(xx) > 0){
-        # The entrez gene identifiers for the first two elements of XX
+        # The ORF identifiers for the first two elements of XX
         xx[1:2]
         # Get the first one
         xx[[1]]
