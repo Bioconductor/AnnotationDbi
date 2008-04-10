@@ -999,7 +999,7 @@ biocViews: AnnotationData, FunctionalAnnotation
 
 Package: hom.Hs.inp.db
 Title: A set of paralogy information from Inparanoid
-Version: 0.0.2
+Version: 0.99.2
 PkgTemplate: INPARANOIDHOMSA.DB
 DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Hs.inp.sqlite
 AnnObjPrefix: hom.Hs.inp
@@ -1009,7 +1009,7 @@ biocViews: AnnotationData, Homo_sapiens
 
 Package: hom.Mm.inp.db
 Title: A set of paralogy information from Inparanoid
-Version: 0.0.2
+Version: 0.99.2
 PkgTemplate: INPARANOIDMUSMU.DB
 DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Mm.inp.sqlite
 AnnObjPrefix: hom.Mm.inp
@@ -1019,7 +1019,7 @@ biocViews: AnnotationData, Mus_musculus
 
 Package: hom.Rn.inp.db
 Title: A set of paralogy information from Inparanoid
-Version: 0.0.2
+Version: 0.99.2
 PkgTemplate: INPARANOIDRATNO.DB
 DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Rn.inp.sqlite
 AnnObjPrefix: hom.Rn.inp
@@ -1029,7 +1029,7 @@ biocViews: AnnotationData, Rattus_norvegicus
 
 Package: hom.Dm.inp.db
 Title: A set of paralogy information from Inparanoid
-Version: 0.0.2
+Version: 0.99.2
 PkgTemplate: INPARANOIDDROME.DB
 DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Dm.inp.sqlite
 AnnObjPrefix: hom.Dm.inp
@@ -1039,7 +1039,7 @@ biocViews: AnnotationData, Drosophila_melanogaster
 
 Package: hom.Sc.inp.db
 Title: A set of paralogy information from Inparanoid
-Version: 0.0.2
+Version: 0.99.2
 PkgTemplate: INPARANOIDSACCE.DB
 DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Sc.inp.sqlite
 AnnObjPrefix: hom.Sc.inp

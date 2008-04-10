@@ -882,14 +882,27 @@ appendGO <- function(db,subStrs, printSchema){
     ", sep="") 
   sqliteQuickSQL(db, sql)
 
+  if(subStrs[["coreID"]]=="systematic_name" && subStrs[["org"]]=="yeast" ){
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'GO2",subStrs[["suffix"]],"', count(DISTINCT go_id)
+     FROM (SELECT go_id FROM sgd INNER JOIN go_bp USING (_id) WHERE systematic_name IS NOT NULL
+              UNION
+           SELECT go_id FROM sgd INNER JOIN go_mf USING (_id) WHERE systematic_name IS NOT NULL
+              UNION
+           SELECT go_id FROM sgd INNER JOIN go_cc USING (_id) WHERE systematic_name IS NOT NULL);
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+  }else{
   sql<- paste("
     INSERT INTO map_counts
      SELECT 'GO2",subStrs[["suffix"]],"', count(go_id)
      FROM (SELECT DISTINCT go_id FROM go_bp UNION
-            SELECT DISTINCT go_id FROM go_mf UNION
-            SELECT DISTINCT go_id FROM go_cc);
+           SELECT DISTINCT go_id FROM go_mf UNION
+           SELECT DISTINCT go_id FROM go_cc);
     ", sep="") 
-  sqliteQuickSQL(db, sql)
+  sqliteQuickSQL(db, sql) 
+  }
   
 }
 
@@ -993,6 +1006,18 @@ appendGOALL <- function(db, subStrs, printSchema){
     ", sep="") 
   sqliteQuickSQL(db, sql)
   
+  if(subStrs[["coreID"]]=="systematic_name" && subStrs[["org"]]=="yeast" ){
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'GO2ALL",subStrs[["suffix"]],"S', count(DISTINCT go_id)
+     FROM (SELECT go_id FROM sgd INNER JOIN go_bp_all USING (_id) WHERE systematic_name IS NOT NULL
+             UNION
+           SELECT go_id FROM sgd INNER JOIN go_mf_all USING (_id) WHERE systematic_name IS NOT NULL
+             UNION
+           SELECT go_id FROM sgd INNER JOIN go_cc_all USING (_id) WHERE systematic_name IS NOT NULL);
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+  }else{
   sql<- paste("
     INSERT INTO map_counts
      SELECT 'GO2ALL",subStrs[["suffix"]],"S', count(go_id)
@@ -1001,6 +1026,8 @@ appendGOALL <- function(db, subStrs, printSchema){
             SELECT DISTINCT go_id FROM go_cc_all);
     ", sep="") 
   sqliteQuickSQL(db, sql)  
+  }
+  
 }
 
 
