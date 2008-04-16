@@ -1,14 +1,15 @@
 
 #Just a utility to prevent empty IDs from ever causing any more mayhem
 cleanSrcMap <- function(file) {
-    insVals <- read.delim(file=file, header=FALSE, sep="\t", quote="")
+    insVals <- read.delim(file=file, header=FALSE, sep="\t", quote="", colClasses = "character")
     insVals <- insVals[insVals[,1]!='',]
     #need to watch for doubles which get cast by sqlite in BAD ways...
-    if(typeof(insVals[1,1])=="double" || typeof(insVals[1,2])=="double"){
-        col1 <- unlist(lapply(unlist(insVals[,1]),function(x) as.character(x)))
-        col2 <- unlist(lapply(unlist(insVals[,2]),function(x) as.character(x)))
-        insVals <- as.data.frame(cbind(col1,col2))
-    }
+##     if(typeof(insVals[1,1])=="double" || typeof(insVals[1,2])=="double"){
+##         message(cat("baseMap contained doubles"))
+##         col1 <- unlist(lapply(unlist(insVals[,1]),function(x) as.character(x)))
+##         col2 <- unlist(lapply(unlist(insVals[,2]),function(x) as.character(x)))
+##         insVals <- as.data.frame(cbind(col1,col2))
+##     }
     insVals
 }
 
