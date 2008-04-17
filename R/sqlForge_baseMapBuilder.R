@@ -3,6 +3,13 @@
 cleanSrcMap <- function(file) {
     insVals <- read.delim(file=file, header=FALSE, sep="\t", quote="", colClasses = "character")
     insVals <- insVals[insVals[,1]!='',]
+
+    #later we might want to cycle through all the IDs that people put and try each one, but right now lets try the 1st one
+    #that they gave us instead of just failing silently. (which is definitely a BAD thing)
+    for(i in 1:length(insVals[,1])){
+        insVals[i,2] = sub(';.+', '', insVals[i,2], perl=TRUE)
+    }
+        
     #need to watch for doubles which get cast by sqlite in BAD ways...
 ##     if(typeof(insVals[1,1])=="double" || typeof(insVals[1,2])=="double"){
 ##         message(cat("baseMap contained doubles"))
