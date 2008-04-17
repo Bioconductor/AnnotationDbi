@@ -6,9 +6,9 @@ cleanSrcMap <- function(file) {
 
     #later we might want to cycle through all the IDs that people put and try each one, but right now lets try the 1st one
     #that they gave us instead of just failing silently. (which is definitely a BAD thing)
-    for(i in 1:length(insVals[,1])){
-        insVals[i,2] = sub(';.+', '', insVals[i,2], perl=TRUE)
-    }
+#    for(i in 1:length(insVals[,1])){
+        insVals[,2] = sub(';.+', '', insVals[,2], perl=TRUE)
+#    }
         
     #need to watch for doubles which get cast by sqlite in BAD ways...
 ##     if(typeof(insVals[1,1])=="double" || typeof(insVals[1,2])=="double"){
@@ -22,9 +22,9 @@ cleanSrcMap <- function(file) {
 
 cleanRefSeqs <- function(baseMap){
     baseMap = as.matrix(baseMap)
-    for(i in 1:length(baseMap[,1])){
-        baseMap[i,2] = gsub("\\.\\d+?$", "", baseMap[i,2], perl=TRUE)
-    }
+#    for(i in 1:length(baseMap[,1])){
+        baseMap[,2] = sub("\\.\\d+?$", "", baseMap[,2], perl=TRUE)
+#    }
     baseMap = cbind(baseMap[,1],baseMap[,2])
     baseMap = as.data.frame(baseMap)
     baseMap
