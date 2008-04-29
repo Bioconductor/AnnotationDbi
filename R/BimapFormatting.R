@@ -207,29 +207,30 @@
         slicer2 <- slicer2 - 1
     keepcols <- seq_len(length(x@data))[- slicer1]
     slicing_one <- lapply(keepcols,
-                     function(j) split(x@data[[j]], x@data[[slicer1]]))
+                          function(j) split(x@data[[j]], x@data[[slicer1]]))
     names(slicing_one) <- names(x@data)[- slicer1]
-    mapped_keys <- names(slicing_one[[1]])
-    ii <- match(mapped_keys, keys)
-    for (i1 in seq_len(length(ii))) {
+    found_keys <- names(slicing_one[[1]])
+    ii <- match(keys, found_keys)
+    for (i1 in seq_len(length(keys))) {
         i2 <- ii[i1]
-        slice_one <- lapply(slicing_one, function(col) col[[i1]])
+        if (is.na(i2)) next
+        slice_one <- lapply(slicing_one, function(col) col[[i2]])
         if (mode == 1) {
-            ans[[i2]] <- do.call(FUN, slice_one)
+            ans[[i1]] <- do.call(FUN, slice_one)
             next
         }
         if (mode == 2 || !any(duplicated(slice_one[[1]]))) {
-            ans[[i2]] <- do.call("mapply",
+            ans[[i1]] <- do.call("mapply",
                                  c(FUN=FUN, slice_one, SIMPLIFY=FALSE))
             next
         }
         ## Sub-slicing
         keepcols <- seq_len(length(slice_one))[- slicer2]
         slicing_two <- lapply(keepcols,
-                         function(j) split(slice_one[[j]], slice_one[[slicer2]]))
+                              function(j) split(slice_one[[j]], slice_one[[slicer2]]))
         slicing_two <- c(list(names(slicing_two[[1]])), slicing_two)
         names(slicing_two) <- c(names(slice_one)[slicer2], names(slice_one)[- slicer2])
-        ans[[i2]] <- do.call("mapply",
+        ans[[i1]] <- do.call("mapply",
                              c(FUN=FUN, slicing_two, SIMPLIFY=FALSE))
     }
     ans
