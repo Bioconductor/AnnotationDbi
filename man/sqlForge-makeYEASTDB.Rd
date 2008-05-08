@@ -14,7 +14,7 @@
 
 \usage{
   makeYEASTCHIP_DB(affy, prefix, fileName, chipSrc, outputDir, version,
-  manufacturer, chipName, manufacturerUrl)
+  manufacturer, chipName, manufacturerUrl, author, maintainer)
 }
 
 \arguments{
@@ -50,6 +50,12 @@
   }
   \item{manufacturerUrl}{
     URL for manufacturers website.
+  }
+  \item{author}{
+    List of authors involved in making the package.
+  }
+  \item{maintainer}{
+    List of package maintainers with email addresses for contact purposes.
   }
 }
 

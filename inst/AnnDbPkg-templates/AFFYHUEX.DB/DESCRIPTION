@@ -3,7 +3,7 @@ Title: @PKGTITLE@
 Description: @PKGTITLE@ assembled using data from manufacturer
 Version: @PKGVERSION@
 Author: @AUTHOR@
-Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
+Maintainer: @MAINTAINER@
 LazyLoad: yes 
 Depends: R (>= 2.7.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
 Imports: methods, AnnotationDbi

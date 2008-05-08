@@ -4,7 +4,7 @@ Description: @PKGTITLE@ assembled using data from public repositories
 Version: @PKGVERSION@
 Author: Marc Carlson, Ting-Yuan Liu, ChenWei Lin, Seth Falcon, Jianhua
         Zhang, James W. MacDonald
-Maintainer: Biocore Data Team <biocannotation@lists.fhcrc.org>
+Maintainer: @MAINTAINER@
 Depends: R (>= 2.7.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
 Imports: methods, AnnotationDbi
 License: @LIC@

@@ -17,7 +17,8 @@
 
 \usage{
   makeHUMANCHIP_DB(affy, prefix, fileName, otherSrc, chipMapSrc, chipSrc,
-  baseMapType, outputDir, version, manufacturer, chipName, manufacturerUrl)
+  baseMapType, outputDir, version, manufacturer, chipName,
+  manufacturerUrl, author, maintainer)
 }
 
 \arguments{
@@ -71,6 +72,12 @@
   }
   \item{manufacturerUrl}{
     URL for manufacturers website.
+  }
+  \item{author}{
+    List of authors involved in making the package.
+  }
+  \item{maintainer}{
+    List of package maintainers with email addresses for contact purposes.
   }
 }
 

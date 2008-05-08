@@ -12,7 +12,9 @@ makeHUMANCHIP_DB <- function(affy,
                              version,
                              manufacturer = "Manufacturer not specified",
                              chipName = "ChipName not specified",
-                             manufacturerUrl = "Manufacturer Url not specified"){
+                             manufacturerUrl = "Manufacturer Url not specified",
+                             author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                             maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
 
     if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
@@ -37,6 +39,8 @@ makeHUMANCHIP_DB <- function(affy,
     seed <- new("AnnDbPkgSeed",
                 Package= paste(prefix,".db",sep=""),
                 Version=version,
+                Author=author,
+                Maintainer=maintainer,
                 PkgTemplate="HUMANCHIP.DB",
                 AnnObjPrefix=prefix
                 )
@@ -57,7 +61,9 @@ makeMOUSECHIP_DB <- function(affy,
                              version,
                              manufacturer = "Manufacturer not specified",
                              chipName = "ChipName not specified",
-                             manufacturerUrl = "Manufacturer Url not specified"){
+                             manufacturerUrl = "Manufacturer Url not specified",
+                             author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                             maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
 
     if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
@@ -82,6 +88,8 @@ makeMOUSECHIP_DB <- function(affy,
     seed <- new("AnnDbPkgSeed",
                 Package= paste(prefix,".db",sep=""),
                 Version=version,
+                Author=author,
+                Maintainer=maintainer,
                 PkgTemplate="MOUSECHIP.DB",
                 AnnObjPrefix=prefix
                 )
@@ -102,7 +110,9 @@ makeRATCHIP_DB <- function(affy,
                            version,
                            manufacturer = "Manufacturer not specified",
                            chipName = "ChipName not specified",
-                           manufacturerUrl = "Manufacturer Url not specified"){
+                           manufacturerUrl = "Manufacturer Url not specified",
+                           author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                           maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
 
     if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
@@ -127,6 +137,8 @@ makeRATCHIP_DB <- function(affy,
     seed <- new("AnnDbPkgSeed",
                 Package= paste(prefix,".db",sep=""),
                 Version=version,
+                Author=author,
+                Maintainer=maintainer,
                 PkgTemplate="RATCHIP.DB",
                 AnnObjPrefix=prefix
                 )
@@ -148,7 +160,9 @@ makeFLYCHIP_DB <- function(affy,
                            version,
                            manufacturer = "Manufacturer not specified",
                            chipName = "ChipName not specified",
-                           manufacturerUrl = "Manufacturer Url not specified"){
+                           manufacturerUrl = "Manufacturer Url not specified",
+                           author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                           maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
 
     if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
@@ -173,6 +187,8 @@ makeFLYCHIP_DB <- function(affy,
     seed <- new("AnnDbPkgSeed",
                 Package= paste(prefix,".db",sep=""),
                 Version=version,
+                Author=author,
+                Maintainer=maintainer,
                 PkgTemplate="FLYCHIP.DB",
                 AnnObjPrefix=prefix
                 )
@@ -192,7 +208,9 @@ makeARABIDOPSISCHIP_DB <- function(affy,
                                    version,
                                    manufacturer = "Manufacturer not specified",
                                    chipName = "ChipName not specified",
-                                   manufacturerUrl = "Manufacturer Url not specified"){
+                                   manufacturerUrl = "Manufacturer Url not specified",
+                                   author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                                   maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
 
     if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
@@ -215,6 +233,8 @@ makeARABIDOPSISCHIP_DB <- function(affy,
     seed <- new("AnnDbPkgSeed",
                 Package= paste(prefix,".db",sep=""),
                 Version=version,
+                Author=author,
+                Maintainer=maintainer,
                 PkgTemplate="ARABIDOPSISCHIP.DB",
                 AnnObjPrefix=prefix
                 )
@@ -232,7 +252,9 @@ makeYEASTCHIP_DB <- function(affy,
                              version,
                              manufacturer = "Manufacturer not specified",
                              chipName = "ChipName not specified",
-                             manufacturerUrl = "Manufacturer Url not specified"){
+                             manufacturerUrl = "Manufacturer Url not specified",
+                             author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                             maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
 
     if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
     
@@ -254,6 +276,8 @@ makeYEASTCHIP_DB <- function(affy,
     seed <- new("AnnDbPkgSeed",
                 Package= paste(prefix,".db",sep=""),
                 Version=version,
+                Author=author,
+                Maintainer=maintainer,
                 PkgTemplate="YEASTCHIP.DB",
                 AnnObjPrefix=prefix
                 )
