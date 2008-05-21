@@ -107,6 +107,7 @@ popHUMANDB <- function(prefix,
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -221,6 +222,8 @@ popMOUSEDB <- function(prefix,
     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendMGI(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
@@ -335,6 +338,7 @@ popRATDB <- function(prefix,
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     

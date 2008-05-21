@@ -227,6 +227,18 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
         )
     ),
     list(
+        objName="ENSEMBLTRANS",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            HUMAN_DB_L2Rlink1,
+            list(
+                tablename="ensembl_trans",
+                Lcolname="_id",
+                Rcolname="trans_id"
+            )
+        )
+    ),
+    list(
         objName="GO",
         Class="Go3AnnDbBimap",
         L2Rchain=list(
@@ -268,6 +280,7 @@ createAnnObjs.HUMAN_DB <- function(prefix, objTarget, dbconn, datacache)
     #ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
     ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
     ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
+    ann_objs$ENSEMBLTRANS2EG <- revmap(ann_objs$ENSEMBLTRANS, objName="ENSEMBLTRANS2EG")
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
     map <- ann_objs$GO2EG
     map@rightTables <- Go3tablenames(all=TRUE)

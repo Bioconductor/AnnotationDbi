@@ -10,7 +10,8 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
                PKGVERSION=version,
                LIC="The Artistic License, Version 2.0",
                BIOCVIEWS="AnnotationData, Homo_sapiens",
-               ANNDBIVERSION="1.1.15")
+               ANNDBIVERSION="1.1.15",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
   pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
   template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
 
@@ -28,7 +29,8 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
                PKGVERSION=version,
                LIC="The Artistic License, Version 2.0",
                BIOCVIEWS="AnnotationData, Mus_musculus",
-               ANNDBIVERSION="1.1.15")
+               ANNDBIVERSION="1.1.15",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
   pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
   template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
 
@@ -46,7 +48,8 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
                PKGVERSION=version,
                LIC="The Artistic License, Version 2.0",
                BIOCVIEWS="AnnotationData, Rattus_norvegicus",
-               ANNDBIVERSION="1.1.15")
+               ANNDBIVERSION="1.1.15",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
   pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
   template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
 
@@ -64,7 +67,8 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
                PKGVERSION=version,
                LIC="The Artistic License, Version 2.0",
                BIOCVIEWS="AnnotationData, Drosophila_melanogaster",
-               ANNDBIVERSION="1.1.15")
+               ANNDBIVERSION="1.1.15",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
   pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
   template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
 
@@ -82,7 +86,8 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
                PKGVERSION=version,
                LIC="The Artistic License, Version 2.0",
                BIOCVIEWS="AnnotationData, Saccharomyces_cerevisiae",
-               ANNDBIVERSION="1.1.15")
+               ANNDBIVERSION="1.1.15",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
   pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
   template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
 
@@ -101,7 +106,8 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
                PKGVERSION=version,
                LIC="The Artistic License, Version 2.0",
                BIOCVIEWS="AnnotationData, Arabidopsis_thaliana",
-               ANNDBIVERSION="1.1.15")
+               ANNDBIVERSION="1.1.15",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
   pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
   template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
 
@@ -119,7 +125,8 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
                PKGVERSION=version,
                LIC="The Artistic License, Version 2.0",
                BIOCVIEWS="AnnotationData, Plasmodium_falciparum",
-               ANNDBIVERSION="1.1.28")
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
   pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
   template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
 

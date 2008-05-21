@@ -1,10 +1,10 @@
 \name{@ANNOBJPREFIX@ENSEMBL}
 \alias{@ANNOBJPREFIX@ENSEMBL}
 \alias{@ANNOBJPREFIX@ENSEMBL2EG}
-\title{Map Ensembl gene Acession numbers with Entrez Gene identifiers}  
+\title{Map Ensembl gene acession numbers with Entrez Gene identifiers}  
 \description{ 
   @ANNOBJPREFIX@ENSEMBL is an R object that contains mappings between 
-  Entrez Gene identifiers and Ensemble gene accession numbers.    
+  Entrez Gene identifiers and Ensembl gene accession numbers.    
 }
 \details{
   This object is a simple mapping of Entrez Gene identifiers
@@ -30,7 +30,7 @@
     # Convert to a list
     xx <- as.list(@ANNOBJPREFIX@ENSEMBL2EG)
     if(length(xx) > 0){
-       # Gets the entrez gene IDs for the first five Ensemble IDs
+       # Gets the entrez gene IDs for the first five Ensembl IDs
        xx[1:5]
        # Get the first one
        xx[[1]]

@@ -4,7 +4,7 @@
 \title{Map Ensembl protein acession numbers with Entrez Gene identifiers}  
 \description{ 
   @ANNOBJPREFIX@ENSEMBL is an R object that contains mappings between 
-  Entrez Gene identifiers and Ensemble protein accession numbers.    
+  Entrez Gene identifiers and Ensembl protein accession numbers.    
 }
 \details{
   This object is a simple mapping of Entrez Gene identifiers
@@ -15,7 +15,7 @@
 }
 
 \examples{
-    x <- @ANNOBJPREFIX@ENSEMBL
+    x <- @ANNOBJPREFIX@ENSEMBLPROT
     # Get the entrez gene IDs that are mapped to an Ensembl ID
     mapped_genes <- mappedkeys(x)
     # Convert to a list
@@ -26,9 +26,9 @@
       # Get the first one
       xx[[1]]
     }
-    #For the reverse map ENSEMBL2EG:
+    #For the reverse map ENSEMBLPROT2EG:
     # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@ENSEMBL2EG)
+    xx <- as.list(@ANNOBJPREFIX@ENSEMBLPROT2EG)
     if(length(xx) > 0){
        # Gets the entrez gene IDs for the first five Ensembl IDs
        xx[1:5]

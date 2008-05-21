@@ -1484,6 +1484,75 @@ appendEnsemblProt <- function(db, subStrs, printSchema){
 }
 
 
+## Make the ensembl transcript IDs table 
+appendEnsemblTrans <- function(db, subStrs, printSchema){
+
+  message(cat("Appending Ensembl Transcript IDs"))
+    
+  sql<- paste("    CREATE TABLE ensembl_trans (
+      _id INTEGER NOT NULL,                          -- REFERENCES ", subStrs[["cntrTab"]],"
+      trans_id VARCHAR(20) NOT NULL,                  -- Ensembl Transcript ID
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO ensembl_trans
+     SELECT a._id,a.trans_id
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.ensembl_trans as a
+     WHERE g._id=a._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fensemblt ON ensembl_trans (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT 'ENSEMBLTRANS', m1.value, m2.value, m3.value
+     FROM anno.metadata AS m1, anno.metadata AS m2, anno.metadata AS m3
+     WHERE m1.name='ENSOURCENAME' AND
+           m2.name='ENSOURCEURL' AND
+           m3.name='ENSOURCEDATE';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT 'ENSEMBLTRANS2GENE',source_name, source_url, source_date
+     FROM map_metadata
+     WHERE map_name='ENSEMBLTRANS';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    UPDATE map_metadata
+     SET map_name='ENSEMBLTRANS2",subStrs[["suffix"]],"' WHERE map_name='ENSEMBLTRANS2GENE';
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ENSEMBLTRANS', count(DISTINCT e._id)
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN ensembl_trans as e
+     WHERE g._id=e._id;
+    ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ENSEMBLTRANS2",subStrs[["suffix"]],"', count(DISTINCT trans_id)
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN ensembl_trans as e
+     WHERE g._id=e._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)  
+  
+}
+
+
 
 ## Make an MGI table
 appendMGI <- function(db, subStrs, printSchema){
