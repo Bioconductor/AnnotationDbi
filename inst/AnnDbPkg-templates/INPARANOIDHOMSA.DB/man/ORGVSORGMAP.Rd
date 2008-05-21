@@ -41,7 +41,7 @@
   identifiers for genes in the package organism and their predicted
   paralogs in the map that the organism is named after.  So for example,
   if the inparanoid package is the human package, then the
-  @ANNOBJPREFIX@RAT map would provide mappings between human and rat.
+  @ANNOBJPREFIX@RATNO map would provide mappings between human and rat.
 }
 \details{
     Mappings between gene identifiers and their paralogs as predicted by
@@ -92,44 +92,45 @@
         }         
 
     \dontrun{
-        #For the most common organisms, we ensure that you can map back
-        #to an Entrez Gene ID by providing you with necessary maps in
-        #the related organism based annotation packages.  The following
-        #example shows how to get from an Entrez Gene ID for Human to
-        #Entrez Gene IDs for Flies even though inparanoid does not map
-        #to Entrez Gene IDs for either of these species.
+        #For the most common organisms, we try to ensure that you can
+        #map back to an Entrez Gene ID by providing you with necessary
+        #maps in the related organism based annotation packages.  The
+        #following example shows how to get from an Entrez Gene ID for
+        #Human to Entrez Gene IDs for Mouse even though inparanoid does
+        #not map to Entrez Gene IDs for either of these species.
 
         #You will have to include the appropriate packages for
         #humans:
         library("org.Hs.eg.db")
-        #and for flies:
-        library("org.Dm.eg.db")
+        #and for mouse:
+        library("org.Mm.eg.db")
         #And of course you will need the inparanoid package:
         library("hom.Hs.inp.db")
 
         #Start with some Human Entrez Gene IDs
-        humanEGIds = c("1770","1769","4036")
+        humanEGIds <- c("4488","4487")
 
         #Inparanoid uses ensembl protein IDs so start with
         #those. Notice that there will be many protein IDs returned for
         #a typical gene since there are many possible translations.
-        humanProtIds = list()
-        humanProtIds = mget(humanEGIds,org.Hs.egENSEMBLPROT)
+        humanProtIds <- mget(humanEGIds,org.Hs.egENSEMBLPROT)
 
         #Map the IDs that we can from inparanoid. Notice that by design,
         #inparanoid only represents each gene product with a single
-        #translation product. Therefore your list should slim down a lot
-        #during this step.
-        rawFlyProtIds = mget(unlist(humanProtIds),hom.Hs.inpDROME,ifnotfound=NA)
+        #translation product. Therefore your list could slim down a lot
+        #during this step.  Also, if the thing you are trying to match
+        #up at this step has less than 100\% seed status, you will not
+        #find it in this step.
+        rawMouseProtIds <- mget(unlist(humanProtIds),hom.Hs.inpMUSMU,ifnotfound=NA)
         #This also means that we need to clean up the NAs from our result
-        flyProtIds = rawFlyProtIds[!is.na(rawFlyProtIds)]
+        mouseProtIds <- rawMouseProtIds[!is.na(rawMouseProtIds)]
 
-        #Then use the fly organism based packages to convert these IDs
-        #back to an Entrex Gene ID again (this time for fly). 
-        flyEGIds = mget(unlist(flyProtIds),org.Dm.egFLYBASEPROT2EG,ifnotfound=NA)
+        #Then use the mouse organism based packages to convert these IDs
+        #back to an Entrez Gene ID again (this time for mouse). 
+        mouseEGIds <- mget(unlist(mouseProtIds),org.Mm.egMGI2EG,ifnotfound=NA)
 
         #Now go ahead and have a look at the output
-        flyEGIds
+        mouseEGIds
     }
 
 }

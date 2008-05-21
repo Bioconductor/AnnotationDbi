@@ -124,8 +124,7 @@ makeSeedList <- function(species, fields)
     INPARANOID_DB_AnnDbBimap_seeds <- list()
     
     for(i in 1:length(fields)){
-       INPARANOID_DB_AnnDbBimap_seeds[i] <- list(                                   
-           list(
+       INPARANOID_DB_AnnDbBimap_seeds[[i]] <- list(                                   
                 objName=toupper(fields[i]),
                 Class="AnnDbBimap",
                 L2Rchain=list(          
@@ -133,20 +132,15 @@ makeSeedList <- function(species, fields)
                        tablename=names(fields)[i],
                        Lcolname="inp_id",
                        Rcolname="clust_id",
-##                        filter="{seed_status}='100%'",
-##                        filter=as.character(paste("{species}=","'",species,"'",sep=""))
                        filter=as.character(paste("{seed_status}='100%' AND ", "{species}=","'",species,"'",sep=""))
                        ),
                   list(
                        tablename=names(fields)[i],
                        Lcolname="clust_id",
                        Rcolname="inp_id",
-##                        filter="{seed_status}='100%'",
-##                        filter=as.character(paste("{species}=","'",fields[i],"'",sep=""))
                        filter=as.character(paste("{seed_status}='100%' AND ","{species}=","'",fields[i],"'",sep=""))
                        )
                   )
-                )
            )
     }
 
