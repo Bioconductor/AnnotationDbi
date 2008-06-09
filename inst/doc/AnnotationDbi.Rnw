@@ -177,7 +177,7 @@ save disk and memory resources, not all reverse mappings are included
 in the environment-based packages.  Here is the common idiom for
 creating a list that serves as the reverse map of a given environment.
 
-<<oldRevMap>>=
+<<oldRevMap, eval=FALSE>>=
 library("hgu95av2", warn.conflicts=FALSE)
 ## we load the environment so as not
 ## to include the load time in the timing
@@ -370,7 +370,7 @@ symbols on which are probed on a chip that have at least one GO BP ID
 annotation with evidence code IMP, IGI, IPI, or IDA.  Here is one way
 to extract this using the environment-based packages:
 
-<<complexEnv>>=
+<<complexEnv, eval=FALSE>>=
 ## Obtain SYMBOLS with at least one GO BP
 ## annotation with evidence IMP, IGI, IPI, or IDA.
 probes <- sample(all_probes, 500)
