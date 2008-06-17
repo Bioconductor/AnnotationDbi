@@ -134,7 +134,7 @@
        b      A
        d      C
   }
-  If in addition the right objects have 1 multi-valued attribute,
+  If in addition the right objects have 1 multivalued attribute,
   for example, a numeric vector:
   \preformatted{
     A <-- c(1.2, 0.9)
@@ -213,13 +213,12 @@
 
 \section{The Bimap interface in AnnotationDbi}{
   The full documentation for the methods of the Bimap interface is splitted
-  into 4 man pages: \link{Bimap-direction}, \link{Bimap-colmethods},
-  \link{Bimap-keys} and \link{Bimap-toTable}.
+  into 4 man pages: \link{Bimap-direction}, \link{Bimap-keys}
+  and \link{Bimap-toTable}.
 }
 
 \seealso{
   \link{Bimap-direction},
-  \link{Bimap-colmethods},
   \link{Bimap-keys},
   \link{Bimap-toTable},
   \link{BimapFormatting},

@@ -6,6 +6,17 @@
 \alias{toTable,FlatBimap-method}
 \alias{toTable,AnnDbBimap-method}
 
+\alias{nrow}
+\alias{nrow,FlatBimap-method}
+\alias{nrow,AnnDbTable-method}
+\alias{nrow,AnnDbBimap-method}
+\alias{nrow,Go3AnnDbBimap-method}
+
+\alias{ncol}
+\alias{ncol,Bimap-method}
+
+\alias{dim,Bimap-method}
+
 \alias{head}
 \alias{head,FlatBimap-method}
 
@@ -17,14 +28,6 @@
 \alias{links,AnnDbBimap-method}
 \alias{links,Go3AnnDbBimap-method}
 
-\alias{nrow}
-\alias{nrow,FlatBimap-method}
-\alias{nrow,AnnDbTable-method}
-\alias{nrow,AnnDbBimap-method}
-\alias{nrow,Go3AnnDbBimap-method}
-
-\alias{dim,Bimap-method}
-
 \alias{count.links}
 \alias{count.links,Bimap-method}
 \alias{count.links,Go3AnnDbBimap-method}
@@ -34,8 +37,38 @@
 \alias{nhit,environment-method}
 \alias{nhit,list-method}
 
+\alias{colnames}
+\alias{colnames,FlatBimap-method}
+\alias{colnames,AnnDbBimap-method}
 
-\title{Methods for extracting data from a Bimap object}
+\alias{colmetanames}
+\alias{colmetanames,FlatBimap-method}
+\alias{colmetanames,AnnDbBimap-method}
+
+\alias{Lkeyname}
+\alias{Lkeyname,Bimap-method}
+\alias{Lkeyname,AnnDbBimap-method}
+\alias{Rkeyname}
+\alias{Rkeyname,Bimap-method}
+\alias{Rkeyname,AnnDbBimap-method}
+\alias{keyname}
+\alias{keyname,Bimap-method}
+
+\alias{tagname}
+\alias{tagname,Bimap-method}
+\alias{tagname,AnnDbBimap-method}
+
+\alias{Rattribnames}
+\alias{Rattribnames,Bimap-method}
+\alias{Rattribnames,AnnDbBimap-method}
+
+\alias{Rattribnames<-}
+\alias{Rattribnames<-,FlatBimap-method}
+\alias{Rattribnames<-,AnnDbBimap-method}
+\alias{Rattribnames<-,Go3AnnDbBimap-method}
+
+
+\title{Methods for manipulating a Bimap object in a data-frame style}
 
 \description{
   These methods are part of the \link{Bimap} interface
@@ -44,18 +77,28 @@
 }
 
 \usage{
-  ## Extract the data
+  ## Extract all the columns of the map (links + right attributes)
   toTable(x)
+  nrow(x)
+  ncol(x)
+  #dim(x)
   head(x, ...)
   tail(x, ...)
-  links(x)
 
-  ## Some basic counting on the data without actually extracting
-  ## them
-  nrow(x)
-  #dim(x)
+  ## Extract only the links of the map
+  links(x)
   count.links(x)
   nhit(x)
+
+  ## Col names and col metanames
+  colnames(x, do.NULL=TRUE, prefix="col")
+  colmetanames(x)
+  Lkeyname(x)
+  Rkeyname(x)
+  keyname(x)
+  tagname(x)
+  Rattribnames(x)
+  Rattribnames(x) <- value
 }
 
 \arguments{
@@ -67,68 +110,90 @@
     \code{\link[utils]{head}} or \code{\link[utils]{tail}}
     for the details).
   }
+  \item{do.NULL}{
+    Ignored.
+  }
+  \item{prefix}{
+    Ignored.
+  }
+  \item{value}{
+    A character vector containing the names of the new right attributes
+    (must be a subset of the current right attribute names)
+    or NULL.
+  }
 }
 
 \details{
+  \code{toTable(x)} turns \link{Bimap} object \code{x} into a
+  data frame (see section "Flat representation of a bimap" in
+  \code{?\link{Bimap}} for a short introduction to this concept).
+  For simple maps (i.e. no tags and no right attributes),
+  the resulting data frame has only 2 columns, one for the left
+  keys and one for the right keys, and each row in the data frame
+  represents a link (or edge) between a left and a right key.
+  For maps with tagged links (i.e. a tag is associated to each
+  link), \code{toTable(x)} has one additional colmun for the tags
+  and there is still one row per link.
+  For maps with right attributes (i.e. a set of attributes is
+  associated to each right key), \code{toTable(x)} has one
+  additional colmun per attribute. So for example if \code{x} has
+  tagged links and 2 right attributes, \code{toTable(x)} will
+  have 5 columns: one for the left keys, one for the right keys,
+  one for the tags, and one for each right attribute (always the
+  rightmost columns).
+  Note that if at least one of the right attributes is multivalued
+  then more than 1 row can be needed to represent the same link
+  so the number of rows in \code{toTable(x)} can be strictly
+  greater than the number of links in the map.
 
+  \code{nrow(x)} is equivalent to (but more efficient than)
+  \code{nrow(toTable(x))}.
 
-  Except for \code{nhit}, all these methods are undirected method
+  \code{ncol(x)} is equivalent to (but more efficient than)
+  \code{ncol(toTable(x))}.
 
-  The function \code{links()} will in many cases give very similar
-  output to the function \code{toTable()}, but these functions are not
-  the same.  Both of these functions aim to describe the data that is in
-  a \link{Bimap} object, but while the \code{toTable()} function will
-  output all of the data in the map, the \code{links()} function will
-  only output the data that is tied directly to the links
-  \preformatted{(edges)} of the \link{Bimap}.
+  \code{colnames(x)} is equivalent to (but more efficient than)
+  \code{colnames(toTable(x))}. Columns are named accordingly to
+  the names of the SQL columns where the data are coming from.
+  An important consequence of this that they are not necessarily
+  unique.
 
-  To understand exactly what this means, it is important to consider
-  that a Bimap is composed of 3 different kinds of elements.  The Lkeys
-  and Rkeys style of element define the left and right values that
-  compose the basic \link{Bimap} mapping.  In addition to the Lkeys and
-  Rkeys, it is also possible to label the edges themselves with a
-  tagname variable.  This tagname is the second kind of element and is
-  meant to represent data that about the relationship between a pair of
-  keys.  A classic example of this would be an evidence code used to map
-  a GO term to a gene or probe.  Finally, the third kind of element is
-  the attribute \preformatted{(Lattribute or Rattribute)} which can be
-  used to label additional information onto the Lkeys or Rkeys.  This
-  third kind of element is meant to capture information about the
-  individual Lkeys and Rkeys that is independent of the relationship
-  between a pair of keys such as the ontology that a term was gathered
-  from.
+  \code{colmetanames(x)} returns the metanames for the column of
+  \code{x} that are not right attributes. Valid column metanames
+  are \code{"Lkeyname"}, \code{"Rkeyname"} and \code{"tagname"}.
 
-  Therefore, the \code{links()} function will output the Lkeys, and
-  Rkeys along with any tagname values but leave out any of the attribute
-  information.
+  \code{Lkeyname}, \code{Rkeyname}, \code{tagname} and
+  \code{Rattribnames} return the name of the column (or columns)
+  containing the left keys, the right keys, the tags and the right
+  attributes, respectively.
 
-  Related to these functions, the \code{count.links()} function will
-  return only the total number of edges in a \link{Bimap}.  This might
-  be more useful than the \code{nrows()} function which just gives you
-  the number of rows you would get if you had called \code{toTable()}.
-  The reason \code{count.links()} might be better is for Bimaps where
-  there are multiple right attributes attached to an individual link.
-  In these cases, \code{nrows()} will count many rows that represent the
-  same essential relationship between the left and right keys, whereas
-  \code{count.links()} will just give you one count for each
-  relationship.
+  Like \code{toTable(x)}, \code{links(x)} turns \code{x} into a
+  data frame but the right attributes (if any) are dropped.
+  Note that dropping the right attributes produces a data frame
+  that has eventually less columns than \code{toTable(x)}
+  and also eventually less rows because now exactly 1 row is
+  needed to represent 1 link.
 
-  Finally, \code{nhit()} returns a named integer vector containing the
-  number of hits for every left key in a \link{Bimap}.  The number of
-  hits for a given left key is equal to the number of links
-  \preformatted{(edges)} mapping from that key to a corresponding right
-  key.  This function is useful for determining whether or not a map is
-  a many to one or a many to many map.
+  \code{count.links(x)} is equivalent to (but more efficient than)
+  \code{nrow(links(x))}.
+
+  \code{nhit(x)} returns a named integer vector indicating the
+  number of "hits" for each key in \code{x} i.e. the number of links
+  that start from each key.
 }
 
 \value{
-  The \code{toTable()} and \code{links()} functions return dataframes.
+  A data frame for \code{toTable} and \code{links}.
 
-  The \code{count.links()} and  \code{nrow()} functions return integers.
+  A single integer for \code{nrow}, \code{ncol} and \code{count.links}.
 
-  The \code{nhit()} function returns a named integer vector
-  corresponding to the number of hits \preformatted{(or right keys)} for
-  each left key.
+  A character vector for \code{colnames}, \code{colmetanames}
+  and \code{Rattribnames}.
+
+  A character string for \code{Lkeyname}, \code{Rkeyname}
+  and \code{tagname}.
+
+  A named integer vector for \code{nhit}.
 }
 
 \author{H. Pages}
@@ -149,7 +214,16 @@
   links(x["GO:0007322"])
 
   nrow(x)
+  ncol(x)
   dim(x)
+  colnames(x)
+  colmetanames(x)
+  Lkeyname(x)
+  Rkeyname(x)
+  tagname(x)
+  Rattribnames(x)
+
+  links(x)[1:4, ]
   count.links(x)
 
   y <- GOBPCHILDREN
@@ -161,7 +235,19 @@
 
   ## Some sanity check
   sum(nhy) == count.links(y) # TRUE
+
+  ## Changing the right attributes of the GOSYNONYM map (advanced
+  ## users only)
+  class(x) # GOTermsAnnDbBimap
+  as.list(x)[1:3]
+  colnames(x)
+  colmetanames(x)
+  tagname(x) # untagged map
+  Rattribnames(x)
+  Rattribnames(x) <- Rattribnames(x)[3:1]
+  colnames(x)
+  class(x) # AnnDbBimap
+  as.list(x)[1:3]
 }
 
 \keyword{methods}
-
