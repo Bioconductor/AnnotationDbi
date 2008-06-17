@@ -214,13 +214,13 @@
 \section{The Bimap interface in AnnotationDbi}{
   The full documentation for the methods of the Bimap interface is splitted
   into 4 man pages: \link{Bimap-direction}, \link{Bimap-colmethods},
-  \link{Bimap-keymethods} and \link{Bimap-toTable}.
+  \link{Bimap-keys} and \link{Bimap-toTable}.
 }
 
 \seealso{
   \link{Bimap-direction},
   \link{Bimap-colmethods},
-  \link{Bimap-keymethods},
+  \link{Bimap-keys},
   \link{Bimap-toTable},
   \link{BimapFormatting},
   \link{AnnDbBimap-envirAPI}
@@ -237,4 +237,3 @@
 
 \keyword{classes}
 \keyword{interface}
-

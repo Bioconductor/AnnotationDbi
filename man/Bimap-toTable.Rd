@@ -38,14 +38,42 @@
 \title{Methods for extracting data from a Bimap object}
 
 \description{
-  These methods are part of the \link{Bimap} interface and are used to
-  extract data from a \link{Bimap} object.  \code{links()} and
-  \code{toTable()} summarize important information about the bimaps,
-  while \code{count.links()} and \code{nhit()} provide useful values for
-  the number of connecting edges in the \link{Bimap}.
+  These methods are part of the \link{Bimap} interface
+  (see \code{?\link{Bimap}} for a quick overview of the \link{Bimap}
+  objects and their interface).
+}
+
+\usage{
+  ## Extract the data
+  toTable(x)
+  head(x, ...)
+  tail(x, ...)
+  links(x)
+
+  ## Some basic counting on the data without actually extracting
+  ## them
+  nrow(x)
+  #dim(x)
+  count.links(x)
+  nhit(x)
+}
+
+\arguments{
+  \item{x}{
+    A \link{Bimap} object (or a list or an environment for \code{nhit}).
+  }
+  \item{...}{
+    Further arguments to be passed to or from other methods (see
+    \code{\link[utils]{head}} or \code{\link[utils]{tail}}
+    for the details).
+  }
 }
 
 \details{
+
+
+  Except for \code{nhit}, all these methods are undirected method
+
   The function \code{links()} will in many cases give very similar
   output to the function \code{toTable()}, but these functions are not
   the same.  Both of these functions aim to describe the data that is in
@@ -91,31 +119,6 @@
   \preformatted{(edges)} mapping from that key to a corresponding right
   key.  This function is useful for determining whether or not a map is
   a many to one or a many to many map.
-}
-
-\usage{
-  ## Extract the data (undirected methods)
-  toTable(x)
-  head(x, ...)
-  tail(x, ...)
-  links(x)
-
-  ## Some basic counting on the data without actually extracting them (undirected methods)
-  nrow(x)
-  #dim(x)
-  count.links(x)
-  nhit(x)
-}
-
-\arguments{
-  \item{x}{
-    A \link{Bimap} object (or a list or an environment for \code{nhit}).
-  }
-  \item{...}{
-    Further arguments to be passed to or from other methods (see
-    \code{\link[utils]{head}} or \code{\link[utils]{tail}}
-    for the details).
-  }
 }
 
 \value{
