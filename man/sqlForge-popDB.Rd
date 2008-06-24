@@ -6,6 +6,8 @@
 \alias{popRATDB}
 \alias{popFLYDB}
 \alias{popYEASTDB}
+\alias{popZEBRAFISHDB}
+\alias{popECOLIDB}
 
 \title{Populates an SQLite DB with and produces a schema definition}
 

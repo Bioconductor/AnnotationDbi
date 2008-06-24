@@ -638,6 +638,220 @@ popMALARIADB <- function(prefix,
 }
 
 
+#presently this is the formula for ZEBRAFISHCHIP_DB
+popZEBRAFISHCHIPDB <- function(affy,
+                           prefix,
+                           fileName,
+                           chipMapSrc = system.file("extdata", "chipmapsrc_zebrafish.sqlite", package="zebrafish.db0"),
+                           chipSrc = system.file("extdata", "chipsrc_zebrafish.sqlite", package="zebrafish.db0"),
+                           metaDataSrc,
+                           otherSrc=character(0),
+                           baseMapType="gbNRef",
+                           outputDir=".",
+                           printSchema=FALSE){
+
+    if(affy==TRUE){
+        getMapForBiocChipPkg(
+                             csvFileName=fileName,
+                             pkgName=prefix,
+                             chipMapSrc=chipMapSrc,
+                             otherSrc=otherSrc,
+                             baseMapType=baseMapType,
+                             outputDir=outputDir
+                             )
+    }
+    else if(affy==FALSE){
+        getMapForOtherChipPkg(
+                              filePath=fileName,
+                              pkgName=prefix,
+                              chipMapSrc=chipMapSrc,
+                              otherSrc=otherSrc,
+                              baseMapType=baseMapType,
+                              outputDir=outputDir                                
+                              )
+    }
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="zebrafish","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+    
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendProbes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+    appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+    appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+    appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+    appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+#This is the formula for ZEBRAFISH_DB  
+popZEBRAFISHDB <- function(prefix,
+                       chipSrc = system.file("extdata", "chipsrc_zebrafish.sqlite", package="zebrafish.db0"),
+                       metaDataSrc,
+                       outputDir=".",
+                       printSchema=FALSE){
+
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="zebrafish","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    appendAccessions(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+    appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+    appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+    appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+    appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+
+
+#presently this is the formula for ECOLICHIP_DB
+popECOLICHIPDB <- function(affy,
+                           prefix,
+                           fileName,
+                           chipMapSrc = system.file("extdata", "chipmapsrc_ecoliK12.sqlite", package="ecoliK12.db0"),
+                           chipSrc = system.file("extdata", "chipsrc_ecoliK12.sqlite", package="ecoliK12.db0"),
+                           metaDataSrc,
+                           otherSrc=character(0),
+                           baseMapType="gbNRef",
+                           outputDir=".",
+                           printSchema=FALSE){
+
+    if(affy==TRUE){
+        getMapForBiocChipPkg(
+                             csvFileName=fileName,
+                             pkgName=prefix,
+                             chipMapSrc=chipMapSrc,
+                             otherSrc=otherSrc,
+                             baseMapType=baseMapType,
+                             outputDir=outputDir
+                             )
+    }
+    else if(affy==FALSE){
+        getMapForOtherChipPkg(
+                              filePath=fileName,
+                              pkgName=prefix,
+                              chipMapSrc=chipMapSrc,
+                              otherSrc=otherSrc,
+                              baseMapType=baseMapType,
+                              outputDir=outputDir                                
+                              )
+    }
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="ecoli","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+    
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendProbes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+    appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+#This is the formula for ECOLI_DB  
+popECOLIDB <- function(prefix,
+                       chipSrc = system.file("extdata", "chipsrc_ecoliK12.sqlite", package="ecoliK12.db0"),
+                       metaDataSrc,
+                       outputDir=".",
+                       printSchema=FALSE){
+
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="ecoli","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendAccessions(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+    appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+
+
+
+
 
 
 

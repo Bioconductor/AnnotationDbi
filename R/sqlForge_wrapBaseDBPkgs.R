@@ -134,8 +134,68 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
   chipMapSrcFile = NULL
 
   makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+
+ 
+  #zebrafish.db0 
+  vals <- list(ANNOBJPREFIX="zebrafish",
+               ORGANISM="Danio rerio",
+               SPECIES="zebrafish",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Danio_rerio",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_zebrafish.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_zebrafish.sqlite",sep="")
+
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+
+  
+  #ecoliK12.db0 
+  vals <- list(ANNOBJPREFIX="ecoliK12",
+               ORGANISM="Escherichia coli",
+               SPECIES="E coli K12 Strain",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Escherichia_coli",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_ecoliK12.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_ecoliK12.sqlite",sep="")
+  
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+
+
+  #ecoliSakai.db0 
+  vals <- list(ANNOBJPREFIX="ecoliSakai",
+               ORGANISM="Escherichia coli",
+               SPECIES="E coli Sakai Strain",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Escherichia_coli",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_ecoliSakai.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_ecoliSakai.sqlite",sep="")
+
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+
+  
   
 }
+
 
 #makeBase Package is just a utility function to minimize code bloat.
 makeBasePackage <- function(chipSrcFile = NULL,#No chipSrcFile = no package

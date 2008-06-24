@@ -288,6 +288,103 @@ makeYEASTCHIP_DB <- function(affy,
 
 
 
+makeZEBRAFISHCHIP_DB <- function(affy,
+                             prefix,
+                             fileName,
+                             otherSrc = character(0),
+                             chipMapSrc = system.file("extdata", "chipmapsrc_zebrafish.sqlite", package="zebrafish.db0"),
+                             chipSrc = system.file("extdata", "chipsrc_zebrafish.sqlite", package="zebrafish.db0"),
+                             baseMapType,
+                             outputDir = ".",
+                             version,
+                             manufacturer = "Manufacturer not specified",
+                             chipName = "ChipName not specified",
+                             manufacturerUrl = "Manufacturer Url not specified",
+                             author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                             maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
+    
+    metaDataSrc <- c(DBSCHEMA="ZEBRAFISHCHIP_DB",
+                     ORGANISM="Danio rerio",
+                     SPECIES="Zebrafish",
+                     MANUFACTURER=manufacturer,
+                     CHIPNAME=chipName,
+                     MANUFACTURERURL=manufacturerUrl)
+
+    popZEBRAFISHCHIPDB(affy = affy,
+                   prefix = prefix,
+                   fileName = fileName,
+                   chipMapSrc = chipMapSrc,
+                   chipSrc = chipSrc,
+                   metaDataSrc = metaDataSrc,
+                   otherSrc = otherSrc,
+                   baseMapType=baseMapType,
+                   outputDir=outputDir,
+                   printSchema=FALSE)
+
+    seed <- new("AnnDbPkgSeed",
+                Package= paste(prefix,".db",sep=""),
+                Version=version,
+                Author=author,
+                Maintainer=maintainer,
+                PkgTemplate="ZEBRAFISHCHIP.DB",
+                AnnObjPrefix=prefix
+                )
+
+    makeAnnDbPkg(seed, paste(outputDir,"/", prefix,".sqlite", sep=""), dest_dir = outputDir)
+
+}
+
+
+
+makeECOLICHIP_DB <- function(affy,
+                             prefix,
+                             fileName,
+                             otherSrc = character(0),
+                             chipMapSrc = system.file("extdata", "chipmapsrc_ecoliK12.sqlite", package="ecoliK12.db0"),
+                             chipSrc = system.file("extdata", "chipsrc_ecoliK12.sqlite", package="ecoliK12.db0"),
+                             baseMapType,
+                             outputDir = ".",
+                             version,
+                             manufacturer = "Manufacturer not specified",
+                             chipName = "ChipName not specified",
+                             manufacturerUrl = "Manufacturer Url not specified",
+                             author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                             maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
+    
+    metaDataSrc <- c(DBSCHEMA="ECOLICHIP_DB",
+                     ORGANISM="Escherichia coli",
+                     SPECIES="E coli",
+                     MANUFACTURER=manufacturer,
+                     CHIPNAME=chipName,
+                     MANUFACTURERURL=manufacturerUrl)
+    
+    popECOLICHIPDB(affy = affy,
+                   prefix = prefix,
+                   fileName = fileName,
+                   chipMapSrc = chipMapSrc,
+                   chipSrc = chipSrc,
+                   metaDataSrc = metaDataSrc,
+                   otherSrc = otherSrc,
+                   baseMapType=baseMapType,
+                   outputDir=outputDir,
+                   printSchema=FALSE)
+
+    seed <- new("AnnDbPkgSeed",
+                Package= paste(prefix,".db",sep=""),
+                Version=version,
+                Author=author,
+                Maintainer=maintainer,
+                PkgTemplate="ECOLICHIP.DB",
+                AnnObjPrefix=prefix
+                )
+
+    makeAnnDbPkg(seed, paste(outputDir,"/", prefix,".sqlite", sep=""), dest_dir = outputDir)
+
+}
 
 
 

@@ -4,6 +4,8 @@
 \alias{makeMOUSECHIP_DB}
 \alias{makeRATCHIP_DB}
 \alias{makeFLYCHIP_DB}
+\alias{makeZEBRAFISHCHIP_DB}
+\alias{makeECOLICHIP_DB}
 
 \title{Creates a sqlite database, and then makes an annotation package
   with it}

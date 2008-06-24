@@ -25,6 +25,8 @@
 \alias{createAnnObjs.RATCHIP_DB}
 \alias{createAnnObjs.FLYCHIP_DB}
 \alias{createAnnObjs.YEASTCHIP_DB}
+\alias{createAnnObjs.ZEBRAFISHCHIP_DB}
+\alias{createAnnObjs.ECOLICHIP_DB}
 \alias{createAnnObjs.ARABIDOPSISCHIP_DB}
 \alias{createAnnObjs.HUMAN_DB}
 \alias{createAnnObjs.MALARIA_DB}
@@ -33,6 +35,8 @@
 \alias{createAnnObjs.FLY_DB}
 \alias{createAnnObjs.YEAST_DB}
 \alias{createAnnObjs.YEASTLEGACY_DB}
+\alias{createAnnObjs.ZEBRAFISH_DB}
+\alias{createAnnObjs.ECOLI_DB}
 \alias{createAnnObjs.GO_DB}
 \alias{createAnnObjs.KEGG_DB}
 \alias{createAnnObjs.INPARANOIDDROME_DB}

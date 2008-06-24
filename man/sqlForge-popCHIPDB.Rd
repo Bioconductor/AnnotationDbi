@@ -4,6 +4,8 @@
 \alias{popMOUSECHIPDB}
 \alias{popRATCHIPDB}
 \alias{popFLYCHIPDB}
+\alias{popZEBRAFISHCHIPDB}
+\alias{popECOLICHIPDB}
 
 \title{Populates an SQLite DB with and produces a schema definition}
 
@@ -62,8 +64,14 @@
   information about how a probe will map.
   }
   \item{baseMapType}{
-    The type of ID that is used in the initial base mapping.  This would
-  be the ID type present in the fileName.
+    The type of ID that is used for the initial base mapping.  If using
+  a classic base mapping file, this should be the ID type present in the
+  fileName.  This can be any of the following values:
+  "gb" = for genbank IDs
+  "ug" = unigene IDs
+  "eg" = Entrez Gene IDs
+  "refseq" = refseq IDs
+  "gbNRef" = mixture of genbank and refseq IDs
   }
   \item{outputDir}{
     Where you would like the output files to be placed.

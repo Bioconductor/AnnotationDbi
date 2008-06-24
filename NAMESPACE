@@ -113,6 +113,8 @@ export(
     createAnnObjs.RATCHIP_DB,
     createAnnObjs.FLYCHIP_DB,
     createAnnObjs.YEASTCHIP_DB,
+    createAnnObjs.ZEBRAFISHCHIP_DB,
+    createAnnObjs.ECOLICHIP_DB,
     createAnnObjs.ARABIDOPSISCHIP_DB,
     createAnnObjs.HUMAN_DB,
     createAnnObjs.MALARIA_DB,
@@ -121,6 +123,8 @@ export(
     createAnnObjs.FLY_DB,
     createAnnObjs.YEAST_DB,
     createAnnObjs.YEASTLEGACY_DB,
+    createAnnObjs.ZEBRAFISH_DB,
+    createAnnObjs.ECOLI_DB,
     createAnnObjs.GO_DB,
     createAnnObjs.KEGG_DB,
     createAnnObjs.INPARANOIDHOMSA_DB,
@@ -157,6 +161,10 @@ export(
     popYEASTCHIPDB,
     popYEASTDB,
     popMALARIADB,
+    popZEBRAFISHCHIPDB,
+    popZEBRAFISHDB,
+    popECOLICHIPDB,
+    popECOLIDB,
 
     ## wrapper functions for making chip packages
     makeHUMANCHIP_DB,
@@ -165,6 +173,8 @@ export(
     makeFLYCHIP_DB,
     makeARABIDOPSISCHIP_DB,
     makeYEASTCHIP_DB,
+    makeZEBRAFISHCHIP_DB,
+    makeECOLICHIP_DB,
 
     #Convenience function to make the intermediate DB pkgs
     wrapBaseDBPackages

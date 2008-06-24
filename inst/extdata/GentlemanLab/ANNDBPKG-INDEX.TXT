@@ -847,13 +847,13 @@ manufacturer: Affymetrix
 
 
 ### =========================================================================
-### HUMAN_DB/MOUSE_DB/RAT_DB/FLY_DB/YEAST_DB schemas
+### HUMAN_DB/MALARIA_DB/MOUSE_DB/RAT_DB/FLY_DB/YEAST_DB/ZEBRAFISH_DB/ECOLI_DB schemas
 ### ------------------------------------------------
 ###   Fields:
 ###     Package (*)
 ###     Title
 ###     Version (*)
-###     PkgTemplate: HUMAN.DB|MOUSE.DB|RAT.DB|FLY.DB|YEAST.DB
+###     PkgTemplate: HUMAN.DB|MALARIA.DB|MOUSE.DB|RAT.DB|FLY.DB|YEAST.DB|ZEBRAFISH.DB|ECOLI_DB
 ###     DBfile (*)
 ###     DBschema
 ###     AnnObjPrefix (*)
@@ -916,6 +916,33 @@ AnnObjPrefix: org.Sc.sgd
 AnnObjTarget: Yeast
 species: Yeast
 biocViews: AnnotationData, Saccharomyces_cerevisiae
+
+Package: org.Dr.eg.db
+Version: 2.2.2
+PkgTemplate: ZEBRAFISH.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Dr.eg.sqlite
+AnnObjPrefix: org.Dr.eg
+AnnObjTarget: Zebrafish
+species: Zebrafish
+biocViews: AnnotationData, Danio_rerio
+
+Package: org.EcK12.eg.db
+Version: 2.2.2
+PkgTemplate: ECOLI.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.EcK12.eg.sqlite
+AnnObjPrefix: org.EcK12.eg
+AnnObjTarget: E coli
+species: E coli strain K12
+biocViews: AnnotationData, Escherichia_coli
+
+Package: org.EcSakai.eg.db
+Version: 2.2.2
+PkgTemplate: ECOLI.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.EcSakai.eg.sqlite
+AnnObjPrefix: org.EcSakai.eg
+AnnObjTarget: E coli
+species: E coli strain Sakai
+biocViews: AnnotationData, Escherichia_coli
 
 
 ###TEMP just to get a YEAST classic made...
