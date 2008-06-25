@@ -35,7 +35,7 @@ information and that is a list of paired IDs.  These IDs are to be
 stored in a tab delimited file that is formatted in the same way that
 they used to be for the older AnnBuilder package.  For those who are
 unfamiliar with the AnnBuilder package, this just means that there are
-two collumns separated by a tab where the column on the left contains
+two columns separated by a tab where the column on the left contains
 probe or probeset identifiers and the column on the right contains
 some sort of widely accepted gene accession.  This file should NOT
 contain a header.  SQLForge will then use these IDs along with it's
