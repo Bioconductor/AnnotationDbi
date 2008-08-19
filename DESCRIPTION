@@ -2,12 +2,12 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.3.8
+Version: 1.3.9
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.7.0), methods, utils, Biobase (>= 1.17.0), DBI (>= 0.2-4), RSQLite (>= 0.6-4)
 Imports: methods, utils, Biobase, DBI, RSQLite
-Suggests: hgu95av2.db, GO.db, human.db0, mouse.db0, rat.db0, fly.db0, yeast.db0, arabidopsis.db0, zebrafish.db0
+Suggests: hgu95av2.db, GO.db, human.db0, mouse.db0, rat.db0, fly.db0, yeast.db0, arabidopsis.db0, zebrafish.db0, ecoliK12.db0, ecoliSakai.db0
 Collate: 00RTobjs.R
          AllGenerics.R
          AllClasses.R
@@ -26,6 +26,8 @@ Collate: 00RTobjs.R
          createAnnObjs.FLYCHIP_DB.R
          createAnnObjs.YEASTCHIP_DB.R
 	 createAnnObjs.ZEBRAFISHCHIP_DB.R
+	 createAnnObjs.CANINECHIP_DB.R
+	 createAnnObjs.BOVINECHIP_DB.R
 	 createAnnObjs.ECOLICHIP_DB.R
          createAnnObjs.ARABIDOPSISCHIP_DB.R
          createAnnObjs.HUMAN_DB.R
@@ -36,6 +38,8 @@ Collate: 00RTobjs.R
          createAnnObjs.YEAST_DB.R
          createAnnObjs.YEASTLEGACY_DB.R
 	 createAnnObjs.ZEBRAFISH_DB.R
+	 createAnnObjs.CANINE_DB.R
+	 createAnnObjs.BOVINE_DB.R
 	 createAnnObjs.ECOLI_DB.R
          createAnnObjs.GO_DB.R
          createAnnObjs.KEGG_DB.R

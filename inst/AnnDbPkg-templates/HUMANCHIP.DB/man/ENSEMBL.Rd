@@ -1,6 +1,6 @@
 \name{@ANNOBJPREFIX@ENSEMBL}
 \alias{@ANNOBJPREFIX@ENSEMBL}
-\alias{@ANNOBJPREFIX@ENSEMBL2EG}
+\alias{@ANNOBJPREFIX@ENSEMBL2PROBE}
 \title{Map Ensembl gene acession numbers with Entrez Gene identifiers}  
 \description{ 
   @ANNOBJPREFIX@ENSEMBL is an R object that contains mappings between 
@@ -26,9 +26,9 @@
       # Get the first one
       xx[[1]]
     }
-    #For the reverse map ENSEMBL2EG:
+    #For the reverse map ENSEMBL2PROBE:
     # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@ENSEMBL2EG)
+    xx <- as.list(@ANNOBJPREFIX@ENSEMBL2PROBE)
     if(length(xx) > 0){
        # Gets the entrez gene IDs for the first five Ensembl IDs
        xx[1:5]

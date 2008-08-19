@@ -85,29 +85,33 @@ gene IDs to compare to an intermediate database.  The data from this
 database is what is used to make the specialized database that is
 placed inside of an annotation package.
 
-At the present time, it is possible to make annotation packages for 6
-unique model organisms. These include human, mouse, rat, fly, yeast
-and arabidposis.
-
-For each of these model organisms another support package will be
-maintained and updated biannually which will include all the basic
-data gathered for this organism from sources such as NCBI, GO, KEGG
-and Flybase etc. These support packages will each be named after the
-organism they are intended for and will each include a large sqlite
-database with all the supporting information for that organism. Please
-note that support databases are not necessary unless you intend to
-actually make a new annotation package for one of the supported
-organisms. In the case where you want to make annotation packages,
-the support databases are only required for the organism in
-question. When SQLForge makes a new database, it uses the information
-supplied by the support database as the data source to make the
-annotation package.  So the relevant support packages needs to be
-updated to the latest version in order to guarantee that the
+At the present time, it is possible to make annotation packages for
+the most common model organisms.  For each of these organisms another
+support package will be maintained and updated biannually which will
+include all the basic data gathered for this organism from sources
+such as NCBI, GO, KEGG and Flybase etc. These support packages will
+each be named after the organism they are intended for and will each
+include a large sqlite database with all the supporting information
+for that organism. Please note that support databases are not
+necessary unless you intend to actually make a new annotation package
+for one of the supported organisms. In the case where you want to make
+annotation packages, the support databases are only required for the
+organism in question. When SQLForge makes a new database, it uses the
+information supplied by the support database as the data source to
+make the annotation package.  So the relevant support packages needs
+to be updated to the latest version in order to guarantee that the
 annotation packages you produce will be made with information from the
 last biannual update.  These support packages are not meant to be
 annotation packages themselves and they come with no schema of their
 own. Instead these are merely a way to distribute the data to those
 who want to make custom annotation packages.
+
+To check if your organism is supported simply look in the metadata
+packages repository on the bioconductor website for a .db0 package.
+Only special organism base packages will end with the .db0
+extension. If you find a package that is named after the organism you
+are interested in, then your organism is supported, and you can use
+that database to make custom packages.
 
 
 \section{How to use SQLForge}
@@ -163,7 +167,12 @@ myMeta = c("DBSCHEMA"="HUMANCHIP_DB",
 @ 
 
 For illustration purposes I will write this example to put the sqlite
-database into a temporary directory.
+database into a temporary directory.  I will also specify the type of
+the primary ID that is to be used by the databases populating function
+with the baseMapType parameter.  In this case, "gb" is used to
+indicate genbank accesssions, but it could also have been "ug" for
+unigene, "eg" for Entrez gene, or "refseq" for refseq accessions.
+Additional details can be found in the man pages for these functions.
 
 
 <<TempDirPopulate, keep.source=TRUE, results=hide>>=

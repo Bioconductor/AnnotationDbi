@@ -1,4 +1,4 @@
-wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/nli/annosrc/db/",
+wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/mcarlson/sqliteGen/annosrc/db/",
                                 destDir = ".",
                                 version ){
 
@@ -154,6 +154,45 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/sqliteGen/
 
   makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
 
+  
+  #canine.db0 
+  vals <- list(ANNOBJPREFIX="canine",
+               ORGANISM="Canis familiaris",
+               SPECIES="canine",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Canis_familiaris",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_canine.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_canine.sqlite",sep="")
+
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+
+
+  #bovine.db0 
+  vals <- list(ANNOBJPREFIX="bovine",
+               ORGANISM="Bos taurus",
+               SPECIES="bovine",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Bos_taurus",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_bovine.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_bovine.sqlite",sep="")
+
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+
+  
   
   #ecoliK12.db0 
   vals <- list(ANNOBJPREFIX="ecoliK12",

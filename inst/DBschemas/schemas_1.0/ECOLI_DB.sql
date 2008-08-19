@@ -1,5 +1,5 @@
 --
--- HUMAN_DB schema
+-- ECOLI_DB schema
 -- ===============
 --
 

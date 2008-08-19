@@ -1,5 +1,5 @@
 --
--- HUMAN_DB schema
+-- MALARIA_DB schema
 -- ===============
 --
 

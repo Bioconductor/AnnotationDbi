@@ -1,5 +1,5 @@
 --
--- HUMAN_DB schema
+-- ZEBRAFISH_DB schema
 -- ===============
 --
 

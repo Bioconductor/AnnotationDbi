@@ -1,5 +1,5 @@
 --
--- HUMANCHIP_DB schema
+-- ZEBRAFISHCHIP_DB schema
 -- ===================
 --
 

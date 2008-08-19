@@ -1937,8 +1937,8 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
 
   sql<- paste("    CREATE INDEX mc1 ON match_count(probe_id);") 
   sqliteQuickSQL(db, sql)
-      
-  sql<- paste("    CREATE TABLE probes (
+
+  sql<- paste(" CREATE TEMP TABLE tprobes (
       probe_id VARCHAR(80) NOT NULL,                -- manufacturer ID
       is_multiple SMALLINT NOT NULL,                -- a silly and useless field
       _id INTEGER NULL,                             -- REFERENCES ", subStrs[["cntrTab"]],"
@@ -1948,7 +1948,7 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
-    INSERT INTO probes
+    INSERT INTO tprobes
      SELECT DISTINCT a.probe_id, a.is_multiple, b._id
      FROM (SELECT   m.probe_id as probe_id,
                     m.is_multiple as is_multiple,
@@ -1961,6 +1961,89 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
      ") 
   sqliteQuickSQL(db, sql)
 
+  ##We have to drop/cleanup probes that are multiple hits, where the 2nd hit does not map to a probe...
+  ##So 1st we drop the 2ndary entries:
+  sqliteQuickSQL(db, "DELETE FROM tprobes WHERE is_multiple = 1 and _id IS NULL;")
+
+  ##Then we have to work on cleaning up, the 1st step is to make a temporary table to count the number
+  ##of mapped probes that we have for each 
+  sql<- paste(" CREATE TEMP TABLE probe_multi_counts (
+      probe_id VARCHAR(80) NOT NULL,
+      is_multiple SMALLINT NOT NULL,
+      _id INTEGER NULL,
+      count INTEGER NOT NULL,
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id));
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO probe_multi_counts (probe_id,
+                                    is_multiple,
+                                    _id,
+                                    count)
+     SELECT probe_id,
+            is_multiple,
+            _id,
+            count(*)
+     FROM tprobes GROUP BY probe_id;
+     ")
+  sqliteQuickSQL(db, sql)
+
+  ##Update the is_multiple col where our counts indicate that we should
+  sqliteQuickSQL(db, "UPDATE probe_multi_counts set is_multiple = 0 where count = 1;")
+
+  ##Then we need a left join to combine this information 
+  sql<- paste(" CREATE TEMP TABLE ljoin (probe_id VARCHAR(80) NOT NULL,
+      p_is_multiple SMALLINT NOT NULL,
+      _id INTEGER NULL,                       
+      pmc_probe_id VARCHAR(80) NOT NULL,
+      is_multiple SMALLINT NOT NULL,
+      pmc_id INTEGER NULL,
+      pmc_count INTEGER NULL,
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id));
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO ljoin (probe_id,
+                       p_is_multiple,
+                       _id,
+                       pmc_probe_id,
+                       is_multiple,
+                       pmc_id,
+                       pmc_count)
+     SELECT p.probe_id,
+            p.is_multiple,
+            p._id,
+            pmc.probe_id,
+            pmc.is_multiple,
+            pmc._id ,
+            pmc.count
+     FROM tprobes as p LEFT JOIN probe_multi_counts as pmc
+     ON p.probe_id=pmc.probe_id;
+     ") 
+  sqliteQuickSQL(db, sql)
+  
+  ##And Finally, we can make our final table
+  sql<- paste(" CREATE TABLE probes (
+      probe_id VARCHAR(80) NOT NULL,                -- manufacturer ID
+      is_multiple SMALLINT NOT NULL,                -- a silly and useless field
+      _id INTEGER NULL,                             -- REFERENCES  genes
+      FOREIGN KEY (_id) REFERENCES  ", subStrs[["cntrTab"]],"   (_id)
+    );") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO probes (probe_id,
+                        is_multiple,
+                        _id)
+     SELECT probe_id,
+            is_multiple,
+            _id
+     FROM ljoin;
+     ") 
+  sqliteQuickSQL(db, sql)
+  
   sql<- paste("    CREATE INDEX Fprobes ON probes (_id);") 
   if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)

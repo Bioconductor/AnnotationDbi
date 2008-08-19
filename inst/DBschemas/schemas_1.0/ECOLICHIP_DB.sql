@@ -1,5 +1,5 @@
 --
--- HUMANCHIP_DB schema
+-- ECOLICHIP_DB schema
 -- ===================
 --
 

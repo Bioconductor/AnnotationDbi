@@ -1,4 +1,21 @@
+ 	**************************************************
+	*						 *
+	*	        1.3.9 SERIES NEWS		 *
+	*						 *
 	**************************************************
+
+
+		CHANGES IN AnnotationDbi VERSION 1.3.9
+
+
+NEW FEATURES
+
+    o	Support added for Malaria, Zebrafish, two strains of E coli,
+      	bovine and canine.
+
+
+
+ 	**************************************************
 	*						 *
 	*	        1.1.7 SERIES NEWS		 *
 	*						 *
