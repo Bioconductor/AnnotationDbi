@@ -846,14 +846,174 @@ species: Arabidopsis
 manufacturer: Affymetrix
 
 
+
 ### =========================================================================
-### HUMAN_DB/MALARIA_DB/MOUSE_DB/RAT_DB/FLY_DB/YEAST_DB/ZEBRAFISH_DB/ECOLI_DB schemas
+### ZEBRAFISHCHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: ZEBRAFISHCHIP.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+Package: zebrafish.db
+Version: 2.2.4
+PkgTemplate: ZEBRAFISHCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/zebrafish.sqlite
+AnnObjPrefix: zebrafish
+species: Zebrafish
+manufacturer: Affymetrix
+
+
+
+### =========================================================================
+### CANINECHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: CANINECHIP.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+Package: canine.db
+Version: 2.2.4
+PkgTemplate: CANINECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/canine.sqlite
+AnnObjPrefix: canine
+species: Dog
+manufacturer: Affymetrix
+
+Package: canine2.db
+Version: 2.2.4
+PkgTemplate: CANINECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/canine2.sqlite
+AnnObjPrefix: canine
+species: Dog
+manufacturer: Affymetrix
+
+
+
+### =========================================================================
+### WORMCHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: WORMCHIP.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+Package: celegans.db
+Version: 2.2.4
+PkgTemplate: WORMCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/celegans.sqlite
+AnnObjPrefix: celegans
+species: Worm
+manufacturer: Affymetrix
+
+
+
+### =========================================================================
+### CHICKENCHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: CHICKENCHIP.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+Package: chicken.db
+Version: 2.2.4
+PkgTemplate: CHICKENCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/chicken.sqlite
+AnnObjPrefix: chicken
+species: Chicken
+manufacturer: Affymetrix
+
+
+
+### =========================================================================
+### BOVINECHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: BOVINECHIP.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+Package: bovine.db
+Version: 2.2.4
+PkgTemplate: BOVINECHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/bovine.sqlite
+AnnObjPrefix: bovine
+species: Bovine
+manufacturer: Affymetrix
+
+
+
+
+### =========================================================================
+### HUMAN_DB/MALARIA_DB/MOUSE_DB/RAT_DB/FLY_DB/YEAST_DB/ZEBRAFISH_DB/ECOLI_DB/CANINE_DB/BOVINE_DB/WORM_DB/PIG_DB/CHICKEN_DB schemas
 ### ------------------------------------------------
 ###   Fields:
 ###     Package (*)
 ###     Title
 ###     Version (*)
-###     PkgTemplate: HUMAN.DB|MALARIA.DB|MOUSE.DB|RAT.DB|FLY.DB|YEAST.DB|ZEBRAFISH.DB|ECOLI_DB
+###     PkgTemplate: HUMAN.DB|MALARIA.DB|MOUSE.DB|RAT.DB|FLY.DB|YEAST.DB|ZEBRAFISH.DB|ECOLI_DB|CANINE_DB|BOVINE_DB|WORM_DB|PIG_DB|CHICKEN_DB
 ###     DBfile (*)
 ###     DBschema
 ###     AnnObjPrefix (*)
@@ -962,17 +1122,45 @@ AnnObjTarget: Bovine
 species: Bovine
 biocViews: AnnotationData, Bos_taurus
 
+Package: org.Ce.eg.db
+Version: 2.2.4
+PkgTemplate: WORM.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Ce.eg.sqlite
+AnnObjPrefix: org.Ce.eg
+AnnObjTarget: Bovine
+species: Bovine
+biocViews: AnnotationData, Caenorhabditis_elegans
+
+Package: org.Ss.eg.db
+Version: 2.2.4
+PkgTemplate: PIG.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Ss.eg.sqlite
+AnnObjPrefix: org.Ss.eg
+AnnObjTarget: Pig
+species: Pig
+biocViews: AnnotationData, Sus_scrofa
+
+Package: org.Gg.eg.db
+Version: 2.2.4
+PkgTemplate: CHICKEN.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Gg.eg.sqlite
+AnnObjPrefix: org.Gg.eg
+AnnObjTarget: Chicken
+species: Chicken
+biocViews: AnnotationData, Gallus_gallus
+
+
 
 ###TEMP just to get a YEAST classic made...
-Package: YEAST.db
-Title: SGD centric annotation maps for Yeast
-Version: 2.2.4
-PkgTemplate: YEASTLEGACY.DB
-DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/YEAST.sqlite
-AnnObjPrefix: YEAST
-AnnObjTarget: Yeast
-species: Yeast
-biocViews: AnnotationData, Saccharomyces_cerevisiae
+### Package: YEAST.db
+### Title: SGD centric annotation maps for Yeast
+### Version: 2.2.4
+### PkgTemplate: YEASTLEGACY.DB
+### DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/YEAST.sqlite
+### AnnObjPrefix: YEAST
+### AnnObjTarget: Yeast
+### species: Yeast
+### biocViews: AnnotationData, Saccharomyces_cerevisiae
 
 
 ### =========================================================================

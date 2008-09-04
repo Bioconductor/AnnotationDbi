@@ -232,6 +232,59 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/mcarlson/s
   makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
 
   
+  #worm.db0 
+  vals <- list(ANNOBJPREFIX="worm",
+               ORGANISM="Caenorhabditis elegans",
+               SPECIES="worm",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Caenorhabditis_elegans",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_worm.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_worm.sqlite",sep="")
+
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)
+  
+  #pig.db0 
+  vals <- list(ANNOBJPREFIX="pig",
+               ORGANISM="Sus scrofa",
+               SPECIES="pig",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Sus_scrofa",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_pig.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_pig.sqlite",sep="")
+
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+
+  #chicken.db0 
+  vals <- list(ANNOBJPREFIX="chicken",
+               ORGANISM="Gallus gallus",
+               SPECIES="chicken",
+               AUTHOR="Marc Carlson, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Gallus_gallus",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_chicken.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_chicken.sqlite",sep="")
+
+  makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
   
 }
 

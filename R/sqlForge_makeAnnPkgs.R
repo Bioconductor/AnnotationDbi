@@ -488,3 +488,151 @@ makeBOVINECHIP_DB <- function(affy,
 }
 
 
+
+makeWORMCHIP_DB <- function(affy,
+                             prefix,
+                             fileName,
+                             otherSrc = character(0),
+                             chipMapSrc = system.file("extdata", "chipmapsrc_worm.sqlite", package="worm.db0"),
+                             chipSrc = system.file("extdata", "chipsrc_worm.sqlite", package="worm.db0"),
+                             baseMapType,
+                             outputDir = ".",
+                             version,
+                             manufacturer = "Manufacturer not specified",
+                             chipName = "ChipName not specified",
+                             manufacturerUrl = "Manufacturer Url not specified",
+                             author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                             maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
+    
+    metaDataSrc <- c(DBSCHEMA="WORMCHIP_DB",
+                     ORGANISM="Caenorhabditis elegans",
+                     SPECIES="Worm",
+                     MANUFACTURER=manufacturer,
+                     CHIPNAME=chipName,
+                     MANUFACTURERURL=manufacturerUrl)
+
+    popWORMCHIPDB(affy = affy,
+                   prefix = prefix,
+                   fileName = fileName,
+                   chipMapSrc = chipMapSrc,
+                   chipSrc = chipSrc,
+                   metaDataSrc = metaDataSrc,
+                   otherSrc = otherSrc,
+                   baseMapType=baseMapType,
+                   outputDir=outputDir,
+                   printSchema=FALSE)
+
+    seed <- new("AnnDbPkgSeed",
+                Package= paste(prefix,".db",sep=""),
+                Version=version,
+                Author=author,
+                Maintainer=maintainer,
+                PkgTemplate="WORMCHIP.DB",
+                AnnObjPrefix=prefix
+                )
+
+    makeAnnDbPkg(seed, paste(outputDir,"/", prefix,".sqlite", sep=""), dest_dir = outputDir)
+
+}
+
+
+makePIGCHIP_DB <- function(affy,
+                             prefix,
+                             fileName,
+                             otherSrc = character(0),
+                             chipMapSrc = system.file("extdata", "chipmapsrc_pig.sqlite", package="pig.db0"),
+                             chipSrc = system.file("extdata", "chipsrc_pig.sqlite", package="pig.db0"),
+                             baseMapType,
+                             outputDir = ".",
+                             version,
+                             manufacturer = "Manufacturer not specified",
+                             chipName = "ChipName not specified",
+                             manufacturerUrl = "Manufacturer Url not specified",
+                             author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                             maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
+    
+    metaDataSrc <- c(DBSCHEMA="PIGCHIP_DB",
+                     ORGANISM="Sus scrofa",
+                     SPECIES="Pig",
+                     MANUFACTURER=manufacturer,
+                     CHIPNAME=chipName,
+                     MANUFACTURERURL=manufacturerUrl)
+
+    popPIGCHIPDB(affy = affy,
+                   prefix = prefix,
+                   fileName = fileName,
+                   chipMapSrc = chipMapSrc,
+                   chipSrc = chipSrc,
+                   metaDataSrc = metaDataSrc,
+                   otherSrc = otherSrc,
+                   baseMapType=baseMapType,
+                   outputDir=outputDir,
+                   printSchema=FALSE)
+
+    seed <- new("AnnDbPkgSeed",
+                Package= paste(prefix,".db",sep=""),
+                Version=version,
+                Author=author,
+                Maintainer=maintainer,
+                PkgTemplate="PIGCHIP.DB",
+                AnnObjPrefix=prefix
+                )
+
+    makeAnnDbPkg(seed, paste(outputDir,"/", prefix,".sqlite", sep=""), dest_dir = outputDir)
+
+}
+
+
+makeCHICKENCHIP_DB <- function(affy,
+                             prefix,
+                             fileName,
+                             otherSrc = character(0),
+                             chipMapSrc = system.file("extdata", "chipmapsrc_chicken.sqlite", package="chicken.db0"),
+                             chipSrc = system.file("extdata", "chipsrc_chicken.sqlite", package="chicken.db0"),
+                             baseMapType,
+                             outputDir = ".",
+                             version,
+                             manufacturer = "Manufacturer not specified",
+                             chipName = "ChipName not specified",
+                             manufacturerUrl = "Manufacturer Url not specified",
+                             author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                             maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
+    
+    metaDataSrc <- c(DBSCHEMA="CHICKENCHIP_DB",
+                     ORGANISM="Gallus gallus",
+                     SPECIES="Chicken",
+                     MANUFACTURER=manufacturer,
+                     CHIPNAME=chipName,
+                     MANUFACTURERURL=manufacturerUrl)
+
+    popCHICKENCHIPDB(affy = affy,
+                   prefix = prefix,
+                   fileName = fileName,
+                   chipMapSrc = chipMapSrc,
+                   chipSrc = chipSrc,
+                   metaDataSrc = metaDataSrc,
+                   otherSrc = otherSrc,
+                   baseMapType=baseMapType,
+                   outputDir=outputDir,
+                   printSchema=FALSE)
+
+    seed <- new("AnnDbPkgSeed",
+                Package= paste(prefix,".db",sep=""),
+                Version=version,
+                Author=author,
+                Maintainer=maintainer,
+                PkgTemplate="CHICKENCHIP.DB",
+                AnnObjPrefix=prefix
+                )
+
+    makeAnnDbPkg(seed, paste(outputDir,"/", prefix,".sqlite", sep=""), dest_dir = outputDir)
+
+}
+
+

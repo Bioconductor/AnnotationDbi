@@ -151,58 +151,58 @@ CANINE_DB_AnnDbBimap_seeds <- list(
             )
         ),
         rightColType="integer"
-    ),
-    list(
-        objName="ENSEMBL",
-        Class="AnnDbBimap",
-        L2Rchain=list(
-            CANINE_DB_L2Rlink1,
-            list(
-                tablename="ensembl",
-                Lcolname="_id",
-                Rcolname="ensembl_id"
-            )
-        )
-    ),
-    list(
-        objName="ENSEMBLPROT",
-        Class="AnnDbBimap",
-        L2Rchain=list(
-            CANINE_DB_L2Rlink1,
-            list(
-                tablename="ensembl_prot",
-                Lcolname="_id",
-                Rcolname="prot_id"
-            )
-        )
-    ),
-    list(
-        objName="ENSEMBLTRANS",
-        Class="AnnDbBimap",
-        L2Rchain=list(
-            CANINE_DB_L2Rlink1,
-            list(
-                tablename="ensembl_trans",
-                Lcolname="_id",
-                Rcolname="trans_id"
-            )
-        )
-    ),
-    list(
-        objName="GO",
-        Class="Go3AnnDbBimap",
-        L2Rchain=list(
-            CANINE_DB_L2Rlink1,
-            list(
-                #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
-                Lcolname="_id",
-                tagname=c(Evidence="{evidence}"),
-                Rcolname="go_id",
-                Rattribnames=c(Ontology="NULL")
-            )
-        ),
-        rightTables=Go3tablenames()
-    )
+    )#,
+##     list(
+##         objName="ENSEMBL",
+##         Class="AnnDbBimap",
+##         L2Rchain=list(
+##             CANINE_DB_L2Rlink1,
+##             list(
+##                 tablename="ensembl",
+##                 Lcolname="_id",
+##                 Rcolname="ensembl_id"
+##             )
+##         )
+##     ),
+##     list(
+##         objName="ENSEMBLPROT",
+##         Class="AnnDbBimap",
+##         L2Rchain=list(
+##             CANINE_DB_L2Rlink1,
+##             list(
+##                 tablename="ensembl_prot",
+##                 Lcolname="_id",
+##                 Rcolname="prot_id"
+##             )
+##         )
+##     ),
+##     list(
+##         objName="ENSEMBLTRANS",
+##         Class="AnnDbBimap",
+##         L2Rchain=list(
+##             CANINE_DB_L2Rlink1,
+##             list(
+##                 tablename="ensembl_trans",
+##                 Lcolname="_id",
+##                 Rcolname="trans_id"
+##             )
+##         )
+##     ),
+##     list(
+##         objName="GO",
+##         Class="Go3AnnDbBimap",
+##         L2Rchain=list(
+##             CANINE_DB_L2Rlink1,
+##             list(
+##                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
+##                 Lcolname="_id",
+##                 tagname=c(Evidence="{evidence}"),
+##                 Rcolname="go_id",
+##                 Rattribnames=c(Ontology="NULL")
+##             )
+##         ),
+##         rightTables=Go3tablenames()
+##     )
 )
 
 createAnnObjs.CANINE_DB <- function(prefix, objTarget, dbconn, datacache)
@@ -224,21 +224,21 @@ createAnnObjs.CANINE_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$REFSEQ2EG <- revmap(ann_objs$REFSEQ, objName="REFSEQ2EG")
     ann_objs$SYMBOL2EG <- revmap(ann_objs$SYMBOL, objName="SYMBOL2EG")
     ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
-    ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
-    ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
-    ann_objs$ENSEMBLTRANS2EG <- revmap(ann_objs$ENSEMBLTRANS, objName="ENSEMBLTRANS2EG")
-    ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
-    map <- ann_objs$GO2EG
-    map@rightTables <- Go3tablenames(all=TRUE)
-    map@objName <- "GO2ALLEGS"
-    ann_objs$GO2ALLEGS <- map
+##     ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
+##     ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
+##     ann_objs$ENSEMBLTRANS2EG <- revmap(ann_objs$ENSEMBLTRANS, objName="ENSEMBLTRANS2EG")
+##     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
+##     map <- ann_objs$GO2EG
+##     map@rightTables <- Go3tablenames(all=TRUE)
+##     map@objName <- "GO2ALLEGS"
+##     ann_objs$GO2ALLEGS <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
     ## Some pre-caching
-    Lkeys(ann_objs$GO)
+##     Lkeys(ann_objs$GO)
     #mappedLkeys(ann_objs$GO)
     #Rkeys(ann_objs$GO2EG)
     #mappedRkeys(ann_objs$GO2EG)

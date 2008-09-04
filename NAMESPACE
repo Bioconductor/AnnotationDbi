@@ -173,6 +173,12 @@ export(
     popCANINEDB,
     popBOVINECHIPDB,
     popBOVINEDB,
+    popWORMCHIPDB,
+    popWORMDB,
+    popPIGCHIPDB,
+    popPIGDB,
+    popCHICKENCHIPDB,
+    popCHICKENDB,
 
     ## wrapper functions for making chip packages
     makeHUMANCHIP_DB,
@@ -185,6 +191,9 @@ export(
     makeECOLICHIP_DB,
     makeCANINECHIP_DB,
     makeBOVINECHIP_DB,
+    makeWORMCHIP_DB,
+    makePIGCHIP_DB,
+    makeCHICKENCHIP_DB,
 
     #Convenience function to make the intermediate DB pkgs
     wrapBaseDBPackages

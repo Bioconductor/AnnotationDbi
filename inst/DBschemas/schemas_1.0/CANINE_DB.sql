@@ -20,16 +20,6 @@ CREATE TABLE alias (
   alias_symbol VARCHAR(80) NOT NULL,            -- gene symbol or alias
   FOREIGN KEY (_id) REFERENCES genes (_id)
 );
-CREATE TABLE ensembl (
-  _id INTEGER NOT NULL,                         -- REFERENCES genes
-  ensembl_id VARCHAR(20) NOT NULL,              -- Ensembl Gene ID
-  FOREIGN KEY (_id) REFERENCES genes (_id)
-);
-CREATE TABLE ensembl_prot (
-  _id INTEGER NOT NULL,                         -- REFERENCES genes
-  prot_id VARCHAR(20) NOT NULL,                 -- Ensembl Protein ID
-  FOREIGN KEY (_id) REFERENCES genes(_id)
-);
 CREATE TABLE chromosomes (
   _id INTEGER NOT NULL,                         -- REFERENCES genes
   chromosome VARCHAR(2) NOT NULL,               -- chromosome name
@@ -107,6 +97,4 @@ CREATE INDEX Fkegg ON kegg (_id);
 CREATE INDEX Fpubmed ON pubmed (_id);
 CREATE INDEX Frefseq ON refseq (_id);
 CREATE INDEX Funigene ON unigene (_id);
-CREATE INDEX Fensembl ON ensembl (_id);
-CREATE INDEX Fensemblp ON ensembl_prot (_id);
 

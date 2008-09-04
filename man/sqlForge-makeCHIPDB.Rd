@@ -8,6 +8,9 @@
 \alias{makeECOLICHIP_DB}
 \alias{makeCANINECHIP_DB}
 \alias{makeBOVINECHIP_DB}
+\alias{makeWORMCHIP_DB}
+\alias{makePIGCHIP_DB}
+\alias{makeCHICKENCHIP_DB}
 
 \title{Creates a sqlite database, and then makes an annotation package
   with it}
