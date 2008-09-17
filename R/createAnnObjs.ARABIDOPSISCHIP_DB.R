@@ -153,6 +153,20 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         rightColType="integer"
     ),
     list(
+        objName="CHRLOCEND",
+        Class="AnnDbMap",
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
+            list(
+                tablename="chromosome_locations",
+                Lcolname="_id",
+                tagname=c(Chromosome="{seqname}"),
+                Rcolname="end_location"
+            )
+        ),
+        rightColType="integer"
+    ),                                            
+    list(
         objName="GO",
         Class="Go3AnnDbBimap",
         L2Rchain=list(

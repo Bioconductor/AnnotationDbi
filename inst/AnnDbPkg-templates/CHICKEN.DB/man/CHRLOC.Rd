@@ -1,10 +1,14 @@
 \name{@ANNOBJPREFIX@CHRLOC}
 \alias{@ANNOBJPREFIX@CHRLOC}
+\alias{@ANNOBJPREFIX@CHRLOCEND}
 \title{Entrez Gene IDs to Chromosomal Location}
 \description{
   @ANNOBJPREFIX@CHRLOC is an R object that maps entrez gene identifiers to the
   starting position of the gene. The position of a gene is
   measured as the number of base pairs.
+
+  The CHRLOCEND mapping is the same as the CHRLOC mapping except that it
+  specifies the ending base of a gene instead of the start.
 }
 \details{
   Each entrez gene identifier maps to a named vector of chromosomal locations,

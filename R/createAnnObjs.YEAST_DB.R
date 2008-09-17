@@ -56,6 +56,20 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         rightColType="integer"
     ),
     list(
+        objName="CHRLOCEND",
+        Class="AnnDbMap",
+        L2Rchain=list(
+            YEAST_DB_L2Rlink1,
+            list(
+                tablename="chromosome_features",
+                Lcolname="_id",
+                tagname=c(Chromosome="{chromosome}"),
+                Rcolname="stop"
+            )
+        ),
+        rightColType="integer"
+    ),
+    list(
         objName="DESCRIPTION",
         Class="AnnDbBimap",
         L2Rchain=list(

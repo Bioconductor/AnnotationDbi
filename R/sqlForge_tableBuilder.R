@@ -1169,6 +1169,7 @@ appendChromsomeLocs <- function(db, subStrs, printSchema){
       _id INTEGER NOT NULL,                      -- REFERENCES ", subStrs[["cntrTab"]],"
       seqname VARCHAR(20) NOT NULL,              -- sequence name
       start_location INTEGER NOT NULL,
+      end_location INTEGER NOT NULL,
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
     );") 
   if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
@@ -1176,7 +1177,7 @@ appendChromsomeLocs <- function(db, subStrs, printSchema){
 
   sql<- paste("
     INSERT INTO chromosome_locations
-     SELECT g._id as _id, i.chromosome, i.start_location
+     SELECT g._id as _id, i.chromosome, i.start_location, i.end_location
      FROM ", subStrs[["cntrTab"]]," as g, anno.chromosome_locations as i
      WHERE g._id=i._id
      ORDER BY g._id;
@@ -1195,8 +1196,23 @@ appendChromsomeLocs <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
   sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'CHRLOCEND';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
     INSERT INTO map_counts
      SELECT 'CHRLOC', count(DISTINCT ", subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]],", chromosome_locations
+     WHERE ", subStrs[["coreTab"]],"._id=chromosome_locations._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'CHRLOCEND', count(DISTINCT ", subStrs[["coreID"]],")
      FROM ", subStrs[["coreTab"]],", chromosome_locations
      WHERE ", subStrs[["coreTab"]],"._id=chromosome_locations._id;
     ", sep="") 
@@ -2315,6 +2331,7 @@ appendYeastChromosomeFeatures <- function(db, subStrs, printSchema){
         _id INTEGER NOT NULL,                         -- REFERENCES sgd
         chromosome VARCHAR(2) NULL,                   -- chromosome name
         start INTEGER NULL,
+        stop INTEGER NULL,
         feature_description TEXT NULL,                -- Yeast feature description
         FOREIGN KEY (_id) REFERENCES sgd (_id)
       );") 
@@ -2323,7 +2340,7 @@ appendYeastChromosomeFeatures <- function(db, subStrs, printSchema){
 
   sql<- paste("
     INSERT INTO chromosome_features
-     SELECT f._id, f.chromosome, f.start, f.feature_description
+     SELECT f._id, f.chromosome, f.start, f.stop, f.feature_description
      FROM sgd AS s CROSS JOIN anno.chromosome_features AS f
      WHERE s._id=f._id;
      ") 
@@ -2339,12 +2356,27 @@ appendYeastChromosomeFeatures <- function(db, subStrs, printSchema){
      WHERE map_name = 'CHRLOC';
      ") 
   sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'CHRLOCEND';
+     ") 
+  sqliteQuickSQL(db, sql)
   
   sql<- paste("
     INSERT INTO map_counts
      SELECT 'CHRLOC', count(DISTINCT ", subStrs[["coreID"]],")
      FROM ", subStrs[["coreTab"]],", chromosome_features
      WHERE ", subStrs[["coreTab"]],"._id=chromosome_features._id AND start NOT NULL;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+    sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'CHRLOCEND', count(DISTINCT ", subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]],", chromosome_features
+     WHERE ", subStrs[["coreTab"]],"._id=chromosome_features._id AND stop NOT NULL;
     ", sep="") 
   sqliteQuickSQL(db, sql)
 
@@ -2627,6 +2659,211 @@ appendYeastGene2Systematic <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
   
 }
+
+
+
+
+
+
+
+## Make the uniprot table
+appendUniprot <- function(db, subStrs, printSchema){
+
+  message(cat("Appending Uniprot"))
+    
+  sql<- paste("    CREATE TABLE uniprot (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      uniprot_id VARCHAR(20) NOT NULL,              -- uniprot id
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+ 
+  sql<- paste("
+    INSERT INTO uniprot
+     SELECT DISTINCT u._id, u.uniprot_id
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.uniprot as u
+     WHERE g._id=u._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Funiprot ON uniprot (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'UNIPROT';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+##   sql<- paste("
+##     INSERT INTO map_metadata
+##      SELECT * FROM anno.map_metadata
+##      WHERE map_name = 'UNIPROT2GENE';
+##      ") 
+##   sqliteQuickSQL(db, sql)
+##   sql<- paste("
+##     UPDATE map_metadata
+##      SET map_name='UNIPROT2",subStrs[["suffix"]],"' WHERE map_name='UNIPROT2GENE';
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'UNIPROT', count(DISTINCT ", subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," AS p INNER JOIN uniprot AS u
+     WHERE p._id=u._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+##   sql<- paste("
+##     INSERT INTO map_counts
+##      SELECT 'UNIPROT2",subStrs[["suffix"]],"', count(DISTINCT uniprot_id)
+##      FROM ", subStrs[["coreTab"]]," AS p INNER JOIN uniprot AS u
+##      WHERE p._id=u._id;
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)  
+  
+}
+
+
+
+## Make the zfin table
+appendZfin <- function(db, subStrs, printSchema){
+
+  message(cat("Appending Zfin"))
+    
+  sql<- paste("    CREATE TABLE zfin (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      zfin_id VARCHAR(20) NOT NULL,                 -- zfin id
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+ 
+  sql<- paste("
+    INSERT INTO zfin
+     SELECT DISTINCT z._id, z.ZFid
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.zfin as z
+     WHERE g._id=z._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fzfin ON zfin (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'ZFIN';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+##   sql<- paste("
+##     INSERT INTO map_metadata
+##      SELECT * FROM anno.map_metadata
+##      WHERE map_name = 'ZFIN2GENE';
+##      ") 
+##   sqliteQuickSQL(db, sql)
+##   sql<- paste("
+##     UPDATE map_metadata
+##      SET map_name='ZFIN2",subStrs[["suffix"]],"' WHERE map_name='ZFIN2GENE';
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ZFIN', count(DISTINCT ", subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," AS p INNER JOIN zfin AS z
+     WHERE p._id=z._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+##   sql<- paste("
+##     INSERT INTO map_counts
+##      SELECT 'ZFIN2",subStrs[["suffix"]],"', count(DISTINCT zfin_id)
+##      FROM ", subStrs[["coreTab"]]," AS p INNER JOIN zfin AS z
+##      WHERE p._id=z._id;
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)  
+  
+}
+
+
+
+## Make the wormbase table
+appendWormbase <- function(db, subStrs, printSchema){
+
+  message(cat("Appending Wormbase"))
+    
+  sql<- paste("    CREATE TABLE wormbase (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      wormbase_id VARCHAR(20) NOT NULL,             -- wormbase id
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+ 
+  sql<- paste("
+    INSERT INTO wormbase
+     SELECT DISTINCT w._id, w.WBid
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.wormbase as w
+     WHERE g._id=w._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fwormbase ON wormbase (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'WORMBASE';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+##   sql<- paste("
+##     INSERT INTO map_metadata
+##      SELECT * FROM anno.map_metadata
+##      WHERE map_name = 'WORMBASE2GENE';
+##      ") 
+##   sqliteQuickSQL(db, sql)
+##   sql<- paste("
+##     UPDATE map_metadata
+##      SET map_name='WORMBASE2",subStrs[["suffix"]],"' WHERE map_name='WORMBASE2GENE';
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'WORMBASE', count(DISTINCT ", subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," AS p INNER JOIN wormbase AS w
+     WHERE p._id=w._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+##   sql<- paste("
+##     INSERT INTO map_counts
+##      SELECT 'WORMBASE2",subStrs[["suffix"]],"', count(DISTINCT wormbase_id)
+##      FROM ", subStrs[["coreTab"]]," AS p INNER JOIN wormbase AS w
+##      WHERE p._id=w._id;
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)  
+  
+}
+
+
+
+
+
+
+
+
+
 
 
 

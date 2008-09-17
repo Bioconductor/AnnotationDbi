@@ -43,7 +43,7 @@ makeBaseMaps <- function(csvFileName,
                           targetDir="."
                           ) {
     csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", 
-		colClasses="character")
+		colClasses="character", skip = 12)
     probe <- csvFile[,1]
     gb <- csvFile[, GenBankIDName]
     eg <- csvFile[, EntrezGeneIDName]

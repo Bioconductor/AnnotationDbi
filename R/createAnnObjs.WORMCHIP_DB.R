@@ -164,31 +164,45 @@ WORMCHIP_DB_AnnDbBimap_seeds <- list(
         rightColType="integer"
     ),
     list(
-        objName="PFAM",
-        Class="IpiAnnDbMap",
+        objName="CHRLOCEND",
+        Class="AnnDbMap",
         L2Rchain=list(
             WORMCHIP_DB_L2Rlink1,
             list(
-                tablename="pfam",
+                tablename="chromosome_locations",
                 Lcolname="_id",
-                Rcolname="ipi_id",
-                Rattribnames=c(PfamId="{pfam_id}")
+                tagname=c(Chromosome="{seqname}"),
+                Rcolname="end_location"
             )
-        )
+        ),
+        rightColType="integer"
     ),
-    list(
-        objName="PROSITE",
-        Class="IpiAnnDbMap",
-        L2Rchain=list(
-            WORMCHIP_DB_L2Rlink1,
-            list(
-                tablename="prosite",
-                Lcolname="_id",
-                Rcolname="ipi_id",
-                Rattribnames=c(PrositeId="{prosite_id}")
-            )
-        )
-    ),
+##     list(
+##         objName="PFAM",
+##         Class="IpiAnnDbMap",
+##         L2Rchain=list(
+##             WORMCHIP_DB_L2Rlink1,
+##             list(
+##                 tablename="pfam",
+##                 Lcolname="_id",
+##                 Rcolname="ipi_id",
+##                 Rattribnames=c(PfamId="{pfam_id}")
+##             )
+##         )
+##     ),
+##     list(
+##         objName="PROSITE",
+##         Class="IpiAnnDbMap",
+##         L2Rchain=list(
+##             WORMCHIP_DB_L2Rlink1,
+##             list(
+##                 tablename="prosite",
+##                 Lcolname="_id",
+##                 Rcolname="ipi_id",
+##                 Rattribnames=c(PrositeId="{prosite_id}")
+##             )
+##         )
+##     ),
 ##     list(
 ##         objName="ENSEMBL",
 ##         Class="AnnDbBimap",
@@ -201,6 +215,30 @@ WORMCHIP_DB_AnnDbBimap_seeds <- list(
 ##             )
 ##         )
 ##     ),
+    list(
+        objName="WORMBASE",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            WORMCHIP_DB_L2Rlink1,
+            list(
+                tablename="wormbase",
+                Lcolname="_id",
+                Rcolname="wormbase_id"
+            )
+        )
+    ),
+    list(
+        objName="UNIPROT",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            WORMCHIP_DB_L2Rlink1,
+            list(
+                tablename="uniprot",
+                Lcolname="_id",
+                Rcolname="uniprot_id"
+            )
+        )
+    ),
     list(
         objName="GO",
         Class="Go3AnnDbBimap",

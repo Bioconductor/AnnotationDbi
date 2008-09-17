@@ -28,6 +28,9 @@
 \alias{createAnnObjs.ZEBRAFISHCHIP_DB}
 \alias{createAnnObjs.CANINECHIP_DB}
 \alias{createAnnObjs.BOVINECHIP_DB}
+\alias{createAnnObjs.CHICKENCHIP_DB}
+\alias{createAnnObjs.PIGCHIP_DB}
+\alias{createAnnObjs.WORMCHIP_DB}
 \alias{createAnnObjs.ECOLICHIP_DB}
 \alias{createAnnObjs.ARABIDOPSISCHIP_DB}
 \alias{createAnnObjs.HUMAN_DB}
@@ -40,6 +43,9 @@
 \alias{createAnnObjs.ZEBRAFISH_DB}
 \alias{createAnnObjs.CANINE_DB}
 \alias{createAnnObjs.BOVINE_DB}
+\alias{createAnnObjs.CHICKEN_DB}
+\alias{createAnnObjs.PIG_DB}
+\alias{createAnnObjs.WORM_DB}
 \alias{createAnnObjs.ECOLI_DB}
 \alias{createAnnObjs.GO_DB}
 \alias{createAnnObjs.KEGG_DB}

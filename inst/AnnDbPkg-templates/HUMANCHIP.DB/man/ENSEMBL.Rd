@@ -1,7 +1,7 @@
 \name{@ANNOBJPREFIX@ENSEMBL}
 \alias{@ANNOBJPREFIX@ENSEMBL}
 \alias{@ANNOBJPREFIX@ENSEMBL2PROBE}
-\title{Map Ensembl gene acession numbers with Entrez Gene identifiers}  
+\title{Map Ensembl gene accession numbers with Entrez Gene identifiers}  
 \description{ 
   @ANNOBJPREFIX@ENSEMBL is an R object that contains mappings between 
   Entrez Gene identifiers and Ensembl gene accession numbers.    

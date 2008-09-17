@@ -60,6 +60,7 @@ popHUMANCHIPDB <- function(affy,
     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
     
@@ -108,6 +109,7 @@ popHUMANDB <- function(prefix,
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -176,6 +178,7 @@ popMOUSECHIPDB <- function(affy,
     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendMGI(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
@@ -224,6 +227,7 @@ popMOUSEDB <- function(prefix,
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendMGI(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
@@ -293,6 +297,7 @@ popRATCHIPDB <- function(affy,
     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
     
@@ -339,6 +344,7 @@ popRATDB <- function(prefix,
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -453,6 +459,7 @@ popFLYCHIPDB <- function(affy,
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBase(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBaseCG(db, subStrs=subStrs, printSchema=printSchema)
     
@@ -499,6 +506,7 @@ popFLYDB <- function(prefix,
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBase(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBaseCG(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBaseProt(db, subStrs=subStrs, printSchema=printSchema)
@@ -697,6 +705,8 @@ popZEBRAFISHCHIPDB <- function(affy,
     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    appendZfin(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
     
@@ -743,6 +753,8 @@ popZEBRAFISHDB <- function(prefix,
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    appendZfin(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -906,13 +918,14 @@ popCANINECHIPDB <- function(affy,
     appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
     appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
     appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
-##     appendGO(db, subStrs=subStrs, printSchema=printSchema)
-##     appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
     appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
     
@@ -948,8 +961,8 @@ popCANINEDB <- function(prefix,
     appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
     appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
     appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
-##     appendGO(db, subStrs=subStrs, printSchema=printSchema)
-##     appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
     appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
@@ -957,6 +970,7 @@ popCANINEDB <- function(prefix,
 ##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1025,6 +1039,7 @@ popBOVINECHIPDB <- function(affy,
     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1071,6 +1086,7 @@ popBOVINEDB <- function(prefix,
 ##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1137,6 +1153,8 @@ popWORMCHIPDB <- function(affy,
     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    appendWormbase(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1181,6 +1199,8 @@ popWORMDB <- function(prefix,
 ##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    appendWormbase(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1243,14 +1263,13 @@ popPIGCHIPDB <- function(affy,
     appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
     appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
     appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
-    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
-##     appendGO(db, subStrs=subStrs, printSchema=printSchema)
-##     appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
     appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
-    appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1285,16 +1304,15 @@ popPIGDB <- function(prefix,
     appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
     appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
     appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
-    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
-##     appendGO(db, subStrs=subStrs, printSchema=printSchema)
-##     appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
     appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
-    appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1367,6 +1385,7 @@ popCHICKENCHIPDB <- function(affy,
     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1413,6 +1432,7 @@ popCHICKENDB <- function(prefix,
     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
