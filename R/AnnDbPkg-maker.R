@@ -33,7 +33,7 @@ setClass(
     ),
     prototype(
         Title=as.character(NA),
-        License="The Artistic License, Version 2.0",
+        License="Artistic-2.0",
         Author="Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
         Maintainer="Biocore Data Team <biocannotation@lists.fhcrc.org>",
         DBschema=as.character(NA),
