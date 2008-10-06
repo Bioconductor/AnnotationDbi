@@ -2094,32 +2094,32 @@ appendArabidopsisProbes <- function(db, subStrs, printSchema){
     ") 
   sqliteQuickSQL(db, sql)
 
-  if(subStrs[["prefix"]] == "ag" || subStrs[["prefix"]] == "ath1121501"){  
-    sql<- paste("
-      INSERT INTO map_metadata
-       SELECT 'MULTIHIT', source_name, source_url, source_date
-       FROM anno.map_metadata
-       WHERE map_name = '",subStrs[["prefix"]],"ACCNUM';
-      ", sep="") 
-    sqliteQuickSQL(db, sql)
-  }
-  else{
-    sql<- paste("
-      INSERT INTO map_metadata
-       SELECT 'MULTIHIT', source_name, source_url, source_date
-       FROM anno.map_metadata
-       WHERE map_name = 'ACCNUM';
-       ", sep="") 
-    sqliteQuickSQL(db, sql)
-  }
+##   if(subStrs[["prefix"]] == "ag" || subStrs[["prefix"]] == "ath1121501"){  
+##     sql<- paste("
+##       INSERT INTO map_metadata
+##        SELECT 'MULTIHIT', source_name, source_url, source_date
+##        FROM anno.map_metadata
+##        WHERE map_name = '",subStrs[["prefix"]],"ACCNUM';
+##       ", sep="") 
+##     sqliteQuickSQL(db, sql)
+##   }
+##   else{
+##     sql<- paste("
+##       INSERT INTO map_metadata
+##        SELECT 'MULTIHIT', source_name, source_url, source_date
+##        FROM anno.map_metadata
+##        WHERE map_name = 'ACCNUM';
+##        ", sep="") 
+##     sqliteQuickSQL(db, sql)
+##   }
   
-  sql<- paste("
-    INSERT INTO map_counts
-     SELECT 'MULTIHIT', count(DISTINCT probe_id)
-     FROM probes
-     WHERE is_multiple=1;
-    ") 
-  sqliteQuickSQL(db, sql)
+##   sql<- paste("
+##     INSERT INTO map_counts
+##      SELECT 'MULTIHIT', count(DISTINCT probe_id)
+##      FROM probes
+##      WHERE is_multiple=1;
+##     ") 
+##   sqliteQuickSQL(db, sql)
   
 }
 

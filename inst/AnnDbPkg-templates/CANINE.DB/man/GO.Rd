@@ -5,7 +5,9 @@
 \description{
   @ANNOBJPREFIX@GO is an R object that provides mappings between
   entrez gene identifiers and the GO identifiers that they are 
-  directly associated with. 
+  directly associated with. This mapping and its reverse mapping do NOT
+  associate the child terms from the GO ontology with the gene.  Only
+  the directly evidenced terms are represented here.
 }
 \details{
      Each Entrez Gene identifier is mapped to a list of lists.  The names on
@@ -54,14 +56,15 @@
   
   Mappings were based on data provided by: @GOSOURCE@
 
-
-  
   For the reverse map GO2EG, each GO term maps to a named vector of
   entrez gene identifiers. A GO identifier may be mapped to the same
   entrez gene identifier more than once but the evidence code can be
   different. Mappings between Gene Ontology identifiers and Gene Ontology
   terms and other information are available in a separate data package
   named GO.
+}
+\seealso{
+  \code{\link{@ANNOBJPREFIX@GO2ALLEGS}}.
 }
 \references{
 \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}

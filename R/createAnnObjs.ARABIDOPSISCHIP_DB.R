@@ -18,7 +18,7 @@ ARABIDOPSISCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rco
 ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AgiAnnDbMap",
+        Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             list(
@@ -26,8 +26,8 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
                 Lcolname="_id",
                 Rcolname="gene_id"
             )
-        ),
-        replace.multiple="multiple"
+        )##,
+##        replace.multiple="multiple"
     ),
     list(
         objName="ARACYC",
@@ -89,19 +89,19 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             )
         )
     ),
-    list(
-        objName="MULTIHIT",
-        Class="AgiAnnDbMap",
-        L2Rchain=list(
-            ARABIDOPSISCHIP_DB_L2Rlink1,
-            list(
-                tablename="genes",
-                Lcolname="_id",
-                Rcolname="gene_id"
-            )
-        ),
-        replace.single=as.character(NA)
-    ),
+##     list(
+##         objName="MULTIHIT",
+##         Class="AgiAnnDbMap",
+##         L2Rchain=list(
+##             ARABIDOPSISCHIP_DB_L2Rlink1,
+##             list(
+##                 tablename="genes",
+##                 Lcolname="_id",
+##                 Rcolname="gene_id"
+##             )
+##         ),
+##         replace.single=as.character(NA)
+##     ),
     list(
         objName="PATH",
         Class="AnnDbBimap",

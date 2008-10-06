@@ -1,3 +1,51 @@
+
+ 	**************************************************
+	*						 *
+	*	        1.3.11 SERIES NEWS		 *
+	*						 *
+	**************************************************
+
+
+		CHANGES IN AnnotationDbi VERSION 1.3.11
+
+
+NEW FEATURES
+
+    o Support has been added for 3 more organisms, this means that the
+    current list of supported organisms as of 1.3.11 is the following:
+    	    Arabidopsis thaliana
+    	    Bos taurus
+	    Caenorhabditis elegans
+	    Canis familiaris
+	    Drosophila melanogaster
+	    Danio rerio
+	    Escherichia coli K12 Strain
+	    Escherichia coli Sakai Strain
+	    Gallus gallus
+	    Homo sapiens
+	    Mus musculus
+	    Plasmodium falciparum
+	    Rattus norvegicus
+	    Saccharomyces cerevisiae
+	    Sus scrofa
+
+    o Added support for GO to canine and pig packages by using
+    BLAST2GO (this data was not available from NCBI for these
+    organisms).
+
+    o ZFIN IDs are supported for Zebrafish packages.
+
+    o Wormbase IDs are supported for C. elegans packages.
+
+    o Uniprot IDs have been added to almost all package types.
+
+    o CHRLOCEND mapping has been added which give gene end positions
+    for almost all packages and compliments the CHRLOC mapping which
+    already provides the start positions.
+
+
+
+
  	**************************************************
 	*						 *
 	*	        1.3.9 SERIES NEWS		 *
@@ -12,6 +60,7 @@ NEW FEATURES
 
     o	Support added for Malaria, Zebrafish, two strains of E coli,
       	bovine and canine.
+
 
 
 
@@ -48,3 +97,5 @@ NEW FEATURES
     	PFAM.db package.
 
     o	AnnotationDbi is now compliant with the 1.0 schema definition.
+
+

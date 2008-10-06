@@ -5,7 +5,9 @@
 \description{
   @ANNOBJPREFIX@GO is an R object that provides mappings between
   ORF identifiers and the GO identifiers that they are 
-  directly associated with. 
+  directly associated with. This mapping and its reverse mapping do NOT
+  associate the child terms from the GO ontology with the gene.  Only
+  the directly evidenced terms are represented here.
 }
 \details{
      Each ORF identifier is mapped to a list of lists.  The names on
@@ -61,6 +63,9 @@
   different. Mappings between Gene Ontology identifiers and Gene Ontology
   terms and other information are available in a separate data package
   named GO.
+}
+\seealso{
+  \code{\link{@ANNOBJPREFIX@GO2ALLORFS}}.
 }
 \references{
 \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
