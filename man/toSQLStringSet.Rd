@@ -33,5 +33,5 @@ toSQLStringSet(c("'foo'", "ab'cd", "bar"))
 
 }
 
-\keyword{ manip }
-
+\keyword{utilities}
+\keyword{manip}

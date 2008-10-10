@@ -92,6 +92,8 @@ exportMethods(
 )
 
 export(
+    unlist2,
+
     ## from R/AnnDbObj-lowAPI.R
     showQCData,
        

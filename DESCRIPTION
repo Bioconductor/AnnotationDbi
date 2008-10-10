@@ -9,6 +9,7 @@ Depends: R (>= 2.7.0), methods, utils, Biobase (>= 1.17.0), DBI (>= 0.2-4), RSQL
 Imports: methods, utils, Biobase, DBI, RSQLite
 Suggests: hgu95av2.db, GO.db, human.db0, mouse.db0, rat.db0, fly.db0, yeast.db0, arabidopsis.db0, zebrafish.db0, ecoliK12.db0, ecoliSakai.db0
 Collate: 00RTobjs.R
+         unlist2.R
          AllGenerics.R
          AllClasses.R
          FlatBimap.R
