@@ -204,7 +204,8 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, dbconn, datacach
     map@objName <- "GO2ALLPROBES"
     ann_objs$GO2ALLPROBES <- map
 
-    ## 1 special map that is not an AnnDbBimap object (just a named integer vector)
+    ## 2 special map that is not an AnnDbBimap object (just a named integer vector)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
     ## Some pre-caching
