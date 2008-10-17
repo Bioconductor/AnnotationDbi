@@ -104,7 +104,7 @@
 }
 
 \examples{
-  library(hgu95av2.db)
+  library("hgu95av2.db")
 
   dbconn(hgu95av2ENTREZID)              # same as hgu95av2_dbconn()
   dbfile(hgu95av2ENTREZID)              # same as hgu95av2_dbfile()
@@ -113,6 +113,7 @@
   dbmeta(hgu95av2_dbconn(), "DBSCHEMA")
   dbmeta(hgu95av2_dbconn(), "DBSCHEMAVERSION")
 
+  library("DBI")
   dbListTables(hgu95av2_dbconn())       #lists all tables on connection
 
   ## If you use dbSendQuery instead of dbGetQuery
@@ -123,6 +124,7 @@
   ## Sometimes you may want to see all the SQLite databases that are
   ## presently connected in your session. To do that you have to specify
   ## the driver:
+  library("RSQLite")
   drvr <- dbDriver("SQLite")        #gets the driver for SQLite
   dbListConnections(drvr)         #List all DB Connections using drvr
 

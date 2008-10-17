@@ -204,6 +204,8 @@ export(
     makeCHICKENCHIP_DB,
 
     #Convenience function to make the intermediate DB pkgs
-    wrapBaseDBPackages
-)
+    wrapBaseDBPackages,
 
+    #Needs to be exported from RSQLite
+    summary
+)
