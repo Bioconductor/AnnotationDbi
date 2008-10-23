@@ -203,6 +203,8 @@ export(
     makePIGCHIP_DB,
     makeCHICKENCHIP_DB,
 
+    createSimpleBimap,
+       
     #Convenience function to make the intermediate DB pkgs
     wrapBaseDBPackages,
 
