@@ -385,6 +385,7 @@ popARABIDOPSISCHIPDB <- function(affy,
     appendArabidopsisGeneInfo(db, subStrs=subStrs, printSchema=printSchema)  ##Arabidopsis requires a custom function.
 
     appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
     appendGO(db, subStrs=subStrs, printSchema=printSchema)
     appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
     appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
