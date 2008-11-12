@@ -184,7 +184,9 @@
 
   \code{count.mappedLkeys(x)} and \code{count.mappedRkeys(x)} are
   equivalent to (but more efficient than) \code{length(mappedLkeys(x))}
-  and \code{length(mappedRkeys(x))}, respectively.
+  and \code{length(mappedRkeys(x))}, respectively.  These functions give
+  overall summaries, if you want to know how many Rkeys correspond to a
+  given Lkey you can use the \code{nhit} function.
 
   \code{Lkeys(x) <- value} and \code{Rkeys(x) <- value} are the
   undirected versions of \code{keys(x) <- value} (see \code{?\link{keys}}
@@ -212,7 +214,8 @@
   \link{Bimap},
   \link{Bimap-keys},
   \link{BimapFormatting},
-  \link{AnnDbBimap-envirAPI}
+  \link{AnnDbBimap-envirAPI},
+  \code{\link{nhit}}
 }
 
 \examples{
