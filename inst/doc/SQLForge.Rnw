@@ -111,7 +111,15 @@ packages repository on the bioconductor website for a .db0 package.
 Only special organism base packages will end with the .db0
 extension. If you find a package that is named after the organism you
 are interested in, then your organism is supported, and you can use
-that database to make custom packages.
+that database to make custom packages.  To list all the supported organism
+.db0 packages directly from R you can use available.db0pkgs().
+
+<<availableDB0s>>=
+  available.db0pkgs()  
+@
+
+Once you know the package name, you can then install the appropriate package
+with biocLite().
 
 
 \section{How to use SQLForge}

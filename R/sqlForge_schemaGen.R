@@ -1446,6 +1446,24 @@ popCHICKENDB <- function(prefix,
 
 
 
+
+
+
+
+available.db0pkgs <- function()
+{
+  url <-
+  "http://bioconductor.org/packages/release/data/annotation/src/contrib"
+  pkgs <- available.packages(url)[, "Package"]
+  pkgs <- pkgs[substr(pkgs, nchar(pkgs)-3, nchar(pkgs)) == ".db0"]
+  names(pkgs) <- NULL
+  pkgs
+}
+
+
+
+
+
 #Test formula to just see if my generic functions work:
 
 makeFooPkg <- function(){

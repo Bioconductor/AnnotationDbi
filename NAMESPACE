@@ -204,6 +204,7 @@ export(
     makeCHICKENCHIP_DB,
 
     createSimpleBimap,
+    available.db0pkgs,
        
     #Convenience function to make the intermediate DB pkgs
     wrapBaseDBPackages,
