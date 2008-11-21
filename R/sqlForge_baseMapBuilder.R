@@ -111,16 +111,16 @@ probe2gene <- function(baseMap, otherSrc,
 			   "SELECT DISTINCT probe_id, gene_id",
 			    "FROM curr_map GROUP BY probe_id;", sep=" ", collapse="")
 		sqliteQuickSQL(db, sql)
-	} else if (baseMapType=='ug') {
-                message(cat("baseMapType is ug"))
+	} else if (baseMapType=='image') {
+                message(cat("baseMapType is image"))
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes_ori;")
 		sql <- paste("INSERT INTO probe2gene",
 			    "SELECT DISTINCT c.probe_id, i.gene_id",
 			    "FROM curr_map as c, src.image_acc_from_uni as i",
 			    "WHERE c.gene_id=i.accession GROUP BY c.probe_id;", sep=" ", collapse="")
 		sqliteQuickSQL(db, sql)
-	} else if (baseMapType=='image') {
-                message(cat("baseMapType is image"))
+	} else if (baseMapType=='ug') {
+                message(cat("baseMapType is ug"))
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes_ori;")
 		sql <- paste("INSERT INTO probe2gene",
 			    "SELECT DISTINCT c.probe_id, u.gene_id",
