@@ -197,7 +197,7 @@ Bimap_methods <- c(
         stop("'direction' must be a single (non-NA) integer or string")
     if (is.character(direction)) {
         direction <- match.arg(tolower(direction), names(.DIRECTION_STR2INT))
-        return(do.call("switch", c(EXPR=direction, as.list(.DIRECTION_STR2INT))))
+        return(do.call(switch, c(EXPR=direction, as.list(.DIRECTION_STR2INT))))
     }
     if (!(direction %in% .DIRECTION_STR2INT))
         stop("when a numeric value, 'direction' should be one of 1, -1 or 0")

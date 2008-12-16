@@ -290,7 +290,7 @@ setMethod("makeAnnDbPkg", "list",
     function(x, dbfile, dest_dir=".", no.man=FALSE, ...)
     {
         x$Class <- "AnnDbPkgSeed"
-        y <- do.call("new", x)
+        y <- do.call(new, x)
         makeAnnDbPkg(y, dbfile, dest_dir, no.man)
     }
 )

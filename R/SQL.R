@@ -20,7 +20,7 @@ debugSQL <- function()
 {
     args <- sapply(colnames, function(col) character(0))
     args <- c(args, list(check.names=FALSE, stringsAsFactors=FALSE))
-    do.call("data.frame", args)
+    do.call(data.frame, args)
 }
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

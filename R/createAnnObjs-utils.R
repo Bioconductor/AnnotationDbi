@@ -51,7 +51,7 @@ createAnnObjs <- function(class, seeds, seed0, envir=NULL)
             if (is.null(seed[slot][[1]]))
                 seed[[slot]] <- seed0[[slot]]
         }
-        envir[[seed$objName]] <- do.call("new", seed)
+        envir[[seed$objName]] <- do.call(new, seed)
     }
     envir
 }
@@ -64,7 +64,7 @@ createAnnDbBimap <- function(seed, seed0)
     }
     L2Rchain <- seed$L2Rchain
     seed$L2Rchain <- lapply(L2Rchain, function(L2Rlink) do.call("L2Rlink", L2Rlink))
-    do.call("new", seed)
+    do.call(new, seed)
 }
 
 createAnnDbBimaps <- function(seeds, seed0, envir=NULL)
@@ -104,15 +104,11 @@ createSimpleBimap <- function(tablename, Lcolname, Rcolname,
 
 ### 3 special maps that are not AnnDbBimap objects (just named vectors).
 
-createCHRLENGTHS <- function(dbconn, dbname="")
+createCHRLENGTHS <- function(dbconn)
 {
-    if(dbname==""){ ##The usual case
-        data <- dbGetTable(dbconn, "chrlengths")
-    }else{ ##For when people are doing a "CROSS" joined package, we want data from the "org" DB
-        data <- dbGetTable(dbconn, paste(.mangleDBName(dbname),".chrlengths",sep=""))        
-    }
+    data <- dbGetTable(dbconn, "chrlengths")
     CHRLENGTHS <- data[["length"]]
-    names(CHRLENGTHS) <- data[["chromosome"]]        
+    names(CHRLENGTHS) <- data[["chromosome"]]
     CHRLENGTHS
 }
 

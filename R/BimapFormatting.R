@@ -220,7 +220,7 @@
             next
         }
         if (mode == 2 || !any(duplicated(slice_one[[1]]))) {
-            ans[[i1]] <- do.call("mapply",
+            ans[[i1]] <- do.call(mapply,
                                  c(FUN=FUN, slice_one, SIMPLIFY=FALSE))
             next
         }
@@ -230,7 +230,7 @@
                               function(j) split(slice_one[[j]], slice_one[[slicer2]]))
         slicing_two <- c(list(names(slicing_two[[1]])), slicing_two)
         names(slicing_two) <- c(names(slice_one)[slicer2], names(slice_one)[- slicer2])
-        ans[[i1]] <- do.call("mapply",
+        ans[[i1]] <- do.call(mapply,
                              c(FUN=FUN, slicing_two, SIMPLIFY=FALSE))
     }
     ans
