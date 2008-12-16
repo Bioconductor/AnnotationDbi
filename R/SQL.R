@@ -230,13 +230,13 @@ L2Rchain.colnames <- function(L2Rchain)
 }
 
 
-### Return a named list of 5 elements. Those elements are pieces of an SQL
+### Return a named list of 6 elements. Those elements are pieces of a SQL
 ### SELECT statement used by some of the DB functions in this file to build
 ### appropriate ( and hopefully valid ;-) ) full SELECT statements.
 ### Those code chunks correspond to the following parts of the SELECT
 ### statement:
 ###   SELECT what FROM from WHERE where
-### hence the 5 elements returned by .makeSQLchunks() are divided in
+### hence the 6 elements returned by .makeSQLchunks() are divided in
 ### 3 groups:
 ###   1) The "what" group:
 ###      - what_Lkey: single string containing the "contextualized" name of
@@ -249,20 +249,62 @@ L2Rchain.colnames <- function(L2Rchain)
 ###        right-pasted with " AS <Rattribname>".
 ###   2) The "from" group:
 ###      - from: single string containing the "from" part of the SELECT.
+###      - this will have to append the altDB IF it is something other than the default DB
 ###   3) The "where" group:
 ###      - where: single string obtained by "contextualizing" all filters
 ###        contained in 'L2Rchain', putting them in parenthezis and pasting
 ###        them together with the " AND " separator.
 ###        If 'L2Rchain' contains no filters then 'where' is the string "1".
+
+###I need things to be pretty general here because I want to loop through and attach all needed databases, and then at the end, after we have made all the objects, I need to detach all the databases  Right now, this assumes that there will not need to be more than about 16 different databases attached for a single session, but I think this is a safe assumption, and also, if we attached and detached them ALL then we would be possibly inviting bad performance to the party.  So this seems like an ok compromise for now...
+
+### Need to swap periods for underscores, because periods have a special meaning in SQLite statements.
+.mangleDBName <- function(name){
+    gsub("\\.","_",name)
+}
+
+.getaltDBs <- function(map){
+    .getDB <- function(link){
+        if(length(link@altDB)>0){
+            return(link@altDB)
+        }
+    }    
+    unique(unlist(lapply(map@L2Rchain, .getDB)))
+}
+
+.attachDBs <- function(dbconn, dbList){
+    dbListLen = length(dbList)
+        for(i in seq_len(dbListLen)){
+            altDB = dbList[i]
+            altDBFile = system.file("extdata", paste(altDB,".sqlite",sep=""), package=paste(altDB,".db",sep=""))
+            SQL <- paste("ATTACH DATABASE '",altDBFile,"' AS ", .mangleDBName(altDB),";", sep="")
+            dbQuery(dbconn, SQL)
+        }
+}
+
+attachDBs <- function(dbconn, ann_objs){
+    lengthObjs = length(ann_objs)
+    allAltDBs = unique(unlist(lapply(ann_objs,.getaltDBs)))    
+    .attachDBs(dbconn, allAltDBs)
+}
+
 .makeSQLchunks <- function(L2Rchain)
 {
     what_tag <- what_Rattribs <- where <- character(0)
     chainlen <- length(L2Rchain)
+        
     for (i in seq_len(chainlen)) {
         L2Rlink <- L2Rchain[[i]]
         tablename <- L2Rlink@tablename
         Lcolname <- L2Rlink@Lcolname
         Rcolname <- L2Rlink@Rcolname
+
+        ##This should define the tablename to be prefixed ONLY when it matters
+        if(length(L2Rlink@altDB)>0){
+            ##Then just append the name onto the table
+            tablename = paste(.mangleDBName(L2Rlink@altDB),".",tablename, sep="")
+        }
+
         if (chainlen == 1) {
             context <- from <- tablename
             what_Lkey <- paste(context, Lcolname, sep=".")

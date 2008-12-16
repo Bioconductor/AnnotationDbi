@@ -21,6 +21,7 @@
 \alias{mergeToNamespaceAndExport}
 
 \alias{createAnnObjs.HUMANCHIP_DB}
+\alias{createAnnObjs.HUMANCROSSCHIP_DB}
 \alias{createAnnObjs.MOUSECHIP_DB}
 \alias{createAnnObjs.RATCHIP_DB}
 \alias{createAnnObjs.FLYCHIP_DB}

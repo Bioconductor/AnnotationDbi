@@ -91,7 +91,8 @@ setClass("L2Rlink",
         Rcolname="character",               # right col (length 1)
         Rattribnames="character",           # right attrib cols (length n + names)
         Rattrib_join="character",           # right attrib join (length 1, SQL string)
-        filter="character"                  # filter (length 1, SQL string)
+        filter="character",                 # filter (length 1, SQL string)
+        altDB="character"                   # optional alternate DB (string of DB name)
     ),
     prototype(
         tagname=as.character(NA),
