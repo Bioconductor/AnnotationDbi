@@ -321,23 +321,23 @@ createAnnObjs.HUMANCROSSCHIP_DB <- function(prefix, objTarget, dbconn, datacache
 
     attachDBs(dbconn, ann_objs)
     
-##     ## Reverse maps
-##     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
-##     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
-##     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
-##     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-##     ann_objs$ENSEMBL2PROBE <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2PROBE")
-##     map <- ann_objs$GO2PROBE
-##     map@rightTables <- Go3tablenames(all=TRUE)
-##     map@objName <- "GO2ALLPROBES"
-##     ann_objs$GO2ALLPROBES <- map
+    ## Reverse maps
+    ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
+    ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
+    ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
+    ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
+    ann_objs$ENSEMBL2PROBE <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2PROBE")
+    map <- ann_objs$GO2PROBE
+    map@rightTables <- Go3tablenames(all=TRUE)
+    map@objName <- "GO2ALLPROBES"
+    ann_objs$GO2ALLPROBES <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname="org.Hs.eg")
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
-##     ## Some pre-caching
-##     Lkeys(ann_objs$GO)
+    ## Some pre-caching
+    Lkeys(ann_objs$GO)
     #mappedLkeys(ann_objs$GO)
     #Rkeys(ann_objs$GO2PROBE)
     #mappedRkeys(ann_objs$GO2PROBE)

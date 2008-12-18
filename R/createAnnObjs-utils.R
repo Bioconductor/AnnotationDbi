@@ -104,13 +104,17 @@ createSimpleBimap <- function(tablename, Lcolname, Rcolname,
 
 ### 3 special maps that are not AnnDbBimap objects (just named vectors).
 
-createCHRLENGTHS <- function(dbconn)
-{
-    data <- dbGetTable(dbconn, "chrlengths")
-    CHRLENGTHS <- data[["length"]]
-    names(CHRLENGTHS) <- data[["chromosome"]]
-    CHRLENGTHS
-}
+createCHRLENGTHS <- function(dbconn, dbname="")
+  {
+          if(dbname==""){ ##The usual case
+                      data <- dbGetTable(dbconn, "chrlengths")
+                  }else{ ##For when people are doing a "CROSS" joined package, we want data from the "org" DB
+                              data <- dbGetTable(dbconn, paste(.mangleDBName(dbname),".chrlengths",sep=""))
+                          }
+              CHRLENGTHS <- data[["length"]]
+              names(CHRLENGTHS) <- data[["chromosome"]]
+              CHRLENGTHS
+      }
 
 createREJECTORF <- function(dbconn)
 {
