@@ -40,6 +40,7 @@
 \alias{createAnnObjs.RAT_DB}
 \alias{createAnnObjs.FLY_DB}
 \alias{createAnnObjs.YEAST_DB}
+\alias{createAnnObjs.YEASTNCBI_DB}
 \alias{createAnnObjs.YEASTLEGACY_DB}
 \alias{createAnnObjs.ZEBRAFISH_DB}
 \alias{createAnnObjs.CANINE_DB}

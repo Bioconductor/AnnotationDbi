@@ -2860,6 +2860,115 @@ appendWormbase <- function(db, subStrs, printSchema){
 
 
 
+## Make the locus_tag table
+appendYeastNCBILocusTags <- function(db, subStrs, printSchema){
+
+  message(cat("Appending locus tags"))
+    
+  sql<- paste("    CREATE TABLE locus_tag (
+      _id INTEGER NOT NULL,                        -- REFERENCES ", subStrs[["cntrTab"]],"
+      locus_tag VARCHAR(80) NOT NULL,              -- Locus_Tag
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO locus_tag
+     SELECT DISTINCT g._id, lt.locus_tag
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.locus_tags as lt
+     WHERE g._id=lt._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Flocus_tag ON locus_tag (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'ORF';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ORF', count(DISTINCT ",subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," as g INNER JOIN locus_tag as lt
+     WHERE g._id=lt._id;
+    ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ORF2",subStrs[["suffix"]],"', count(DISTINCT locus_tag)
+     FROM ", subStrs[["coreTab"]]," AS g INNER JOIN locus_tag AS lt
+     WHERE g._id=lt._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)  
+  
+}
+
+
+## Make the sgd table
+appendYeastNCBISGD <- function(db, subStrs, printSchema){
+
+  message(cat("Appending sgd IDs"))
+    
+  sql<- paste("    CREATE TABLE sgd (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      sgd_id VARCHAR(80) NOT NULL,              -- SGD ID
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO sgd
+     SELECT DISTINCT g._id, s.sgd_id
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.sgd_ids as s
+     WHERE g._id=s._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX FSGD ON sgd (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'SGD';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'SGD', count(DISTINCT ",subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," as g INNER JOIN sgd as s
+     WHERE g._id=s._id;
+    ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'SGD2",subStrs[["suffix"]],"', count(DISTINCT sgd_id)
+     FROM ", subStrs[["coreTab"]]," AS g INNER JOIN sgd AS s
+     WHERE g._id=s._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)  
+  
+}
+
+
+
+
+
+
+
+
+
 
 
 

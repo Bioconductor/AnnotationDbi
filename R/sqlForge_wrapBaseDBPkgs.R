@@ -285,6 +285,26 @@ wrapBaseDBPackages <- function (dbPath = "/mnt/cpb_anno/mcarlson/proj/mcarlson/s
   chipMapSrcFile = paste(dbPath,"chipmapsrc_chicken.sqlite",sep="")
 
   makeBasePackage(chipSrcFile, chipMapSrcFile, pkgName, destDir, template, vals)  
+
+  
+  #yeastNCBI.db0 
+  vals <- list(ANNOBJPREFIX="yeastNCBI",
+               ORGANISM="Saccharomyces cerevisiae",
+               SPECIES="yeast",
+               AUTHOR="Marc Carlson, Nianhua Li, Herve Pages",
+               PKGVERSION=version,
+               LIC="The Artistic License, Version 2.0",
+               BIOCVIEWS="AnnotationData, Saccharomyces_cerevisiae",
+               ANNDBIVERSION="1.1.28",
+               MAINTAINER="Biocore Data Team <biocannotation@lists.fhcrc.org>")
+  pkgName= paste(vals[["ANNOBJPREFIX"]],".db0",sep="")
+  template=paste(system.file(package = "AnnotationDbi"), "/AnnDbPkg-templates/BASEPKG.DB", sep="")
+
+  chipSrcFile = paste(dbPath,"chipsrc_yeastNCBI.sqlite",sep="")
+  chipMapSrcFile = paste(dbPath,"chipmapsrc_yeastNCBI.sqlite",sep="")
+  
+  makeBasePackage(chipSrcFile, pkgName=pkgName, destDir=destDir, template=template, vals=vals)
+
   
 }
 

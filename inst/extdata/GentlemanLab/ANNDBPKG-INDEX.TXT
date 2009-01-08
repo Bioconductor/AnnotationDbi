@@ -1149,6 +1149,15 @@ AnnObjTarget: Chicken
 species: Chicken
 biocViews: AnnotationData, Gallus_gallus
 
+Package: org.Sc.eg.db
+Version: 2.2.8
+PkgTemplate: YEASTNCBI.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Sc.eg.sqlite
+AnnObjPrefix: org.Sc.eg
+AnnObjTarget: Yeast
+species: Yeast
+biocViews: AnnotationData, Saccharomyces_cerevisiae
+
 
 
 ###TEMP just to get a YEAST classic made...

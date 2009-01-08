@@ -6,6 +6,7 @@
 \alias{popRATDB}
 \alias{popFLYDB}
 \alias{popYEASTDB}
+\alias{popYEASTNCBIDB}
 \alias{popZEBRAFISHDB}
 \alias{popECOLIDB}
 \alias{popCANINEDB}

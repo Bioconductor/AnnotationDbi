@@ -2,7 +2,7 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.5.8
+Version: 1.5.9
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.7.0), methods, utils, Biobase (>= 1.17.0)
@@ -42,6 +42,7 @@ Collate: 00RTobjs.R
          createAnnObjs.FLY_DB.R
          createAnnObjs.YEAST_DB.R
          createAnnObjs.YEASTLEGACY_DB.R
+         createAnnObjs.YEASTNCBI_DB.R
 	 createAnnObjs.ZEBRAFISH_DB.R
 	 createAnnObjs.CANINE_DB.R
 	 createAnnObjs.BOVINE_DB.R

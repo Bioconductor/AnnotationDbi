@@ -1441,6 +1441,59 @@ popCHICKENDB <- function(prefix,
 }
 
 
+#This is the formula for YEASTNCBI_DB  
+popYEASTNCBIDB <- function(prefix,
+                       chipSrc = system.file("extdata", "chipsrc_yeastNCBI.sqlite", package="yeastNCBI.db0"),
+                       metaDataSrc,
+                       outputDir=".",
+                       printSchema=FALSE){
+
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    require("RSQLite")
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    appendAccessions(db, subStrs=subStrs, printSchema=printSchema)
+##     appendCytogenicLocs(db, subStrs=subStrs, printSchema=printSchema)
+##     appendOmim(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+##     appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+##     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+##     appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+##     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+    appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendYeastNCBILocusTags(db, subStrs=subStrs, printSchema=printSchema)
+    appendYeastNCBISGD(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+
 
 
 
