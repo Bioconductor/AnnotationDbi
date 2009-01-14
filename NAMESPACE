@@ -213,6 +213,9 @@ export(
     #Convenience function to make the intermediate DB pkgs
     wrapBaseDBPackages,
 
+    #Convenience function to allow mapping for inparanoid packages:
+    inpIDMapper,
+       
     #Needs to be exported from RSQLite
     summary
 )
