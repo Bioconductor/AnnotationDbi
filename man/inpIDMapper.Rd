@@ -17,7 +17,9 @@
 }
 
 \usage{
-  inpIDMapper(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destIDType="EG", keepMultGeneMatches=FALSE, keepMultProtMatches=FALSE)
+  inpIDMapper(ids, srcSpecies, destSpecies, srcIDType="UNIPROT",
+  destIDType="EG", keepMultGeneMatches=FALSE, keepMultProtMatches=FALSE,
+  keepMultDestIDMatches = TRUE)
 }
 
 \arguments{
@@ -39,6 +41,10 @@
   \item{keepMultProtMatches}{Do you want to try and keep the 1st ID in
   those ambiguous cases where more than one protein is suggested?
   (default = FALSE)}
+  \item{keepMultDestIDMatches}{If you have mapped to a destination ID OTHER
+  than an entrez gene ID, then it is possible that there may be multiple
+  answers.  Do you want to keep all of these or only return the 1st one?
+  (default = TRUE)}
 }
 
 \value{
@@ -103,6 +109,8 @@
   UPIDs = inpIDMapper(ids, "HOMSA", "MUSMU")
   ##Get yeast uniprot IDs in exchange for uniprot IDs from human
   UPYEASTUPs = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT")
+  ##Get yeast uniprot IDs but only return one ID per initial ID
+  UPYEASTUPSingles = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT", keepMultDestIDMatches = FALSE)
 }
 }
 

@@ -59,7 +59,7 @@
 
 ##TODO: rename the internal variables.  They should be named better.
 
-inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destIDType="EG", keepMultGeneMatches=FALSE, keepMultProtMatches=FALSE){
+inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destIDType="EG", keepMultGeneMatches=FALSE, keepMultProtMatches=FALSE, keepMultDestIDMatches=TRUE){
 
     ##I need to set up the right thing based on what the package is
     setupVals = .getMappingData(srcSpecies)
@@ -118,6 +118,7 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     }else{resultIDs = EGIDs}
     
     resultIDs = .reLabel(EGIDs, resultIDs, "resultIDs")
+    if(keepMultDestIDMatches==FALSE){resultIDs = .handleMultipleMatches(resultIDs, keepMultiples=TRUE)}
     resultIDs = .cleanup(resultIDs)
     
     resultIDs
