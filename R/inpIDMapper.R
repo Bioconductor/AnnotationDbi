@@ -69,7 +69,7 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     #require the hom package and map
     require(paste("hom.",srcSpcAbrv,".inp.db",sep=""),character.only=TRUE)
     homMap = get(paste("hom.",srcSpcAbrv,".inp",destSpecies,sep=""))
-    toSrcEGMap = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))
+    if(srcIDType!="EG"){toSrcEGMap = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))}
     ##more info to map back out to an entrez gene ID at the end.
     mapBackVals = .getMappingData(destSpecies)
     destSpcAbrv = mapBackVals[1]
@@ -77,9 +77,14 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     geneMap = get(mapBackVals[3])
 
     ###MGET#1 Get mapped into the initial EGs
-    ids = .cleanup(ids)
-    genes = mget(as.character(ids), revmap(toSrcEGMap), ifnotfound=NA)
-    genes = .cleanup(genes)
+    if(srcIDType=="EG"){
+        genes = ids
+        names(genes) = ids
+    }else{
+        ids = .cleanup(ids)
+        genes = mget(as.character(ids), revmap(toSrcEGMap), ifnotfound=NA)
+        genes = .cleanup(genes)
+    }
 
     ##Before the 2nd mgt, we need to have ONLY ONE answer for each element.
     genes = .handleMultipleMatches(genes, keepMultGeneMatches)
