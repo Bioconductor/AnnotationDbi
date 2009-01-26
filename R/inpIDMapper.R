@@ -5,25 +5,32 @@
            "HOMSA" = {srcSpcAb<-"Hs";
                       srcDBAb<-"eg";
                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
-                      inpMap <- "org.Hs.egENSEMBLPROT"},
+                      inpMap <- "org.Hs.egENSEMBLPROT";
+		      centralID <- "EG"},
            "MUSMU"  = {srcSpcAb<-"Mm";
                        srcDBAb<-"eg";
                        require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
-                       inpMap = "org.Mm.egMGI"},
+                       inpMap = "org.Mm.egMGI";
+		       centralID <- "EG"},
            "DROME"  = {srcSpcAb<-"Dm";
                        srcDBAb<-"eg";
                        require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
-                       inpMap = "org.Dm.egFLYBASEPROT"},
+                       inpMap = "org.Dm.egFLYBASEPROT";
+		       centralID <- "EG"},
            "RATNO"  = {srcSpcAb<-"Rn";
                        srcDBAb<-"eg";
                        require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
-                       inpMap = "org.Rn.egENSEMBLPROT"},
+                       inpMap = "org.Rn.egENSEMBLPROT";
+		       centralID <- "EG"},
            "SACCE"  = {srcSpcAb<-"Sc";
-                       srcDBAb<-"eg";
+                       srcDBAb<-"eg"; ##sgd
                        require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
-                       inpMap = "org.Sc.egORF"} 
+                       inpMap = "org.Sc.egORF";	##this transition will not be needed at all anymore 
+		       	      			##so I need to not do this step when centralID == ORF
+						##signal this by setting this value to NA
+		       centralID <- "EG"} ##ORF 
            )
-    return(c(srcSpcAb, srcDBAb, inpMap))    
+    return(c(srcSpcAb, srcDBAb, inpMap, centralID))    
 }
 
 
@@ -66,18 +73,19 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     srcSpcAbrv = setupVals[1]
     srcDBAbrv = setupVals[2]
     protMap = get(setupVals[3])
+    centralID = setupVals[4]
     #require the hom package and map
     require(paste("hom.",srcSpcAbrv,".inp.db",sep=""),character.only=TRUE)
     homMap = get(paste("hom.",srcSpcAbrv,".inp",destSpecies,sep=""))
-    if(srcIDType!="EG"){toSrcEGMap = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))}
+    if(srcIDType!=centralID){toSrcEGMap = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))}
     ##more info to map back out to an entrez gene ID at the end.
     mapBackVals = .getMappingData(destSpecies)
     destSpcAbrv = mapBackVals[1]
     destDBAbrv = mapBackVals[2]
-    geneMap = get(mapBackVals[3])
+    geneMap = get(mapBackVals[3]) 
 
     ###MGET#1 Get mapped into the initial EGs
-    if(srcIDType=="EG"){
+    if(srcIDType==centralID){
         genes = ids
         names(genes) = ids
     }else{
@@ -91,11 +99,13 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     genes = .cleanup(genes)
 
     ###MGET#2 map to the ID type used by inparanoid.
-    inpIDs = mget(as.character(genes), protMap, ifnotfound=NA)
-    ##Carry the names for the uniprot IDs over...
-    inpIDs = .reLabel(genes, inpIDs, "inpIDs")
-    inpIDs = .cleanup(inpIDs)
-
+    if(exists("protMap")){
+	inpIDs = mget(as.character(genes), protMap, ifnotfound=NA)
+    	##Carry the names for the uniprot IDs over...
+    	inpIDs = .reLabel(genes, inpIDs, "inpIDs")
+    	inpIDs = .cleanup(inpIDs)
+    }
+    
     ###MGET#3 map across species with inparanoid
     ##I have to check each one of these possible mappings for a match...    
     destList = lapply(inpIDs, function(x){mget(as.character(x), homMap, ifnotfound=NA)})
@@ -116,7 +126,7 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
 
     ###MGET#5 final mapping (may not be needed if they wanted EGs)
     ##Finally give the user the ID type that they asked for (ORF, EntrezID = (which is the default), UNIPROT etc.).
-    if(destIDType != "EG"){
+    if(destIDType != centralID){
         ##We will need a special case here if we decide to unify the eg IDs into the SGD org DB...
         resultMap = get(paste("org.",destSpcAbrv,".",destDBAbrv,destIDType,sep=""))    
         resultIDs = mget(as.character(EGIDs), resultMap, ifnotfound=NA)
