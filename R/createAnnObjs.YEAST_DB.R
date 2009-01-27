@@ -97,9 +97,10 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         objName="GENENAME",
         Class="AnnDbBimap",
         L2Rchain=list(
+            YEAST_DB_L2Rlink1,
             list(
                 tablename="sgd",
-                Lcolname="systematic_name",
+                Lcolname="_id",
                 Rcolname="gene_name"
             )
         )
@@ -189,6 +190,54 @@ YEAST_DB_AnnDbBimap_seeds <- list(
                 Rcolname="smart_id"
             )
         )
+    ),
+    list(
+        objName="SGD",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            YEAST_DB_L2Rlink1,
+            list(
+                tablename="sgd",
+                Lcolname="_id",
+                Rcolname="sgd_id"
+            )
+        )
+    ),
+    list(
+        objName="ENTREZID",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            YEAST_DB_L2Rlink1,
+            list(
+                tablename="genes",
+                Lcolname="_id",
+                Rcolname="gene_id"
+            )
+        )
+    ),
+    list(
+        objName="REFSEQ",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            YEAST_DB_L2Rlink1,
+            list(
+                tablename="refseq",
+                Lcolname="_id",
+                Rcolname="accession"
+            )
+        )
+    ),
+    list(
+        objName="UNIPROT",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            YEAST_DB_L2Rlink1,
+            list(
+                tablename="uniprot",
+                Lcolname="_id",
+                Rcolname="uniprot_id"
+            )
+        )
     )
 )
 
@@ -207,6 +256,7 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$ENZYME2ORF <- revmap(ann_objs$ENZYME, objName="ENZYME2ORF")
     ann_objs$PATH2ORF <- revmap(ann_objs$PATH, objName="PATH2ORF")
     ann_objs$PMID2ORF <- revmap(ann_objs$PMID, objName="PMID2ORF")
+    ann_objs$ALIAS2ORF <- revmap(ann_objs$ALIAS, objName="ALIAS2ORF")
     ann_objs$GO2ORF <- revmap(ann_objs$GO, objName="GO2ORF")
     map <- ann_objs$GO2ORF
     map@rightTables <- Go3tablenames(all=TRUE)

@@ -2728,6 +2728,57 @@ appendUniprot <- function(db, subStrs, printSchema){
   
 }
 
+## Make an external genes table to hold Entrez Gene IDs
+appendExternalEG <- function(db, subStrs, printSchema){
+
+  message(cat("Appending Entrez Gene IDs"))
+    
+  sql<- paste("    CREATE TABLE genes (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      gene_id VARCHAR(20) NOT NULL,                 -- gene id
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+ 
+  sql<- paste("
+    INSERT INTO genes
+     SELECT DISTINCT u._id, u.gene_id
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.genes as u
+     WHERE g._id=u._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fgene ON genes(_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'ENTREZID';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ENTREZID', count(DISTINCT ", subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," AS p INNER JOIN genes AS u
+     WHERE p._id=u._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+##   sql<- paste("
+##     INSERT INTO map_counts
+##      SELECT 'ENTREZID2",subStrs[["suffix"]],"', count(DISTINCT gene_id)
+##      FROM ", subStrs[["coreTab"]]," AS p INNER JOIN genes AS u
+##      WHERE p._id=u._id;
+##     ", sep="") 
+##   sqliteQuickSQL(db, sql)  
+  
+}
+
+
 
 
 ## Make the zfin table

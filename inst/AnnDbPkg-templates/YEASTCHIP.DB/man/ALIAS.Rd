@@ -1,5 +1,6 @@
 \name{@ANNOBJPREFIX@ALIAS}
 \alias{@ANNOBJPREFIX@ALIAS}
+\alias{@ANNOBJPREFIX@ALIAS2PROBE}
 \title{Map Open Reading Frame (ORF) Identifiers to Alias Gene Names}
 \description{
   A set of gene names may have been used to report yeast genes

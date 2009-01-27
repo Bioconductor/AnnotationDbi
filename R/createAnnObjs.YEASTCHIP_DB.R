@@ -173,6 +173,7 @@ createAnnObjs.YEASTCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
+    ann_objs$ALIAS2PROBE <- revmap(ann_objs$ALIAS, objName="ALIAS2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
     map <- ann_objs$GO2PROBE
     map@rightTables <- Go3tablenames(all=TRUE)

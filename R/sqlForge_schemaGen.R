@@ -558,7 +558,7 @@ popYEASTCHIPDB <- function(affy,
     appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
     appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
-
+    
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
@@ -605,6 +605,11 @@ popYEASTDB <- function(prefix,
     appendYeastInterpro(db, subStrs=subStrs, printSchema=printSchema)
     appendYeastRejectORF(db, subStrs=subStrs, printSchema=printSchema)
     appendYeastGene2Systematic(db, subStrs=subStrs, printSchema=printSchema)
+
+    ##Append the 3 tables that come from the NCBI data
+    appendExternalEG(db, subStrs=subStrs, printSchema=printSchema)  ##needed to cover case where genes table is not central... 
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
