@@ -1,0 +1,10 @@
+Package: @PKGNAME@
+Title: Probe sequence data for microarrays of type @ARRAYTYPE@
+Version: @VERSION@
+Created: @TODAY@
+Author: The Bioconductor Project www.bioconductor.org 
+Description: This package was automatically created by @CREATOR@. @DATASOURCE@ 
+Maintainer: @MAINTAINER@
+Depends: R (>= 1.6), AnnotationDbi (>= @ANNOTATIONDBIVERSION@)
+License:  LGPL
+biocViews: AnnotationData, AffymetrixChip, @ARRAYTYPE@, @SPECIES@

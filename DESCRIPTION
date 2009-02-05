@@ -2,12 +2,12 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.5.14
+Version: 1.5.15
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.7.0), methods, utils, Biobase (>= 1.17.0)
 Imports: methods, utils, Biobase, DBI, RSQLite
-Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db, human.db0, mouse.db0, rat.db0, fly.db0, yeast.db0, arabidopsis.db0, zebrafish.db0, ecoliK12.db0, ecoliSakai.db0
+Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db, human.db0, mouse.db0, rat.db0, fly.db0, yeast.db0, arabidopsis.db0, zebrafish.db0, ecoliK12.db0, ecoliSakai.db0, hgu95av2cdf, affy
 Collate: 00RTobjs.R
          unlist2.R
          AllGenerics.R
@@ -27,13 +27,13 @@ Collate: 00RTobjs.R
          createAnnObjs.RATCHIP_DB.R
          createAnnObjs.FLYCHIP_DB.R
          createAnnObjs.YEASTCHIP_DB.R
-	 createAnnObjs.ZEBRAFISHCHIP_DB.R
-	 createAnnObjs.CANINECHIP_DB.R
-	 createAnnObjs.BOVINECHIP_DB.R
-	 createAnnObjs.WORMCHIP_DB.R
-	 createAnnObjs.PIGCHIP_DB.R
-	 createAnnObjs.CHICKENCHIP_DB.R
-	 createAnnObjs.ECOLICHIP_DB.R
+         createAnnObjs.ZEBRAFISHCHIP_DB.R
+         createAnnObjs.CANINECHIP_DB.R
+         createAnnObjs.BOVINECHIP_DB.R
+         createAnnObjs.WORMCHIP_DB.R
+         createAnnObjs.PIGCHIP_DB.R
+         createAnnObjs.CHICKENCHIP_DB.R
+         createAnnObjs.ECOLICHIP_DB.R
          createAnnObjs.ARABIDOPSISCHIP_DB.R
          createAnnObjs.HUMAN_DB.R
          createAnnObjs.MALARIA_DB.R
@@ -43,13 +43,13 @@ Collate: 00RTobjs.R
          createAnnObjs.YEAST_DB.R
          createAnnObjs.YEASTLEGACY_DB.R
          createAnnObjs.YEASTNCBI_DB.R
-	 createAnnObjs.ZEBRAFISH_DB.R
-	 createAnnObjs.CANINE_DB.R
-	 createAnnObjs.BOVINE_DB.R
-	 createAnnObjs.WORM_DB.R
-	 createAnnObjs.PIG_DB.R
-	 createAnnObjs.CHICKEN_DB.R
-	 createAnnObjs.ECOLI_DB.R
+         createAnnObjs.ZEBRAFISH_DB.R
+         createAnnObjs.CANINE_DB.R
+         createAnnObjs.BOVINE_DB.R
+         createAnnObjs.WORM_DB.R
+         createAnnObjs.PIG_DB.R
+         createAnnObjs.CHICKEN_DB.R
+         createAnnObjs.ECOLI_DB.R
          createAnnObjs.GO_DB.R
          createAnnObjs.KEGG_DB.R
          createAnnObjs.INPARANOIDHOMSA_DB.R
@@ -63,12 +63,13 @@ Collate: 00RTobjs.R
          AnnDbPkg-maker.R
          AnnDbPkg-checker.R
          makeMap.R
-	 sqlForge_baseMapBuilder.R
-	 sqlForge_schemaGen.R
-	 sqlForge_tableBuilder.R
-	 sqlForge_makeAnnPkgs.R
-	 sqlForge_wrapBaseDBPkgs.R
-	 inpIDMapper.R
+         sqlForge_baseMapBuilder.R
+         sqlForge_schemaGen.R
+         sqlForge_tableBuilder.R
+         sqlForge_makeAnnPkgs.R
+         sqlForge_wrapBaseDBPkgs.R
+         inpIDMapper.R
+         makeProbePackage.R
          zzz.R
 License: Artistic-2.0
 biocViews: Annotation, Infrastructure

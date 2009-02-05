@@ -1,0 +1,156 @@
+%\VignetteIndexEntry{Creating probe packages}
+%\VignetteDepends{Biobase, AnnotationDbi}
+%\VignetteKeywords{annotation}
+%\VignettePackage{AnnotationDbi}
+
+\documentclass[11pt]{article}
+\usepackage[margin=2cm,nohead]{geometry}
+
+\usepackage{color}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.75}
+\usepackage[%
+baseurl={http://www.bioconductor.org},%
+pdftitle={Basic infrastructure for using oligonucleotide microarray reporter 
+sequence information for preprocessing and quality assessment},%
+pdfauthor={Wolfgang Huber and Robert Gentleman},%
+pdfkeywords={Bioconductor},%
+pagebackref,bookmarks,colorlinks,linkcolor=darkblue,citecolor=darkblue,%
+pagecolor=darkblue,raiselinks,plainpages,pdftex]{hyperref}
+
+\SweaveOpts{keep.source=TRUE,eps=FALSE,include=FALSE} 
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rfile}[1]{{\texttt{#1}}}
+
+\newcommand{\myincfig}[3]{%
+  \begin{figure}[tb]
+    \begin{center}
+      \includegraphics[width=#2]{#1}
+      \caption{\label{#1}#3}
+    \end{center}
+  \end{figure}
+}
+
+
+\bibliographystyle{plainnat} 
+
+\begin{document}
+\title{Creating probe packages}
+\author{Wolfgang Huber and Robert Gentleman}
+\maketitle
+\tableofcontents
+
+%------------------------------------------------------------
+\section{Overview}
+%------------------------------------------------------------
+This document describes how to create a Bioconductor \textit{probe}
+package from the reporter sequence information of a particular chip.
+Probe packages are a convenient way for distributing and storing the 
+probe sequences and related information. 
+
+First, let us load the \Rpackage{AnnotationDbi} package.
+%
+<<startup,results=hide>>=
+library("AnnotationDbi")
+@
+
+
+%------------------------------------------------------------
+\subsection{For Affymetrix genechips}\label{subsec.affy}
+%------------------------------------------------------------
+In this section we see how a probe package can be created for
+Affymetrix genechips from the tabulator-separated sequence files that
+can be obtained from the vendor (at
+\url{http://www.affymetrix.com/support}). As an example, the file
+\Rfile{HG-U95Av2\_probe\_tab.gz} is provided in the \Rfile{extdata}
+subdirectory of the \Rpackage{AnnotationDbi} package.
+
+<<makeprobepackage>>=
+filename <- system.file("extdata", "HG-U95Av2_probe_tab.gz", 
+                          package="AnnotationDbi")
+outdir   <- tempdir()
+me       <- "Wolfgang Huber <w.huber@dkfz.de>"
+species  <- "Homo_sapiens"
+makeProbePackage("HG-U95Av2",
+                 datafile   = gzfile(filename, open="r"),
+                 outdir     = outdir,
+                 maintainer = me,
+                 species    = species,
+                 version    = "0.0.1", 
+                 force      = TRUE)
+dir(outdir)
+@
+
+%------------------------------------------------------------
+\subsection{For other chiptypes}\label{subsec.otherarraytypes}
+%------------------------------------------------------------ 
+To deal with different file formats and additional types of probe
+annotation data from public or in-house databases, the function
+\Rfunction{makeProbePackage} offers a great deal of flexibility. The
+user can specify her own import function through the argument
+\Robject{importfun}. By default, its value is
+\Rfunction{getProbeDataAffy}, a function that reads tabular Affymetrix
+genechip sequence files. Import functions for other types of arrays
+can be adapted from this prototype.
+
+The help pages and R code contained in the produced packages are
+derived from a template directory that obeys the usual R package
+conventions~\cite{RExt}. A prototype for such a directory is provided
+within the package \Rpackage{AnnotationDbi}.  To facilitate the
+automated production of large numbers of similar packages, we provide
+a text substitution mechanism similar to the one used in the GNU
+\Rfunction{configure} system.
+
+The input parameters of an import function are
+\begin{itemize}
+\item a character string naming the array type
+\item the input data files
+\item a character string with the directory name of a package 
+  template directory, containing at least a file \Rfile{DESCRIPTION}, 
+  a directory \Rfile{man} with a file @PKGNAME@.Rd, 
+  a directory \Rfile{data}, and possible other directories and files,
+  conforming to the usual R package conventions.
+\item ... any sort of further parameters, as necessary.
+\end{itemize}
+
+The output of an import function is a named list with elements
+\begin{itemize}
+\item \texttt{pkgname}: a character string with the package name.
+\item \texttt{dataEnv}: an environment containing an arbitrary number 
+  of data objects; these make the core of the package. Among these,
+  there should be a data frame whose name is the value of
+  \texttt{pkgname} with a column \Robject{sequence}.
+  This data frame may have other columns such as the $x$- and $y$-position of the probes
+  on the array, identifiers linking a probe to genomic databases, or its
+  length and relative position within the gene it represents.  
+  The objects in the environment will be saved as individual 
+  \Rfile{.rda} files of the same name into the data directory of the 
+  produced package. Documentation needs to be provided for the 
+  columns of the data frame, as well as  for the other objects.
+\item \texttt{symVals}: a named list, containing the symbol-value 
+  substitutions that are used in the text processing. It must at least 
+  contain the elements
+  \begin{itemize}
+  \item \texttt{ARRAYTYPE}: name of the array
+  \item \texttt{DATASOURCE}: a textual description of how the data
+     were obtained. It should contain the URL, or the name of the
+     company / person.
+  \end{itemize}
+\end{itemize}
+
+For more details, please refer to the help files for the functions 
+\Rfunction{makeProbePackage} and \Rfunction{getProbeDataAffy}.
+For an example, refer to the source code of \Rfunction{getProbeDataAffy}.
+
+\begin{thebibliography}{10}
+\bibitem{RExt}
+R Foundation (1999).
+\newblock {\em Writing R Extensions}.
+\newblock \url{http://www.r-project.org}.
+\end{thebibliography}
+
+\end{document}
+

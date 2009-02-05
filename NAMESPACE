@@ -217,5 +217,11 @@ export(
     inpIDMapper,
        
     #Needs to be exported from RSQLite
-    summary
+    summary,
+
+    ## from R/makeProbePackage.R
+    print.probetable,
+    getProbeDataAffy,
+    getProbeData_1lq,
+    makeProbePackage
 )
