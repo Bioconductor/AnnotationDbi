@@ -132,10 +132,16 @@
     Extra arguments for \code{subset} can be:
     \describe{
       \item{\code{Lkeys}}{
-        The new Lkeys (must be a subset of the current Lkeys).
+        The new Lkeys.
       }
       \item{\code{Rkeys}}{
-        The new Rkeys (must be a subset of the current Rkeys).
+        The new Rkeys.
+      }
+      \item{\code{drop.invalid.keys}}{
+        If \code{drop.invalid.keys=FALSE} (the default), an error will be raised
+        if the new Lkeys or Rkeys contain invalid keys i.e. keys that don't belong
+        to the current Lkeys or Rkeys.
+        If \code{drop.invalid.keys=TRUE}, invalid keys are silently dropped.
       }
       \item{\code{objName}}{
         The name to give to the submap (only supported if \code{x} is an

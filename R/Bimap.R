@@ -507,10 +507,13 @@ setMethod("keys", "Bimap",
 ### The "Lkeys<-", "Rkeys<-" and "keys<-" replacement methods.
 ###
 
+.checkKeysAreWellFormed <- function(keys)
+    if (!is.null(keys) && (!is.character(keys) || any(is.na(keys))))
+        stop("keys must be supplied in a character vector with no NAs")
+
 .checkKeys <- function(keys, valid.keys, ifnotfound)
 {
-    if (!is.character(keys))
-        stop("the keys must be character strings")
+    .checkKeysAreWellFormed(keys)
     if (length(ifnotfound) == 0) {
         not_found <- which(!(keys %in% valid.keys))
         if (length(not_found) != 0)
@@ -591,10 +594,17 @@ setReplaceMethod("keys", "Bimap",
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "subset" methods.
+###
 
 setMethod("subset", "Bimap",
-    function(x, Lkeys=NULL, Rkeys=NULL)
+    function(x, Lkeys=NULL, Rkeys=NULL, drop.invalid.keys=FALSE)
     {
+        if (drop.invalid.keys) {
+            .checkKeysAreWellFormed(Lkeys)
+            .checkKeysAreWellFormed(Rkeys)
+            Lkeys <- Lkeys[Lkeys %in% Lkeys(x)]
+            Rkeys <- Rkeys[Rkeys %in% Rkeys(x)]
+        }
         Lkeys(x) <- Lkeys
         Rkeys(x) <- Rkeys
         x
@@ -602,10 +612,10 @@ setMethod("subset", "Bimap",
 )
 
 setMethod("subset", "AnnDbBimap",
-    function(x, Lkeys=NULL, Rkeys=NULL, objName=NULL)
+    function(x, Lkeys=NULL, Rkeys=NULL, drop.invalid.keys=FALSE, objName=NULL)
     {
         ## Call "subset" method for "Bimap" objects
-        x <- callNextMethod(x, Lkeys=Lkeys, Rkeys=Rkeys)
+        x <- callNextMethod(x, Lkeys=Lkeys, Rkeys=Rkeys, drop.invalid.keys=drop.invalid.keys)
         if (!is.null(objName))
             x@objName <- toString(objName)
         x
