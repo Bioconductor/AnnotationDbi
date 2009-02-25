@@ -106,11 +106,13 @@
   library("org.Hs.eg.db")
   ids = as.list(org.Hs.egUNIPROT)[10000:10500]
   ## Get entrez gene IDs (default) for uniprot IDs mapping from human to mouse.
-  UPIDs = inpIDMapper(ids, "HOMSA", "MUSMU")
+  MouseEGs = inpIDMapper(ids, "HOMSA", "MUSMU")
   ##Get yeast uniprot IDs in exchange for uniprot IDs from human
-  UPYEASTUPs = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT")
+  YeastUPs = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT")
   ##Get yeast uniprot IDs but only return one ID per initial ID
-  UPYEASTUPSingles = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT", keepMultDestIDMatches = FALSE)
+  YeastUPSingles = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT", keepMultDestIDMatches = FALSE)
+  ##Now we have to go from yeast uniprot IDs to Human entrez gene IDs.
+  HumanEGs = inpIDMapper(YeastUPSingles, "SACCE", "HOMSA")
 }
 }
 

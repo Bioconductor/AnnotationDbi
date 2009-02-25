@@ -23,12 +23,10 @@
                        inpMap = "org.Rn.egENSEMBLPROT";
 		       centralID <- "EG"},
            "SACCE"  = {srcSpcAb<-"Sc";
-                       srcDBAb<-"eg"; ##sgd
+                       srcDBAb<-"sgd"; 
                        require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
-                       inpMap = "org.Sc.egORF";	##this transition will not be needed at all anymore 
-		       	      			##so I need to not do this step when centralID == ORF
-						##signal this by setting this value to NA
-		       centralID <- "EG"} ##ORF 
+                       inpMap = NA; ##Not needed for yeast (uses the same ID in inparanoid as the central ID in the org package)
+		       centralID <- "ORF"}  
            )
     return(c(srcSpcAb, srcDBAb, inpMap, centralID))    
 }
@@ -72,7 +70,7 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     setupVals = .getMappingData(srcSpecies)
     srcSpcAbrv = setupVals[1]
     srcDBAbrv = setupVals[2]
-    protMap = get(setupVals[3])
+    if(!is.na(setupVals[3])){protMap = get(setupVals[3])}##FIXME
     centralID = setupVals[4]
     #require the hom package and map
     require(paste("hom.",srcSpcAbrv,".inp.db",sep=""),character.only=TRUE)
@@ -82,7 +80,7 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     mapBackVals = .getMappingData(destSpecies)
     destSpcAbrv = mapBackVals[1]
     destDBAbrv = mapBackVals[2]
-    geneMap = get(mapBackVals[3]) 
+    if(!is.na(mapBackVals[3])){geneMap = get(mapBackVals[3])}##FIXME
 
     ###MGET#1 Get mapped into the initial EGs
     if(srcIDType==centralID){
@@ -104,6 +102,8 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     	##Carry the names for the uniprot IDs over...
     	inpIDs = .reLabel(genes, inpIDs, "inpIDs")
     	inpIDs = .cleanup(inpIDs)
+    }else{
+        inpIDs = genes
     }
     
     ###MGET#3 map across species with inparanoid
@@ -119,14 +119,18 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     finIDs = .handleMultipleMatches(destIDs, keepMultProtMatches)    
     uniqIDs = .cleanup(finIDs)
         
-    ###MGET#4 dest species EG
-    EGIDs = mget(as.character(uniqIDs), revmap(geneMap), ifnotfound=NA) 
-    EGIDs = .reLabel(uniqIDs, EGIDs, "EGIDs")
-    EGIDs = .cleanup(EGIDs) #do before the rename, because there may be duplicates)
-
+    ###MGET#4 dest species EG don't do this if we are already "there"
+    if(exists("geneMap")){
+        EGIDs = mget(as.character(uniqIDs), revmap(geneMap), ifnotfound=NA) 
+        EGIDs = .reLabel(uniqIDs, EGIDs, "EGIDs")
+        EGIDs = .cleanup(EGIDs) #do before the rename, because there may be duplicates)
+    }else{
+        EGIDs = uniqIDs
+    }
+    
     ###MGET#5 final mapping (may not be needed if they wanted EGs)
     ##Finally give the user the ID type that they asked for (ORF, EntrezID = (which is the default), UNIPROT etc.).
-    if(destIDType != centralID){
+    if(destIDType != centralID && toupper(destDBAbrv)!=destIDType){
         ##We will need a special case here if we decide to unify the eg IDs into the SGD org DB...
         resultMap = get(paste("org.",destSpcAbrv,".",destDBAbrv,destIDType,sep=""))    
         resultIDs = mget(as.character(EGIDs), resultMap, ifnotfound=NA)
