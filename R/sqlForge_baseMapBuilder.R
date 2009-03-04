@@ -1,30 +1,33 @@
 
 #Just a utility to prevent empty IDs from ever causing any more mayhem
 cleanSrcMap <- function(file) {
-    insVals <- read.delim(file=file, header=FALSE, sep="\t", quote="", colClasses = "character")
-    insVals <- insVals[insVals[,1]!='',]
+    fileVals <- read.delim(file=file, header=FALSE, sep="\t", quote="", colClasses = "character")
+    fileVals <- fileVals[fileVals[,1]!='',]
 
     #later we might want to cycle through all the IDs that people put and try each one, but right now lets try the 1st one
     #that they gave us instead of just failing silently. (which is definitely a BAD thing)
-#    for(i in 1:length(insVals[,1])){
-        insVals[,2] = sub(';.+', '', insVals[,2], perl=TRUE)
-#    }
-        
-    #need to watch for doubles which get cast by sqlite in BAD ways...
-##     if(typeof(insVals[1,1])=="double" || typeof(insVals[1,2])=="double"){
-##         message(cat("baseMap contained doubles"))
-##         col1 <- unlist(lapply(unlist(insVals[,1]),function(x) as.character(x)))
-##         col2 <- unlist(lapply(unlist(insVals[,2]),function(x) as.character(x)))
-##         insVals <- as.data.frame(cbind(col1,col2))
-##     }
-    insVals
+    ## So instead of just nuking everything after the 1st semicolon, lets do like we do for multiple EGs in the affy annots    
+   fileVals[,2] = sub(';.+', '', fileVals[,2], perl=TRUE)
+   fileVals
+   ##TODO: uncomment the code below, and then change the SQL in probe2gene to remove the DISTINCT and GROUP BY clauses
+   ##when you insert into probe2gene.  Do this in the devel branch immediately after release.
+##     probe <- fileVals[,1]
+##     id <- fileVals[,2]
+##     id <- gsub(" ","", id)
+##     id <- strsplit(id, split=";", fix=T)
+##     id_count <- sapply(id, length)
+##     id_probe <- rep(probe, id_count)
+##     id <- unlist(id)
+    
+##     insVals <- cbind(id_probe, id)
+##     insVals <- as.data.frame(insVals)
+## ##     print(insVals)
+##     insVals
 }
 
 cleanRefSeqs <- function(baseMap){
     baseMap = as.matrix(baseMap)
-#    for(i in 1:length(baseMap[,1])){
-        baseMap[,2] = sub("\\.\\d+?$", "", baseMap[,2], perl=TRUE)
-#    }
+    baseMap[,2] = sub("\\.\\d+?$", "", baseMap[,2], perl=TRUE)
     baseMap = cbind(baseMap[,1],baseMap[,2])
     baseMap = as.data.frame(baseMap)
     baseMap
@@ -42,8 +45,14 @@ makeBaseMaps <- function(csvFileName,
                           EntrezGeneIDName="Entrez.Gene",
                           targetDir="."
                           ) {
-    csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", 
-		colClasses="character", skip = 12)
+    ##in the case where we have read in an affy file, we want to 1st check to see if that file has or has not already had the 1st 12 lines removed.
+    ##1st read it in.
+    csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", colClasses="character")
+    #Then look at the 1st line and if not ok, then TRY AGAIN and skip the 1st 12 lines...
+    if(length(grep("Probe.+?Set.+?ID",colnames(csvFile)[1], perl=TRUE))==0){
+        csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", 
+                            colClasses="character", skip = 12)        
+    }
     probe <- csvFile[,1]
     gb <- csvFile[, GenBankIDName]
     eg <- csvFile[, EntrezGeneIDName]
@@ -87,7 +96,6 @@ probe2gene <- function(baseMap, otherSrc,
         #If there might be refseq IDs, then they might have unwanted .<digit> extensions which must be removed.
         #This (unfortunately cannot be done for the otherSrc files since I won't know what I am getting in that case).
         if(baseMapType=='refseq' || baseMapType=='gbNRef'){  #need to verify that this function is not destructive to genbank IDs
-        #if(baseMapType=='refseq'){
             baseMap=cleanRefSeqs(baseMap)
         }
         
@@ -108,8 +116,8 @@ probe2gene <- function(baseMap, otherSrc,
                 message(cat("baseMapType is eg"))
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes_ori;")
 		sql <- paste("INSERT INTO probe2gene",
-			   "SELECT DISTINCT probe_id, gene_id",
-			    "FROM curr_map GROUP BY probe_id;", sep=" ", collapse="")
+                             "SELECT DISTINCT probe_id, gene_id",  ##To make things map to multiples, I will have to remove the DISTINCT and GROUP BY clauses when I insert into probe2gene
+                             "FROM curr_map GROUP BY probe_id;", sep=" ", collapse="")
 		sqliteQuickSQL(db, sql)
 	} else if (baseMapType=='image') {
                 message(cat("baseMapType is image"))

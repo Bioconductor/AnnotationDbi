@@ -198,7 +198,7 @@ appendProbes <- function(db, subStrs, printSchema){
   message(cat("Appending Probes"))
     
   sql<- paste("    CREATE TABLE probes (
-      probe_id VARCHAR(80) PRIMARY KEY,             -- manufacturer ID
+      probe_id VARCHAR(80) NOT NULL,                         -- manufacturer ID
       accession VARCHAR(20),                        -- GenBank accession number
       _id INTEGER NULL,                             -- REFERENCES ", subStrs[["cntrTab"]],"
       FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
@@ -208,7 +208,7 @@ appendProbes <- function(db, subStrs, printSchema){
 
   sql<- paste("
     INSERT INTO probes
-     SELECT DISTINCT  p.probe_id as probe_id, p.accession, g._id as _id
+     SELECT p.probe_id as probe_id, p.accession, g._id as _id
      FROM probe_map as p LEFT OUTER JOIN ", subStrs[["cntrTab"]]," as g
      ON p.gene_id=g.gene_id
      ORDER BY probe_id;

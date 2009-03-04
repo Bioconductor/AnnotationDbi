@@ -1,33 +1,44 @@
 \name{inpIDMapper}
-
 \alias{inpIDMapper}
-
-\title{convenience function for mapping IDs through an appropriate set of
-  inparanoid packages}
+\alias{intraIDMapper}
+\alias{idConverter}
+\title{Convenience functions for mapping IDs through an appropriate set of
+  annotation packages}
 
 \description{
-  This is a convenience function that attempts to take a list of IDs
-  along with some addional information about what those IDs are, what
-  type of ID you would like them to be, as well as some information
+  These are a set of convenience functions that attempt to take a list
+  of IDs along with some addional information about what those IDs are,
+  what type of ID you would like them to be, as well as some information
   about what species they are from and what species you would like them
   to be from and then attempts to the simplest possible conversion using
-  an inparanoid package.  By default, this function will drop ambiguous
-  matches from the results.  Please see the details section for more
-  information about these last two parameters.
+  the organism and possible inparanoid annotation packages.  By default,
+  this function will drop ambiguous matches from the results.  Please
+  see the details section for more information about the parameters that
+  can affect this.  If a more complex treatment of how to handle
+  multiple matches is required, then it is likely that a less convenient
+  approach will be necessary.
 }
 
 \usage{
   inpIDMapper(ids, srcSpecies, destSpecies, srcIDType="UNIPROT",
   destIDType="EG", keepMultGeneMatches=FALSE, keepMultProtMatches=FALSE,
   keepMultDestIDMatches = TRUE)
+
+  intraIDMapper(ids, species, srcIDType="UNIPROT", destIDType="EG",
+  keepMultGeneMatches=FALSE)
+
+  idConverter(ids, srcSpecies, destSpecies, srcIDType="UNIPROT",
+  destIDType="EG", keepMultGeneMatches=FALSE, keepMultProtMatches=FALSE,
+  keepMultDestIDMatches = TRUE)
 }
 
 \arguments{
-  \item{ids}{the list of original IDs to match}
+  \item{ids}{a list or vector of original IDs to match}
   \item{srcSpecies}{The original source species in in paranoid
   format. In other words, the 3 letters of the genus followed by 2
   letters of the species in all caps.  Ie. 'HOMSA' is for Homo sapiens etc.}
   \item{destSpecies}{the destination species in inparanoid format}
+  \item{species}{the species involved}
   \item{srcIDType}{The source ID type written exactly as it would be
   used in a mapping name for an eg package.  So for example, 'UNIPROT'
   is how the uniprot mappings are always written, so we keep that
@@ -54,8 +65,8 @@
   things to align you can do some bookeeping.
 }
   
-\details{
-  This is a convenience function for getting an ID from one species
+\details{ 
+  inpIDMapper - This is a convenience function for getting an ID from one species
   mapped to an ID type of your choice from another organism of your
   choice.  The only mappings used to do this are the mappings that are
   scored as 100 according to the inparanoid algorithm.  This function
@@ -87,6 +98,21 @@
   keepMultProtMatches parameter to make the same kind of decision as in
   step \#2, again, the default is to drop anything that is ambiguous.
 
+
+  intraIDMapper - This is a convenience function to map within an
+  organism and so it has a much simpler job to do.  It will either map
+  through one mapping or two depending whether the source ID or
+  destination ID is a central ID for the relevant organism package.  If
+  the answer is neither, then two mappings will be needed.
+
+  idConverter - This is mostly for convenient usage of these functions
+  by developers.  It is just a wrapper function that can pass along all
+  the parameters to the appropriate function (intraIDMapper or
+  inpIDMapper).  It decides which function to call based on the source
+  and destination organism.  The disadvantage to using this function all
+  the time is just that more of the parameters have to be filled out
+  each time.
+
 }
 
 \author{Marc Carlson}
@@ -104,16 +130,28 @@
 
   ##Some IDs just for the example
   library("org.Hs.eg.db")
-  ids = as.list(org.Hs.egUNIPROT)[10000:10500]
+  ids = as.list(org.Hs.egUNIPROT)[10000:10500] ##get some ragged IDs
   ## Get entrez gene IDs (default) for uniprot IDs mapping from human to mouse.
   MouseEGs = inpIDMapper(ids, "HOMSA", "MUSMU")
   ##Get yeast uniprot IDs in exchange for uniprot IDs from human
   YeastUPs = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT")
   ##Get yeast uniprot IDs but only return one ID per initial ID
   YeastUPSingles = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT", keepMultDestIDMatches = FALSE)
-  ##Now we have to go from yeast uniprot IDs to Human entrez gene IDs.
-  HumanEGs = inpIDMapper(YeastUPSingles, "SACCE", "HOMSA")
+
+  ##Test out the intraIDMapper function:
+  HumanEGs = intraIDMapper(ids, species="HOMSA", srcIDType="UNIPROT",
+  destIDType="EG")
+  HumanPATHs = intraIDMapper(ids, species="HOMSA", srcIDType="UNIPROT",
+  destIDType="PATH")
+
+  ##Test out the wrapper function
+  MousePATHs = idConverter(MouseEGs, srcSpecies="MUSMU", destSpecies="MUSMU",
+  srcIDType="EG", destIDType="PATH")
+  ##Convert from Yeast uniprot IDs to Human entrez gene IDs.
+  HumanEGs = idConverter(YeastUPSingles, "SACCE", "HOMSA")
+
 }
 }
 
 \keyword{manip}
+
