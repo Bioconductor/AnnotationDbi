@@ -6,6 +6,10 @@
 \alias{FlatBimap-class}
 \alias{FlatBimap}
 
+\alias{class:AnnObj}
+\alias{AnnObj-class}
+\alias{AnnObj}
+
 \alias{showQCData}
 
 \alias{class:L2Rlink}

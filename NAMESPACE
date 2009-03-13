@@ -8,6 +8,7 @@ exportClasses(
     ## from R/AllClasses.R
     "Bimap",
     "FlatBimap",
+    "AnnObj",
     "AnnDbObj",
     #"AnnDbTable",
     "L2Rlink",
