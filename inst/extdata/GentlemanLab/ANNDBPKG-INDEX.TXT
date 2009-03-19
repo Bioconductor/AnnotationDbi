@@ -1289,6 +1289,26 @@ AnnObjTarget: Yeast
 species: Yeast
 biocViews: AnnotationData, Saccharomyces_cerevisiae
 
+### Package: hom.At.inp.db
+### Title: Homology information for Arabidopsis thaliana from Inparanoid
+### Version: 2.2.9
+### PkgTemplate: INPARANOIDARATH.DB
+### DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.At.inp.sqlite
+### AnnObjPrefix: hom.Ar.inp
+### AnnObjTarget: Arabidopsis
+### species: Arabidopsis
+### biocViews: AnnotationData, Arabidopsis_thaliana
+
+### Package: hom.Dr.inp.db
+### Title: Homology information for Danio rerio from Inparanoid
+### Version: 2.2.9
+### PkgTemplate: INPARANOIDDANRE.DB
+### DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hom.Dr.inp.sqlite
+### AnnObjPrefix: hom.Dr.inp
+### AnnObjTarget: Arabidopsis
+### species: Arabidopsis
+### biocViews: AnnotationData, Danio_rerio
+
 
 ### =========================================================================
 ### PFAM_DB schema

@@ -620,3 +620,10 @@ dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
     dbQuery(conn, SQL, 1)
 }
 
+
+## ### Bimap filter function
+## L2Rchain.bimapFilter = function(L2Rchain){
+##   filter = sapply(L2Rchain, function(L2RLink) L2Rlink@filter)
+##   filter = filter[!is.na(filter)][1]
+## }
+

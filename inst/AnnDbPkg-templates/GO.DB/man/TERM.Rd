@@ -6,13 +6,13 @@
 }
 \details{
   Each GO identifier is mapped to a \code{GOTerms} object that has 6 slots:
-  \item{GOID}{GO Identifier}
-  \item{Term}{The term for that GO id}
-  \item{Synonym}{Synonymous terms}
-  \item{Secondary}{Secondary terms that have been merged into this term}
-  \item{Definition}{Further definition of the GO term}
-  \item{Ontology}{One of MF - molecular function, BP - biological
-    process, or CC - cellular component}
+   GOID: GO Identifier
+   Term: The term for that GO id
+   Synonym: Synonymous terms
+   Secondary: Secondary terms that have been merged into this term
+   Definition: Further definition of the GO term
+   Ontology: One of MF - molecular function, BP - biological
+    process, or CC - cellular component
  
   All the obsolete GO terms are under the nodes "obsolete molecular
   function" (GO:0008369), "obsolete cellular component" (GO id

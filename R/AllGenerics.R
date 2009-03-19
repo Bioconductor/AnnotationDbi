@@ -32,6 +32,8 @@ setGeneric("nhit", function(x) standardGeneric("nhit"))
 setGeneric("toLList", function(x) standardGeneric("toLList"))
 setGeneric("toRList", function(x) standardGeneric("toRList"))
 setGeneric("toList", function(x) standardGeneric("toList"))
+## setGeneric("bimapFilter", function(x) standardGeneric("bimapFilter"))
+## setGeneric("bimapFilter<-", signature="x", function(x, value) standardGeneric("bimapFilter<-"))
 
 ### Others (do whatever you want with them ;-)
 setGeneric("dbconn", function(x) standardGeneric("dbconn"))

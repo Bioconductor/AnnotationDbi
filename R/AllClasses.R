@@ -134,6 +134,15 @@ setClass("AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Inparanpoid Bimap
+###
+### This class is just needed so we can encapsulate some methods that are
+### required for this more specialized set of packages.
+## setClass("InpAnnDbBimap", contains="AnnDbBimap")
+
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### GO-related bimaps.
 ###
 

@@ -44,6 +44,7 @@ exportMethods(
     "colnames", "colmetanames",
     "Lkeyname", "Rkeyname", "keyname",
     "tagname",
+##     "bimapFilter","bimapFilter<-",
     "Rattribnames", "Rattribnames<-",
     "Lkeys", "Rkeys", "keys",
     "Lkeys<-", "Rkeys<-", "keys<-",

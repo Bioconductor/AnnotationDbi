@@ -48,10 +48,11 @@
   Gene Ontology terms and other information are available in a separate
   data package named GO.  
   
-  Mappings were based on data provided by: @GO2ALLEGSSOURCE@
+  Mappings were based on data provided by: \url{http://www.blast2go.de/}
 }
 \references{
-\url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
+  \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
+  \url{http://www.blast2go.de/}
 }
 \examples{
     # Convert to a list

@@ -51,10 +51,13 @@
   between Gene Ontology identifiers an Gene Ontology terms and other information
   are available in a separate data package named GO.
   
-  Mappings were based on data provided by: @GOSOURCE@
+  Mappings were based on data provided by: \url{http://www.blast2go.de/}
 
 }
-
+\references{
+  \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
+  \url{http://www.blast2go.de/}
+}
 \examples{
         x <- @ANNOBJPREFIX@GO
         # Get the probe identifiers that are mapped to a GO ID

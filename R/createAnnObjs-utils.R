@@ -157,6 +157,7 @@ makeSeedList <- function(species, fields)
        INPARANOID_DB_AnnDbBimap_seeds[[i]] <- list(                                   
                 objName=toupper(fields[i]),
                 Class="AnnDbBimap",
+##                 Class="InpAnnDbBimap",
                 L2Rchain=list(          
                   list(
                        tablename=names(fields)[i],

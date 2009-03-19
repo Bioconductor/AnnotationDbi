@@ -1214,3 +1214,34 @@ setMethod("ncol", "Bimap",
 setMethod("dim", "Bimap",
     function(x) c(nrow(x), ncol(x)))
 
+
+
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The bimapFilter methods.
+###
+
+## setMethod("bimapFilter", "InpAnnDbBimap",
+##     function(x) L2Rchain.bimapFilter(x@L2Rchain))
+
+
+## setReplaceMethod("bimapFilter", "InpAnnDbBimap",
+##     function(x, value) L2Rchain.bimapFilterReplace(x, value){
+##         ##Code goes here
+##     })
+
+
+##For reference  BUT I have to do much more than this since I have to parse text etc.
+## setReplaceMethod("Lkeys", "AnnDbBimap",
+##     function(x, value)
+##     {
+##         if (!is.null(value)) {
+##             .checkKeys(value, Lkeys(x), x@ifnotfound)
+##             if (!is.null(names(value)))
+##                 names(value) <- NULL
+##             x@Lkeys <- value
+##         }
+##         x
+##     }
+## )

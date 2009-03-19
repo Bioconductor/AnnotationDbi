@@ -54,7 +54,7 @@
   between Gene Ontology identifiers an Gene Ontology terms and other information
   are available in a separate data package named GO.
   
-  Mappings were based on data provided by: @GOSOURCE@
+  Mappings were based on data provided by: \url{http://www.blast2go.de/}
 
   For the reverse map GO2EG, each GO term maps to a named vector of
   entrez gene identifiers. A GO identifier may be mapped to the same
@@ -67,7 +67,8 @@
   \code{\link{@ANNOBJPREFIX@GO2ALLEGS}}.
 }
 \references{
-\url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
+  \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/}
+  \url{http://www.blast2go.de/}
 }
 \examples{
     x <- @ANNOBJPREFIX@GO

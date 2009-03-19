@@ -16,7 +16,7 @@
   \url{http://www.bioconductor.org}.
 
   Graphic presentations of pathways are searchable at
-  url{http://www.genome.ad.jp/kegg/pathway.html} by using pathway identifiers as
+  url http://www.genome.ad.jp/kegg/pathway.html by using pathway identifiers as
   keys.   
 
   Mappings were based on data provided by: @PATHSOURCE@
