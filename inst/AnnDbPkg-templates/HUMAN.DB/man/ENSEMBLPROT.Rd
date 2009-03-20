@@ -11,7 +11,9 @@
   \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene} to Ensembl
   protein accession numbers.
 
-  Mappings were based on data provided by: @ENSEMBLSOURCE@
+  Mappings were based on data provided by:
+  \url{ftp://ftp.ensembl.org/pub/current_fasta}
+  \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA}
 }
 
 \examples{
