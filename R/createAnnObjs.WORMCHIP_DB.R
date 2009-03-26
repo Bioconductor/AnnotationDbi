@@ -203,18 +203,18 @@ WORMCHIP_DB_AnnDbBimap_seeds <- list(
 ##             )
 ##         )
 ##     ),
-##     list(
-##         objName="ENSEMBL",
-##         Class="AnnDbBimap",
-##         L2Rchain=list(
-##             WORMCHIP_DB_L2Rlink1,
-##             list(
-##                 tablename="ensembl",
-##                 Lcolname="_id",
-##                 Rcolname="ensembl_id"
-##             )
-##         )
-##     ),
+    list(
+        objName="ENSEMBL",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            WORMCHIP_DB_L2Rlink1,
+            list(
+                tablename="ensembl",
+                Lcolname="_id",
+                Rcolname="ensembl_id"
+            )
+        )
+    ),
     list(
         objName="WORMBASE",
         Class="AnnDbBimap",
@@ -272,7 +272,7 @@ createAnnObjs.WORMCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-##     ann_objs$ENSEMBL2PROBE <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2PROBE")
+    ann_objs$ENSEMBL2PROBE <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2PROBE")
     map <- ann_objs$GO2PROBE
     map@rightTables <- Go3tablenames(all=TRUE)
     map@objName <- "GO2ALLPROBES"

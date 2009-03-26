@@ -17,8 +17,8 @@
   url http://www.genome.ad.jp/kegg/pathway.html by using pathway identifiers as
   keys.   
 
-  Mappings were based on data provided by: @PATHSOURCE@
-
+  Mappings were based on data provided by: @PATHSOURCE@  For fly, this
+  required mapping these ids THROUGH the flybase IDs provided by NCBI.
 }
 \references{
   \url{http://www.genome.ad.jp/kegg/}

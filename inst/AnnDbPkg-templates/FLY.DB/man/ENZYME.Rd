@@ -42,7 +42,8 @@
   \url{http://www.chem.qmul.ac.uk/iupac/jcbn/index.html#6} 
   
   Mappings between entrez gene identifiers and enzyme identifiers were obtained using files
-  provided by: @ENZYMESOURCE@
+  provided by: @ENZYMESOURCE@  For fly, this required mapping these ids THROUGH
+  the flybase IDs provided by NCBI.
 
   For the reverse map, each EC number maps to a named vector containing
   the entrez gene identifier that corresponds to the gene that produces

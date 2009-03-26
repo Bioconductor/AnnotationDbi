@@ -39,7 +39,8 @@
   The EC name for a given EC number can be viewed at
   \url{http://www.chem.qmul.ac.uk/iupac/jcbn/index.html#6} 
   
-  Mappings were based on data provided by: @ENZYME2PROBESOURCE@
+  Mappings were based on data provided by: @ENZYME2PROBESOURCE@  For fly, this
+  required mapping these ids THROUGH the flybase IDs provided by NCBI.
 
 }
 \references{

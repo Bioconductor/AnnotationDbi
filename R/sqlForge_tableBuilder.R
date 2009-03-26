@@ -1430,6 +1430,57 @@ appendEnsembl <- function(db, subStrs, printSchema){
 
 
 
+## Make the ensembl2ncbi table (no metadata needed)
+appendEnsembl2NCBI <- function(db, subStrs, printSchema){
+    
+  sql<- paste("    CREATE TABLE ensembl2ncbi (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO ensembl2ncbi
+     SELECT DISTINCT e._id, e.ensid
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.ensembl2ncbi as e
+     WHERE g._id=e._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fensembl2ncbi ON ensembl2ncbi (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+  
+}
+
+## Make the ncbi2ensembl table  (no metadata needed)
+appendNCBI2Ensembl <- function(db, subStrs, printSchema){
+    
+  sql<- paste("    CREATE TABLE ncbi2ensembl (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO ncbi2ensembl
+     SELECT DISTINCT e._id, e.ensid
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.ncbi2ensembl as e
+     WHERE g._id=e._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fncbi2ensembl ON ncbi2ensembl (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+  
+}
+
+
 
 ## Make the ensembl protein IDs table 
 appendEnsemblProt <- function(db, subStrs, printSchema){
@@ -2661,6 +2712,68 @@ appendYeastGene2Systematic <- function(db, subStrs, printSchema){
 }
 
 
+## Make the yeast ensembl table
+appendYeastEnsembl <- function(db, subStrs, printSchema){
+
+  message(cat("Appending Ensembl"))
+    
+  sql<- paste("    CREATE TABLE ensembl (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO ensembl
+     SELECT DISTINCT e._id, e.ensembl_id
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.ensembl as e
+     WHERE g._id=e._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fensembl ON ensembl (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'ENSEMBL';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'ENSEMBL2GENE';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    UPDATE map_metadata
+     SET map_name='ENSEMBL2",subStrs[["suffix"]],"' WHERE map_name='ENSEMBL2GENE';
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ENSEMBL', count(DISTINCT ", subStrs[["coreID"]],")
+     FROM ", subStrs[["coreTab"]]," AS p INNER JOIN ensembl AS e
+     WHERE p._id=e._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ENSEMBL2",subStrs[["suffix"]],"', count(DISTINCT ensembl_id)
+     FROM ", subStrs[["coreTab"]]," AS p INNER JOIN ensembl AS e
+     WHERE p._id=e._id;
+    ", sep="") 
+  sqliteQuickSQL(db, sql)  
+  
+}
 
 
 

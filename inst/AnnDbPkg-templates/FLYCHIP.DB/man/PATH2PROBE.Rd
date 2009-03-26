@@ -19,7 +19,8 @@
   Graphic presentations of pathways are searchable at
   \url{http://www.genome.ad.jp/kegg/pathway.html} using pathway identifiers as keys.
   
-  Mappings were based on data provided by: @PATH2PROBESOURCE@
+  Mappings were based on data provided by: @PATH2PROBESOURCE@  For fly, this
+  required mapping these ids THROUGH the flybase IDs provided by NCBI.
 
 }
 \references{

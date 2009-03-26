@@ -192,42 +192,42 @@ BOVINE_DB_AnnDbBimap_seeds <- list(
             )
         )
     ),
-##     list(
-##         objName="ENSEMBL",
-##         Class="AnnDbBimap",
-##         L2Rchain=list(
-##             BOVINE_DB_L2Rlink1,
-##             list(
-##                 tablename="ensembl",
-##                 Lcolname="_id",
-##                 Rcolname="ensembl_id"
-##             )
-##         )
-##     ),
-##     list(
-##         objName="ENSEMBLPROT",
-##         Class="AnnDbBimap",
-##         L2Rchain=list(
-##             BOVINE_DB_L2Rlink1,
-##             list(
-##                 tablename="ensembl_prot",
-##                 Lcolname="_id",
-##                 Rcolname="prot_id"
-##             )
-##         )
-##     ),
-##     list(
-##         objName="ENSEMBLTRANS",
-##         Class="AnnDbBimap",
-##         L2Rchain=list(
-##             BOVINE_DB_L2Rlink1,
-##             list(
-##                 tablename="ensembl_trans",
-##                 Lcolname="_id",
-##                 Rcolname="trans_id"
-##             )
-##         )
-##     ),
+    list(
+        objName="ENSEMBL",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            BOVINE_DB_L2Rlink1,
+            list(
+                tablename="ensembl",
+                Lcolname="_id",
+                Rcolname="ensembl_id"
+            )
+        )
+    ),
+    list(
+        objName="ENSEMBLPROT",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            BOVINE_DB_L2Rlink1,
+            list(
+                tablename="ensembl_prot",
+                Lcolname="_id",
+                Rcolname="prot_id"
+            )
+        )
+    ),
+    list(
+        objName="ENSEMBLTRANS",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            BOVINE_DB_L2Rlink1,
+            list(
+                tablename="ensembl_trans",
+                Lcolname="_id",
+                Rcolname="trans_id"
+            )
+        )
+    ),
     list(
         objName="UNIPROT",
         Class="AnnDbBimap",
@@ -278,9 +278,9 @@ createAnnObjs.BOVINE_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
     #ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
     #ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
-##     ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
-##     ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
-##     ann_objs$ENSEMBLTRANS2EG <- revmap(ann_objs$ENSEMBLTRANS, objName="ENSEMBLTRANS2EG")
+    ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
+    ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
+    ann_objs$ENSEMBLTRANS2EG <- revmap(ann_objs$ENSEMBLTRANS, objName="ENSEMBLTRANS2EG")
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
     map <- ann_objs$GO2EG
     map@rightTables <- Go3tablenames(all=TRUE)

@@ -228,6 +228,18 @@ YEAST_DB_AnnDbBimap_seeds <- list(
         )
     ),
     list(
+        objName="ENSEMBL",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            YEAST_DB_L2Rlink1,
+            list(
+                tablename="ensembl",
+                Lcolname="_id",
+                Rcolname="ensembl_id"
+            )
+        )
+    ),
+    list(
         objName="UNIPROT",
         Class="AnnDbBimap",
         L2Rchain=list(
@@ -257,6 +269,7 @@ createAnnObjs.YEAST_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$PATH2ORF <- revmap(ann_objs$PATH, objName="PATH2ORF")
     ann_objs$PMID2ORF <- revmap(ann_objs$PMID, objName="PMID2ORF")
     ann_objs$ALIAS2ORF <- revmap(ann_objs$ALIAS, objName="ALIAS2ORF")
+    ann_objs$ENSEMBL2ORF <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2ORF")
     ann_objs$GO2ORF <- revmap(ann_objs$GO, objName="GO2ORF")
     map <- ann_objs$GO2ORF
     map@rightTables <- Go3tablenames(all=TRUE)

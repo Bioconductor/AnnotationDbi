@@ -145,6 +145,18 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         rightTables=Go3tablenames()
     ),
     list(
+        objName="ENSEMBL",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            YEASTCHIP_DB_L2Rlink1,
+            list(
+                tablename="ensembl",
+                Lcolname="_id",
+                Rcolname="ensembl_id"
+            )
+        )
+    ),
+    list(
         objName="ORF",
         Class="AnnDbBimap",
         L2Rchain=list(
@@ -174,6 +186,7 @@ createAnnObjs.YEASTCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
     ann_objs$ALIAS2PROBE <- revmap(ann_objs$ALIAS, objName="ALIAS2PROBE")
+    ann_objs$ENSEMBL2PROBE <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2PROBE")
     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
     map <- ann_objs$GO2PROBE
     map@rightTables <- Go3tablenames(all=TRUE)
