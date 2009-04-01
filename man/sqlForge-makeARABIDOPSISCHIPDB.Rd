@@ -9,7 +9,9 @@
   This function 1st creates a SQLite file useful for making a SQLite
   based annotation package by using the correct popXXXCHIP\_DB function.
   Next, this function produces an annotation package featuring the
-  sqlite database produced.
+  sqlite database produced.  This function REQUIRES that you have
+  installed the latest arabidopsis.dbo package which can be obtained by
+  using biocLite().
 }
 
 \usage{

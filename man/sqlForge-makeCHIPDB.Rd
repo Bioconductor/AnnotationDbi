@@ -19,7 +19,10 @@
   This function 1st creates a SQLite file useful for making a SQLite
   based annotation package by using the correct popXXXCHIP\_DB function.
   Next, this function produces an annotation package featuring the
-  sqlite database produced.
+  sqlite database produced.  All makeXXXXChip_DB functions REQUIRE that
+  you previously have installed the appropriate XXXX.db0 package.  Call
+  the function available.db0pkgs() to see what your options are, and
+  then install the appropriate package with biocLite().
 }
 
 \usage{
