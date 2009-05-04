@@ -160,6 +160,22 @@ AnnObjPrefix: hu35ksubd
 species: Human
 manufacturer: Affymetrix
 
+Package: hthgu133a.db
+Version: 2.2.11
+PkgTemplate: HUMANCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hthgu133a.sqlite
+AnnObjPrefix: hthgu133a
+species: Human
+manufacturer: Affymetrix
+
+Package: hthgu133b.db
+Version: 2.2.11
+PkgTemplate: HUMANCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hthgu133b.sqlite
+AnnObjPrefix: hthgu133b
+species: Human
+manufacturer: Affymetrix
+
 Package: hu6800.db
 Version: 2.2.11
 PkgTemplate: HUMANCHIP.DB
