@@ -11,8 +11,10 @@
 ### The createAnnObjs.ARABIDOPSISCHIP_DB() function is the main entry point for
 ### this file: it is called by any ARABIDOPSISCHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
+orgPkg = "org.At.tair"
 
-ARABIDOPSISCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="_id")
+ARABIDOPSISCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="gene_id")
+ARABIDOPSISCHIP_DB_L2Rlink2 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id", altDB=orgPkg)
 
 ### Mandatory fields: objName, Class and L2Rchain
 ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
@@ -21,6 +23,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="genes",
                 Lcolname="_id",
@@ -34,10 +37,13 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="aracyc",
                 Lcolname="_id",
-                Rcolname="pathway_name"
+                Rcolname="pathway_name",
+                altDB=orgPkg
+
             )
         )
     ),
@@ -46,10 +52,12 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="chromosome"
+                Rcolname="chromosome",
+                altDB=orgPkg
             )
         )
     ),
@@ -58,10 +66,12 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="ec",
                 Lcolname="_id",
-                Rcolname="ec_number"
+                Rcolname="ec_number",
+                altDB=orgPkg
             )
         )
     ),
@@ -70,10 +80,12 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="enzyme",
                 Lcolname="_id",
-                Rcolname="ec_name"
+                Rcolname="ec_name",
+                altDB=orgPkg
             )
         )
     ),
@@ -82,10 +94,12 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="gene_name"
+                Rcolname="gene_name",
+                altDB=orgPkg
             )
         )
     ),
@@ -94,10 +108,12 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
 ##         Class="AgiAnnDbMap",
 ##         L2Rchain=list(
 ##             ARABIDOPSISCHIP_DB_L2Rlink1,
+##             ARABIDOPSISCHIP_DB_L2Rlink2,
 ##             list(
 ##                 tablename="genes",
 ##                 Lcolname="_id",
-##                 Rcolname="gene_id"
+##                 Rcolname="gene_id",
+##                 altDB=orgPkg
 ##             )
 ##         ),
 ##         replace.single=as.character(NA)
@@ -107,10 +123,12 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="kegg",
                 Lcolname="_id",
-                Rcolname="path_id"
+                Rcolname="path_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -119,10 +137,12 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="pubmed",
                 Lcolname="_id",
-                Rcolname="pubmed_id"
+                Rcolname="pubmed_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -131,10 +151,12 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="symbol"
+                Rcolname="symbol",
+                altDB=orgPkg
             )
         )
     ),
@@ -143,11 +165,13 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbMap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="chromosome_locations",
                 Lcolname="_id",
                 tagname=c(Chromosome="{seqname}"),
-                Rcolname="start_location"
+                Rcolname="start_location",
+                altDB=orgPkg
             )
         ),
         rightColType="integer"
@@ -157,11 +181,13 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbMap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 tablename="chromosome_locations",
                 Lcolname="_id",
                 tagname=c(Chromosome="{seqname}"),
-                Rcolname="end_location"
+                Rcolname="end_location",
+                altDB=orgPkg
             )
         ),
         rightColType="integer"
@@ -171,12 +197,14 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
         Class="Go3AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="_id",
                 tagname=c(Evidence="{evidence}"),
                 Rcolname="go_id",
-                Rattribnames=c(Ontology="NULL")
+                Rattribnames=c(Ontology="NULL"),
+                altDB=orgPkg
             )
         ),
         rightTables=Go3tablenames()
@@ -193,7 +221,10 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, dbconn, datacach
         datacache=datacache
     )
     ann_objs <- createAnnDbBimaps(ARABIDOPSISCHIP_DB_AnnDbBimap_seeds, seed0)
+    
+    attachDBs(dbconn, ann_objs)
 
+    
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
@@ -205,9 +236,12 @@ createAnnObjs.ARABIDOPSISCHIP_DB <- function(prefix, objTarget, dbconn, datacach
     ann_objs$GO2ALLPROBES <- map
 
     ## 2 special map that is not an AnnDbBimap object (just a named integer vector)
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname="org.At.tair")
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
+    ## 1 special string to let us know who the supporting org package is.
+    ann_objs$ORGPKG <- "org.At.tair"
+    
     ## Some pre-caching
     Lkeys(ann_objs$GO)
 

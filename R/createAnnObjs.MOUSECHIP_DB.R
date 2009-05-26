@@ -12,8 +12,10 @@
 ### this file: it is called by any MOUSECHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
+orgPkg = "org.Mm.eg"
 
-MOUSECHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="_id")
+MOUSECHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="gene_id")
+MOUSECHIP_DB_L2Rlink2 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id", altDB=orgPkg)
 
 ### Mandatory fields: objName, Class and L2Rchain
 MOUSECHIP_DB_AnnDbBimap_seeds <- list(
@@ -22,7 +24,7 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             list(
-                tablename="probes",
+                tablename="accessions",
                 Lcolname="probe_id",
                 Rcolname="accession"
             )
@@ -33,6 +35,7 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="alias",
                 Lcolname="_id",
@@ -46,10 +49,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="chromosomes",
                 Lcolname="_id",
-                Rcolname="chromosome"
+                Rcolname="chromosome",
+                altDB=orgPkg
             )
         )
     ),
@@ -58,10 +63,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="genes",
                 Lcolname="_id",
-                Rcolname="gene_id"
+                Rcolname="gene_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -70,10 +77,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="ec",
                 Lcolname="_id",
-                Rcolname="ec_number"
+                Rcolname="ec_number",
+                altDB=orgPkg
             )
         )
     ),
@@ -82,10 +91,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="gene_name"
+                Rcolname="gene_name",
+                altDB=orgPkg
             )
         )
     ),
@@ -94,10 +105,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="cytogenetic_locations",
                 Lcolname="_id",
-                Rcolname="cytogenetic_location"
+                Rcolname="cytogenetic_location",
+                altDB=orgPkg
             )
         )
     ),
@@ -106,10 +119,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="kegg",
                 Lcolname="_id",
-                Rcolname="path_id"
+                Rcolname="path_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -118,10 +133,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="pubmed",
                 Lcolname="_id",
-                Rcolname="pubmed_id"
+                Rcolname="pubmed_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -130,10 +147,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="refseq",
                 Lcolname="_id",
-                Rcolname="accession"
+                Rcolname="accession",
+                altDB=orgPkg
             )
         )
     ),
@@ -142,10 +161,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="symbol"
+                Rcolname="symbol",
+                altDB=orgPkg
             )
         )
     ),
@@ -154,10 +175,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="unigene",
                 Lcolname="_id",
-                Rcolname="unigene_id"
+                Rcolname="unigene_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -166,11 +189,13 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbMap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="chromosome_locations",
                 Lcolname="_id",
                 tagname=c(Chromosome="{seqname}"),
-                Rcolname="start_location"
+                Rcolname="start_location",
+                altDB=orgPkg
             )
         ),
         rightColType="integer"
@@ -180,11 +205,13 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbMap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="chromosome_locations",
                 Lcolname="_id",
                 tagname=c(Chromosome="{seqname}"),
-                Rcolname="end_location"
+                Rcolname="end_location",
+                altDB=orgPkg
             )
         ),
         rightColType="integer"
@@ -194,11 +221,13 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="IpiAnnDbMap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="pfam",
                 Lcolname="_id",
                 Rcolname="ipi_id",
-                Rattribnames=c(PfamId="{pfam_id}")
+                Rattribnames=c(PfamId="{pfam_id}"),
+                altDB=orgPkg
             )
         )
     ),
@@ -207,11 +236,13 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="IpiAnnDbMap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="prosite",
                 Lcolname="_id",
                 Rcolname="ipi_id",
-                Rattribnames=c(PrositeId="{prosite_id}")
+                Rattribnames=c(PrositeId="{prosite_id}"),
+                altDB=orgPkg
             )
         )
     ),
@@ -220,10 +251,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="ensembl",
                 Lcolname="_id",
-                Rcolname="ensembl_id"
+                Rcolname="ensembl_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -232,10 +265,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="mgi",
                 Lcolname="_id",
-                Rcolname="mgi_id"
+                Rcolname="mgi_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -244,10 +279,12 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 tablename="uniprot",
                 Lcolname="_id",
-                Rcolname="uniprot_id"
+                Rcolname="uniprot_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -256,12 +293,14 @@ MOUSECHIP_DB_AnnDbBimap_seeds <- list(
         Class="Go3AnnDbBimap",
         L2Rchain=list(
             MOUSECHIP_DB_L2Rlink1,
+            MOUSECHIP_DB_L2Rlink2,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="_id",
                 tagname=c(Evidence="{evidence}"),
                 Rcolname="go_id",
-                Rattribnames=c(Ontology="NULL")
+                Rattribnames=c(Ontology="NULL"),
+                altDB=orgPkg
             )
         ),
         rightTables=Go3tablenames()
@@ -279,6 +318,8 @@ createAnnObjs.MOUSECHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     )
     ann_objs <- createAnnDbBimaps(MOUSECHIP_DB_AnnDbBimap_seeds, seed0)
 
+    attachDBs(dbconn, ann_objs)
+    
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
@@ -292,8 +333,10 @@ createAnnObjs.MOUSECHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$GO2ALLPROBES <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname="org.Mm.eg")
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+    ## 1 special string to let us know who the supporting org package is.
+    ann_objs$ORGPKG <- "org.Mm.eg"
 
     ## Some pre-caching
     Lkeys(ann_objs$GO)

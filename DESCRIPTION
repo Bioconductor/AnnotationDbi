@@ -2,12 +2,12 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.7.0
+Version: 1.7.2
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.7.0), methods, utils, Biobase (>= 1.17.0)
 Imports: methods, utils, Biobase, DBI, RSQLite
-Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db, human.db0, mouse.db0, rat.db0, fly.db0, yeast.db0, arabidopsis.db0, zebrafish.db0, ecoliK12.db0, ecoliSakai.db0, hgu95av2cdf, affy
+Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db, human.db0, hgu95av2cdf, affy
 Collate: 00RTobjs.R
          unlist2.R
          AllGenerics.R
@@ -35,6 +35,7 @@ Collate: 00RTobjs.R
          createAnnObjs.CHICKENCHIP_DB.R
          createAnnObjs.ECOLICHIP_DB.R
          createAnnObjs.ARABIDOPSISCHIP_DB.R
+	 createAnnObjs.XENOPUSCHIP_DB.R
          createAnnObjs.HUMAN_DB.R
          createAnnObjs.MALARIA_DB.R
          createAnnObjs.MOUSE_DB.R
@@ -50,6 +51,11 @@ Collate: 00RTobjs.R
          createAnnObjs.PIG_DB.R
          createAnnObjs.CHICKEN_DB.R
          createAnnObjs.ECOLI_DB.R
+         createAnnObjs.ARABIDOPSIS_DB.R
+         createAnnObjs.CHIMP_DB.R
+         createAnnObjs.RHESUS_DB.R
+         createAnnObjs.ANOPHELES_DB.R
+         createAnnObjs.XENOPUS_DB.R
          createAnnObjs.GO_DB.R
          createAnnObjs.KEGG_DB.R
          createAnnObjs.INPARANOIDHOMSA_DB.R

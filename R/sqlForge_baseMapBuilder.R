@@ -11,18 +11,18 @@ cleanSrcMap <- function(file) {
    fileVals
    ##TODO: uncomment the code below, and then change the SQL in probe2gene to remove the DISTINCT and GROUP BY clauses
    ##when you insert into probe2gene.  Do this in the devel branch immediately after release.
-##     probe <- fileVals[,1]
-##     id <- fileVals[,2]
-##     id <- gsub(" ","", id)
-##     id <- strsplit(id, split=";", fix=T)
-##     id_count <- sapply(id, length)
-##     id_probe <- rep(probe, id_count)
-##     id <- unlist(id)
+    probe <- fileVals[,1]
+    id <- fileVals[,2]
+    id <- gsub(" ","", id)
+    id <- strsplit(id, split=";", fix=T)
+    id_count <- sapply(id, length)
+    id_probe <- rep(probe, id_count)
+    id <- unlist(id)
     
-##     insVals <- cbind(id_probe, id)
-##     insVals <- as.data.frame(insVals)
-## ##     print(insVals)
-##     insVals
+    insVals <- cbind(id_probe, id)
+    insVals <- as.data.frame(insVals)
+##     print(insVals)
+    insVals
 }
 
 cleanRefSeqs <- function(baseMap){
@@ -74,7 +74,8 @@ makeBaseMaps <- function(csvFileName,
 
 probe2gene <- function(baseMap, otherSrc,
 			baseMapType=c("gb", "ug", "eg", "refseq", "gbNRef", "image"), 
-			chipMapSrc, pkgName, outputDir=".", allowHomologyGene=FALSE) {
+			chipMapSrc, chipSrc, pkgName, outputDir=".", allowHomologyGene=FALSE) {
+        ## message(cat(paste("Using '",chipSrc,"' for chipSrc.", sep="")))
 	baseMapType <- match.arg(baseMapType)
         require("RSQLite")
 	drv <- dbDriver("SQLite")
@@ -116,50 +117,52 @@ probe2gene <- function(baseMap, otherSrc,
                 message(cat("baseMapType is eg"))
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes_ori;")
 		sql <- paste("INSERT INTO probe2gene",
-                             "SELECT DISTINCT probe_id, gene_id",  ##To make things map to multiples, I will have to remove the DISTINCT and GROUP BY clauses when I insert into probe2gene
-                             "FROM curr_map GROUP BY probe_id;", sep=" ", collapse="")
+                             "SELECT probe_id, gene_id",  ##To make things map to multiples, I will have to remove the DISTINCT and GROUP BY clauses when I insert into probe2gene
+                             "FROM curr_map;", sep=" ", collapse="")
 		sqliteQuickSQL(db, sql)
 	} else if (baseMapType=='image') {
                 message(cat("baseMapType is image"))
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes_ori;")
 		sql <- paste("INSERT INTO probe2gene",
-			    "SELECT DISTINCT c.probe_id, i.gene_id",
+			    "SELECT c.probe_id, i.gene_id",
 			    "FROM curr_map as c, src.image_acc_from_uni as i",
-			    "WHERE c.gene_id=i.accession GROUP BY c.probe_id;", sep=" ", collapse="")
+			    "WHERE c.gene_id=i.accession;", sep=" ", collapse="")
 		sqliteQuickSQL(db, sql)
 	} else if (baseMapType=='ug') {
                 message(cat("baseMapType is ug"))
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT probe_id, NULL FROM probes_ori;")
 		sql <- paste("INSERT INTO probe2gene",
-			    "SELECT DISTINCT c.probe_id, u.gene_id",
+			    "SELECT c.probe_id, u.gene_id",
 			    "FROM curr_map as c, src.unigene as u",
-			    "WHERE c.gene_id=u.unigene_id GROUP BY c.probe_id;", sep=" ", collapse="")
+			    "WHERE c.gene_id=u.unigene_id;", sep=" ", collapse="")
 		sqliteQuickSQL(db, sql)
 	} else if (baseMapType=='refseq') {
                 message(cat("baseMapType is refseq"))
 		sqliteQuickSQL(db, "CREATE INDEX cm1 ON curr_map(probe_id);")
+                sqliteQuickSQL(db, "CREATE INDEX cm2 ON curr_map(gene_id);")
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes_ori AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
 		sql <- paste("INSERT INTO probe2gene", 
-			    "SELECT DISTINCT c.probe_id, a.gene_id",
+			    "SELECT c.probe_id, a.gene_id",
 			    "FROM curr_map as c, src.refseq as a",
-			    "WHERE c.gene_id=a.accession GROUP BY c.probe_id;", sep=" ", collapse="") 
+			    "WHERE c.gene_id=a.accession;", sep=" ", collapse="") 
 		sqliteQuickSQL(db, sql)
 	} else 	{ ### type='gb' or 'gbNRef'
                 message(cat("baseMapType is gb or gbNRef"))
 		sqliteQuickSQL(db, "CREATE INDEX cm1 ON curr_map(probe_id);")
+		sqliteQuickSQL(db, "CREATE INDEX cm2 ON curr_map(gene_id);")
 		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes_ori AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
 		sql <- paste("INSERT INTO probe2gene", 
-			    "SELECT DISTINCT c.probe_id, a.gene_id",
+			    "SELECT c.probe_id, a.gene_id",
 			    "FROM curr_map as c, src.accession as a",
-			    "WHERE c.gene_id=a.accession GROUP BY c.probe_id;", sep=" ", collapse="") 
+			    "WHERE c.gene_id=a.accession;", sep=" ", collapse="") 
 		sqliteQuickSQL(db, sql)
 		sql <- paste("DELETE FROM curr_map WHERE probe_id IN",
 			"(SELECT probe_id FROM probe2gene);", sep=" ", collapse="")
  		sqliteQuickSQL(db, sql)
 		sql <- paste("INSERT INTO probe2gene ", 
-			    "SELECT DISTINCT c.probe_id, a.gene_id ",
+			    "SELECT c.probe_id, a.gene_id ",
 			    "FROM curr_map as c, src.accession_unigene as a",  #The HORRIBLY MISNAMED accession_unigene table contains refseq IDs as well as GenBank IDs but no unigene IDs!
-                            "WHERE c.gene_id=a.accession GROUP BY c.probe_id;", sep=" ", collapse="") #This name is not my fault!  NOT MY FAULT! - Marc
+                            "WHERE c.gene_id=a.accession;", sep=" ", collapse="") #This name is not my fault!  NOT MY FAULT! - Marc
 		sqliteQuickSQL(db, sql)
 	}
 	#sqliteQuickSQL(db, "DETACH DATABASE src;")
@@ -251,11 +254,17 @@ probe2gene <- function(baseMap, otherSrc,
         sqliteQuickSQL(db, "DROP TABLE probe2acc;")
         sqliteQuickSQL(db, "DROP TABLE probes_ori;")
         sqliteQuickSQL(db, "DROP TABLE min_other_rank;")
+
+        ##Now I need to attach the chipsrc and use verify that all the gene_IDs are in fact contained in the genes table of the corresponding chipsrc DB...
+        sqliteQuickSQL(db, paste("ATTACH '", chipSrc,"' AS chipSrc;", sep="", collapse=""))
+        sqliteQuickSQL(db, paste("UPDATE probe_map SET gene_id = NULL WHERE gene_id NOT IN (SELECT gene_id FROM chipSrc.genes);",sep=""))
+                       
         dbDisconnect(db)
 	pkgName
 }
 
-getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc, 
+
+getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc, chipSrc, 
 				otherSrc=character(0),
 				baseMapType="gbNRef", 
 				outputDir=".",
@@ -292,6 +301,7 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc,
                baseMapType=baseMapType, 
                otherSrc=otherSrcObjs,
                chipMapSrc=chipMapSrc,
+               chipSrc=chipSrc,
                pkgName=pkgName,
                outputDir=outputDir,
                allowHomologyGene=allowHomologyGene)
@@ -300,6 +310,7 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc,
 getMapForOtherChipPkg <- function(filePath,
                                   pkgName,
                                   chipMapSrc,
+                                  chipSrc,
                                   otherSrc=character(0),
                                   baseMapType="gbNRef",
                                   outputDir=".",
@@ -324,6 +335,7 @@ getMapForOtherChipPkg <- function(filePath,
                baseMapType=baseMapType,
                otherSrc=otherSrcObjs,
                chipMapSrc=chipMapSrc,
+               chipSrc=chipSrc,
                pkgName=pkgName,
                outputDir=outputDir,
                allowHomologyGene=allowHomologyGene)

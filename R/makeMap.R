@@ -1,12 +1,13 @@
 make_eg_to_go_map <- function(chip) {
+    
     if (length(grep("\\.db$", chip)))
       chip <- substr(chip, 1, nchar(chip) - 3)
     chipNS <- getNamespace(paste(chip, ".db", sep=""))
     chip2GO <- get(paste(chip, "GO", sep=""), chipNS)
     chipGO2PROBE <- get(paste(chip, "GO2PROBE", sep=""), chipNS)
-    L2Rchain <- list(new("L2Rlink", tablename="genes",
-                        Lcolname="gene_id", Rcolname="_id"),
-                    chip2GO@L2Rchain[[2]])
+    L2Rchain <- list(new("L2Rlink", tablename="probes", Lcolname="gene_id", Rcolname="gene_id"),
+                    chip2GO@L2Rchain[[2]],
+                    chip2GO@L2Rchain[[3]])
     eg2go.map <- new("Go3AnnDbBimap",
                      rightTables=chipGO2PROBE@rightTables,
                      L2Rchain=L2Rchain,

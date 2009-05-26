@@ -1,7 +1,63 @@
 
 ##TODO: make these so that they look for the correct kind of chipSrc and chipMapSrc files...  Probably this should be tied to these databases being downloadable to a standard place using biocLite.  For now, its a parameter, but there can be a default location added later.
 
-makeHUMANCHIP_DB <- function(affy,
+
+##Need to deprecate all of these functions so that they can be consolidated.
+makeHUMANCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("HUMANCHIP_DB", ...)    
+}
+makeMOUSECHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("MOUSECHIP_DB", ...)    
+}
+makeRATCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("RATCHIP_DB", ...)    
+}
+makeFLYCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("FLYCHIP_DB", ...)    
+}
+makeYEASTCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("YEASTCHIP_DB", ...)    
+}
+makeZEBRAFISHCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("ZEBRAFISHCHIP_DB", ...)    
+}
+makeECOLICHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("ECOLICHIP_DB", ...)    
+}
+makeCANINECHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("CANINECHIP_DB", ...)    
+}
+makeBOVINECHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("BOVINECHIP_DB", ...)    
+}
+makeWORMCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("WORMCHIP_DB", ...)    
+}
+makePIGCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("PIGCHIP_DB", ...)    
+}
+makeCHICKENCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("CHICKENCHIP_DB", ...)    
+}
+makeARABIDOPSISCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("ARABIDOPSISCHIP_DB", ...)    
+}
+
+
+.makeHUMANCHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -50,7 +106,7 @@ makeHUMANCHIP_DB <- function(affy,
 }
 
 
-makeMOUSECHIP_DB <- function(affy,
+.makeMOUSECHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -99,7 +155,7 @@ makeMOUSECHIP_DB <- function(affy,
 }
 
 
-makeRATCHIP_DB <- function(affy,
+.makeRATCHIP_DB <- function(affy,
                            prefix,
                            fileName,
                            otherSrc = character(0),
@@ -149,7 +205,7 @@ makeRATCHIP_DB <- function(affy,
 
 
 
-makeFLYCHIP_DB <- function(affy,
+.makeFLYCHIP_DB <- function(affy,
                            prefix,
                            fileName,
                            otherSrc = character(0),
@@ -199,7 +255,7 @@ makeFLYCHIP_DB <- function(affy,
 
 
 
-makeARABIDOPSISCHIP_DB <- function(affy,
+.makeARABIDOPSISCHIP_DB <- function(affy,
                                    prefix,
                                    fileName = "myFile.txt",
                                    chipMapSrc = system.file("extdata", "chipmapsrc_arabidopsis.sqlite", package="arabidopsis.db0"),
@@ -244,7 +300,7 @@ makeARABIDOPSISCHIP_DB <- function(affy,
 }
 
 
-makeYEASTCHIP_DB <- function(affy,
+.makeYEASTCHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              chipSrc = system.file("extdata", "chipsrc_yeast.sqlite", package="yeast.db0"),
@@ -288,7 +344,7 @@ makeYEASTCHIP_DB <- function(affy,
 
 
 
-makeZEBRAFISHCHIP_DB <- function(affy,
+.makeZEBRAFISHCHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -338,7 +394,7 @@ makeZEBRAFISHCHIP_DB <- function(affy,
 
 
 
-makeECOLICHIP_DB <- function(affy,
+.makeECOLICHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -389,7 +445,7 @@ makeECOLICHIP_DB <- function(affy,
 
 
 
-makeCANINECHIP_DB <- function(affy,
+.makeCANINECHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -439,7 +495,7 @@ makeCANINECHIP_DB <- function(affy,
 
 
 
-makeBOVINECHIP_DB <- function(affy,
+.makeBOVINECHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -489,7 +545,7 @@ makeBOVINECHIP_DB <- function(affy,
 
 
 
-makeWORMCHIP_DB <- function(affy,
+.makeWORMCHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -538,7 +594,7 @@ makeWORMCHIP_DB <- function(affy,
 }
 
 
-makePIGCHIP_DB <- function(affy,
+.makePIGCHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -587,7 +643,7 @@ makePIGCHIP_DB <- function(affy,
 }
 
 
-makeCHICKENCHIP_DB <- function(affy,
+.makeCHICKENCHIP_DB <- function(affy,
                              prefix,
                              fileName,
                              otherSrc = character(0),
@@ -628,6 +684,55 @@ makeCHICKENCHIP_DB <- function(affy,
                 Author=author,
                 Maintainer=maintainer,
                 PkgTemplate="CHICKENCHIP.DB",
+                AnnObjPrefix=prefix
+                )
+
+    makeAnnDbPkg(seed, paste(outputDir,"/", prefix,".sqlite", sep=""), dest_dir = outputDir)
+
+}
+
+
+.makeXENOPUSCHIP_DB <- function(affy,
+                            prefix,
+                            fileName,
+                            otherSrc = character(0),
+                            chipMapSrc = system.file("extdata", "chipmapsrc_xenopus.sqlite", package="xenopus.db0"),
+                            chipSrc = system.file("extdata", "chipsrc_xenopus.sqlite", package="xenopus.db0"),
+                            baseMapType,
+                            outputDir = ".",
+                            version,
+                            manufacturer = "Manufacturer not specified",
+                            chipName = "ChipName not specified",
+                            manufacturerUrl = "Manufacturer Url not specified",
+                            author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                            maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
+    
+    metaDataSrc <- c(DBSCHEMA="XENOPUSCHIP_DB",
+                     ORGANISM="Xenopus laevis",
+                     SPECIES="Xenopus",
+                     MANUFACTURER=manufacturer,
+                     CHIPNAME=chipName,
+                     MANUFACTURERURL=manufacturerUrl)
+
+    popXENOPUSCHIPDB(affy = affy,
+                   prefix = prefix,
+                   fileName = fileName,
+                   chipMapSrc = chipMapSrc,
+                   chipSrc = chipSrc,
+                   metaDataSrc = metaDataSrc,
+                   otherSrc = otherSrc,
+                   baseMapType=baseMapType,
+                   outputDir=outputDir,
+                   printSchema=FALSE)
+
+    seed <- new("AnnDbPkgSeed",
+                Package= paste(prefix,".db",sep=""),
+                Version=version,
+                Author=author,
+                Maintainer=maintainer,
+                PkgTemplate="XENOPUSCHIP.DB",
                 AnnObjPrefix=prefix
                 )
 

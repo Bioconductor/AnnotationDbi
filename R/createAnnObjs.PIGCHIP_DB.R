@@ -12,8 +12,10 @@
 ### this file: it is called by any PIGCHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
+orgPkg = "org.Ss.eg"
 
-PIGCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="_id")
+PIGCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="gene_id")
+PIGCHIP_DB_L2Rlink2 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id", altDB=orgPkg)
 
 ### Mandatory fields: objName, Class and L2Rchain
 PIGCHIP_DB_AnnDbBimap_seeds <- list(
@@ -22,7 +24,7 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             list(
-                tablename="probes",
+                tablename="accessions",
                 Lcolname="probe_id",
                 Rcolname="accession"
             )
@@ -33,10 +35,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="alias",
                 Lcolname="_id",
-                Rcolname="alias_symbol"
+                Rcolname="alias_symbol",
+                altDB=orgPkg
             )
         ),
         direction=-1L
@@ -46,10 +50,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="chromosomes",
                 Lcolname="_id",
-                Rcolname="chromosome"
+                Rcolname="chromosome",
+                altDB=orgPkg
             )
         )
     ),
@@ -58,10 +64,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="genes",
                 Lcolname="_id",
-                Rcolname="gene_id"
+                Rcolname="gene_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -70,10 +78,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="ec",
                 Lcolname="_id",
-                Rcolname="ec_number"
+                Rcolname="ec_number",
+                altDB=orgPkg
             )
         )
     ),
@@ -82,10 +92,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="gene_name"
+                Rcolname="gene_name",
+                altDB=orgPkg
             )
         )
     ),
@@ -94,10 +106,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="kegg",
                 Lcolname="_id",
-                Rcolname="path_id"
+                Rcolname="path_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -106,10 +120,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="pubmed",
                 Lcolname="_id",
-                Rcolname="pubmed_id"
+                Rcolname="pubmed_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -118,10 +134,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="refseq",
                 Lcolname="_id",
-                Rcolname="accession"
+                Rcolname="accession",
+                altDB=orgPkg
             )
         )
     ),
@@ -130,10 +148,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="symbol"
+                Rcolname="symbol",
+                altDB=orgPkg
             )
         )
     ),
@@ -142,10 +162,12 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="unigene",
                 Lcolname="_id",
-                Rcolname="unigene_id"
+                Rcolname="unigene_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -154,90 +176,28 @@ PIGCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 tablename="uniprot",
                 Lcolname="_id",
-                Rcolname="uniprot_id"
+                Rcolname="uniprot_id",
+                altDB=orgPkg
             )
         )
     ),
-##     list(
-##         objName="CHRLOC",
-##         Class="AnnDbMap",
-##         L2Rchain=list(
-##             PIGCHIP_DB_L2Rlink1,
-##             list(
-##                 tablename="chromosome_locations",
-##                 Lcolname="_id",
-##                 tagname=c(Chromosome="{seqname}"),
-##                 Rcolname="start_location"
-##             )
-##         ),
-##         rightColType="integer"
-##     ),
-##     list(
-##         objName="CHRLOCEND",
-##         Class="AnnDbMap",
-##         L2Rchain=list(
-##             PIGCHIP_DB_L2Rlink1,
-##             list(
-##                 tablename="chromosome_locations",
-##                 Lcolname="_id",
-##                 tagname=c(Chromosome="{seqname}"),
-##                 Rcolname="end_location"
-##             )
-##         ),
-##         rightColType="integer"
-##     ),
-##     list(
-##         objName="PFAM",
-##         Class="IpiAnnDbMap",
-##         L2Rchain=list(
-##             PIGCHIP_DB_L2Rlink1,
-##             list(
-##                 tablename="pfam",
-##                 Lcolname="_id",
-##                 Rcolname="ipi_id",
-##                 Rattribnames=c(PfamId="{pfam_id}")
-##             )
-##         )
-##     ),
-##     list(
-##         objName="PROSITE",
-##         Class="IpiAnnDbMap",
-##         L2Rchain=list(
-##             PIGCHIP_DB_L2Rlink1,
-##             list(
-##                 tablename="prosite",
-##                 Lcolname="_id",
-##                 Rcolname="ipi_id",
-##                 Rattribnames=c(PrositeId="{prosite_id}")
-##             )
-##         )
-##     ),
-##     list(
-##         objName="ENSEMBL",
-##         Class="AnnDbBimap",
-##         L2Rchain=list(
-##             PIGCHIP_DB_L2Rlink1,
-##             list(
-##                 tablename="ensembl",
-##                 Lcolname="_id",
-##                 Rcolname="ensembl_id"
-##             )
-##         )
-##     ),
     list(
         objName="GO",
         Class="Go3AnnDbBimap",
         L2Rchain=list(
             PIGCHIP_DB_L2Rlink1,
+            PIGCHIP_DB_L2Rlink2,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="_id",
                 tagname=c(Evidence="{evidence}"),
                 Rcolname="go_id",
-                Rattribnames=c(Ontology="NULL")
+                Rattribnames=c(Ontology="NULL"),
+                altDB=orgPkg
             )
         ),
         rightTables=Go3tablenames()
@@ -255,6 +215,8 @@ createAnnObjs.PIGCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     )
     ann_objs <- createAnnDbBimaps(PIGCHIP_DB_AnnDbBimap_seeds, seed0)
 
+    attachDBs(dbconn, ann_objs)
+
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
@@ -269,6 +231,8 @@ createAnnObjs.PIGCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
 ##     ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+    ## 1 special string to let us know who the supporting org package is.
+    ann_objs$ORGPKG <- "org.Ss.eg"
 
     ## Some pre-caching
     Lkeys(ann_objs$GO)

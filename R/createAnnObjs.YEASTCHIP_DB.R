@@ -12,8 +12,13 @@
 ### this file: it is called by any YEASTCHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
+orgPkg = "org.Sc.sgd"
 
-YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="_id")
+## YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="_id")
+
+YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="systematic_name")
+YEASTCHIP_DB_L2Rlink2 <- list(tablename="sgd", Lcolname="systematic_name", Rcolname="_id", altDB=orgPkg)
+
 
 ### Mandatory fields: objName, Class and L2Rchain
 YEASTCHIP_DB_AnnDbBimap_seeds <- list(
@@ -22,10 +27,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="gene2alias",
                 Lcolname="_id",
-                Rcolname="alias"
+                Rcolname="alias",
+                altDB=orgPkg
             )
         )
     ),
@@ -34,10 +41,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="chromosome_features",
                 Lcolname="_id",
-                Rcolname="chromosome"
+                Rcolname="chromosome",
+                altDB=orgPkg
             )
         )
     ),
@@ -46,11 +55,13 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbMap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="chromosome_features",
                 Lcolname="_id",
                 tagname=c(Chromosome="{chromosome}"),
-                Rcolname="start"
+                Rcolname="start",
+                altDB=orgPkg
             )
         ),
         rightColType="integer"
@@ -60,11 +71,13 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbMap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="chromosome_features",
                 Lcolname="_id",
                 tagname=c(Chromosome="{chromosome}"),
-                Rcolname="stop"
+                Rcolname="stop",
+                altDB=orgPkg
             )
         ),
         rightColType="integer"
@@ -74,10 +87,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="chromosome_features",
                 Lcolname="_id",
-                Rcolname="feature_description"
+                Rcolname="feature_description",
+                altDB=orgPkg
             )
         )
     ),
@@ -86,10 +101,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="ec",
                 Lcolname="_id",
-                Rcolname="ec_number"
+                Rcolname="ec_number",
+                altDB=orgPkg
             )
         )
     ),
@@ -98,10 +115,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="sgd",
                 Lcolname="_id",
-                Rcolname="gene_name"
+                Rcolname="gene_name",
+                altDB=orgPkg
             )
         )
     ),
@@ -110,10 +129,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="kegg",
                 Lcolname="_id",
-                Rcolname="path_id"
+                Rcolname="path_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -122,10 +143,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="pubmed",
                 Lcolname="_id",
-                Rcolname="pubmed_id"
+                Rcolname="pubmed_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -134,12 +157,14 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="Go3AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="_id",
                 tagname=c(Evidence="{evidence}"),
                 Rcolname="go_id",
-                Rattribnames=c(Ontology="NULL")
+                Rattribnames=c(Ontology="NULL"),
+                altDB=orgPkg
             )
         ),
         rightTables=Go3tablenames()
@@ -149,10 +174,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="ensembl",
                 Lcolname="_id",
-                Rcolname="ensembl_id"
+                Rcolname="ensembl_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -161,10 +188,12 @@ YEASTCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             YEASTCHIP_DB_L2Rlink1,
+            YEASTCHIP_DB_L2Rlink2,
             list(
                 tablename="sgd",
                 Lcolname="_id",
-                Rcolname="systematic_name"
+                Rcolname="systematic_name",
+                altDB=orgPkg
             )
         )
     )
@@ -181,6 +210,8 @@ createAnnObjs.YEASTCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     )
     ann_objs <- createAnnDbBimaps(YEASTCHIP_DB_AnnDbBimap_seeds, seed0)
 
+    attachDBs(dbconn, ann_objs)
+    
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
@@ -194,8 +225,10 @@ createAnnObjs.YEASTCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$GO2ALLPROBES <- map
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname="org.Sc.sgd")
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+    ## 1 special string to let us know who the supporting org package is.
+    ann_objs$ORGPKG <- "org.Sc.sgd"
 
     ## Some pre-caching
     Lkeys(ann_objs$GO)

@@ -24,7 +24,7 @@ HUMANCROSSCHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             list(
-                tablename="probes",
+                tablename="genbank",
                 Lcolname="probe_id",
                 Rcolname="accession"
             )

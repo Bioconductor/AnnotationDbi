@@ -412,6 +412,7 @@ would need to look 1st at the schema to know what tables are present:
 hgu95av2_dbschema() 
 @
 
+
 This function will give you an output of all the create table
 statements that were used to generate the hgu5av2 database.  Then you
 could assemble the sql query and use the helper function

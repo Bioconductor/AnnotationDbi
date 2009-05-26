@@ -12,8 +12,10 @@
 ### this file: it is called by any ECOLICHIP_DB-based package at load-time.
 ### -------------------------------------------------------------------------
 
+orgPkg = "org.EcK12.eg"
 
-ECOLICHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="_id")
+ECOLICHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="gene_id")
+ECOLICHIP_DB_L2Rlink2 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id", altDB=orgPkg)
 
 ### Mandatory fields: objName, Class and L2Rchain
 ECOLICHIP_DB_AnnDbBimap_seeds <- list(
@@ -22,7 +24,7 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             list(
-                tablename="probes",
+                tablename="accessions",
                 Lcolname="probe_id",
                 Rcolname="accession"
             )
@@ -33,10 +35,12 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 tablename="alias",
                 Lcolname="_id",
-                Rcolname="alias_symbol"
+                Rcolname="alias_symbol",
+                altDB=orgPkg
             )
         ),
         direction=-1L
@@ -46,10 +50,12 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 tablename="genes",
                 Lcolname="_id",
-                Rcolname="gene_id"
+                Rcolname="gene_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -58,10 +64,12 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 tablename="ec",
                 Lcolname="_id",
-                Rcolname="ec_number"
+                Rcolname="ec_number",
+                altDB=orgPkg
             )
         )
     ),
@@ -70,10 +78,12 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="gene_name"
+                Rcolname="gene_name",
+                altDB=orgPkg
             )
         )
     ),
@@ -82,10 +92,12 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 tablename="kegg",
                 Lcolname="_id",
-                Rcolname="path_id"
+                Rcolname="path_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -94,10 +106,12 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 tablename="pubmed",
                 Lcolname="_id",
-                Rcolname="pubmed_id"
+                Rcolname="pubmed_id",
+                altDB=orgPkg
             )
         )
     ),
@@ -106,10 +120,12 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 tablename="refseq",
                 Lcolname="_id",
-                Rcolname="accession"
+                Rcolname="accession",
+                altDB=orgPkg
             )
         )
     ),
@@ -118,10 +134,12 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
-                Rcolname="symbol"
+                Rcolname="symbol",
+                altDB=orgPkg
             )
         )
     ),
@@ -130,12 +148,14 @@ ECOLICHIP_DB_AnnDbBimap_seeds <- list(
         Class="Go3AnnDbBimap",
         L2Rchain=list(
             ECOLICHIP_DB_L2Rlink1,
+            ECOLICHIP_DB_L2Rlink2,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="_id",
                 tagname=c(Evidence="{evidence}"),
                 Rcolname="go_id",
-                Rattribnames=c(Ontology="NULL")
+                Rattribnames=c(Ontology="NULL"),
+                altDB=orgPkg
             )
         ),
         rightTables=Go3tablenames()
@@ -153,6 +173,8 @@ createAnnObjs.ECOLICHIP_DB <- function(prefix, objTarget, dbconn, datacache)
     )
     ann_objs <- createAnnDbBimaps(ECOLICHIP_DB_AnnDbBimap_seeds, seed0)
 
+    attachDBs(dbconn, ann_objs)
+    
     ## Reverse maps
     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
@@ -165,6 +187,8 @@ createAnnObjs.ECOLICHIP_DB <- function(prefix, objTarget, dbconn, datacache)
 
     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+    ## 1 special string to let us know who the supporting org package is.
+    ann_objs$ORGPKG <- "org.EcK12.eg"
 
     ## Some pre-caching
     Lkeys(ann_objs$GO)

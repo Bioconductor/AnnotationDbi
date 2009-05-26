@@ -1,6 +1,6 @@
 ### All the createAnnObjs.*_DB() functions currently support the same DB
 ### schema version (of course, each function support its own schema).
-DBSCHEMAVERSION <- "1.0"
+DBSCHEMAVERSION <- "2.0"
 
 checkDBSCHEMA <- function(dbconn, DBSCHEMA)
 {
@@ -56,6 +56,124 @@ createAnnObjs <- function(class, seeds, seed0, envir=NULL)
     envir
 }
 
+## Function to get all these create statements out of the namespace.
+createAnnObjs.SchemaChoice = function(schema, prefix, target, dbconn, datacache){
+    switch(schema,
+           "HUMANCROSSCHIP_DB" = return(AnnotationDbi:::createAnnObjs.HUMANCROSSCHIP_DB(prefix, target, dbconn, datacache)),
+           
+           "HUMANCHIP_DB" = return(AnnotationDbi:::createAnnObjs.HUMANCHIP_DB(prefix, target, dbconn, datacache)),
+           "MOUSECHIP_DB"  = return(AnnotationDbi:::createAnnObjs.MOUSECHIP_DB(prefix, target, dbconn, datacache)),
+           "RATCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.RATCHIP_DB(prefix, target, dbconn, datacache)),
+           "FLYCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.FLYCHIP_DB(prefix, target, dbconn, datacache)),
+           "YEASTCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.YEASTCHIP_DB(prefix, target, dbconn, datacache)),
+           "ZEBRAFISHCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.ZEBRAFISHCHIP_DB(prefix, target, dbconn, datacache)),
+           "ECOLICHIP_DB"  = return(AnnotationDbi:::createAnnObjs.ECOLICHIP_DB(prefix, target, dbconn, datacache)),
+           "CANINECHIP_DB"  = return(AnnotationDbi:::createAnnObjs.CANINECHIP_DB(prefix, target, dbconn, datacache)),
+           "BOVINECHIP_DB"  = return(AnnotationDbi:::createAnnObjs.BOVINECHIP_DB(prefix, target, dbconn, datacache)),
+           "WORMCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.WORMCHIP_DB(prefix, target, dbconn, datacache)),
+           "PIGCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.PIGCHIP_DB(prefix, target, dbconn, datacache)),
+           "CHICKENCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.CHICKENCHIP_DB(prefix, target, dbconn, datacache)),
+           "XENOPUSCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.XENOPUSCHIP_DB(prefix, target, dbconn, datacache)),
+           "ARABIDOPSISCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.ARABIDOPSISCHIP_DB(prefix, target, dbconn, datacache)),
+           
+           "HUMAN_DB"  = return(AnnotationDbi:::createAnnObjs.HUMAN_DB(prefix, target, dbconn, datacache)),
+           "MALARIA_DB"  = return(AnnotationDbi:::createAnnObjs.MALARIA_DB(prefix, target, dbconn, datacache)),
+           "MOUSE_DB"  = return(AnnotationDbi:::createAnnObjs.MOUSE_DB(prefix, target, dbconn, datacache)),
+           "RAT_DB"  = return(AnnotationDbi:::createAnnObjs.RAT_DB(prefix, target, dbconn, datacache)),
+           "FLY_DB"  = return(AnnotationDbi:::createAnnObjs.FLY_DB(prefix, target, dbconn, datacache)),
+           "YEAST_DB"  = return(AnnotationDbi:::createAnnObjs.YEAST_DB(prefix, target, dbconn, datacache)),
+           "ZEBRAFISH_DB"  = return(AnnotationDbi:::createAnnObjs.ZEBRAFISH_DB(prefix, target, dbconn, datacache)),
+           "CANINE_DB"  = return(AnnotationDbi:::createAnnObjs.CANINE_DB(prefix, target, dbconn, datacache)),
+           "BOVINE_DB"  = return(AnnotationDbi:::createAnnObjs.BOVINE_DB(prefix, target, dbconn, datacache)),
+           "WORM_DB"  = return(AnnotationDbi:::createAnnObjs.WORM_DB(prefix, target, dbconn, datacache)),
+           "PIG_DB"  = return(AnnotationDbi:::createAnnObjs.PIG_DB(prefix, target, dbconn, datacache)),
+           "CHICKEN_DB"  = return(AnnotationDbi:::createAnnObjs.CHICKEN_DB(prefix, target, dbconn, datacache)),
+           "ECOLI_DB"  = return(AnnotationDbi:::createAnnObjs.ECOLI_DB(prefix, target, dbconn, datacache)),
+           "ARABIDOPSIS_DB"  = return(AnnotationDbi:::createAnnObjs.ARABIDOPSIS_DB(prefix, target, dbconn, datacache)),
+           "CHIMP_DB"  = return(AnnotationDbi:::createAnnObjs.CHIMP_DB(prefix, target, dbconn, datacache)),
+           "RHESUS_DB"  = return(AnnotationDbi:::createAnnObjs.RHESUS_DB(prefix, target, dbconn, datacache)),
+           "ANOPHELES_DB"  = return(AnnotationDbi:::createAnnObjs.ANOPHELES_DB(prefix, target, dbconn, datacache)),
+           "XENOPUS_DB"  = return(AnnotationDbi:::createAnnObjs.XENOPUS_DB(prefix, target, dbconn, datacache)),
+           
+           "GO_DB"  = return(AnnotationDbi:::createAnnObjs.GO_DB(prefix, target, dbconn, datacache)),
+
+           "KEGG_DB"  = return(AnnotationDbi:::createAnnObjs.KEGG_DB(prefix, target, dbconn, datacache)),
+
+           "INPARANOIDHOMSA_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDHOMSA_DB(prefix, target, dbconn, datacache)),
+           "INPARANOIDMUSMU_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDMUSMU_DB(prefix, target, dbconn, datacache)),
+           "INPARANOIDRATNO_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDRATNO_DB(prefix, target, dbconn, datacache)),
+           "INPARANOIDDROME_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDDROME_DB(prefix, target, dbconn, datacache)),
+           "INPARANOIDSACCE_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDSACCE_DB(prefix, target, dbconn, datacache)),
+           
+           "PFAM_DB"  = return(AnnotationDbi:::createAnnObjs.PFAM_DB(prefix, target, dbconn, datacache)),
+           
+           "AFFYHUEX_DB"  = return(AnnotationDbi:::createAnnObjs.AFFYHUEX_DB(prefix, target, dbconn, datacache))
+          )
+}
+
+
+## Function to get all these populate functions out of the namespace.
+populateDB = function(schema, ...){
+    switch(schema,           
+           "HUMANCHIP_DB" = return(AnnotationDbi:::popHUMANCHIPDB(...)),
+           "MOUSECHIP_DB"  = return(AnnotationDbi:::popMOUSECHIPDB(...)),
+           "RATCHIP_DB"  = return(AnnotationDbi:::popRATCHIPDB(...)),
+           "FLYCHIP_DB"  = return(AnnotationDbi:::popFLYCHIPDB(...)),
+           "YEASTCHIP_DB"  = return(AnnotationDbi:::popYEASTCHIPDB(...)),
+           "ZEBRAFISHCHIP_DB"  = return(AnnotationDbi:::popZEBRAFISHCHIPDB(...)),
+           "ECOLICHIP_DB"  = return(AnnotationDbi:::popECOLICHIPDB(...)),
+           "CANINECHIP_DB"  = return(AnnotationDbi:::popCANINECHIPDB(...)),
+           "BOVINECHIP_DB"  = return(AnnotationDbi:::popBOVINECHIPDB(...)),
+           "WORMCHIP_DB"  = return(AnnotationDbi:::popWORMCHIPDB(...)),
+           "PIGCHIP_DB"  = return(AnnotationDbi:::popPIGCHIPDB(...)),
+           "CHICKENCHIP_DB"  = return(AnnotationDbi:::popCHICKENCHIPDB(...)),
+           "XENOPUSCHIP_DB"  = return(AnnotationDbi:::popXENOPUSCHIPDB(...)),
+           "ARABIDOPSISCHIP_DB"  = return(AnnotationDbi:::popARABIDOPSISCHIPDB(...)),
+           
+           "HUMAN_DB"  = return(AnnotationDbi:::popHUMANDB(...)),
+           "MALARIA_DB"  = return(AnnotationDbi:::popMALARIADB(...)),
+           "MOUSE_DB"  = return(AnnotationDbi:::popMOUSEDB(...)),
+           "RAT_DB"  = return(AnnotationDbi:::popRATDB(...)),
+           "FLY_DB"  = return(AnnotationDbi:::popFLYDB(...)),
+           "YEAST_DB"  = return(AnnotationDbi:::popYEASTDB(...)),
+           "ZEBRAFISH_DB"  = return(AnnotationDbi:::popZEBRAFISHDB(...)),
+           "CANINE_DB"  = return(AnnotationDbi:::popCANINEDB(...)),
+           "BOVINE_DB"  = return(AnnotationDbi:::popBOVINEDB(...)),
+           "WORM_DB"  = return(AnnotationDbi:::popWORMDB(...)),
+           "PIG_DB"  = return(AnnotationDbi:::popPIGDB(...)),
+           "CHICKEN_DB"  = return(AnnotationDbi:::popCHICKENDB(...)),
+           "ARABIDOPSIS_DB"  = return(AnnotationDbi:::popARABIDOPSISDB(...)),
+           "ECOLI_DB"  = return(AnnotationDbi:::popECOLIDB(...)),           
+           "CHIMP_DB"  = return(AnnotationDbi:::popCHIMPDB(...)),
+           "RHESUS_DB"  = return(AnnotationDbi:::popRHESUSDB(...)),
+           "ANOPHELES_DB"  = return(AnnotationDbi:::popANOPHELESDB(...)),
+           "XENOPUS_DB"  = return(AnnotationDbi:::popXENOPUSDB(...))
+          )
+}
+
+
+## Function to get all the make***CHIP_DB functions out of the namespace.
+makeDBPackage = function(schema, ...){
+    switch(schema,           
+           "HUMANCHIP_DB" = return(AnnotationDbi:::.makeHUMANCHIP_DB(...)),
+           "MOUSECHIP_DB"  = return(AnnotationDbi:::.makeMOUSECHIP_DB(...)),
+           "RATCHIP_DB"  = return(AnnotationDbi:::.makeRATCHIP_DB(...)),
+           "FLYCHIP_DB"  = return(AnnotationDbi:::.makeFLYCHIP_DB(...)),
+           "YEASTCHIP_DB"  = return(AnnotationDbi:::.makeYEASTCHIP_DB(...)),
+           "ZEBRAFISHCHIP_DB"  = return(AnnotationDbi:::.makeZEBRAFISHCHIP_DB(...)),
+           "ECOLICHIP_DB"  = return(AnnotationDbi:::.makeECOLICHIP_DB(...)),
+           "CANINECHIP_DB"  = return(AnnotationDbi:::.makeCANINECHIP_DB(...)),
+           "BOVINECHIP_DB"  = return(AnnotationDbi:::.makeBOVINECHIP_DB(...)),
+           "WORMCHIP_DB"  = return(AnnotationDbi:::.makeWORMCHIP_DB(...)),
+           "PIGCHIP_DB"  = return(AnnotationDbi:::.makePIGCHIP_DB(...)),
+           "CHICKENCHIP_DB"  = return(AnnotationDbi:::.makeCHICKENCHIP_DB(...)),
+           "XENOPUSCHIP_DB"  = return(AnnotationDbi:::.makeXENOPUSCHIP_DB(...)),
+           "ARABIDOPSISCHIP_DB"  = return(AnnotationDbi:::.makeARABIDOPSISCHIP_DB(...))           
+          )
+}
+
+
+
 createAnnDbBimap <- function(seed, seed0)
 {
     for (slot in names(seed0)) {
@@ -105,16 +223,16 @@ createSimpleBimap <- function(tablename, Lcolname, Rcolname,
 ### 3 special maps that are not AnnDbBimap objects (just named vectors).
 
 createCHRLENGTHS <- function(dbconn, dbname="")
-  {
-          if(dbname==""){ ##The usual case
-                      data <- dbGetTable(dbconn, "chrlengths")
-                  }else{ ##For when people are doing a "CROSS" joined package, we want data from the "org" DB
-                              data <- dbGetTable(dbconn, paste(.mangleDBName(dbname),".chrlengths",sep=""))
-                          }
-              CHRLENGTHS <- data[["length"]]
-              names(CHRLENGTHS) <- data[["chromosome"]]
-              CHRLENGTHS
-      }
+{
+    if(dbname==""){ ##The usual case
+        data <- dbGetTable(dbconn, "chrlengths")
+    }else{ ##For when people are doing a "CROSS" joined package, we want data from the "org" DB
+        data <- dbGetTable(dbconn, paste(.mangleDBName(dbname),".chrlengths",sep=""))        
+    }
+    CHRLENGTHS <- data[["length"]]
+    names(CHRLENGTHS) <- data[["chromosome"]]        
+    CHRLENGTHS
+}
 
 createREJECTORF <- function(dbconn)
 {
@@ -157,7 +275,6 @@ makeSeedList <- function(species, fields)
        INPARANOID_DB_AnnDbBimap_seeds[[i]] <- list(                                   
                 objName=toupper(fields[i]),
                 Class="AnnDbBimap",
-##                 Class="InpAnnDbBimap",
                 L2Rchain=list(          
                   list(
                        tablename=names(fields)[i],

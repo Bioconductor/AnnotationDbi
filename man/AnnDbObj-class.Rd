@@ -135,8 +135,8 @@
   ## column. Note that in all tables, the "_id" column is an internal id with
   ## no biological meaning (provided for allowing efficient joins between
   ## tables).
-  ## To retrieve the mapping between manufacturer IDs and Entrez Gene IDs:
-  dbGetQuery(hgu95av2_dbconn(), "SELECT * FROM probes INNER JOIN genes USING(_id) LIMIT 10")
+  ## The information about the probe to gene mapping is in probes:
+  dbGetQuery(hgu95av2_dbconn(), "SELECT * FROM probes LIMIT 10")
   ## This mapping is in fact the ENTREZID map:
   toTable(hgu95av2ENTREZID)[1:10, ] # only relevant columns are retrieved
 

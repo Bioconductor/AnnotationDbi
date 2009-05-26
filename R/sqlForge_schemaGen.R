@@ -16,6 +16,7 @@ popHUMANCHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -26,6 +27,7 @@ popHUMANCHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -63,6 +65,9 @@ popHUMANCHIPDB <- function(affy,
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
 
     appendPostMeta(db, subStrs=subStrs)
+    
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
     
     dbDisconnect(db)
 }
@@ -137,6 +142,7 @@ popMOUSECHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -147,6 +153,7 @@ popMOUSECHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -185,6 +192,9 @@ popMOUSECHIPDB <- function(affy,
     
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -258,6 +268,7 @@ popRATCHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -268,6 +279,7 @@ popRATCHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -305,6 +317,9 @@ popRATCHIPDB <- function(affy,
 
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -386,9 +401,10 @@ popARABIDOPSISCHIPDB <- function(affy,
     sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
     
     appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
-    appendArabidopsisGenes(db, subStrs=subStrs, printSchema=printSchema)     ##Arabidopsis requires a custom function.
-    appendArabidopsisProbes(db, subStrs=subStrs, printSchema=printSchema)    ##Arabidopsis requires a custom function.
-    appendArabidopsisGeneInfo(db, subStrs=subStrs, printSchema=printSchema)  ##Arabidopsis requires a custom function.
+    appendArabidopsisGenes(db, subStrs=subStrs, printSchema=printSchema)           ##Arabidopsis requires a custom function.
+    appendArabidopsisEntrezGenes(db, subStrs=subStrs, printSchema=printSchema)     ##Arabidopsis requires a custom function.
+    appendArabidopsisProbes(db, subStrs=subStrs, printSchema=printSchema)          ##Arabidopsis requires a custom function.
+    appendArabidopsisGeneInfo(db, subStrs=subStrs, printSchema=printSchema)        ##Arabidopsis requires a custom function.
 
     appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
     appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
@@ -403,8 +419,54 @@ popARABIDOPSISCHIPDB <- function(affy,
     
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyArabidopsisProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db, subStrs=subStrs, printSchema=printSchema)
 }
+
+
+#presently this is the formula for ARABIDOPSIS_DB
+popARABIDOPSISDB <- function(prefix,
+                             chipSrc = system.file("extdata", "chipsrc_arabidopsis.sqlite", package="arabidopsis.db0"),
+                             metaDataSrc,
+                             outputDir=".",
+                             printSchema=FALSE){
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="TAIR","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    require("RSQLite")
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    sqliteQuickSQL(db, "CREATE TABLE probe_map (probe_id TEXT, gene_id TEXT, accession TEXT);")
+    
+    sqliteQuickSQL(db, "CREATE TABLE metadata (name VARCHAR(80) PRIMARY KEY, value VARCHAR(255) );")
+    sqliteQuickSQL(db, paste("INSERT INTO metadata VALUES ('PKGNAME', '", prefix, "');", sep="", collapse=""))
+    
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendArabidopsisGenes(db, subStrs=subStrs, printSchema=printSchema)        ##Arabidopsis requires a custom function.
+    appendArabidopsisEntrezGenes(db, subStrs=subStrs, printSchema=printSchema)  ##Arabidopsis requires a custom function.
+    appendArabidopsisGeneInfo(db, subStrs=subStrs, printSchema=printSchema)     ##Arabidopsis requires a custom function.
+
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+    appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendAraCyc(db, subStrs=subStrs, printSchema=printSchema)
+    appendAraCycEnzyme(db, subStrs=subStrs, printSchema=printSchema)
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db, subStrs=subStrs, printSchema=printSchema)
+}
+
+
+
 
 
 
@@ -426,6 +488,7 @@ popFLYCHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -436,6 +499,7 @@ popFLYCHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -472,6 +536,9 @@ popFLYCHIPDB <- function(affy,
     
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -568,6 +635,9 @@ popYEASTCHIPDB <- function(affy,
     
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyYeastProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -677,6 +747,7 @@ popZEBRAFISHCHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -687,6 +758,7 @@ popZEBRAFISHCHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -724,6 +796,9 @@ popZEBRAFISHCHIPDB <- function(affy,
 
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -797,6 +872,7 @@ popECOLICHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -807,6 +883,7 @@ popECOLICHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -835,6 +912,9 @@ popECOLICHIPDB <- function(affy,
 
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -901,6 +981,7 @@ popCANINECHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -911,6 +992,7 @@ popCANINECHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -945,6 +1027,9 @@ popCANINECHIPDB <- function(affy,
 
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -1015,6 +1100,7 @@ popBOVINECHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -1025,6 +1111,7 @@ popBOVINECHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -1061,6 +1148,9 @@ popBOVINECHIPDB <- function(affy,
 
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -1133,6 +1223,7 @@ popWORMCHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -1143,6 +1234,7 @@ popWORMCHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -1178,6 +1270,9 @@ popWORMCHIPDB <- function(affy,
 
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -1251,6 +1346,7 @@ popPIGCHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -1261,6 +1357,7 @@ popPIGCHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -1293,6 +1390,9 @@ popPIGCHIPDB <- function(affy,
 
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
 
@@ -1344,8 +1444,6 @@ popPIGDB <- function(prefix,
 
 
 
-
-
 #presently this is the formula for CHICKENCHIP_DB
 popCHICKENCHIPDB <- function(affy,
                            prefix,
@@ -1363,6 +1461,7 @@ popCHICKENCHIPDB <- function(affy,
                              csvFileName=fileName,
                              pkgName=prefix,
                              chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
                              otherSrc=otherSrc,
                              baseMapType=baseMapType,
                              outputDir=outputDir
@@ -1373,6 +1472,7 @@ popCHICKENCHIPDB <- function(affy,
                               filePath=fileName,
                               pkgName=prefix,
                               chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
                               otherSrc=otherSrc,
                               baseMapType=baseMapType,
                               outputDir=outputDir                                
@@ -1409,8 +1509,12 @@ popCHICKENCHIPDB <- function(affy,
 
     appendPostMeta(db, subStrs=subStrs)
     
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
     dbDisconnect(db)
 }
+
 
 
 #This is the formula for CHICKEN_DB  
@@ -1460,6 +1564,308 @@ popCHICKENDB <- function(prefix,
     
     dbDisconnect(db)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+##This is the formula for CHIMP_DB  
+popCHIMPDB <- function(prefix,
+                       chipSrc = system.file("extdata", "chipsrc_chimp.sqlite", package="chimp.db0"),
+                       metaDataSrc,
+                       outputDir=".",
+                       printSchema=FALSE){
+
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="chimp","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    require("RSQLite")
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    appendAccessions(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+##     appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+    appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+##     appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+##     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+##     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl2NCBI(db, subStrs=subStrs, printSchema=printSchema)
+    appendNCBI2Ensembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+
+
+#This is the formula for RHESUS_DB  
+popRHESUSDB <- function(prefix,
+                       chipSrc = system.file("extdata", "chipsrc_rhesus.sqlite", package="rhesus.db0"),
+                       metaDataSrc,
+                       outputDir=".",
+                       printSchema=FALSE){
+
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="rhesus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    require("RSQLite")
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    appendAccessions(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+##     appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+    appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+##     appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+##     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+##     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl2NCBI(db, subStrs=subStrs, printSchema=printSchema)
+    appendNCBI2Ensembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+
+
+#This is the formula for ANOPHELES_DB  
+popANOPHELESDB <- function(prefix,
+                       chipSrc = system.file("extdata", "chipsrc_anopheles.sqlite", package="anopheles.db0"),
+                       metaDataSrc,
+                       outputDir=".",
+                       printSchema=FALSE){
+
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="anopheles","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    require("RSQLite")
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    appendAccessions(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+##     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+##     appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+##     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+##     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl2NCBI(db, subStrs=subStrs, printSchema=printSchema)
+    appendNCBI2Ensembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+
+
+
+#This is the formula for XENOPUSCHIP_DB  
+popXENOPUSCHIPDB <- function(affy,
+                           prefix,
+                           fileName,
+                           chipMapSrc = system.file("extdata", "chipmapsrc_xenopus.sqlite", package="xenopus.db0"),
+                           chipSrc = system.file("extdata", "chipsrc_xenopus.sqlite", package="xenopus.db0"),
+                           metaDataSrc,
+                           otherSrc=character(0),
+                           baseMapType="gbNRef",
+                           outputDir=".",
+                           printSchema=FALSE){
+
+    if(affy==TRUE){
+        getMapForBiocChipPkg(
+                             csvFileName=fileName,
+                             pkgName=prefix,
+                             chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
+                             otherSrc=otherSrc,
+                             baseMapType=baseMapType,
+                             outputDir=outputDir
+                             )
+    }
+    else if(affy==FALSE){
+        getMapForOtherChipPkg(
+                              filePath=fileName,
+                              pkgName=prefix,
+                              chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
+                              otherSrc=otherSrc,
+                              baseMapType=baseMapType,
+                              outputDir=outputDir                                
+                              )
+    }
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="xenopus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    require("RSQLite")
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+    
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendProbes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+##     appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+##     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+##     appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+##     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+##     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsembl2NCBI(db, subStrs=subStrs, printSchema=printSchema)
+##     appendNCBI2Ensembl(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+
+    dbDisconnect(db)
+}
+
+
+
+
+#This is the formula for XENOPUS_DB  
+popXENOPUSDB <- function(prefix,
+                       chipSrc = system.file("extdata", "chipsrc_xenopus.sqlite", package="xenopus.db0"),
+                       metaDataSrc,
+                       outputDir=".",
+                       printSchema=FALSE){
+
+    makeUniversalMapping(pkgName=prefix,
+                         chipSrc=chipSrc,
+                         outputDir=outputDir)
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="xenopus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    require("RSQLite")
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    appendAccessions(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+##     appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+##     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+##     appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+##     appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+##     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsembl2NCBI(db, subStrs=subStrs, printSchema=printSchema)
+##     appendNCBI2Ensembl(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    
+    appendPostMeta(db, subStrs=subStrs)
+    
+    dbDisconnect(db)
+}
+
+
+
+
+
+
+
+
+
+
 
 
 #This is the formula for YEASTNCBI_DB  
@@ -1519,11 +1925,6 @@ popYEASTNCBIDB <- function(prefix,
 
 
 
-
-
-
-
-
 available.db0pkgs <- function()
 {
   url <-
@@ -1533,6 +1934,58 @@ available.db0pkgs <- function()
   names(pkgs) <- NULL
   pkgs
 }
+
+available.dbschemas <- function(){
+  ##need a generic path
+  path = system.file(package="AnnotationDbi")
+  path = paste(path,"/DBschemas/schemas_1.0", sep = "")
+  list = list.files(path)
+  list = list[grep("_DB.sql", list)]
+  list = gsub(".sql","",list)  
+  list
+}
+
+available.chipdbschemas <- function(){
+  list = available.dbschemas()
+  list = list[grep("CHIP_DB", list)]
+  list
+}
+
+
+
+
+##Generate a schema for an installed package.  Why installed?  Because I will
+##be the primary user of this, and it is good for me to have to install at
+##least one example of each type of supported package while testing.  Also,
+##this means that these things will always be in a standardized place which
+##will make it easier to script this stuff.  Also, this will ensure that
+##updating the schemas and bumping AnnotationDbi will be one of the last
+##things I do.  This function ONLY works with SQLite DBs (all we use)
+generate.schema <- function(name = "HUMANCHIP_DB", pkg = "hgu95av2.db", path = "." ){
+    pkgname = sub(".db",".sqlite",pkg)
+    dbFile = system.file("extdata",pkgname,package=pkg)
+    drv = dbDriver("SQLite")
+    con = dbConnect(drv, dbname=dbFile)
+    sql = "SELECT * FROM sqlite_master;"
+    res = dbGetQuery(con, sql)
+    ##Now we have to format it nicely...
+    res = res[,5]
+    res = res[!is.na(res)]
+    ##Add semicolons to the end of the elements in res
+    res = gsub("$",";",res,perl=TRUE)
+    
+    ##Insert some lines right before the end index:
+    indNums = grep("INDEX",res) #number to insert lines before.
+    nonIndNums = grep("INDEX",res, invert=TRUE)
+    ##Tnen use paste to insert the comments
+    indexComment = "\n-- Explicit index creation on the referencing column of all the foreign keys.\n-- Note that this is only needed for SQLite: PostgreSQL and MySQL create those\n-- indexes automatically."
+
+    res = c(res[nonIndNums],indexComment,res[indNums])
+    
+    ##Then write it out to a file.
+    write(res, paste(path, name,".sql", sep=""))
+}
+
 
 
 

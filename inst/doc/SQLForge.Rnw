@@ -1,10 +1,5 @@
 %\VignetteIndexEntry{SQLForge}
 %\VignetteDepends{human.db0}
-%\VignetteDepends{mouse.db0}
-%\VignetteDepends{rat.db0}
-%\VignetteDepends{fly.db0}
-%\VignetteDepends{yeast.db0}
-%\VignetteDepends{arabidopsis.db0}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
 \documentclass[11pt]{article}
@@ -185,7 +180,10 @@ Additional details can be found in the man pages for these functions.
 
 <<TempDirPopulate, keep.source=TRUE, results=hide>>=
 tmpout = tempdir()
-popHUMANCHIPDB(affy = FALSE, prefix = "hcg110Test",
+##To see what chip packages are available:
+available.chipdbschemas()
+##Then you can make a DB using that schema.
+populateDB("HUMANCHIP_DB", affy = FALSE, prefix = "hcg110Test",
     fileName = hcg110_IDs, metaDataSrc = myMeta,
     baseMapType = "gb", outputDir = tmpout)
 @
@@ -218,15 +216,16 @@ to combine all of the previous steps.  The following shows how you
 could make the same exact package as above but with a lot less hassle:
 
 <<SQLForge, keep.source=TRUE, results=hide>>=
-makeHUMANCHIP_DB(affy=FALSE,            
-    prefix="hcg110",
-    fileName=hcg110_IDs,
-    baseMapType="gb",
-    outputDir = tmpout,
-    version="1.0.0",
-    manufacturer = "Affymetrix",
-    chipName = "Human Cancer G110 Array",
-    manufacturerUrl = "http://www.affymetrix.com")
+makeDBPackage("HUMANCHIP_DB",
+              affy=FALSE,            
+              prefix="hcg110",
+              fileName=hcg110_IDs,
+              baseMapType="gb",
+              outputDir = tmpout,
+              version="1.0.0",
+              manufacturer = "Affymetrix",
+              chipName = "Human Cancer G110 Array",
+              manufacturerUrl = "http://www.affymetrix.com")
 @ 
 <<cleanup2, echo=FALSE, results=hide>>=
 file.remove(file.path(tmpout, "hcg110.sqlite"))

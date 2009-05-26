@@ -13,7 +13,7 @@ message(cat("Prepending Metadata"))
 
   ##This is where the version number for the schema is inserted.
   sql<- paste("
-    INSERT INTO metadata VALUES('DBSCHEMAVERSION', '1.0');
+    INSERT INTO metadata VALUES('DBSCHEMAVERSION', '2.0');
      ") 
   sqliteQuickSQL(db, sql)
 
@@ -1903,12 +1903,21 @@ appendAraCyc <- function(db, subStrs, printSchema){
      ") 
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("
+  if( subStrs[["coreTab"]] == "probes" ){
+    sql<- paste("
     INSERT INTO map_counts
      SELECT 'ARACYC', count(DISTINCT ", subStrs[["coreID"]],")
      FROM ", subStrs[["coreTab"]],", aracyc
      WHERE ", subStrs[["coreTab"]],"._id=aracyc._id;
-    ", sep="") 
+    ", sep="")
+  }else{
+    sql<- paste("
+    INSERT INTO map_counts
+     SELECT 'ARACYC', count(DISTINCT pathway_name)
+     FROM ", subStrs[["coreTab"]],", aracyc
+     WHERE ", subStrs[["coreTab"]],"._id=aracyc._id;
+    ", sep="")
+  }
   sqliteQuickSQL(db, sql)
   
 }
@@ -1929,7 +1938,7 @@ appendAraCycEnzyme <- function(db, subStrs, printSchema){
 
   sql<- paste("
     INSERT INTO enzyme
-     SELECT g._id, a.ec_number
+     SELECT g._id, a.ec_name
      FROM ", subStrs[["cntrTab"]]," as g CROSS JOIN anno.enzyme as a
      WHERE g._id=a._id;
      ") 
@@ -1964,19 +1973,59 @@ appendArabidopsisGenes <- function(db, subStrs, printSchema){
   if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("
-    INSERT INTO genes
-     SELECT DISTINCT a._id, p.gene_id
-     FROM probe_map AS p CROSS JOIN anno.genes AS a
-     WHERE p.gene_id=a.gene_id;
-     ") 
-  sqliteQuickSQL(db, sql)
-
-##   sql<- paste("    CREATE INDEX Fgenes ON genes(gene_id);") 
-##   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-##   sqliteQuickSQL(db, sql)
+  if( subStrs[["coreTab"]] == "probes" ){
+    sql<- paste("
+      INSERT INTO genes
+       SELECT DISTINCT a._id, p.gene_id
+       FROM probe_map AS p CROSS JOIN anno.genes AS a
+       WHERE p.gene_id=a.gene_id;
+       ") 
+    sqliteQuickSQL(db, sql)
+  }
+  else{
+    sql<- paste("
+      INSERT INTO genes
+      SELECT * FROM anno.genes;
+       ")
+    sqliteQuickSQL(db, sql)
+  }
 
   sqliteQuickSQL(db, "ANALYZE;")
+}
+
+
+## For Arabidopsis the ", subStrs[["cntrTab"]]," table is still the central table
+appendArabidopsisEntrezGenes <- function(db, subStrs, printSchema){
+
+  message(cat("Creating Entrez Genes table"))
+
+  sql<- paste("    CREATE TABLE entrez_genes (
+      _id INTEGER PRIMARY KEY,
+      gene_id CHAR(9) NOT NULL UNIQUE               -- AGI locus ID
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  if( subStrs[["coreTab"]] == "probes" ){
+    sql<- paste("
+      INSERT INTO entrez_genes
+       SELECT DISTINCT a._id, p.gene_id
+       FROM probe_map AS p CROSS JOIN anno.entrez_genes AS a
+       WHERE p.gene_id=a.gene_id;
+       ") 
+    sqliteQuickSQL(db, sql)
+  }
+  else{
+    sql<- paste("
+      INSERT INTO entrez_genes
+      SELECT * FROM anno.entrez_genes;
+       ")
+    sqliteQuickSQL(db, sql)
+  }
+  
+  sql<- paste("    CREATE INDEX Fentrez_genes ON entrez_genes(gene_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
 
 }
 
@@ -3400,5 +3449,65 @@ createCntrTableGeneric <- function(db, subStrs, printSchema, table, field, fileN
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
   
+}
+
+
+
+
+## simplify the probes tables (for all packages except yeast and arabidopsis)
+simplifyProbes <- function(db, subStrs){
+  message(cat("simplifying probes table"))
+  sqliteQuickSQL(db, "CREATE TEMP TABLE probehook (probe_id VARCHAR(80) PRIMARY KEY, gene_id VARCHAR(10) NULL);")
+  sqliteQuickSQL(db, "INSERT INTO probehook SELECT p.probe_id, g.gene_id FROM probes AS p LEFT JOIN genes AS g ON p._id = g._id;")
+  sqliteQuickSQL(db, "CREATE TABLE accessions (probe_id VARCHAR(80) PRIMARY KEY,accession VARCHAR(20));")        
+  sqliteQuickSQL(db, "INSERT INTO accessions SELECT probe_id, accession FROM probes;")
+  sqliteQuickSQL(db, "CREATE INDEX Fgbprobes ON accessions (probe_id);")
+  sqliteQuickSQL(db, "DROP TABLE probes;")
+  sqliteQuickSQL(db, "CREATE TABLE probes (probe_id VARCHAR(80) PRIMARY KEY, gene_id VARCHAR(10) NULL);")
+  sqliteQuickSQL(db, "INSERT INTO probes SELECT * FROM probehook;")
+  sqliteQuickSQL(db, "CREATE INDEX Fprobes ON probes (probe_id);")
+  sqliteQuickSQL(db, "CREATE INDEX Fgenes ON probes (gene_id);")
+}
+
+
+## simplify the probes tables (for arabidopsis)
+simplifyArabidopsisProbes <- function(db, subStrs){
+  message(cat("simplifying probes table"))
+  sqliteQuickSQL(db, "CREATE TEMP TABLE probehook (probe_id VARCHAR(80) NOT NULL, is_multiple SMALLINT NOT NULL, gene_id VARCHAR(10) NULL);")
+  sqliteQuickSQL(db, "INSERT INTO probehook SELECT p.probe_id, p.is_multiple, g.gene_id FROM probes AS p LEFT JOIN genes AS g ON p._id = g._id;")
+  sqliteQuickSQL(db, "DROP TABLE probes;")
+  sqliteQuickSQL(db, "CREATE TABLE probes (probe_id VARCHAR(80) NOT NULL, is_multiple SMALLINT NOT NULL, gene_id VARCHAR(10) NULL);")
+  sqliteQuickSQL(db, "INSERT INTO probes SELECT * FROM probehook;")
+  sqliteQuickSQL(db, "CREATE INDEX Fprobes ON probes (probe_id);")
+  sqliteQuickSQL(db, "CREATE INDEX Fgenes ON probes (gene_id);")
+}
+
+
+## simplify the probes tables (for yeast)
+simplifyYeastProbes <- function(db, subStrs){
+  message(cat("simplifying probes table"))
+  sqliteQuickSQL(db, "CREATE TEMP TABLE probehook (probe_id VARCHAR(80) PRIMARY KEY, systematic_name VARCHAR(14) NULL, gene_name VARCHAR(14) NULL, sgd_id CHAR(10) NULL);")
+  sqliteQuickSQL(db, "INSERT INTO probehook SELECT p.probe_id, s.systematic_name, s.gene_name, s.sgd_id  FROM probes AS p LEFT JOIN sgd AS s ON p._id = s._id;")
+  sqliteQuickSQL(db, "DROP TABLE probes;")
+  sqliteQuickSQL(db, "CREATE TABLE probes (probe_id VARCHAR(80) PRIMARY KEY, systematic_name VARCHAR(14) NULL, gene_name VARCHAR(14) NULL, sgd_id CHAR(10) NULL);")
+  sqliteQuickSQL(db, "INSERT INTO probes SELECT * FROM probehook;")
+  sqliteQuickSQL(db, "CREATE INDEX Fprobes ON probes (probe_id);")
+  sqliteQuickSQL(db, "CREATE INDEX Fgenes ON probes (systematic_name);")
+}
+
+
+
+## drop unwanted tables 
+dropRedundantTables <- function(db, subStrs){
+  message(cat("dropping redundant data"))
+  ##Define tables we should never drop (sqlite_stat1 is "undroppable")
+  saveList = c("accessions", "probes", "map_counts", "metadata", "map_metadata", "sqlite_stat1")
+  list = dbListTables(db)
+  list = list[!(list %in% saveList)]
+  for(i in seq_len(length(list))){
+      sql <- paste("DROP TABLE ",list[[i]],";",sep="")
+      sqliteQuickSQL(db, sql)
+  }
+  sqliteQuickSQL(db, "VACUUM;")
 }
 

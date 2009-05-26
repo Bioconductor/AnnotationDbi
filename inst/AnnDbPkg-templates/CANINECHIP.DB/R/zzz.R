@@ -17,7 +17,7 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     dbconn <- dbFileConnect(dbfile)
     assign("dbconn", dbconn, envir=datacache)
     ## Create the AnnObj instances
-    ann_objs <- createAnnObjs.@DBSCHEMA@("@ANNOBJPREFIX@", "@ANNOBJTARGET@", dbconn, datacache)
+    ann_objs <- createAnnObjs.SchemaChoice("@DBSCHEMA@", "@ANNOBJPREFIX@", "@ANNOBJTARGET@", dbconn, datacache)
     mergeToNamespaceAndExport(ann_objs, pkgname)
 }
 
