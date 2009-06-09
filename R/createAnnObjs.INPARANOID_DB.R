@@ -6,10 +6,10 @@
 ### objects.
 ###
 ### This file describes the set of AnnObj objects provided by any
-### INPARANOIDSACCE_DB-based package i.e. any SQLite-based ann data package
-### based on the INPARANOIDSACCE_DB schema.
-### The createAnnObjs.INPARANOIDSACCE_DB() function is the main entry point
-### for this file: it is called by any INPARANOIDSACCE_DB-based package at
+### INPARANOID_DB-based package i.e. any SQLite-based ann data package
+### based on the INPARANOID_DB schema.
+### The createAnnObjs.INPARANOID_DB() function is the main entry point
+### for this file: it is called by any INPARANOID_DB-based package at
 ### load-time.
 ### -------------------------------------------------------------------------
 
@@ -17,12 +17,12 @@
 ### Mandatory fields: objName, Class and L2Rchain
 
 
-
-
-createAnnObjs.INPARANOIDSACCE_DB <- function(prefix, objTarget, dbconn, datacache)
+createAnnObjs.INPARANOID_DB <- function(prefix, objTarget, dbconn, datacache)
 {
-    # This list needs to be kept aligned with the aliases for the man pages
-    species = "SACCE"
+    # This list needs to figure out (from the source DB) which organism it is so that those mappings are not assigned.
+    phyloName = dbmeta(datacache, 'ORGANISM') ##need to remove spaces and change to lowercase
+    phyloName = tolower(sub(" ", "_", phyloName))
+    
     fields = c(
           "aedes_aegypti" = "AEDAE",          
           "anopheles_gambiae" = "ANOGA",
@@ -53,24 +53,31 @@ createAnnObjs.INPARANOIDSACCE_DB <- function(prefix, objTarget, dbconn, datacach
           "oryza_sativa" = "ORYSA",
           "pan_troglodytes" = "PANTR",         
           "rattus_norvegicus" = "RATNO",
-         #"saccharomyces_cerevisiae" = "SACCE",    
+          "saccharomyces_cerevisiae" = "SACCE",    
           "schizosaccharomyces_pombe" = "SCHPO",
           "takifugu_rubripes" = "FUGRU",
           "tetraodon_nigroviridis" = "TETNI",  
           "xenopus_tropicalis" = "XENTR",
           "yarrowia_lipolytica" = "YARLI"
-     )
-
-    INPARANOIDSACCE_DB_AnnDbBimap_seeds <- makeSeedList(species, fields)
+    )
     
-    checkDBSCHEMA(dbconn, "INPARANOIDSACCE_DB")
+    ##Use this to figure out what our "species" value is
+    species = fields[phyloName]
+    
+    ##Finally, we want to remove the one thing from fields that we don't need...
+    ind = grep(phyloName,names(fields))
+    fields = fields[-ind]
+    
+    INPARANOID_DB_AnnDbBimap_seeds <- makeSeedList(species, fields)
+
+    checkDBSCHEMA(dbconn, "INPARANOID_DB")
 
     ## AnnDbBimap objects 
     seed0 <- list(
         objTarget=objTarget,
         datacache=datacache
     )
-    ann_objs <- createAnnDbBimaps(INPARANOIDSACCE_DB_AnnDbBimap_seeds, seed0)
+    ann_objs <- createAnnDbBimaps(INPARANOID_DB_AnnDbBimap_seeds, seed0)
 
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 

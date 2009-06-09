@@ -120,6 +120,13 @@ setMethod("dbschema", "DBIConnection",
                             paste(schema, ".sql", sep=""),
                             package="AnnotationDbi")
         lines <- readLines(file)
+        if(schema == "INPARANOID_DB"){
+            organism <- dbmeta(x, "ORGANISM")
+            tableName <- tolower(sub(" ", "_", organism))
+            ii <- grep(tableName, lines)
+            ii <- c(ii[1], ii[1]+1:5, ii[2],ii[3])
+            lines <- lines[-ii]
+        }
         if (!show.indices) {
             ## Remove the CREATE INDEX lines
             createIndexStart <- "CREATE INDEX"
@@ -148,14 +155,14 @@ setMethod("dbschema", "DBIConnection",
             }
             lines <- lines[-ii]
         }
-        ## Remove empty trailing lines
-        ii <- integer(0)
-        i <- length(lines)
-        while ((i >= 1) && (lines[i] == "")) {
-            ii <- c(i, ii)
-            i <- i - 1
-        }
-        lines <- lines[-ii]
+##         ## Remove empty trailing lines
+##         ii <- integer(0)
+##         i <- length(lines)
+##         while ((i >= 1) && (lines[i] == "")) {
+##             ii <- c(i, ii)
+##             i <- i - 1
+##         }
+##         lines <- lines[-ii]
         cat(lines, sep="\n")
     }
 )

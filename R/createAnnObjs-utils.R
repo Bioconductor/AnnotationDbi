@@ -99,11 +99,7 @@ createAnnObjs.SchemaChoice = function(schema, prefix, target, dbconn, datacache)
 
            "KEGG_DB"  = return(AnnotationDbi:::createAnnObjs.KEGG_DB(prefix, target, dbconn, datacache)),
 
-           "INPARANOIDHOMSA_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDHOMSA_DB(prefix, target, dbconn, datacache)),
-           "INPARANOIDMUSMU_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDMUSMU_DB(prefix, target, dbconn, datacache)),
-           "INPARANOIDRATNO_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDRATNO_DB(prefix, target, dbconn, datacache)),
-           "INPARANOIDDROME_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDDROME_DB(prefix, target, dbconn, datacache)),
-           "INPARANOIDSACCE_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOIDSACCE_DB(prefix, target, dbconn, datacache)),
+           "INPARANOID_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOID_DB(prefix, target, dbconn, datacache)),
            
            "PFAM_DB"  = return(AnnotationDbi:::createAnnObjs.PFAM_DB(prefix, target, dbconn, datacache)),
            

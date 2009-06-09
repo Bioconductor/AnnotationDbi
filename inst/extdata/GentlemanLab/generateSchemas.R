@@ -1,51 +1,4 @@
 
-
-## ##I want one example from each kind of schema
-## pkgs = c("ag.db" = "ARABIDOPSISCHIP_DB",
-##          "org.At.tair.db" = "ARABIDOPSIS_DB"
-##          "hgu95av2.db"="HUMANCHIP_DB",
-##          "org.Hs.eg.db" = "HUMAN_DB",
-##          "moe430a.db" = "MOUSECHIP_DB",
-##          "org.Mm.eg.db" = "MOUSE_DB",
-##          "rae230a.db" = "RATCHIP_DB",
-##          "org.Rn.eg.db" = "RAT_DB",
-##          "bovine.db" = "BOVINECHIP_DB",
-##          "org.Bt.eg.db" = "BOVINE_DB",
-##          "canine.db" = "CANINECHIP_DB",
-##          "org.Cf.eg.db" = "CANINE_DB",
-##          "chicken.db" = "CHICKENCHIP_DB",
-##          "org.Gg.eg.db" = "CHICKEN_DB",
-## ##         "" = "ECOLICHIP_DB",  ##No example yet - make by hand :(
-##          "org.Ec.eg.db" = "ECOLI_DB",
-##          "drosgenome1.db" = "FLYCHIP_DB",
-##          "org.Dm.eg.db" = "FLY_DB",
-##          "org.Pf.plasmo.db" = "MALARIA_DB",
-## ##         "" = "PIGCHIP_DB",  ##No example yet - make by hand :(
-##          "org.Ss.eg.db" = "PIG_DB",
-##          "celegans.db" = "WORMCHIP_DB",
-##          "org.Ce.eg.db" = "WORM_DB",
-##          "yeast2.db" = "YEASTCHIP_DB",
-##          "org.Sc.sgd.db" = "YEAST_DB",
-##          "zebrafish.db" = "ZEBRAFISHCHIP_DB",
-##          "org.Dr.eg.db" = "ZEBRAFISH_DB",  
-##          "GO.db" = "GO_DB",
-##          "KEGG.db" = "KEGG_DB",
-##          "PFAM.db" = "PFAM_DB",
-##          "hom.Hs.inp.db" = "INPARANOIDHOMSA_DB",
-##          "hom.Mm.inp.db" = "INPARANOIDMUSMU_DB",
-##          "hom.Rn.inp.db" = "INPARANOIDRATNO_DB",
-##          "hom.Dm.inp.db" = "INPARANOIDDROME_DB",
-##          "hom.Sc.inp.db" = "INPARANOIDSACCE_DB"
-##          )
-
-
-
-
-
-
-
-
-
 ##Optional- depends on circumstances
 ##Get the latest (this step is slow)
 ##1st make sure that we have the latest packages installed
@@ -67,23 +20,11 @@ library(RSQLite)
 
 
 
-inpPkgs = c(
-  "INPARANOIDDROME_DB" = "hom.Dm.inp.db", 
-  "INPARANOIDHOMSA_DB" = "hom.Hs.inp.db", 
-  "INPARANOIDMUSMU_DB" = "hom.Mm.inp.db", 
-  "INPARANOIDRATNO_DB" = "hom.Rn.inp.db", 
-  "INPARANOIDSACCE_DB" = "hom.Sc.inp.db")
-
-for(i in seq_len(length(inpPkgs))){
-    AnnotationDbi:::generate.schema(names(inpPkgs[i]),inpPkgs[i], path = schemaDir)
-}
-
-
-
 sbPkgs = c(
   "GO_DB" = "GO.db", 
   "KEGG_DB" = "KEGG.db", 
-  "PFAM_DB" = "PFAM.db")
+  "PFAM_DB" = "PFAM.db",
+  "INPARANOID_DB" = "hom.Hs.inp.db")  ##Don't forget to add missing homo sapiens table and indexes!
 
 for(i in seq_len(length(sbPkgs))){
     AnnotationDbi:::generate.schema(names(sbPkgs[i]),sbPkgs[i], path = schemaDir)

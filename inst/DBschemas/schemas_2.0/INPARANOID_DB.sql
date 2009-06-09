@@ -63,30 +63,6 @@ CREATE TABLE gasterosteus_aculeatus (
         species CHAR(5) NOT NULL,
         score VARCHAR(6) NOT NULL,
         seed_status CHAR(4));
-CREATE TABLE homo_sapiens (
-        inp_id VARCHAR(30) UNIQUE NOT NULL,
-        clust_id INTEGER NOT NULL,
-        species CHAR(5) NOT NULL,
-        score VARCHAR(6) NOT NULL,
-        seed_status CHAR(4));
-CREATE TABLE macaca_mulatta (
-        inp_id VARCHAR(30) UNIQUE NOT NULL,
-        clust_id INTEGER NOT NULL,
-        species CHAR(5) NOT NULL,
-        score VARCHAR(6) NOT NULL,
-        seed_status CHAR(4));
-CREATE TABLE monodelphis_domestica (
-        inp_id VARCHAR(30) UNIQUE NOT NULL,
-        clust_id INTEGER NOT NULL,
-        species CHAR(5) NOT NULL,
-        score VARCHAR(6) NOT NULL,
-        seed_status CHAR(4));
-CREATE TABLE pan_troglodytes (
-        inp_id VARCHAR(30) UNIQUE NOT NULL,
-        clust_id INTEGER NOT NULL,
-        species CHAR(5) NOT NULL,
-        score VARCHAR(6) NOT NULL,
-        seed_status CHAR(4));
 CREATE TABLE arabidopsis_thaliana (
         inp_id VARCHAR(30) UNIQUE NOT NULL,
         clust_id INTEGER NOT NULL,
@@ -171,6 +147,24 @@ CREATE TABLE kluyveromyces_lactis (
         species CHAR(5) NOT NULL,
         score VARCHAR(6) NOT NULL,
         seed_status CHAR(4));
+CREATE TABLE homo_sapiens (
+        inp_id VARCHAR(30) UNIQUE NOT NULL,
+        clust_id INTEGER NOT NULL,
+        species CHAR(5) NOT NULL,
+        score VARCHAR(6) NOT NULL,
+        seed_status CHAR(4));
+CREATE TABLE macaca_mulatta (
+        inp_id VARCHAR(30) UNIQUE NOT NULL,
+        clust_id INTEGER NOT NULL,
+        species CHAR(5) NOT NULL,
+        score VARCHAR(6) NOT NULL,
+        seed_status CHAR(4));
+CREATE TABLE monodelphis_domestica (
+        inp_id VARCHAR(30) UNIQUE NOT NULL,
+        clust_id INTEGER NOT NULL,
+        species CHAR(5) NOT NULL,
+        score VARCHAR(6) NOT NULL,
+        seed_status CHAR(4));
 CREATE TABLE mus_musculus (
         inp_id VARCHAR(30) UNIQUE NOT NULL,
         clust_id INTEGER NOT NULL,
@@ -178,6 +172,18 @@ CREATE TABLE mus_musculus (
         score VARCHAR(6) NOT NULL,
         seed_status CHAR(4));
 CREATE TABLE oryza_sativa (
+        inp_id VARCHAR(30) UNIQUE NOT NULL,
+        clust_id INTEGER NOT NULL,
+        species CHAR(5) NOT NULL,
+        score VARCHAR(6) NOT NULL,
+        seed_status CHAR(4));
+CREATE TABLE pan_troglodytes (
+        inp_id VARCHAR(30) UNIQUE NOT NULL,
+        clust_id INTEGER NOT NULL,
+        species CHAR(5) NOT NULL,
+        score VARCHAR(6) NOT NULL,
+        seed_status CHAR(4));
+CREATE TABLE rattus_norvegicus (
         inp_id VARCHAR(30) UNIQUE NOT NULL,
         clust_id INTEGER NOT NULL,
         species CHAR(5) NOT NULL,
@@ -235,14 +241,6 @@ CREATE INDEX galga_c ON gallus_gallus(clust_id);
 CREATE INDEX galga_s ON gallus_gallus(species);
 CREATE INDEX gasac_c ON gasterosteus_aculeatus(clust_id);
 CREATE INDEX gasac_s ON gasterosteus_aculeatus(species);
-CREATE INDEX homsa_c ON homo_sapiens(clust_id);
-CREATE INDEX homsa_s ON homo_sapiens(species);
-CREATE INDEX macmu_c ON macaca_mulatta(clust_id);
-CREATE INDEX macmu_s ON macaca_mulatta(species);
-CREATE INDEX mondo_c ON monodelphis_domestica(clust_id);
-CREATE INDEX mondo_s ON monodelphis_domestica(species);
-CREATE INDEX pantr_c ON pan_troglodytes(clust_id);
-CREATE INDEX pantr_s ON pan_troglodytes(species);
 CREATE INDEX arath_c ON arabidopsis_thaliana(clust_id);
 CREATE INDEX arath_s ON arabidopsis_thaliana(species);
 CREATE INDEX caeel_c ON caenorhabditis_elegans(clust_id);
@@ -271,10 +269,20 @@ CREATE INDEX fugru_c ON takifugu_rubripes(clust_id);
 CREATE INDEX fugru_s ON takifugu_rubripes(species);
 CREATE INDEX klula_c ON kluyveromyces_lactis(clust_id);
 CREATE INDEX klula_s ON kluyveromyces_lactis(species);
+CREATE INDEX homsa_c ON homo_sapiens(clust_id);
+CREATE INDEX homsa_s ON homo_sapiens(species);
+CREATE INDEX macmu_c ON macaca_mulatta(clust_id);
+CREATE INDEX macmu_s ON macaca_mulatta(species);
+CREATE INDEX mondo_c ON monodelphis_domestica(clust_id);
+CREATE INDEX mondo_s ON monodelphis_domestica(species);
 CREATE INDEX musmu_c ON mus_musculus(clust_id);
 CREATE INDEX musmu_s ON mus_musculus(species);
 CREATE INDEX orysa_c ON oryza_sativa(clust_id);
 CREATE INDEX orysa_s ON oryza_sativa(species);
+CREATE INDEX pantr_c ON pan_troglodytes(clust_id);
+CREATE INDEX pantr_s ON pan_troglodytes(species);
+CREATE INDEX ratno_c ON rattus_norvegicus(clust_id);
+CREATE INDEX ratno_s ON rattus_norvegicus(species);
 CREATE INDEX sacce_c ON saccharomyces_cerevisiae(clust_id);
 CREATE INDEX sacce_s ON saccharomyces_cerevisiae(species);
 CREATE INDEX schpo_c ON schizosaccharomyces_pombe(clust_id);
