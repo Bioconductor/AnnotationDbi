@@ -22,6 +22,21 @@
                        require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
                        inpMap = "org.Rn.egENSEMBLPROT";
 		       centralID <- "EG"},
+           "CAEEL"  = {srcSpcAb<-"Ce";
+                       srcDBAb<-"eg";
+                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       inpMap = "org.Ce.egWORMBASE";
+		       centralID <- "EG"},
+           "ARATH"  = {srcSpcAb<-"At"; ##Won't work till we ltrim off the decimals off the TAIR IDs in the inp pkgs
+                       srcDBAb<-"eg";
+                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       ##inpMap = NA;  ##Should not be needed since this one should be like yeast
+		       centralID <- "TAIR"},
+           "DANRE"  = {srcSpcAb<-"Dr";
+                       srcDBAb<-"eg";
+                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       inpMap = "org.Dr.egZFIN";
+		       centralID <- "EG"},
            "SACCE"  = {srcSpcAb<-"Sc";
                        srcDBAb<-"sgd"; 
                        require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);

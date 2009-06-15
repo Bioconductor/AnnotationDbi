@@ -233,17 +233,24 @@ probe2gene <- function(baseMap, otherSrc,
         sqliteQuickSQL(db, "CREATE TABLE min_other_rank (probe_id TEXT, gene_id TEXT, vote INTEGER,  row_id INTEGER);")
         sqliteQuickSQL(db, "INSERT INTO min_other_rank SELECT * FROM other_rank WHERE rowid IN (SELECT min(rowid) FROM other_rank GROUP BY probe_id);")
         
-        ##The following will insert any unigene IDs into the database AS entrez gene IDs, (by joining with the prefiltered min_other_rank table)
-        sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, u.gene_id FROM min_other_rank as m INNER JOIN src.unigene as u WHERE m.gene_id=u.unigene_id;"
- 	sqliteQuickSQL(db, sql)
-
-        ##The following will insert any missing refseq IDs into the database AS entrez gene IDs, (by joining with the prefiltered min_other_rank table)
-        sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, r.gene_id FROM min_other_rank as m INNER JOIN src.refseq as r WHERE m.gene_id=r.accession;"
- 	sqliteQuickSQL(db, sql)
+        ##I need to know if there is refseq, unigene or GenBank data for the organism in question.
+        tables = sqliteQuickSQL(db, "SELECT name FROM src.sqlite_master;")       
         
+        ##The following will insert any unigene IDs into the database AS entrez gene IDs, (by joining with the prefiltered min_other_rank table)
+        if(length(grep("unigene",tables))>0){
+            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, u.gene_id FROM min_other_rank as m INNER JOIN src.unigene as u WHERE m.gene_id=u.unigene_id;"
+            sqliteQuickSQL(db, sql)
+        }
+        ##The following will insert any missing refseq IDs into the database AS entrez gene IDs, (by joining with the prefiltered min_other_rank table)
+        if(length(grep("refseq",tables))>0){
+            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, r.gene_id FROM min_other_rank as m INNER JOIN src.refseq as r WHERE m.gene_id=r.accession;"
+            sqliteQuickSQL(db, sql)
+        }        
         ##The following will insert any missing GenBank IDs into the database AS entrez gene IDs, (by joining with the prefiltered min_other_rank table)
-        sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, gb.gene_id FROM min_other_rank as m INNER JOIN src.accession as gb WHERE m.gene_id=gb.accession;"
- 	sqliteQuickSQL(db, sql)
+        if(length(grep("accession",tables))>0){
+            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, gb.gene_id FROM min_other_rank as m INNER JOIN src.accession as gb WHERE m.gene_id=gb.accession;"
+            sqliteQuickSQL(db, sql)
+        }
         
 	sqliteQuickSQL(db, "INSERT INTO probe2gene SELECT probe_id, NULL FROM probes_ori WHERE probe_id NOT IN (SELECT probe_id FROM probe2gene);")
 	sqliteQuickSQL(db, "CREATE INDEX p1 ON probe2gene(probe_id);")
