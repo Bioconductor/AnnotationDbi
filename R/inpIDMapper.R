@@ -207,25 +207,25 @@ intraIDMapper = function(ids,
     if(srcIDType==centralID){##srcIDType is a central ID (EG, ORF etc.)
         map = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,destIDType,sep="")) ##eg. org.Hs.eg.UNIPROT and we have an "EG"
         ##Get the new names
-        resultIDs <- unlist(mget(as.character(ids), map, ifnotfound=NA))
+        resultIDs <- unlist2(mget(as.character(ids), map, ifnotfound=NA))
     }
     else if(destIDType==centralID){##destIDType is a central ID (EG, ORF etc.)
         map = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))  ##eg.  org.Hs.eg.UNIPROT and we have an "UNIPROT"
         map = revmap(map) ##So In this case it has to be revmapped
         ##Get the new names
-        resultIDs <- unlist(mget(as.character(ids), map, ifnotfound=NA))
+        resultIDs <- unlist2(mget(as.character(ids), map, ifnotfound=NA))
     }
     else if(srcIDType!=centralID && destIDType!=centralID){
         ##Get the central IDs
         map1 = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))  ##This one will be the map that goes TO the central ID
         map1 = revmap(map1) ##Therefore this one has to be reversed
-        resultIDs1 = unlist(mget(as.character(ids), map1, ifnotfound=NA))
+        resultIDs1 = unlist2(mget(as.character(ids), map1, ifnotfound=NA))
         ##Before the 2nd mget, we need to have ONLY ONE answer for each element.
         resultIDs1 = .handleMultipleMatches(resultIDs1, keepMultGeneMatches)
         resultIDs1 = .cleanup(resultIDs1) ##in case there are NAs
         ##Then get the dest IDs.
         map2 = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,destIDType,sep=""))
-        resultIDs = unlist(mget(as.character(resultIDs1), map2, ifnotfound=NA))
+        resultIDs = unlist2(mget(as.character(resultIDs1), map2, ifnotfound=NA))
         resultIDs = .handleMultipleMatches(resultIDs, keepMultGeneMatches)        
         resultIDs = .reLabel(resultIDs1, resultIDs, "resultIDs") ##two mappings so we want to keep initial names
     }
