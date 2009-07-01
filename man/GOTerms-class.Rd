@@ -10,16 +10,28 @@
 
 \alias{GOID}
 \alias{GOID,GOTerms-method}
+\alias{GOID,GOTermsAnnDbBimap-method}
+\alias{GOID,character-method}
 \alias{Term}
 \alias{Term,GOTerms-method}
+\alias{Term,GOTermsAnnDbBimap-method}
+\alias{Term,character-method}
 \alias{Ontology}
 \alias{Ontology,GOTerms-method}
+\alias{Ontology,GOTermsAnnDbBimap-method}
+\alias{Ontology,character-method}
 \alias{Definition}
 \alias{Definition,GOTerms-method}
+\alias{Definition,GOTermsAnnDbBimap-method}
+\alias{Definition,character-method}
 \alias{Synonym}
 \alias{Synonym,GOTerms-method}
+\alias{Synonym,GOTermsAnnDbBimap-method}
+\alias{Synonym,character-method}
 \alias{Secondary}
 \alias{Secondary,GOTerms-method}
+\alias{Secondary,GOTermsAnnDbBimap-method}
+\alias{Secondary,character-method}
 
 \alias{show,GOTerms-method}
 
@@ -90,6 +102,17 @@
   GOID(gonode)
   Term(gonode)
   Ontology(gonode)
+
+  ##Or you can just use these methods on a GOTermsAnnDbBimap
+\dontrun{##I want to show an ex., but don't want to require GO.db
+  require(GO.db)
+  FirstTenGOBimap <- GOTERM[1:10] ##grab the 1st ten
+  Term(FirstTenGOBimap)
+
+  ##Or you can just use GO IDs directly
+  ids = keys(FirstTenGOBimap)
+  Term(ids)
+}
 }
 
 \keyword{methods}
