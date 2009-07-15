@@ -63,6 +63,7 @@ exportMethods(
     "count.links",
     "nhit",
     "ncol", "dim",
+    "exposeMultiProbes",
 
     ## from R/GOTerms.R
     "GOID",
