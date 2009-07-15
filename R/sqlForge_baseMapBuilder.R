@@ -1,5 +1,5 @@
 
-##Just a utility to prevent empty IDs from ever causing any more mayhem
+#Just a utility to prevent empty IDs from ever causing any more mayhem
 cleanSrcMap <- function(file) {
     fileVals <- read.delim(file=file, header=FALSE, sep="\t", quote="", colClasses = "character")
     fileVals <- fileVals[fileVals[,1]!='',]
@@ -72,31 +72,6 @@ makeBaseMaps <- function(csvFileName,
 }
 
 
-##For labelDuplicatedProbes() The 1st col HAS to be probes, and the 2nd col
-##MUST be the central ID for the platform!
-labelDuplicatedProbes <- function(frame){
-    ##I need to test 1st if the probe matches more than one thing in the 1st
-    ##col (numProbes) Then I need to test if among those matches there is more
-    ##than one entrez gene ID.  If more than one, then I need to put a 1
-    ##There is a corner case however, if I have 1 unmapped and one
-    multipleAssign = function(x){
-        probeInds = grep(paste('^',x[1],'$',sep=""),frame[,1],perl=TRUE)
-        numProbes = length(probeInds)
-        EGs = frame[probeInds,2]
-        uniqEGs = unique(EGs[!is.na(EGs)]) ##must filter out "" since it does not count as an EG
-        numUniqEGs = length(uniqEGs)
-        if( numProbes>1  &&  numUniqEGs>1 ){
-            return(1)
-        }else{
-            return(0)
-        }
-    }
-    is_multiple = unlist(apply(frame,1,multipleAssign))
-    ans = cbind(frame, is_multiple)
-    ans
-}
-
-
 probe2gene <- function(baseMap, otherSrc,
 			baseMapType=c("gb", "ug", "eg", "refseq", "gbNRef", "image"), 
 			chipMapSrc, chipSrc, pkgName, outputDir=".", allowHomologyGene=FALSE) {
@@ -114,10 +89,10 @@ probe2gene <- function(baseMap, otherSrc,
 	sqliteQuickSQL(db, "CREATE TABLE curr_map (probe_id TEXT, gene_id TEXT);")  #curr_map is the baseMap file
 	sqliteQuickSQL(db, "CREATE TABLE probes_ori (probe_id TEXT);")             #all the probes from curr_map
 	sqliteQuickSQL(db, "CREATE TABLE other (probe_id TEXT, gene_id TEXT);")     #This holds the otherSrc data
+	sqliteQuickSQL(db, "CREATE TABLE other_rank (probe_id TEXT, gene_id TEXT, vote INTEGER,  row_id INTEGER);") 
 	sqliteQuickSQL(db, "CREATE TABLE probe2gene (probe_id TEXT, gene_id TEXT);") 
 	sqliteQuickSQL(db, "CREATE TABLE probe2acc (probe_id TEXT, gene_id TEXT);") 
-	sqliteQuickSQL(db, "CREATE TABLE temp_probe_map (probe_id TEXT, gene_id TEXT, accession TEXT);")
-	sqliteQuickSQL(db, "CREATE TABLE probe_map (probe_id TEXT, gene_id TEXT, accession TEXT, is_multiple SMALLINT NOT NULL);")
+	sqliteQuickSQL(db, "CREATE TABLE probe_map (probe_id TEXT, gene_id TEXT, accession TEXT);")
 
         #If there might be refseq IDs, then they might have unwanted .<digit> extensions which must be removed.
         #This (unfortunately cannot be done for the otherSrc files since I won't know what I am getting in that case).
@@ -125,7 +100,7 @@ probe2gene <- function(baseMap, otherSrc,
             baseMap=cleanRefSeqs(baseMap)
         }
         
-        #populate the contents of baseMap into curr_map
+        #populate the contents of baseMap int curr_map
         clnVals <-baseMap
         sqlIns <- "INSERT INTO curr_map (probe_id,gene_id) VALUES (?,?);"
         dbBeginTransaction(db)
@@ -165,8 +140,7 @@ probe2gene <- function(baseMap, otherSrc,
                 message(cat("baseMapType is refseq"))
 		sqliteQuickSQL(db, "CREATE INDEX cm1 ON curr_map(probe_id);")
                 sqliteQuickSQL(db, "CREATE INDEX cm2 ON curr_map(gene_id);")
-                ##just keep ALL of the accessions that went in from the base map (whether or NOT they successfully map over)
-		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT DISTINCT probe_id, gene_id FROM curr_map;")
+		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes_ori AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
 		sql <- paste("INSERT INTO probe2gene", 
 			    "SELECT c.probe_id, a.gene_id",
 			    "FROM curr_map as c, src.refseq as a",
@@ -176,8 +150,7 @@ probe2gene <- function(baseMap, otherSrc,
                 message(cat("baseMapType is gb or gbNRef"))
 		sqliteQuickSQL(db, "CREATE INDEX cm1 ON curr_map(probe_id);")
 		sqliteQuickSQL(db, "CREATE INDEX cm2 ON curr_map(gene_id);")
-                ##just keep ALL of the accessions that went in from the base map (whether or NOT they successfully map over)
-		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT DISTINCT probe_id, gene_id FROM curr_map;")
+		sqliteQuickSQL(db, "INSERT INTO probe2acc SELECT p.probe_id, c.gene_id FROM probes_ori AS p LEFT OUTER JOIN curr_map AS c ON p.probe_id=c.probe_id GROUP BY p.probe_id;")
 		sql <- paste("INSERT INTO probe2gene", 
 			    "SELECT c.probe_id, a.gene_id",
 			    "FROM curr_map as c, src.accession as a",
@@ -192,8 +165,37 @@ probe2gene <- function(baseMap, otherSrc,
                             "WHERE c.gene_id=a.accession;", sep=" ", collapse="") #This name is not my fault!  NOT MY FAULT! - Marc
 		sqliteQuickSQL(db, sql)
 	}
-        
-        ##Code for dealing with other sources of IDs (try to find other EG matches and if so, stick them in!)        
+	#sqliteQuickSQL(db, "DETACH DATABASE src;")
+        #At the present time allowHomologyGene is deactivated and has been for
+        #as long as I have been using this code. (-Marc) The use of this seems
+        #a little risky (since the src tables are not filtered by organism
+        #first) and we would also be increasing the size of the intermediate
+        #DBs by about 50% since we would be adding two ENORMOUS tables to all
+        #of these packages (that contain all the refseqs and genbanks ever
+        #matched to an entrez ID)
+	if (allowHomologyGene && baseMapType %in% c('refseq', 'gb', 'gbNRef')) {
+                message(cat("Searching for other useful ID's from the \"all\" indices \n"))
+		#sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipmapsrc,"' AS src;",sep=""))
+		sqliteQuickSQL(db,
+			"DELETE FROM curr_map WHERE probe_id IN (SELECT probe_id FROM probe2gene);")
+		if (baseMapType=='refseq') { 
+			sql <- paste("INSERT INTO probe2gene",
+                            "SELECT DISTINCT c.probe_id, a.gene_id",
+                            "FROM curr_map as c, src.refseq_all as a",
+                            "WHERE c.gene_id=a.accession GROUP BY c.probe_id;", 
+				sep=" ", collapse="")
+		} else { ## type='gb' or 'gbNRef'
+			sql <- paste("INSERT INTO probe2gene",
+                            "SELECT DISTINCT c.probe_id, a.gene_id",
+                            "FROM curr_map as c, src.accession_all as a",
+                            "WHERE c.gene_id=a.accession GROUP BY c.probe_id;", 
+				sep=" ", collapse="")
+		}
+		sqliteQuickSQL(db, sql)
+		sqliteQuickSQL(db, "DETACH DATABASE src;")
+	}else{
+            sqliteQuickSQL(db, "DETACH DATABASE src;")
+        }
 	sqliteQuickSQL(db, "DROP TABLE curr_map;")
 	lapply(otherSrc, function(thisOtherName) {
             clnVals <- thisOtherName
@@ -204,57 +206,66 @@ probe2gene <- function(baseMap, otherSrc,
             dbCommit(db)
 	})
 	sqliteQuickSQL(db, "DELETE FROM other WHERE gene_id IN ('NA', '');")
+	sqliteQuickSQL(db, "DELETE FROM other WHERE probe_id IN (SELECT probe_id FROM probe2gene);")
+	sqliteQuickSQL(db,
+		"CREATE TEMP TABLE other_stat AS SELECT probe_id, gene_id, count(*) as vote FROM other GROUP BY probe_id, gene_id;")
+	sqliteQuickSQL(db,
+		"INSERT INTO other_rank (probe_id, gene_id, vote, row_id) SELECT DISTINCT o.probe_id AS Probe, o.gene_id AS Gene, s.vote AS Vote, o.rowid AS Row FROM other AS o, other_stat AS s WHERE o.probe_id=s.probe_id AND o.gene_id=s.gene_id ORDER BY Probe asc, Vote desc, Row asc;")
 
+        ##The following worked great when it was always affy data (and the extra data in the "other_rank" was always an EG)
+        ##but now we have stuff like unigene IDs that can be in these fields, so we need to search the DB, and get out any EGs that match from the chipmapsrc and
+        ##put THOSE into the probe2-gene mapping.
+
+        ##NOW I want to use the stuff inside of "other_rank" directly if it is already *IN* the src.EGList, but if it is not, then we want to do another search of the 3 fields: accession_unigene, refseq and accession
+
+        ##We will be needing the chipMapSrc file once again...
+ 	attach_sql <- paste("ATTACH DATABASE '",chipMapSrc,"' AS src;", sep="", collapse="")
+ 	sqliteQuickSQL(db, attach_sql)
+
+        ##The following will insert any entrez gene IDs into the database.
+        sql <- "INSERT INTO probe2gene SELECT DISTINCT probe_id, gene_id FROM other_rank WHERE rowid IN (SELECT min(rowid) FROM other_rank GROUP BY probe_id)
+                 AND gene_id IN src.EGList;"
+ 	sqliteQuickSQL(db, sql)
+
+        ##TODO?  Someone might want it set up so that if their unigene etc. is not found, it is still jammed in there as a unigene.  Right now we ignore it if we don't have an EG...
+
+        ##Now to proceed I need another tabled to hold only the minimal row number information from the other_rank table
+        sqliteQuickSQL(db, "CREATE TABLE min_other_rank (probe_id TEXT, gene_id TEXT, vote INTEGER,  row_id INTEGER);")
+        sqliteQuickSQL(db, "INSERT INTO min_other_rank SELECT * FROM other_rank WHERE rowid IN (SELECT min(rowid) FROM other_rank GROUP BY probe_id);")
+        
         ##I need to know if there is refseq, unigene or GenBank data for the organism in question.
         tables = sqliteQuickSQL(db, "SELECT name FROM src.sqlite_master;")       
         
-        ##The following will insert any unigene IDs into the database AS entrez gene IDs, (by joining with the other table)
+        ##The following will insert any unigene IDs into the database AS entrez gene IDs, (by joining with the prefiltered min_other_rank table)
         if(length(grep("unigene",tables))>0){
-            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, u.gene_id FROM other as m INNER JOIN src.unigene as u WHERE m.gene_id=u.unigene_id;"
+            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, u.gene_id FROM min_other_rank as m INNER JOIN src.unigene as u WHERE m.gene_id=u.unigene_id;"
             sqliteQuickSQL(db, sql)
         }
-        ##The following will insert any missing refseq IDs into the database AS entrez gene IDs, (by joining with the other table)
+        ##The following will insert any missing refseq IDs into the database AS entrez gene IDs, (by joining with the prefiltered min_other_rank table)
         if(length(grep("refseq",tables))>0){
-            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, r.gene_id FROM other as m INNER JOIN src.refseq as r WHERE m.gene_id=r.accession;"
+            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, r.gene_id FROM min_other_rank as m INNER JOIN src.refseq as r WHERE m.gene_id=r.accession;"
             sqliteQuickSQL(db, sql)
         }        
-        ##The following will insert any missing GenBank IDs into the database AS entrez gene IDs, (by joining with the other table)
+        ##The following will insert any missing GenBank IDs into the database AS entrez gene IDs, (by joining with the prefiltered min_other_rank table)
         if(length(grep("accession",tables))>0){
-            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, gb.gene_id FROM other as m INNER JOIN src.accession as gb WHERE m.gene_id=gb.accession;"
+            sql <- "INSERT INTO probe2gene SELECT DISTINCT m.probe_id, gb.gene_id FROM min_other_rank as m INNER JOIN src.accession as gb WHERE m.gene_id=gb.accession;"
             sqliteQuickSQL(db, sql)
         }
         
-        ##The following will insert any missing Entrez Gene IDs into the database AS themselves, 
-        if(length(grep("EGList",tables))>0){
-            sql <- "INSERT INTO probe2gene SELECT DISTINCT probe_id, gene_id FROM other WHERE gene_id IN (SELECT gene_id FROM src.EGList);"
-            sqliteQuickSQL(db, sql)
-        }
-
-        sqliteQuickSQL(db, "INSERT INTO probe2gene SELECT probe_id, NULL FROM probes_ori WHERE probe_id NOT IN (SELECT probe_id FROM probe2gene);")
+	sqliteQuickSQL(db, "INSERT INTO probe2gene SELECT probe_id, NULL FROM probes_ori WHERE probe_id NOT IN (SELECT probe_id FROM probe2gene);")
 	sqliteQuickSQL(db, "CREATE INDEX p1 ON probe2gene(probe_id);")
-	sqliteQuickSQL(db, "INSERT INTO temp_probe_map SELECT DISTINCT p.probe_id, p.gene_id, a.gene_id FROM probe2acc as a LEFT OUTER JOIN probe2gene as p ON a.probe_id=p.probe_id;")
+	sqliteQuickSQL(db, "INSERT INTO probe_map SELECT DISTINCT p.probe_id, p.gene_id, a.gene_id FROM probe2acc as a LEFT OUTER JOIN probe2gene as p ON a.probe_id=p.probe_id;")
+	sqliteQuickSQL(db, "DROP TABLE other_rank;")
         sqliteQuickSQL(db, "DROP TABLE other;")
         sqliteQuickSQL(db, "DROP TABLE probe2gene;")
         sqliteQuickSQL(db, "DROP TABLE probe2acc;")
         sqliteQuickSQL(db, "DROP TABLE probes_ori;")
-        
+        sqliteQuickSQL(db, "DROP TABLE min_other_rank;")
+
         ##Now I need to attach the chipsrc and use verify that all the gene_IDs are in fact contained in the genes table of the corresponding chipsrc DB...
         sqliteQuickSQL(db, paste("ATTACH '", chipSrc,"' AS chipSrc;", sep="", collapse=""))
-        sqliteQuickSQL(db, paste("UPDATE temp_probe_map SET gene_id = NULL WHERE gene_id NOT IN (SELECT gene_id FROM chipSrc.genes);",sep=""))
-
-        
-        ##Now I need to decide which probes have multiple mappings and flag those.
-        probeData <- sqliteQuickSQL(db, "SELECT * FROM temp_probe_map;")
-        modifiedData <- labelDuplicatedProbes(probeData)
-        sqlIns <- "INSERT INTO probe_map (probe_id,gene_id,accession,is_multiple) VALUES (?,?,?,?);"
-        dbBeginTransaction(db)
-        rset <- dbSendPreparedQuery(db, sqlIns, modifiedData)
-        dbClearResult(rset)
-        dbCommit(db)
-
-##         ##Drop that temp table
-        sqliteQuickSQL(db, "DROP TABLE temp_probe_map;")
-
+        sqliteQuickSQL(db, paste("UPDATE probe_map SET gene_id = NULL WHERE gene_id NOT IN (SELECT gene_id FROM chipSrc.genes);",sep=""))
+                       
         dbDisconnect(db)
 	pkgName
 }
@@ -356,20 +367,18 @@ getMapForYeastChipPkg <- function(affy, fileName, pkgName, outputDir=".") {
                                 pkgName, "');", sep="", collapse="")
 	sqliteQuickSQL(db, metadata_sql)
 	sqliteQuickSQL(db, 
-		"CREATE TABLE probe_map (probe_id TEXT NOT NULL, systematic_name TEXT, is_multiple SMALLINT NOT NULL);");
+		"CREATE TABLE probe_map (probe_id TEXT NOT NULL, systematic_name TEXT);");
     if(affy==TRUE){
-        probeData <- as.data.frame(baseMaps[[1]])
-        clnVals <- labelDuplicatedProbes(probeData)
-        sqlIns <- "INSERT INTO probe_map VALUES(?,?,?);"
+        clnVals <- as.data.frame(baseMaps[[1]])
+        sqlIns <- "INSERT INTO probe_map VALUES(?,?);"
         dbBeginTransaction(db)
         rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
         dbClearResult(rset)
         dbCommit(db)        
     }else
     {
-        probeData <- cleanSrcMap(fileName)
-        clnVals <- labelDuplicatedProbes(probeData)
-        sqlIns <- "INSERT INTO probe_map VALUES(?,?,?);"
+        clnVals <- cleanSrcMap(fileName)
+        sqlIns <- "INSERT INTO probe_map VALUES(?,?);"
         dbBeginTransaction(db)
         rset <- dbSendPreparedQuery(db, sqlIns, clnVals)
         dbClearResult(rset)

@@ -1,14 +1,16 @@
 \name{@ANNOBJPREFIX@ACCNUM}
 \alias{@ANNOBJPREFIX@ACCNUM}
-\title{Map Manufacturer identifiers to Accession Numbers}  
+\title{Map Manufacturer identifiers to GenBank Accession Numbers}  
 \description{ 
   @ANNOBJPREFIX@ACCNUM is an R object that contains mappings between a
-  manufacturer's identifiers and manufacturers accessions.
+  manufacturer's identifiers and GenBank accession numbers.    
 }
 \details{
-  For chip packages such as this, the ACCNUM mapping comes directly from
-  the manufacturer.  This is different from other mappings which are
-  mapped onto the probes via an Entrez Gene identifier.
+  This object was produced by first mapping the manufacturer's identifiers to
+  Entrez Gene identifiers
+  \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene}. The
+  mapped Entrez Gene identifiers then serve as the point of linkage to the
+  GenBank accession numbers.
 
   Each manufacturer identifier maps to a vector containing a GenBank accession number.
 

@@ -1216,29 +1216,6 @@ setMethod("dim", "Bimap",
 
 
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Method to remove the multiple mapping filter from AnnDbBimaps that have a probe mapping in them.
-###
-
-setMethod("exposeMultiProbes", "AnnDbBimap",
-    function(x){
-        ans = x
-        ##problem: this gives me Error in if (filter == "1") return(filter) : argument is of length zero
-        ##ans@L2Rchain[[1]]@filter = character(0)
-        ##The following will work, but reading it really makes me feel stupid.
-        if(ans@L2Rchain[[1]]@filter == "{is_multiple}='0'" && ans@L2Rchain[[1]]@tablename == "probes"){
-            ans@L2Rchain[[1]]@filter = "{is_multiple} IN ('1','0')"
-        }else if(ans@L2Rchain[[1]]@filter == "{is_multiple} IN ('1','0')" && ans@L2Rchain[[1]]@tablename == "probes"){
-            stop("Any probes that map multiple things for this Bimap have already been exposed.")
-        }
-        else{
-            stop("This Bimap does not have multiple probe mappings to expose.")
-        }
-        ans
-    }
-)
-
-
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
