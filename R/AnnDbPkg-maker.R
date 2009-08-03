@@ -147,9 +147,9 @@ getSymbolValuesForManPages <- function(map_names, dbfile)
                              if (length(map_index) > 0) {
                                  this_source <- paste(
                                      map_metadata[map_index, "source_name"],
-                                     "(",
+                                     " \n ",
                                      map_metadata[map_index, "source_url"],
-                                     ") on",
+                                     " \n  With a date stamp from the source of:",
                                      map_metadata[map_index, "source_date"],
                                      sep=" ", collapse=" and ")
                              } else {

@@ -16,7 +16,7 @@ orgPkg = "org.Sc.sgd"
 
 ## YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="_id")
 
-YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="systematic_name")
+YEASTCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="systematic_name", filter="{is_multiple}='0'")
 YEASTCHIP_DB_L2Rlink2 <- list(tablename="sgd", Lcolname="systematic_name", Rcolname="_id", altDB=orgPkg)
 
 

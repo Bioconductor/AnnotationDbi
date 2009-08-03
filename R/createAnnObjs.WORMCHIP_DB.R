@@ -14,7 +14,7 @@
 
 orgPkg = "org.Ce.eg"
 
-WORMCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="gene_id")
+WORMCHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="gene_id", filter="{is_multiple}='0'")
 WORMCHIP_DB_L2Rlink2 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id", altDB=orgPkg)
 
 ### Mandatory fields: objName, Class and L2Rchain

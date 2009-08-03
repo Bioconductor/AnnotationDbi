@@ -23,6 +23,8 @@
   appropriate organism packages.  These mappings are based upon the ensembl
   table which is contains data from BOTH of these sources in an effort
   to maximize the chances that you will find a match.
+
+  Mappings were based on data provided by: @ENSEMBLSOURCE@
 }
 
 \examples{

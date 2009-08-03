@@ -48,7 +48,7 @@
 
   ## Converting to a list
   mget(x, envir, mode, ifnotfound, inherits)
-  eapply(env, FUN, ..., all.names)
+  eapply(env, FUN, ..., all.names, USE.NAMES)
   #contents(object, all.names)
 
   ## Additional convenience method
@@ -69,6 +69,9 @@
     \code{get} and \code{exists}.
   }
   \item{all.names}{
+    Ignored.
+  }
+  \item{USE.NAMES}{
     Ignored.
   }
   \item{pattern}{
