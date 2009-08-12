@@ -1220,51 +1220,134 @@ setMethod("dim", "Bimap",
 ### Method to remove the multiple mapping filter from AnnDbBimaps that have a probe mapping in them.
 ###
 
-setMethod("exposeMultiProbes", "AnnDbBimap",
+setMethod("toggleProbes", "AnnDbBimap",
+    function(x, value = c("all","single","multiple")){
+        type <- match.arg(value)
+        ans <- x
+        if(ans@L2Rchain[[1]]@tablename!="probes"){
+          stop("This method can only be used on mappings where the Lkeys are probes.")
+        }
+        switch(type,
+          "all" = ans@L2Rchain[[1]]@filter <- "{is_multiple} IN ('1','0')",
+          "single"  = ans@L2Rchain[[1]]@filter <- "{is_multiple}='0'",
+          "multiple" = ans@L2Rchain[[1]]@filter <- "{is_multiple}='1'"
+          )
+        return(ans)
+      }
+)
+
+## ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## ### Method to re-mask the multiple probes
+## ###
+
+## setMethod("maskMultiProbes", "AnnDbBimap",
+##     function(x){
+##         ans = x
+##         f <- ans@L2Rchain[[1]]@filter
+##         if((f=="{is_multiple}='1'" || f=="{is_multiple} IN ('1','0')") && ans@L2Rchain[[1]]@tablename=="probes"){
+##             ans@L2Rchain[[1]]@filter <- "{is_multiple}='0'"
+##         }else if(f=="{is_multiple}='0'" && ans@L2Rchain[[1]]@tablename=="probes"){
+##             stop("Any probes that map multiple things for this Bimap have already been masked.")
+##         }
+##         else{
+##             stop("This Bimap does not have multiple probe mappings to mask.")
+##         }
+##         ans
+##     }
+## )
+
+
+## ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## ### Method to mask single mapping probes
+## ###
+
+## setMethod("maskSingleProbes", "AnnDbBimap",
+##     function(x){
+##         ans = x
+##         f <- ans@L2Rchain[[1]]@filter
+##         if((f=="{is_multiple}='0'" || f=="{is_multiple} IN ('1','0')") && ans@L2Rchain[[1]]@tablename=="probes"){
+##             ans@L2Rchain[[1]]@filter <- "{is_multiple}='1'"
+##         }else if(f=="{is_multiple}='1'" && ans@L2Rchain[[1]]@tablename=="probes"){
+##             stop("Probes that map single things for this Bimap have already been masked.")
+##         }
+##         else{
+##             stop("This Bimap does not have single probe mappings to mask.")
+##         }
+##         ans
+##     }
+## )
+
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Methods to indicate the mask setting of the probes
+###
+
+setMethod("hasMultiProbes", "AnnDbBimap",
     function(x){
-        ans = x
-        ##problem: this gives me Error in if (filter == "1") return(filter) : argument is of length zero
-        ##ans@L2Rchain[[1]]@filter = character(0)
-        ##The following will work, but reading it really makes me feel stupid.
-        if(ans@L2Rchain[[1]]@filter == "{is_multiple}='0'" && ans@L2Rchain[[1]]@tablename == "probes"){
-            ans@L2Rchain[[1]]@filter = "{is_multiple} IN ('1','0')"
-        }else if(ans@L2Rchain[[1]]@filter == "{is_multiple} IN ('1','0')" && ans@L2Rchain[[1]]@tablename == "probes"){
-            stop("Any probes that map multiple things for this Bimap have already been exposed.")
+        f <- x@L2Rchain[[1]]@filter
+        if((f=="{is_multiple}='1'" || f=="{is_multiple} IN ('1','0')") && x@L2Rchain[[1]]@tablename=="probes"){
+            ans <- TRUE
+        }else{
+            ans <- FALSE
         }
-        else{
-            stop("This Bimap does not have multiple probe mappings to expose.")
-        }
-        ans
+        return(ans)
     }
 )
+
+setMethod("hasSingleProbes", "AnnDbBimap",
+    function(x){
+        f <- x@L2Rchain[[1]]@filter
+        if((f=="{is_multiple}='0'" || f=="{is_multiple} IN ('1','0')") && x@L2Rchain[[1]]@tablename=="probes"){
+            ans <- TRUE
+        }else{
+            ans <- FALSE
+        }
+        ans
+    })
+
 
 
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The bimapFilter methods.
+### The BimapFilter methods.
 ###
 
-## setMethod("bimapFilter", "InpAnnDbBimap",
-##     function(x) L2Rchain.bimapFilter(x@L2Rchain))
+##usage: getBimapFilter(myBiMap)
+##returns the filter that is on there for any Bimap
+
+setMethod("getBimapFilters", "AnnDbBimap",
+##      function(x){L2Rchain.bimapFilter(x@L2Rchain)})
+    function(x) {
+      L2Rchain <- x@L2Rchain
+      filter <- sapply(L2Rchain, function(x){x@filter})
+      filter <- filter[!is.na(filter)]
+      return(filter)
+    })
 
 
-## setReplaceMethod("bimapFilter", "InpAnnDbBimap",
-##     function(x, value) L2Rchain.bimapFilterReplace(x, value){
-##         ##Code goes here
-##     })
 
+##usage: foo = setInpBimapFilter(oriMapping, newFilter)
+##sets the filter to be newFilter on foo
+##only have a method for InpAnnDbBimaps for now...
+## library(hom.Dm.inp.db);getBimapFilters(hom.Dm.inpANOGA)
+## f80 = setInpBimapFilter(hom.Dm.inpANOGA, "80%")
+## f90 = setInpBimapFilter(f80, "90%")
+## hom.Dm.inpANOGA@L2Rchain[[1]]
 
-##For reference  BUT I have to do much more than this since I have to parse text etc.
-## setReplaceMethod("Lkeys", "AnnDbBimap",
-##     function(x, value)
-##     {
-##         if (!is.null(value)) {
-##             .checkKeys(value, Lkeys(x), x@ifnotfound)
-##             if (!is.null(names(value)))
-##                 names(value) <- NULL
-##             x@Lkeys <- value
-##         }
-##         x
-##     }
-## )
+setMethod("setInpBimapFilter", "InpAnnDbBimap",
+##     function(x, value){L2Rchain.bimapFilterReplace(x@L2Rchain, value)})                 
+    function(x, value) {
+      ans = x
+      ori_filt_1 = x@L2Rchain[[1]]@filter
+      ori_filt_2 = x@L2Rchain[[2]]@filter      
+      species_filt_1 = gsub("{seed_status}=.+AND","", ori_filt_1, perl=TRUE)
+      species_filt_2 = gsub("{seed_status}=.+AND","", ori_filt_2, perl=TRUE)
+      new_filt_1 = as.character(paste("{seed_status}='",value,"' AND",species_filt_1,sep=""))
+      new_filt_2 = as.character(paste("{seed_status}='",value,"' AND",species_filt_2,sep=""))
+      ans@L2Rchain[[1]]@filter = new_filt_1
+      ans@L2Rchain[[2]]@filter = new_filt_2
+      ans
+    })
+

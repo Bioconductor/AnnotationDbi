@@ -70,7 +70,7 @@ setMethod("mget", signature(envir="AnnDbBimap"),
 ###
 
 setMethod("eapply", signature(env="Bimap"),
-    function(env, FUN, ..., all.names, USE.NAMES)
+    function(env, FUN, ..., all.names =  FALSE, USE.NAMES = TRUE)
     {
         lapply(as.list(env), FUN, ...)
     }

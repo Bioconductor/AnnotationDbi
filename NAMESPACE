@@ -44,7 +44,6 @@ exportMethods(
     "colnames", "colmetanames",
     "Lkeyname", "Rkeyname", "keyname",
     "tagname",
-##     "bimapFilter","bimapFilter<-",
     "Rattribnames", "Rattribnames<-",
     "Lkeys", "Rkeys", "keys",
     "Lkeys<-", "Rkeys<-", "keys<-",
@@ -63,7 +62,9 @@ exportMethods(
     "count.links",
     "nhit",
     "ncol", "dim",
-    "exposeMultiProbes",
+    "toggleProbes",
+    "hasMultiProbes","hasSingleProbes",
+    "getBimapFilters","setInpBimapFilter",
 
     ## from R/GOTerms.R
     "GOID",

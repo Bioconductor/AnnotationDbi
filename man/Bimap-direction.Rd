@@ -17,9 +17,6 @@
 \alias{revmap,environment-method}
 \alias{revmap,list-method}
 
-\alias{exposeMultiProbes}
-\alias{exposeMultiProbes,AnnDbBimap-method}
-
 \alias{Lkeys}
 \alias{Lkeys,FlatBimap-method}
 \alias{Lkeys,AnnDbBimap-method}
@@ -113,9 +110,6 @@
   Rkeys(x) <- value
   subset(x, ...)
 
-  ## Making a Bimal object that does not prefilter to remove probes that
-  ## match multiple genes.
-  exposeMultiProbes(x)
 }
 
 \arguments{
@@ -272,11 +266,6 @@
 
   ## Get rid of all unmapped keys (left and right)
   z <- subset(y, Lkeys=mappedLkeys(y), Rkeys=mappedRkeys(y))
-
-  ## Make a Bimap that contains all the
-  mapWithMultiProbes <- exposeMultiProbes(hgu95av2ENTREZID)
-  count.mappedLkeys(hgu95av2ENTREZID)
-  count.mappedLkeys(mapWithMultiProbes)
 
 }
 

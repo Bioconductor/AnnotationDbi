@@ -206,7 +206,7 @@ package.  Some common types of information include gene symbols
 (ENSEMBL) and chromosome start and stop locations (CHRLOC and
 CHRLOCEND).  Each mapping will have a manual page that you can read to
 describe the data in the mapping and where it came from.
-<<helpDemo, results=hide>>=
+<<helpDemo, eval= FALSE, results=hide>>=
 ?hgu95av2CHRLOC
 @ 
 
@@ -523,22 +523,50 @@ know what they map to then their usefullness is definitely suspect.
 For this reason, by default all chip packages will normally hide such
 probes in the standard mappings.  But sometimes you may want access to
 the answers that the manufacturer says such a probe will map to.  In
-such cases, you will want to use the \Rfunction{exposeMultiProbes}
+such cases, you will want to use the \Rfunction{toggleProbes}
 method. To use this method, just call it on a standard mapping and
 copy the result into a new mapping (you cannot alter the original
 mapping).  Then treat the new mapping as you would any other mapping.
 
-<<multiProbes, eval=FALSE>>=
+<<multiProbes>>=
   ## How many probes?
   dim(hgu95av2ENTREZID)
   ## Make a mapping with multiple probes exposed 
-  multi <- exposeMultiProbes(hgu95av2ENTREZID)
+  multi <- toggleProbes(hgu95av2ENTREZID, "all")
   ## How many probes?
   dim(multi)
 @ 
 
+If you then decide that you want to make a mapping that has only
+multiple mappings or you wish to revert one of your maps back to the
+default state of only showing the single mappings then you can use
+\Rfunction{toggleProbes} to switch back and forth.
 
+<<multiProbes2>>=
+  ## Make a mapping with ONLY multiple probes exposed 
+  multiOnly <- toggleProbes(multi, "multiple")
+  ## How many probes?
+  dim(multiOnly)
 
+  ## Then make a mapping with ONLY single mapping probes
+  singleOnly <- toggleProbes(multiOnly, "single")
+  ## How many probes?
+  dim(singleOnly)  
+@ 
+
+Finally, there are also a pair of test methods
+\Rfunction{hasMultiProbes} and \Rfunction{hasSingleProbes} that can
+be used to see what methods a mapping presently has exposed.
+
+<<multiProbes3>>=
+  ## Test the multiOnly mapping
+  hasMultiProbes(multiOnly)
+  hasSingleProbes(multiOnly)
+
+  ## Test the singleOnly mapping
+  hasMultiProbes(singleOnly)
+  hasSingleProbes(singleOnly)
+@ 
 
 
 

@@ -621,9 +621,37 @@ dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
 }
 
 
+
+
 ## ### Bimap filter function
-## L2Rchain.bimapFilter = function(L2Rchain){
-##   filter = sapply(L2Rchain, function(L2RLink) L2Rlink@filter)
-##   filter = filter[!is.na(filter)][1]
+## L2Rchain.bimapFilter <- function(L2Rchain){
+##   filter <- sapply(L2Rchain, function(x){x@filter})
+##   filter <- filter[!is.na(filter)]
+##   return(filter)
+## }
+
+
+## ### BimapFilterReplace function
+## L2Rchain.bimapFilterReplace <- function(L2Rchain, value){
+##   ori_filt_1 <- L2Rchain[[1]]@filter
+##   ori_filt_2 <- L2Rchain[[2]]@filter
+##   message(ori_filt_1)
+##   message(ori_filt_2)
+  
+##   species_filt_1 <- gsub("{seed_status}=.+AND","", ori_filt_1, perl=TRUE)
+##   species_filt_2 <- gsub("{seed_status}=.+AND","", ori_filt_2, perl=TRUE)
+      
+##   new_filt_1 <- as.character(paste("{seed_status}='",value,"' AND",species_filt_1,sep=""))
+##   new_filt_2 <- as.character(paste("{seed_status}='",value,"' AND",species_filt_2,sep=""))
+##   message(new_filt_1)
+##   message(new_filt_2)
+  
+##   L2Rchain[[1]]@filter <- new_filt_1
+##   L2Rchain[[2]]@filter <- new_filt_2
+
+##   ##output
+## ##   filter <- sapply(L2Rchain, function(x){x@filter})
+## ##   filter <- filter[!is.na(filter)][1]
+## ##   message(cat("the new filter is:",filter))
 ## }
 
