@@ -503,6 +503,26 @@ setMethod("keys", "Bimap",
 )
 
 
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## For the Probe mappings, I need to be able to
+## just gets the Lkeys() with NO FILTERING.  
+
+.GetUniqueLKeys = function(x){
+        if (.inslot.Lkeys(x))
+            return(x@Lkeys)
+        dbUniqueVals(dbconn(x), Ltablename(x), Lkeyname(x),
+                                "1", x@datacache)
+}
+
+setMethod("Lkeys", "ProbeAnnDbBimap",function(x){.GetUniqueLKeys(x)})
+setMethod("Lkeys", "ProbeAnnDbMap",function(x){.GetUniqueLKeys(x)})
+setMethod("Lkeys", "ProbeIpiAnnDbMap",function(x){.GetUniqueLKeys(x)})
+setMethod("Lkeys", "ProbeGo3AnnDbBimap",function(x){.GetUniqueLKeys(x)})
+
+
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "Lkeys<-", "Rkeys<-" and "keys<-" replacement methods.
 ###
@@ -706,6 +726,30 @@ setMethod("length", "Bimap",
                "-1"=Rlength(x),
                     stop("length() is undefined for an undirected bimap"))
 )
+
+
+
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## For the Probe mappings, I need to be get length
+## of the Lkeys() with NO FILTERING.  
+
+.GetLKeyLength = function(x){
+        if (.inslot.Lkeys(x))
+            return(length(x@Lkeys))
+        dbCountUniqueVals(dbconn(x), Ltablename(x), Lkeyname(x),
+                                     "1", x@datacache)
+}
+
+setMethod("Llength", "ProbeAnnDbBimap",function(x){.GetLKeyLength(x)})
+setMethod("Llength", "ProbeAnnDbMap",function(x){.GetLKeyLength(x)})
+setMethod("Llength", "ProbeIpiAnnDbMap",function(x){.GetLKeyLength(x)})
+setMethod("Llength", "ProbeGo3AnnDbBimap",function(x){.GetLKeyLength(x)})
+
+
+
+##library(ALL);library(hgu95av2.db);library(genefilter);data(ALL);nsFilter(ALL)
+
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

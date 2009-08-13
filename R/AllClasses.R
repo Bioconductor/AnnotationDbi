@@ -163,6 +163,7 @@ setClass("Go3AnnDbBimap",
 setClass("GOTermsAnnDbBimap", contains="AnnDbBimap")
 
 
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Non reversible bimaps (hence we can just call them "maps").
 ###
@@ -194,4 +195,16 @@ setClass("AgiAnnDbMap",
         replace.multiple="character"
     )
 )
+
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### probe Bimaps
+###
+### These classes is are needed so that we can more cleanly separate the probe
+### mappings along with their more unusual Lkeys and Rkeys methods...
+setClass("ProbeAnnDbBimap", contains="AnnDbBimap")
+setClass("ProbeAnnDbMap", contains="AnnDbMap")
+setClass("ProbeIpiAnnDbMap", contains="IpiAnnDbMap")
+setClass("ProbeGo3AnnDbBimap", contains="Go3AnnDbBimap")
 

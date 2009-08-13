@@ -20,6 +20,10 @@
 \alias{Lkeys}
 \alias{Lkeys,FlatBimap-method}
 \alias{Lkeys,AnnDbBimap-method}
+\alias{Lkeys,ProbeAnnDbBimap-method}
+\alias{Lkeys,ProbeAnnDbMap-method}
+\alias{Lkeys,ProbeGo3AnnDbBimap-method}
+\alias{Lkeys,ProbeIpiAnnDbMap-method}
 
 \alias{Rkeys}
 \alias{Rkeys,FlatBimap-method}
@@ -30,6 +34,10 @@
 \alias{Llength}
 \alias{Llength,Bimap-method}
 \alias{Llength,AnnDbBimap-method}
+\alias{Llength,ProbeAnnDbBimap-method}
+\alias{Llength,ProbeAnnDbMap-method}
+\alias{Llength,ProbeGo3AnnDbBimap-method}
+\alias{Llength,ProbeIpiAnnDbMap-method}
 
 \alias{Rlength}
 \alias{Rlength,Bimap-method}

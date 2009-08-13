@@ -20,7 +20,7 @@ ARABIDOPSISCHIP_DB_L2Rlink2 <- list(tablename="genes", Lcolname="gene_id", Rcoln
 ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -34,7 +34,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ARACYC",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -49,7 +49,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -63,7 +63,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -77,7 +77,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ARACYCENZYME",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -91,7 +91,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -105,7 +105,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
 ##     list(
 ##         objName="MULTIHIT",
-##         Class="AgiAnnDbMap",
+##         Class="ProbeAgiAnnDbMap",
 ##         L2Rchain=list(
 ##             ARABIDOPSISCHIP_DB_L2Rlink1,
 ##             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -120,7 +120,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
 ##     ),
     list(
         objName="PATH",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -134,7 +134,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -148,7 +148,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -162,7 +162,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHRLOC",
-        Class="AnnDbMap",
+        Class="ProbeAnnDbMap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -178,7 +178,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHRLOCEND",
-        Class="AnnDbMap",
+        Class="ProbeAnnDbMap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,
@@ -194,7 +194,7 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
     ),                                            
     list(
         objName="GO",
-        Class="Go3AnnDbBimap",
+        Class="ProbeGo3AnnDbBimap",
         L2Rchain=list(
             ARABIDOPSISCHIP_DB_L2Rlink1,
             ARABIDOPSISCHIP_DB_L2Rlink2,

@@ -21,7 +21,7 @@ XENOPUSCHIP_DB_L2Rlink2 <- list(tablename="genes", Lcolname="gene_id", Rcolname=
 XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             list(
                 tablename="accessions",
@@ -32,7 +32,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="CHR",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -46,7 +46,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENTREZID",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -60,7 +60,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="ENZYME",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -74,7 +74,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="GENENAME",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -88,7 +88,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PATH",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -102,7 +102,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="PMID",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -116,7 +116,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="REFSEQ",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -130,7 +130,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="SYMBOL",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -144,7 +144,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="UNIGENE",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -158,7 +158,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="UNIPROT",
-        Class="AnnDbBimap",
+        Class="ProbeAnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,
@@ -172,7 +172,7 @@ XENOPUSCHIP_DB_AnnDbBimap_seeds <- list(
     ),
     list(
         objName="GO",
-        Class="Go3AnnDbBimap",
+        Class="ProbeGo3AnnDbBimap",
         L2Rchain=list(
             XENOPUSCHIP_DB_L2Rlink1,
             XENOPUSCHIP_DB_L2Rlink2,

@@ -37,6 +37,25 @@
 \alias{class:AgiAnnDbMap}
 \alias{AgiAnnDbMap-class}
 
+\alias{ProbeAnnDbBimap}
+\alias{class:ProbeAnnDbBimap}
+\alias{ProbeAnnDbBimap-class}
+
+\alias{ProbeGo3AnnDbBimap}
+\alias{class:ProbeGo3AnnDbBimap}
+\alias{ProbeGo3AnnDbBimap-class}
+
+\alias{ProbeAnnDbMap}
+\alias{class:ProbeAnnDbMap}
+\alias{ProbeAnnDbMap-class}
+
+\alias{ProbeIpiAnnDbMap}
+\alias{class:ProbeIpiAnnDbMap}
+\alias{ProbeIpiAnnDbMap-class}
+
+
+
+
 % Standard generic methods
 
 \alias{show,FlatBimap-method}
