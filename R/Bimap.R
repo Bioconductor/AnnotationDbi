@@ -1264,62 +1264,24 @@ setMethod("dim", "Bimap",
 ### Method to remove the multiple mapping filter from AnnDbBimaps that have a probe mapping in them.
 ###
 
-setMethod("toggleProbes", "AnnDbBimap",
-    function(x, value = c("all","single","multiple")){
-        type <- match.arg(value)
-        ans <- x
-        if(ans@L2Rchain[[1]]@tablename!="probes"){
-          stop("This method can only be used on mappings where the Lkeys are probes.")
-        }
-        switch(type,
-          "all" = ans@L2Rchain[[1]]@filter <- "{is_multiple} IN ('1','0')",
-          "single"  = ans@L2Rchain[[1]]@filter <- "{is_multiple}='0'",
-          "multiple" = ans@L2Rchain[[1]]@filter <- "{is_multiple}='1'"
-          )
-        return(ans)
-      }
-)
+.toggleFilter = function(x, value = c("all","single","multiple")){
+  type <- match.arg(value)
+  ans <- x
+  if(ans@L2Rchain[[1]]@tablename!="probes"){
+    stop("This method can only be used on mappings where the Lkeys are probes.")
+  }
+  switch(type,
+         "all" = ans@L2Rchain[[1]]@filter <- "{is_multiple} IN ('1','0')",
+         "single"  = ans@L2Rchain[[1]]@filter <- "{is_multiple}='0'",
+         "multiple" = ans@L2Rchain[[1]]@filter <- "{is_multiple}='1'"
+         )
+  return(ans)
+}
 
-## ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-## ### Method to re-mask the multiple probes
-## ###
-
-## setMethod("maskMultiProbes", "AnnDbBimap",
-##     function(x){
-##         ans = x
-##         f <- ans@L2Rchain[[1]]@filter
-##         if((f=="{is_multiple}='1'" || f=="{is_multiple} IN ('1','0')") && ans@L2Rchain[[1]]@tablename=="probes"){
-##             ans@L2Rchain[[1]]@filter <- "{is_multiple}='0'"
-##         }else if(f=="{is_multiple}='0'" && ans@L2Rchain[[1]]@tablename=="probes"){
-##             stop("Any probes that map multiple things for this Bimap have already been masked.")
-##         }
-##         else{
-##             stop("This Bimap does not have multiple probe mappings to mask.")
-##         }
-##         ans
-##     }
-## )
-
-
-## ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-## ### Method to mask single mapping probes
-## ###
-
-## setMethod("maskSingleProbes", "AnnDbBimap",
-##     function(x){
-##         ans = x
-##         f <- ans@L2Rchain[[1]]@filter
-##         if((f=="{is_multiple}='0'" || f=="{is_multiple} IN ('1','0')") && ans@L2Rchain[[1]]@tablename=="probes"){
-##             ans@L2Rchain[[1]]@filter <- "{is_multiple}='1'"
-##         }else if(f=="{is_multiple}='1'" && ans@L2Rchain[[1]]@tablename=="probes"){
-##             stop("Probes that map single things for this Bimap have already been masked.")
-##         }
-##         else{
-##             stop("This Bimap does not have single probe mappings to mask.")
-##         }
-##         ans
-##     }
-## )
+setMethod("toggleProbes", "ProbeAnnDbBimap", function(x, value){.toggleFilter(x, value)})
+setMethod("toggleProbes", "ProbeAnnDbMap", function(x, value){.toggleFilter(x, value)})
+setMethod("toggleProbes", "ProbeIpiAnnDbMap", function(x, value){.toggleFilter(x, value)})
+setMethod("toggleProbes", "ProbeGo3AnnDbBimap", function(x, value){.toggleFilter(x, value)})
 
 
 
@@ -1327,31 +1289,36 @@ setMethod("toggleProbes", "AnnDbBimap",
 ### Methods to indicate the mask setting of the probes
 ###
 
-setMethod("hasMultiProbes", "AnnDbBimap",
-    function(x){
-        f <- x@L2Rchain[[1]]@filter
-        if((f=="{is_multiple}='1'" || f=="{is_multiple} IN ('1','0')") && x@L2Rchain[[1]]@tablename=="probes"){
-            ans <- TRUE
-        }else{
-            ans <- FALSE
-        }
-        return(ans)
-    }
-)
+.hasMultiProbes = function(x){
+  f <- x@L2Rchain[[1]]@filter
+  if((f=="{is_multiple}='1'" || f=="{is_multiple} IN ('1','0')") && x@L2Rchain[[1]]@tablename=="probes"){
+    ans <- TRUE
+  }else{
+    ans <- FALSE
+  }
+  return(ans)
+}
 
-setMethod("hasSingleProbes", "AnnDbBimap",
-    function(x){
-        f <- x@L2Rchain[[1]]@filter
-        if((f=="{is_multiple}='0'" || f=="{is_multiple} IN ('1','0')") && x@L2Rchain[[1]]@tablename=="probes"){
-            ans <- TRUE
-        }else{
-            ans <- FALSE
-        }
-        ans
-    })
+setMethod("hasMultiProbes", "ProbeAnnDbBimap",function(x){.hasMultiProbes(x)})
+setMethod("hasMultiProbes", "ProbeAnnDbMap",function(x){.hasMultiProbes(x)})
+setMethod("hasMultiProbes", "ProbeIpiAnnDbMap",function(x){.hasMultiProbes(x)})
+setMethod("hasMultiProbes", "ProbeGo3AnnDbBimap",function(x){.hasMultiProbes(x)})
 
 
+.hasSingleProbes = function(x){
+  f <- x@L2Rchain[[1]]@filter
+  if((f=="{is_multiple}='0'" || f=="{is_multiple} IN ('1','0')") && x@L2Rchain[[1]]@tablename=="probes"){
+    ans <- TRUE
+  }else{
+    ans <- FALSE
+  }
+  ans
+}
 
+setMethod("hasSingleProbes", "ProbeAnnDbBimap",function(x){.hasSingleProbes(x)})
+setMethod("hasSingleProbes", "ProbeAnnDbMap",function(x){.hasSingleProbes(x)})
+setMethod("hasSingleProbes", "ProbeIpiAnnDbMap",function(x){.hasSingleProbes(x)})
+setMethod("hasSingleProbes", "ProbeGo3AnnDbBimap",function(x){.hasSingleProbes(x)})
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

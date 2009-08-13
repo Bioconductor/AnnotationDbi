@@ -1,4 +1,4 @@
-\name{exposeAllProbes}
+\name{toggleProbes}
 
 % \alias{exposeAllProbes}
 % \alias{exposeAllProbes,AnnDbBimap-method}
@@ -8,12 +8,22 @@
 % \alias{maskSingleProbes,AnnDbBimap-method}
 
 \alias{toggleProbes}
-\alias{toggleProbes,AnnDbBimap-method}
+\alias{toggleProbes,ProbeAnnDbBimap-method}
+\alias{toggleProbes,ProbeAnnDbMap-method}
+\alias{toggleProbes,ProbeIpiAnnDbMap-method}
+\alias{toggleProbes,ProbeGo3AnnDbBimap-method}
 
 \alias{hasMultiProbes}
-\alias{hasMultiProbes,AnnDbBimap-method}
+\alias{hasMultiProbes,ProbeAnnDbBimap-method}
+\alias{hasMultiProbes,ProbeAnnDbMap-method}
+\alias{hasMultiProbes,ProbeIpiAnnDbMap-method}
+\alias{hasMultiProbes,ProbeGo3AnnDbBimap-method}
+
 \alias{hasSingleProbes}
-\alias{hasSingleProbes,AnnDbBimap-method}
+\alias{hasSingleProbes,ProbeAnnDbBimap-method}
+\alias{hasSingleProbes,ProbeAnnDbMap-method}
+\alias{hasSingleProbes,ProbeIpiAnnDbMap-method}
+\alias{hasSingleProbes,ProbeGo3AnnDbBimap-method}
 
 \alias{getBimapFilters}
 \alias{getBimapFilters,AnnDbBimap-method}
