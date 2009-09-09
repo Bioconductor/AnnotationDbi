@@ -29,7 +29,12 @@ exportClasses(
     "GOTerms",
 
     ## from R/AnnDbPkg-maker.R
-    "AnnDbPkgSeed"
+    "AnnDbPkgSeed",
+
+    ## Special Frame objects
+    "GOFrame",
+    "GOAllFrame"
+              
 )
 
 exportMethods(
@@ -79,6 +84,12 @@ exportMethods(
     "Secondary",
     "Definition",
 
+    ## Special Frame Methods
+    "GOFrame",
+    "GOAllFrame",
+    "getGOFrameData",
+              
+              
     ## from R/BimapFormatting.R
     "as.list",
     #"toLList", "toRList", "toList",

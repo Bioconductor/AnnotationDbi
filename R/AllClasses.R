@@ -208,3 +208,22 @@ setClass("ProbeAnnDbMap", contains="AnnDbMap")
 setClass("ProbeIpiAnnDbMap", contains="IpiAnnDbMap")
 setClass("ProbeGo3AnnDbBimap", contains="Go3AnnDbBimap")
 
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### GoFrames
+###
+### for people who cannot have bimaps but need a way to pass around their data
+###
+
+setClass("AnnotFrame", representation("VIRTUAL") )
+
+## For standard GO mappings.
+setClass("GOFrame", contains="AnnotFrame",
+         representation(data="data.frame",
+                        organism="character"),
+         prototype=prototype(organism=""))
+
+## For 'GO 2 ALL' style mappings
+setClass("GOAllFrame", contains="GOFrame")                                    
+

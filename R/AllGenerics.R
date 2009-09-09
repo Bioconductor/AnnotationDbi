@@ -37,6 +37,9 @@ setGeneric("setInpBimapFilter", signature="x", function(x, value) standardGeneri
 setGeneric("toLList", function(x) standardGeneric("toLList"))
 setGeneric("toRList", function(x) standardGeneric("toRList"))
 setGeneric("toList", function(x) standardGeneric("toList"))
+setGeneric("GOFrame", function(x, organism) standardGeneric("GOFrame"))
+setGeneric("GOAllFrame", function(x) standardGeneric("GOAllFrame"))
+setGeneric("getGOFrameData", function(x) standardGeneric("getGOFrameData"))
 
 ### Others (do whatever you want with them ;-)
 setGeneric("dbconn", function(x) standardGeneric("dbconn"))

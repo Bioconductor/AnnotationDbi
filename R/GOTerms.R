@@ -157,3 +157,122 @@ setMethod("show", "GOTerms",
     }
 )
 
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The methods to construct a GOFrame or a GOAllFrame
+###
+
+.attachGO <- function(con){
+  GOLoc = system.file("extdata", "GO.sqlite", package="GO.db")
+  attachSQL = paste("ATTACH '", GOLoc, "' AS go;", sep = "")
+  dbGetQuery(con, attachSQL)
+}
+
+
+.testGOFrame <- function(x, organism=""){
+  require(RSQLite)
+  require(GO.db)
+  drv <- dbDriver("SQLite")
+  con <- dbConnect(drv)
+  ##Test that some GOIDs are real and that the evidence codes are legit.
+  .attachGO(con)
+  GOIDs = x[,1]
+  eviCodes = x[,2]
+  realGOIDs = as.character(dbGetQuery(con, "SELECT go_id FROM go_term;")[,1])
+  ##Test that the data.frame has some rows of data in it
+  if(!dim(x)[1]>0){
+    stop("There are no rows of data in the data.frame supplied to make a GOFrame.")
+  }
+  ## TODO, Add evidence codes to GO.sqlite so that we can test this properly
+  ## without any hard coding
+  realEviCodes = c("EXP","ISO","ISA","ISM","IGC","RCA","NR","IMP","IGI","IPI","ISS","IDA","IEP","IEA","TAS","NAS","ND","IC")
+  if(is.na(table(GOIDs %in% realGOIDs)["TRUE"])){
+    stop("None of elements in the 1st column of your data.frame object are legitimate GO IDs.")
+  }
+  if(!is.na(table(eviCodes %in% realEviCodes)["FALSE"]) ){  
+    stop("All of the Evidence codes in your data.frame object must be legitimate Evidence Codes.")
+  }
+  if(length(x[,1]) != length(x[,2]) || length(x[,1]) != length(x[,3])){
+    stop("You need to have evidence codes and genes for all your GO IDs.")
+  }
+   if(organism!=""){
+    new("GOFrame", data = x, organism = organism)
+   }else{new("GOFrame", data = x)}
+}
+
+setMethod("GOFrame", signature=signature(x="data.frame", organism="character"), function(x, organism){.testGOFrame(x, organism)})
+setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), function(x){.testGOFrame(x)})
+
+
+## Helper method for converting GOFrame type data.frames into GOAllFrame objects
+.convertGOtoGO2ALL = function(frame, type = c("BP","CC","MF")){
+  require(RSQLite)
+  require(GO.db)
+  drv <- dbDriver("SQLite")
+  con <- dbConnect(drv)
+  ##require type to be legit
+  type <- match.arg(type)
+    
+  ##Now Make a table
+  dbGetQuery(con, "CREATE TABLE data (go_id VARCHAR(10), evidence VARCHAR(3), gene_id INTEGER)")
+  ##populate it with the stuff in frame:
+  clnVals = frame
+  sqlIns <- "INSERT INTO data (go_id, evidence, gene_id) VALUES (?,?,?)"
+  dbBeginTransaction(con)
+  rset <- dbSendPreparedQuery(con, sqlIns, clnVals)
+  dbClearResult(rset)
+  dbCommit(con)
+
+  ##Now I have to make a 'go_data' table from 'data' that to INSURE that all
+  ##the GO IDs are also in GO.db...
+  .attachGO(con)  
+  go_dataSQL = paste(  "CREATE TABLE go_data as
+    SELECT t.go_id AS go_id, g.evidence as evidence, g.gene_id AS gene_id
+    FROM data AS g, go.go_term AS t
+    WHERE g.go_id=t.go_id AND t.ontology='",toupper(type),"'", sep="")
+  dbGetQuery(con,go_dataSQL)
+  dbGetQuery(con,"CREATE INDEX gdgo on go_data(go_id)")
+
+  ##Now I have to make the literal table from GO
+  offspringSQL <- paste("CREATE TABLE go_offspring_literal as
+      SELECT t1.go_id AS go_id, t2.go_id AS offspring_id
+      FROM   go.go_",tolower(type),"_offspring as o, go.go_term as t1, go.go_term as t2 
+      WHERE  o._id = t1._id AND o._offspring_id = t2._id", sep="")
+  dbGetQuery(con, offspringSQL)
+  dbGetQuery(con,"CREATE INDEX literalo on go_offspring_literal(offspring_id)")
+  dbGetQuery(con,"CREATE INDEX literalgo on go_offspring_literal(go_id)")
+
+  ##Now I need to make the final table:
+  finalSQL = paste(  "CREATE TABLE go_all_data as
+   SELECT t.go_id as go_id, g.evidence AS evidence,
+           g.gene_id as gene_id
+   FROM   go_data as g CROSS JOIN               
+           go_offspring_literal as o CROSS JOIN
+           go.go_term as t
+   WHERE  o.go_id=t.go_id and o.offspring_id=g.go_id and  
+           t.ontology='",toupper(type),"'
+  UNION
+   SELECT go_id, evidence, gene_id
+   FROM   go_data",sep="")
+  dbGetQuery(con,finalSQL)
+  ##And return
+  res =  dbGetQuery(con, "SELECT * FROM go_all_data")
+  dbDisconnect(con)
+  return(res)
+}
+
+
+## Method to make GOAllFrame objects from GOFrame objects
+setMethod("GOAllFrame", "GOFrame", function(x){
+  bp = .convertGOtoGO2ALL(x@data,"BP")
+  mf = .convertGOtoGO2ALL(x@data,"MF")
+  cc = .convertGOtoGO2ALL(x@data,"CC")
+  res =  rbind(bp,mf,cc)
+  new("GOAllFrame", data = res, organism = x@organism) 
+})
+
+
+## Method to access the data in a GOFrame object
+setMethod("getGOFrameData", "GOFrame", function(x){x@data})
+setMethod("getGOFrameData", "GOAllFrame", function(x){x@data})
