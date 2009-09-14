@@ -8,8 +8,7 @@
   Prints class(x), nrow(x) and ncol(x), but not the elements of x.
   The motivation for having this method is that methods from the package
   \code{base} such as
-  \code{\link[base:print.matrix]{print.matrix}} and
-  \code{\link[base:print.data.frame]{print.data.frame}}
+  \code{\link[base:print.dataframe]{print.data.frame}}
   will try to print the values of all elements of \code{x}, which can
   take inconveniently much time and screen space if \code{x} is large.
 }
@@ -18,8 +17,7 @@
   \item{\dots}{further arguments that get ignored.}
 }
 \seealso{
-  \code{\link[base:print.matrix]{print.matrix}},
-  \code{\link[base:print.data.frame]{print.data.frame}}
+  \code{\link[base:print.dataframe]{print.data.frame}}
 }
 \examples{
   a = as.data.frame(matrix(runif(1e6), ncol=1e3))

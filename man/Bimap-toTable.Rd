@@ -107,7 +107,7 @@
   }
   \item{...}{
     Further arguments to be passed to or from other methods (see
-    \code{\link[utils]{head}} or \code{\link[utils]{tail}}
+    \code{\link[utils]{head}} or \code{\link[utils:head]{tail}}
     for the details).
   }
   \item{do.NULL}{

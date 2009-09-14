@@ -130,7 +130,7 @@
   \code{\link[base]{ls}},
   \code{\link[base]{exists}},
   \code{\link[base]{get}},
-  \code{\link[base]{mget}},
+  \code{\link[base:get]{mget}},
   \code{\link[base]{eapply}},
   \code{\link[Biobase]{contents}},
   \code{\link[base]{sample}},

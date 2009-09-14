@@ -98,8 +98,8 @@
 \seealso{
   \code{\link[DBI]{dbConnect}},
   \code{\link[DBI]{dbListTables}},
-  \code{\link[DBI]{dbListFields}},
-  \code{\link[DBI]{dbGetQuery}},
+  \code{\link[DBI:dbListTables]{dbListFields}},
+  \code{\link[DBI:dbSendQuery]{dbGetQuery}},
   \link{Bimap}
 }
 
