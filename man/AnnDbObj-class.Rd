@@ -80,7 +80,7 @@
 
       The \code{file} argument must be a connection, or a character string
       naming the file to print to (see the \code{file} argument of the
-      \code{\link[base]{cat}} function for the details).
+      \code{\link[base:cat]{cat}} function for the details).
 
       The CREATE INDEX statements are not shown by default.
       Use \code{show.indices=TRUE} to get them.
@@ -96,8 +96,8 @@
 }
 
 \seealso{
-  \code{\link[DBI]{dbConnect}},
-  \code{\link[DBI]{dbListTables}},
+  \code{\link[DBI:dbConnect]{dbConnect}},
+  \code{\link[DBI:dbListTables]{dbListTables}},
   \code{\link[DBI:dbListTables]{dbListFields}},
   \code{\link[DBI:dbSendQuery]{dbGetQuery}},
   \link{Bimap}

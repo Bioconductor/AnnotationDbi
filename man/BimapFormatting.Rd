@@ -38,8 +38,6 @@
   }
 }
 
-\value{
-}
 
 \author{H. Pages}
 

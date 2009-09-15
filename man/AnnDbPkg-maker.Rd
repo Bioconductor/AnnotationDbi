@@ -47,8 +47,6 @@
   }
 }
 
-\details{
-}
 
 \seealso{
   \link{AnnDbPkg-checker}

@@ -21,8 +21,6 @@
   }
 }
 
-\details{
-}
 
 \author{H. Pages}
 

@@ -105,7 +105,7 @@
     An \link{AnnDbBimap} object.
   }
   \item{FUN}{
-    The function to be applied (see original \code{\link[base]{eapply}}
+    The function to be applied (see original \code{\link[base:eapply]{eapply}}
     for environments for the details).
   }
   \item{...}{
@@ -123,17 +123,14 @@
   }
 }
 
-\value{
-}
-
 \seealso{
-  \code{\link[base]{ls}},
-  \code{\link[base]{exists}},
-  \code{\link[base]{get}},
+  \code{\link[base:ls]{ls}},
+  \code{\link[base:exists]{exists}},
+  \code{\link[base:get]{get}},
   \code{\link[base:get]{mget}},
-  \code{\link[base]{eapply}},
-  \code{\link[Biobase]{contents}},
-  \code{\link[base]{sample}},
+  \code{\link[base:eapply]{eapply}},
+  \code{\link[Biobase:contents]{contents}},
+  \code{\link[base:sample]{sample}},
   \link{BimapFormatting},
   \link{Bimap}
 }

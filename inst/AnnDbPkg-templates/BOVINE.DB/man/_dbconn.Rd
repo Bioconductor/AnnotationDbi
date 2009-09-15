@@ -1,3 +1,4 @@
+
 \name{@ANNOBJPREFIX@_dbconn}
 
 \alias{@ANNOBJPREFIX@_dbconn}
@@ -33,11 +34,12 @@
 }
 
 \details{
-  \code{@ANNOBJPREFIX@_dbconn} returns a connection object to the package
-  annotation DB.
-  IMPORTANT: Don't call \code{\link[DBI]{dbDisconnect}} on the connection
-  object returned by \code{@ANNOBJPREFIX@_dbconn} or you will
-  break all the \code{\link[AnnotationDbi]{AnnDbObj}} objects defined in this package!
+  \code{@ANNOBJPREFIX@_dbconn} returns a connection object to the
+  package annotation DB.  IMPORTANT: Don't call
+  \code{\link[DBI:dbConnect]{dbDisconnect}} on the connection object
+  returned by \code{@ANNOBJPREFIX@_dbconn} or you will break all the
+  \code{\link[AnnotationDbi:AnnDbObj-class]{AnnDbObj}} objects defined
+  in this package!
 
   \code{@ANNOBJPREFIX@_dbfile} returns the path (character string) to the
   package annotation DB (this is an SQLite file).
@@ -50,8 +52,8 @@
 }
 
 \value{
-  \code{@ANNOBJPREFIX@_dbconn}: a DBIConnection object representing an open
-  connection to the package annotation DB.
+  \code{@ANNOBJPREFIX@_dbconn}: a DBIConnection object representing an
+  open connection to the package annotation DB.
 
   \code{@ANNOBJPREFIX@_dbfile}: a character string with the path to the
   package annotation DB.
@@ -62,20 +64,22 @@
 }
 
 \seealso{
-  \code{\link[DBI]{dbGetQuery}},
-  \code{\link[DBI]{dbConnect}},
-  \code{\link[AnnotationDbi]{dbconn}},
-  \code{\link[AnnotationDbi]{dbfile}},
-  \code{\link[AnnotationDbi]{dbschema}},
-  \code{\link[AnnotationDbi]{dbInfo}}
+  \code{\link[DBI:dbSendQuery]{dbGetQuery}},
+  \code{\link[DBI:dbConnect]{dbConnect}},
+  \code{\link[AnnotationDbi:AnnDbObj-class]{dbconn}},
+  \code{\link[AnnotationDbi:AnnDbObj-class]{dbfile}},
+  \code{\link[AnnotationDbi:AnnDbObj-class]{dbschema}},
+  \code{\link[AnnotationDbi:AnnDbObj-class]{dbInfo}}
 }
 
 \examples{
   ## Count the number of rows in the "genes" table:
   dbGetQuery(@ANNOBJPREFIX@_dbconn(), "SELECT COUNT(*) FROM genes")
 
-  ## The connection object returned by @ANNOBJPREFIX@_dbconn() was created with:
-  dbConnect(SQLite(), dbname=@ANNOBJPREFIX@_dbfile(), cache_size=64000, synchronous=0)
+  ## The connection object returned by @ANNOBJPREFIX@_dbconn() was
+  ## created with:
+  dbConnect(SQLite(), dbname=@ANNOBJPREFIX@_dbfile(), cache_size=64000,
+  synchronous=0)
 
   @ANNOBJPREFIX@_dbschema()
 

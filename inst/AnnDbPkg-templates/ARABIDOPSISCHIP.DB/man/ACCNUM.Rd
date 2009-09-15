@@ -23,7 +23,7 @@
 }
 
 \seealso{
-  \code{\link[AnnotationDbi]{nhit}}
+  \code{\link[AnnotationDbi:Bimap-toTable]{nhit}}
 }
 
 \examples{
