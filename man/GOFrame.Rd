@@ -29,8 +29,8 @@
 
 \description{
   These objects each contain a data frame which is required to be
-  composed of 3 columns. The 1st column are gene IDs.  The second are
-  evidence codes and the 3rd are the GO IDs that match to the gene IDs
+  composed of 3 columns. The 1st column are GO IDs.  The second are
+  evidence codes and the 3rd are the gene IDs that match to the GO IDs
   using those evidence codes.  There is also a slot for the organism
   that these anotations pertain to.
 }
