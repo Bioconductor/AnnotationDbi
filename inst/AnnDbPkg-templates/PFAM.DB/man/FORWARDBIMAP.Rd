@@ -7,7 +7,6 @@
 \alias{@ANNOBJPREFIX@LOAD}
 \alias{@ANNOBJPREFIX@MEROPS}
 \alias{@ANNOBJPREFIX@MIM}
-\alias{@ANNOBJPREFIX@PFAMB}
 \alias{@ANNOBJPREFIX@PRINTS}
 \alias{@ANNOBJPREFIX@PROSITE}
 \alias{@ANNOBJPREFIX@PROSITEPROFILE}
@@ -70,8 +69,6 @@
      Biotechnology Information, National Library of Medicine (Bethesda,
      MD), 2000
 
-  PFAMB:  Pfam-B is an automatic clustering of the rest of SWISSPROT and
-    TrEMBL derived from the PRODOM database.
 
   PRINTS:  PRINTS (<URL: http://umber.sbs.man.ac.uk/dbbrowser/PRINTS/>)
     is a compendium of protein fingerprints.

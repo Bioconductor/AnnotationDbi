@@ -8,4 +8,3 @@ Depends: R (>= 2.7.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
 Imports: methods, AnnotationDbi
 License: @LIC@
 biocViews: @BIOCVIEWS@
-

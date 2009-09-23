@@ -118,17 +118,17 @@ PFAM_DB_AnnDbBimap_seeds <- list(
             )
         )
     ),
-    list(
-        objName="PFAMB",
-        Class="AnnDbBimap",
-        L2Rchain=list(
-            list(
-                tablename="pfamb",
-                Lcolname="ac",
-                Rcolname="pfamb"
-            )
-        )
-    ),
+##     list(
+##         objName="PFAMB",
+##         Class="AnnDbBimap",
+##         L2Rchain=list(
+##             list(
+##                 tablename="pfamb",
+##                 Lcolname="ac",
+##                 Rcolname="pfamb"
+##             )
+##         )
+##     ),
     list(
         objName="PRINTS",
         Class="AnnDbBimap",
@@ -267,7 +267,7 @@ createAnnObjs.PFAM_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$MEROPS2AC <- revmap(ann_objs$MEROPS, objName="MEROPS2AC")
     ann_objs$MIM2AC <- revmap(ann_objs$MIM, objName="MIM2AC")
     ann_objs$PDB2AC <- revmap(ann_objs$PDB, objName="PDB2AC")
-    ann_objs$PFAMB2AC <- revmap(ann_objs$PFAMB, objName="PFAMB2AC")
+##     ann_objs$PFAMB2AC <- revmap(ann_objs$PFAMB, objName="PFAMB2AC")
     ann_objs$PRINTS2AC <- revmap(ann_objs$PRINTS, objName="PRINTS2AC")
     ann_objs$PROSITE2AC <- revmap(ann_objs$PROSITE, objName="PROSITE2AC")
     ann_objs$PROSITEPROFILE2AC <- revmap(ann_objs$PROSITEPROFILE, objName="PROSITEPROFILE2AC")

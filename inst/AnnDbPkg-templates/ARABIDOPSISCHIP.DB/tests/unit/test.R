@@ -3,7 +3,7 @@ testForGOSourceMismatches <- function(){
   require("annotate")
   require("@PKGNAME@")
   g = Lkeys(GOTERM)
-  m = Rkeys(getAnnMap('GO2PROBE', gsub(".db","","@PKGNAME@")))
+  m = Rkeys(getAnnMap('GO2PROBE', gsub(".db$","","@PKGNAME@")))
   ##Are all the IDs from m in g?
   all((m %in% g)) 
 }
@@ -23,7 +23,7 @@ getGODate <- function(){
 
 getPkgDate <-function(){
   require("@PKGNAME@")
-  dbmeta(eval(call(what = paste(gsub(".db","","@PKGNAME@"),
+  dbmeta(eval(call(what = paste(gsub(".db$","","@PKGNAME@"),
                      "_dbconn",sep=""))), "GOSOURCEDATE")
 }
 
