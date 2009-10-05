@@ -2408,6 +2408,43 @@ appendUniprot <- function(db, subStrs, printSchema){
 
 }
 
+## Make the uniprot table
+appendUCSCGenes <- function(db, subStrs, printSchema){
+
+  message(cat("Appending UCSC Known Genes"))
+    
+  sql<- paste("    CREATE TABLE ucsc (
+      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
+      ucsc_id VARCHAR(20) NOT NULL,              -- uniprot id
+      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
+    );") 
+  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+ 
+  sql<- paste("
+    INSERT INTO ucsc
+     SELECT DISTINCT u._id, u.ucsc_id
+     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.ucsc as u
+     WHERE g._id=u._id;
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("    CREATE INDEX Fucsc ON ucsc (_id);") 
+  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+    INSERT INTO map_metadata
+     SELECT * FROM anno.map_metadata
+     WHERE map_name = 'UCSCKG';
+     ") 
+  sqliteQuickSQL(db, sql)
+
+  makeMapCounts(db, "UCSCKG",subStrs[["coreID"]],subStrs[["coreTab"]],"ucsc",paste("WHERE ",subStrs[["coreTab"]],"._id=ucsc._id",sep=""))
+  
+}
+
+
 ## Make an external genes table to hold Entrez Gene IDs
 appendExternalEG <- function(db, subStrs, printSchema){
 

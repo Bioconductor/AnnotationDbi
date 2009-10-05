@@ -117,6 +117,7 @@ popHUMANDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    appendUCSCGenes(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -242,6 +243,7 @@ popMOUSEDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    appendUCSCGenes(db, subStrs=subStrs, printSchema=printSchema)
     appendMGI(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)

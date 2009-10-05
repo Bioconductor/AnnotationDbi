@@ -265,6 +265,18 @@ MOUSE_DB_AnnDbBimap_seeds <- list(
         )
     ),
     list(
+        objName="UCSCKG",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            MOUSE_DB_L2Rlink1,
+            list(
+                tablename="ucsc",
+                Lcolname="_id",
+                Rcolname="ucsc_id"
+            )
+        )
+    ),
+    list(
         objName="GO",
         Class="Go3AnnDbBimap",
         L2Rchain=list(
