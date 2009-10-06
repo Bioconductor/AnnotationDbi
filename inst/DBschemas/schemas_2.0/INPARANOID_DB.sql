@@ -147,12 +147,6 @@ CREATE TABLE kluyveromyces_lactis (
         species CHAR(5) NOT NULL,
         score VARCHAR(6) NOT NULL,
         seed_status CHAR(4));
-CREATE TABLE homo_sapiens (
-        inp_id VARCHAR(30) UNIQUE NOT NULL,
-        clust_id INTEGER NOT NULL,
-        species CHAR(5) NOT NULL,
-        score VARCHAR(6) NOT NULL,
-        seed_status CHAR(4));
 CREATE TABLE macaca_mulatta (
         inp_id VARCHAR(30) UNIQUE NOT NULL,
         clust_id INTEGER NOT NULL,
@@ -269,8 +263,6 @@ CREATE INDEX fugru_c ON takifugu_rubripes(clust_id);
 CREATE INDEX fugru_s ON takifugu_rubripes(species);
 CREATE INDEX klula_c ON kluyveromyces_lactis(clust_id);
 CREATE INDEX klula_s ON kluyveromyces_lactis(species);
-CREATE INDEX homsa_c ON homo_sapiens(clust_id);
-CREATE INDEX homsa_s ON homo_sapiens(species);
 CREATE INDEX macmu_c ON macaca_mulatta(clust_id);
 CREATE INDEX macmu_s ON macaca_mulatta(species);
 CREATE INDEX mondo_c ON monodelphis_domestica(clust_id);

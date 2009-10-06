@@ -32,10 +32,6 @@ CREATE TABLE pdb (
  start_point INTEGER,			--start of alignment
  end_point INTEGER			--end of alignment
 );
-CREATE TABLE pfamb (
- ac VARCHAR(12)  NOT NULL,		--AC ID
- pfamb VARCHAR(8) NOT NULL              --PFAMB ID
-);
 CREATE TABLE prints (
  ac VARCHAR(12)  NOT NULL,		--AC ID
  prints VARCHAR(7) NOT NULL             --PRINTS ID
@@ -103,7 +99,6 @@ CREATE INDEX load_ac ON load(ac);
 CREATE INDEX merops_ac ON merops(ac);
 CREATE INDEX mim_ac ON mim(ac);
 CREATE INDEX pdb_ac ON pdb(ac);
-CREATE INDEX pfamb_ac ON pfamb(ac);
 CREATE INDEX prints_ac ON prints(ac);
 CREATE INDEX prosite_ac ON prosite(ac);
 CREATE INDEX prosite_profile_ac ON prosite_profile(ac);

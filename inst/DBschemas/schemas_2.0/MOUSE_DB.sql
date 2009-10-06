@@ -154,6 +154,11 @@ CREATE TABLE uniprot (
       uniprot_id VARCHAR(20) NOT NULL,              -- uniprot id
       FOREIGN KEY (_id) REFERENCES  genes  (_id)
     );
+CREATE TABLE ucsc (
+      _id INTEGER NOT NULL,                         -- REFERENCES  genes 
+      ucsc_id VARCHAR(20) NOT NULL,              -- uniprot id
+      FOREIGN KEY (_id) REFERENCES  genes  (_id)
+    );
 CREATE TABLE mgi (
       _id INTEGER NOT NULL,                     -- REFERENCES  genes 
       mgi_id VARCHAR(20) NOT NULL,              -- ensembl id
@@ -193,4 +198,5 @@ CREATE INDEX Fncbi2ensembl ON ncbi2ensembl (_id);
 CREATE INDEX Fensemblp ON ensembl_prot (_id);
 CREATE INDEX Fensemblt ON ensembl_trans (_id);
 CREATE INDEX Funiprot ON uniprot (_id);
+CREATE INDEX Fucsc ON ucsc (_id);
 CREATE INDEX Fmgi ON mgi (_id);

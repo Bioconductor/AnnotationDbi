@@ -1985,7 +1985,9 @@ generate.schema <- function(name = "HUMANCHIP_DB", pkg = "hgu95av2.db", path = "
     res = c(res[nonIndNums],indexComment,res[indNums])
     
     ##Then write it out to a file.
-    write(res, paste(path, name,".sql", sep=""))
+    write(res, file = paste( name,".sql", sep=""))
+    ##Then disconnect (so there won't be limits on how many times we can call this)
+    dbDisconnect(con)
 }
 
 

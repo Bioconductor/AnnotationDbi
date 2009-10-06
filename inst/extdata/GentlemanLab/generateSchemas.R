@@ -7,11 +7,14 @@
 ##biocLite(pkgs)
 
 
+##TO UPDATE: just go to the directory meant to hold the new schemas (be sure
+##that you set it up in the DBs ahead of the change!) and then run this script
+##from there.
 
 
 ##Need to put the packages in the latest AnnotationDbi schemas directory
 ##(source)
-schemaDir = "/mnt/cpb_anno/mcarlson/proj/mcarlson/AnnMod/AnnotationDbi/inst/DBschemas/schemas_2.0/"
+## schemaDir = "/mnt/cpb_anno/mcarlson/proj/mcarlson/AnnMod/AnnotationDbi/inst/DBschemas/schemas_2.0/"
 
 ##Now generate the schemas
 library(AnnotationDbi)
@@ -19,21 +22,11 @@ library(DBI)
 library(RSQLite)
 
 
-
-sbPkgs = c(
+pkgs = c(
   "GO_DB" = "GO.db", 
   "KEGG_DB" = "KEGG.db", 
   "PFAM_DB" = "PFAM.db",
-  "INPARANOID_DB" = "hom.Hs.inp.db")  ##Don't forget to add missing homo sapiens table and indexes!
-
-for(i in seq_len(length(sbPkgs))){
-    AnnotationDbi:::generate.schema(names(sbPkgs[i]),sbPkgs[i], path = schemaDir)
-}
-
-
-
-##Cannot do more than 16 at once so split up orgs (for now)
-orgPkgs = c(
+  "INPARANOID_DB" = "hom.Hs.inp.db",
   "ANOPHELES_DB" = "org.Ag.eg.db", 
   "ARABIDOPSIS_DB" = "org.At.tair.db", 
   "BOVINE_DB" = "org.Bt.eg.db", 
@@ -42,15 +35,7 @@ orgPkgs = c(
   "CHIMP_DB" = "org.Pt.eg.db", 
   "ECOLI_DB" = "org.EcK12.eg.db", 
   "FLY_DB" = "org.Dm.eg.db", 
-  "HUMAN_DB" = "org.Hs.eg.db")
-
-for(i in seq_len(length(orgPkgs))){
-    AnnotationDbi:::generate.schema(names(orgPkgs[i]),orgPkgs[i], path = schemaDir)
-}
-
-
-
-orgPkgs2 = c(
+  "HUMAN_DB" = "org.Hs.eg.db",  
   "MALARIA_DB" = "org.Pf.plasmo.db", 
   "MOUSE_DB" = "org.Mm.eg.db", 
   "PIG_DB" = "org.Ss.eg.db", 
@@ -60,15 +45,7 @@ orgPkgs2 = c(
   "XENOPUS_DB" = "org.Xl.eg.db", 
   "YEAST_DB" = "org.Sc.sgd.db", 
   ## "YEASTNCBI_DB" = "", 
-  "ZEBRAFISH_DB" = "org.Dr.eg.db")
-
-for(i in seq_len(length(orgPkgs2))){
-    AnnotationDbi:::generate.schema(names(orgPkgs2[i]),orgPkgs2[i], path = schemaDir)
-}
-
-
-
-chipPkgs = c(
+  "ZEBRAFISH_DB" = "org.Dr.eg.db",
   "ARABIDOPSISCHIP_DB" = "ag.db", 
   "BOVINECHIP_DB" = "bovine.db", 
   "CANINECHIP_DB" = "canine.db", 
@@ -83,8 +60,12 @@ chipPkgs = c(
   "XENOPUSCHIP_DB" = "xlaevis.db",  ##Have to repeat once its installed.
   "YEASTCHIP_DB" = "yeast2.db", 
   "ZEBRAFISHCHIP_DB" = "zebrafish.db")
+  
 
-for(i in seq_len(length(chipPkgs))){
-    AnnotationDbi:::generate.schema(names(chipPkgs[i]),chipPkgs[i], path = schemaDir)
+for(i in seq_len(length(pkgs))){
+    AnnotationDbi:::generate.schema(names(pkgs[i]),pkgs[i])
 }
+
+
+
 

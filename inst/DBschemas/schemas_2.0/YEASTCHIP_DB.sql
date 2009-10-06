@@ -10,7 +10,7 @@ CREATE TABLE map_counts (
       count INTEGER NOT NULL
     );
 CREATE TABLE sqlite_stat1(tbl,idx,stat);
-CREATE TABLE probes (probe_id VARCHAR(80) PRIMARY KEY, systematic_name VARCHAR(14) NULL, gene_name VARCHAR(14) NULL, sgd_id CHAR(10) NULL);
+CREATE TABLE probes (probe_id VARCHAR(80), systematic_name VARCHAR(14) NULL, gene_name VARCHAR(14) NULL, sgd_id CHAR(10) NULL, is_multiple SMALLINT NOT NULL);
 
 -- Explicit index creation on the referencing column of all the foreign keys.
 -- Note that this is only needed for SQLite: PostgreSQL and MySQL create those

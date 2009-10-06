@@ -159,6 +159,11 @@ CREATE TABLE uniprot (
       uniprot_id VARCHAR(20) NOT NULL,              -- uniprot id
       FOREIGN KEY (_id) REFERENCES  genes  (_id)
     );
+CREATE TABLE ucsc (
+      _id INTEGER NOT NULL,                         -- REFERENCES  genes 
+      ucsc_id VARCHAR(20) NOT NULL,              -- uniprot id
+      FOREIGN KEY (_id) REFERENCES  genes  (_id)
+    );
 
 -- Explicit index creation on the referencing column of all the foreign keys.
 -- Note that this is only needed for SQLite: PostgreSQL and MySQL create those
@@ -194,3 +199,4 @@ CREATE INDEX Fncbi2ensembl ON ncbi2ensembl (_id);
 CREATE INDEX Fensemblp ON ensembl_prot (_id);
 CREATE INDEX Fensemblt ON ensembl_trans (_id);
 CREATE INDEX Funiprot ON uniprot (_id);
+CREATE INDEX Fucsc ON ucsc (_id);
