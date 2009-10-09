@@ -33,7 +33,8 @@ exportClasses(
 
     ## Special Frame objects
     "GOFrame",
-    "GOAllFrame"
+    "GOAllFrame",
+    "KEGGFrame"
               
 )
 
@@ -88,6 +89,8 @@ exportMethods(
     "GOFrame",
     "GOAllFrame",
     "getGOFrameData",
+    "KEGGFrame",
+    "getKEGGFrameData",
               
               
     ## from R/BimapFormatting.R

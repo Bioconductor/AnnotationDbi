@@ -227,3 +227,10 @@ setClass("GOFrame", contains="AnnotFrame",
 ## For 'GO 2 ALL' style mappings
 setClass("GOAllFrame", contains="GOFrame")                                    
 
+
+## For standard KEGG mappings.
+setClass("KEGGFrame", contains="AnnotFrame",
+         representation(data="data.frame",
+                        organism="character"),
+         prototype=prototype(organism=""))
+

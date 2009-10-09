@@ -55,6 +55,7 @@
   frame=GOFrame(frameData,organism="Homo sapiens")
   allFrame=GOAllFrame(frame)
 
+  getGOFrameData(allFrame)
 }
 
 \keyword{classes}

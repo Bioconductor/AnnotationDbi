@@ -276,3 +276,51 @@ setMethod("GOAllFrame", "GOFrame", function(x){
 ## Method to access the data in a GOFrame object
 setMethod("getGOFrameData", "GOFrame", function(x){x@data})
 setMethod("getGOFrameData", "GOAllFrame", function(x){x@data})
+
+
+
+
+
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Methods to construct a KEGGFrame
+###
+
+.attachKEGG <- function(con){
+  KEGGLoc = system.file("extdata", "KEGG.sqlite", package="KEGG.db")
+  attachSQL = paste("ATTACH '", KEGGLoc, "' AS kegg;", sep = "")
+  dbGetQuery(con, attachSQL)
+}
+
+
+.testKEGGFrame <- function(x, organism=""){
+  require(RSQLite)
+  require(KEGG.db)
+  drv <- dbDriver("SQLite")
+  con <- dbConnect(drv)
+  ##Test that some KEGGIDs are real and that the evidence codes are legit.
+  .attachKEGG(con)
+  KEGGIDs = x[,1]
+  realKEGGIDs = as.character(dbGetQuery(con, "SELECT path_id FROM pathway2name;")[,1])
+  ##Test that the data.frame has some rows of data in it
+  if(!dim(x)[1]>0){
+    stop("There are no rows of data in the data.frame supplied to make a KEGGFrame.")
+  }
+  if(is.na(table(KEGGIDs %in% realKEGGIDs)["TRUE"])){
+    stop("None of elements in the 1st column of your data.frame object are legitimate KEGG IDs.")
+  }
+  if(length(x[,1]) != length(x[,2])){ ## TODO, I don't think that this is going to test this effectively...  I probbaly need a different test.
+    stop("You need to have genes for all your KEGG IDs.")
+  }
+   if(organism!=""){
+    new("KEGGFrame", data = x, organism = organism)
+   }else{new("KEGGFrame", data = x)}
+}
+
+setMethod("KEGGFrame", signature=signature(x="data.frame", organism="character"), function(x, organism){.testKEGGFrame(x, organism)})
+setMethod("KEGGFrame", signature=signature(x="data.frame", organism="missing"), function(x){.testKEGGFrame(x)})
+
+## Method to access the data in a KEGGFrame object
+setMethod("getKEGGFrameData", "KEGGFrame", function(x){x@data})
+

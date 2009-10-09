@@ -40,6 +40,8 @@ setGeneric("toList", function(x) standardGeneric("toList"))
 setGeneric("GOFrame", function(x, organism) standardGeneric("GOFrame"))
 setGeneric("GOAllFrame", function(x) standardGeneric("GOAllFrame"))
 setGeneric("getGOFrameData", function(x) standardGeneric("getGOFrameData"))
+setGeneric("KEGGFrame", function(x, organism) standardGeneric("KEGGFrame"))
+setGeneric("getKEGGFrameData", function(x) standardGeneric("getKEGGFrameData"))
 
 ### Others (do whatever you want with them ;-)
 setGeneric("dbconn", function(x) standardGeneric("dbconn"))
