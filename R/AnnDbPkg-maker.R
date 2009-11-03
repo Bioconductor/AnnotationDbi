@@ -218,9 +218,13 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
         dbfile_basename <- basename(dbfile)
         if (dbfile_basename != paste(x@AnnObjPrefix, ".sqlite", sep=""))
             stop("'", dbfile, "': File name doesn't match 'x@AnnObjPrefix' (", x@AnnObjPrefix, ")")
-        template_path <- system.file("AnnDbPkg-templates",
-                                     x@PkgTemplate,
-                                     package="AnnotationDbi")
+        if (!grepl("^/", x@PkgTemplate)[1]) { 
+          template_path <- system.file("AnnDbPkg-templates",
+                                       x@PkgTemplate,
+                                       package="AnnotationDbi")
+        } else {
+          template_path <- x@PkgTemplate
+        }
         ann_dbi_version <- installed.packages()['AnnotationDbi','Version']
         symvals <- list(
             DBSCHEMA=x@DBschema,
