@@ -1,29 +1,28 @@
 
-##Just a utility to prevent empty IDs from ever causing any more mayhem
+## Just a utility to prevent empty IDs from ever causing any more mayhem
 cleanSrcMap <- function(file) {
     fileVals <- read.delim(file=file, header=FALSE, sep="\t", quote="", colClasses = "character")
     fileVals <- fileVals[fileVals[,1]!='',]
 
-    #later we might want to cycle through all the IDs that people put and try each one, but right now lets try the 1st one
-    #that they gave us instead of just failing silently. (which is definitely a BAD thing)
-    ## So instead of just nuking everything after the 1st semicolon, lets do like we do for multiple EGs in the affy annots    
-   fileVals[,2] = sub(';.+', '', fileVals[,2], perl=TRUE)
-   fileVals
-   ##TODO: uncomment the code below, and then change the SQL in probe2gene to remove the DISTINCT and GROUP BY clauses
-   ##when you insert into probe2gene.  Do this in the devel branch immediately after release.
+    ##For the case where someone puts no value in, we need things to be an NA
+    fileVals[!is.na(fileVals[,2]) & fileVals[,2]=='',2] <- NA
+    
+    ##Expand IDs to match all the ones available
     probe <- fileVals[,1]
     id <- fileVals[,2]
     id <- gsub(" ","", id)
     id <- strsplit(id, split=";", fix=T)
-    id_count <- sapply(id, length)
+    ##Otherwise, the following may remove probes that map to nothing
+    id_count <- sapply(id, length)  
     id_probe <- rep(probe, id_count)
     id <- unlist(id)
-    
+
     insVals <- cbind(id_probe, id)
     insVals <- as.data.frame(insVals)
-##     print(insVals)
     insVals
 }
+
+
 
 cleanRefSeqs <- function(baseMap){
     baseMap = as.matrix(baseMap)

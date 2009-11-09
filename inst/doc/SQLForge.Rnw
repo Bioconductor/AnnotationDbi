@@ -10,7 +10,7 @@
 \newcommand{\Rclass}[1]{{\textit{#1}}}
 
 
-\title{SQLForge}
+\title{Creating a New Annotation Package using SQLForge}
 \author{Marc Carlson, Herve Pages, Nianhua Li}
 
 \SweaveOpts{keep.source=TRUE}

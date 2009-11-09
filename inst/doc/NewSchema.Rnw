@@ -15,7 +15,7 @@
 \newcommand{\program}[1]{{\texttt{#1}}}
 
 \title{Creating an annotation package \\
-  with a new database schema}
+  with a customized database schema}
 \author{G\'abor Cs\'ardi}
 
 \SweaveOpts{keep.source=TRUE}
