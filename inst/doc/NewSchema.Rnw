@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{Creating an annotation package with a new database schema}
+%\VignetteIndexEntry{Creating an annotation package with a customized database schema}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
 \documentclass[11pt]{article}

@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{SQLForge}
+%\VignetteIndexEntry{SQLForge: An easy way to create a new annotation package with a standard database schema.}
 %\VignetteDepends{human.db0}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
