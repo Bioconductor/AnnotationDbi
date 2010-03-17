@@ -582,6 +582,9 @@ popFLYDB <- function(prefix,
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
     appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBase(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBaseCG(db, subStrs=subStrs, printSchema=printSchema)
@@ -591,9 +594,6 @@ popFLYDB <- function(prefix,
     
     dbDisconnect(db)
 }
-
-
-
 
 
 
@@ -633,7 +633,7 @@ popYEASTCHIPDB <- function(affy,
     appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
     appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
-    appendYeastEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -687,7 +687,11 @@ popYEASTDB <- function(prefix,
 
     ##Append the 3 tables that come from the NCBI data
     appendExternalEG(db, subStrs=subStrs, printSchema=printSchema)  ##needed to cover case where genes table is not central... 
-    appendYeastEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl2NCBI(db, subStrs=subStrs, printSchema=printSchema)
+    appendNCBI2Ensembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
     

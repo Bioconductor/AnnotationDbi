@@ -1,6 +1,6 @@
 ### All the createAnnObjs.*_DB() functions currently support the same DB
 ### schema version (of course, each function support its own schema).
-DBSCHEMAVERSION <- "2.0"
+DBSCHEMAVERSION <- "2.1"
 
 checkDBSCHEMA <- function(dbconn, DBSCHEMA)
 {
@@ -89,6 +89,7 @@ createAnnObjs.SchemaChoice = function(schema, prefix, target, dbconn, datacache)
            "PIG_DB"  = return(AnnotationDbi:::createAnnObjs.PIG_DB(prefix, target, dbconn, datacache)),
            "CHICKEN_DB"  = return(AnnotationDbi:::createAnnObjs.CHICKEN_DB(prefix, target, dbconn, datacache)),
            "ECOLI_DB"  = return(AnnotationDbi:::createAnnObjs.ECOLI_DB(prefix, target, dbconn, datacache)),
+           "COELICOLOR_DB"  = return(AnnotationDbi:::createAnnObjs.COELICOLOR_DB(prefix, target, dbconn, datacache)),
            "ARABIDOPSIS_DB"  = return(AnnotationDbi:::createAnnObjs.ARABIDOPSIS_DB(prefix, target, dbconn, datacache)),
            "CHIMP_DB"  = return(AnnotationDbi:::createAnnObjs.CHIMP_DB(prefix, target, dbconn, datacache)),
            "RHESUS_DB"  = return(AnnotationDbi:::createAnnObjs.RHESUS_DB(prefix, target, dbconn, datacache)),

@@ -227,6 +227,42 @@ FLY_DB_AnnDbBimap_seeds <- list(
         )
     ),
     list(
+        objName="ENSEMBL",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            FLY_DB_L2Rlink1,
+            list(
+                tablename="ensembl",
+                Lcolname="_id",
+                Rcolname="ensembl_id"
+            )
+        )
+    ),
+    list(
+        objName="ENSEMBLPROT",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            FLY_DB_L2Rlink1,
+            list(
+                tablename="ensembl_prot",
+                Lcolname="_id",
+                Rcolname="prot_id"
+            )
+        )
+    ),
+    list(
+        objName="ENSEMBLTRANS",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            FLY_DB_L2Rlink1,
+            list(
+                tablename="ensembl_trans",
+                Lcolname="_id",
+                Rcolname="trans_id"
+            )
+        )
+    ),
+    list(
         objName="GO",
         Class="Go3AnnDbBimap",
         L2Rchain=list(
@@ -266,6 +302,9 @@ createAnnObjs.FLY_DB <- function(prefix, objTarget, dbconn, datacache)
     ann_objs$FLYBASE2EG <- revmap(ann_objs$FLYBASE, objName="FLYBASE2EG")
     ann_objs$FLYBASECG2EG <- revmap(ann_objs$FLYBASECG, objName="FLYBASECG2EG")
     ann_objs$FLYBASEPROT2EG <- revmap(ann_objs$FLYBASEPROT, objName="FLYBASEPROT2EG")
+    ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
+    ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
+    ann_objs$ENSEMBLTRANS2EG <- revmap(ann_objs$ENSEMBLTRANS, objName="ENSEMBLTRANS2EG")
     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
     map <- ann_objs$GO2EG
     map@rightTables <- Go3tablenames(all=TRUE)

@@ -12,19 +12,10 @@
   gene Accession Numbers.
 
   Mappings were based on data provided by BOTH of these sources:
-  \url{http://www.ensembl.org/biomart/martview/}
-  \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA}
+  \url{ftp://ftp.ensembl.org/pub/current_fasta}
 
-  This mapping is a combination of NCBI to ensembl IDs from BOTH NCBI
-  and ensembl.  Users who wish to only use mappings from NCBI are
-  encouraged to see the ncbi2ensembl table in the appropriate organism
-  package.  Users who wish to only use mappings from ensembl are
-  encouraged to see the ensembl2ncbi table which is also found in the
-  appropriate organism packages.  These mappings are based upon the ensembl
-  table which is contains data from BOTH of these sources in an effort
-  to maximize the chances that you will find a match.
-
-  Mappings were based on data provided by: @ENSEMBLSOURCE@
+  This mapping is based on ensembl IDs as mapped to entrez gene IDs
+  according to sources from ensembl.  
 }
 
 \examples{

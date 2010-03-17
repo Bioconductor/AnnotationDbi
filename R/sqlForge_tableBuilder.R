@@ -13,7 +13,7 @@ message(cat("Prepending Metadata"))
 
   ##This is where the version number for the schema is inserted.
   sql<- paste("
-    INSERT INTO metadata VALUES('DBSCHEMAVERSION', '2.0');
+    INSERT INTO metadata VALUES('DBSCHEMAVERSION', '2.1');
      ") 
   sqliteQuickSQL(db, sql)
 
@@ -2316,59 +2316,6 @@ appendYeastGene2Systematic <- function(db, subStrs, printSchema){
   makeMapCounts(db, paste("COMMON2",subStrs[["suffix"]],sep=""),"gene_name","gene2systematic","","WHERE systematic_name IS NOT NULL")
   
 }
-
-
-## Make the yeast ensembl table
-appendYeastEnsembl <- function(db, subStrs, printSchema){
-
-  message(cat("Appending Ensembl"))
-    
-  sql<- paste("    CREATE TABLE ensembl (
-      _id INTEGER NOT NULL,                         -- REFERENCES ", subStrs[["cntrTab"]],"
-      ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
-      FOREIGN KEY (_id) REFERENCES ", subStrs[["cntrTab"]]," (_id)
-    );") 
-  if(printSchema==TRUE){write(sql, file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-  sqliteQuickSQL(db, sql)
-
-  sql<- paste("
-    INSERT INTO ensembl
-     SELECT DISTINCT e._id, e.ensembl_id
-     FROM ", subStrs[["cntrTab"]]," as g INNER JOIN anno.ensembl as e
-     WHERE g._id=e._id;
-     ") 
-  sqliteQuickSQL(db, sql)
-
-  sql<- paste("    CREATE INDEX Fensembl ON ensembl (_id);") 
-  if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
-  sqliteQuickSQL(db, sql)
-
-  sql<- paste("
-    INSERT INTO map_metadata
-     SELECT * FROM anno.map_metadata
-     WHERE map_name = 'ENSEMBL';
-     ") 
-  sqliteQuickSQL(db, sql)
-
-  sql<- paste("
-    INSERT INTO map_metadata
-     SELECT * FROM anno.map_metadata
-     WHERE map_name = 'ENSEMBL2GENE';
-     ") 
-  sqliteQuickSQL(db, sql)
-
-  sql<- paste("
-    UPDATE map_metadata
-     SET map_name='ENSEMBL2",subStrs[["suffix"]],"' WHERE map_name='ENSEMBL2GENE';
-    ", sep="") 
-  sqliteQuickSQL(db, sql)
-
-  makeMapCounts(db, "ENSEMBL",subStrs[["coreID"]],subStrs[["coreTab"]],"ensembl",paste("WHERE ",subStrs[["coreTab"]],"._id=ensembl._id",sep=""))
-  makeMapCounts(db, paste("ENSEMBL2",subStrs[["suffix"]],sep=""),"ensembl_id","ensembl AS e", paste(subStrs[["coreTab"]],"AS g"),"WHERE e._id=g._id")
-  
-}
-
-
 
 
 

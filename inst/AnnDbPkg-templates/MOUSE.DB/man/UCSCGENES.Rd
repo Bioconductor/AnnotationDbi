@@ -1,6 +1,8 @@
 \name{@ANNOBJPREFIX@UCSCKG}
 \alias{@ANNOBJPREFIX@UCSCKG}
-\title{Map UCSC "Known Gene" accession numbers with Entrez Gene identifiers}  
+\title{This mapping has been deprecated and will no longer be available
+  after bioconductor 2.6.  See the details section for how you can live
+  without it.  For now, it is a map of UCSC "Known Gene" accession numbers with Entrez Gene identifiers}  
 \description{ 
   @ANNOBJPREFIX@UCSCKG is an R object that contains mappings between 
   Entrez Gene identifiers and UCSC "Known Gene" accession numbers.    
@@ -13,6 +15,13 @@
   than they are gene identifiers.  
 
   Mappings were based on data provided by: @CHRLOCSOURCE@
+  
+  This mapping is based on the very latest build available at UCSC for
+  this organism as of March 2010.  2.6 is the last release where you
+  can expect it to be here.  The GenomicFeatures package contains
+  functionality that replaces the need for this mapping.  Please see the
+  GenomicFeatures vignette for details on how to use it.
+  
 }
 
 \examples{

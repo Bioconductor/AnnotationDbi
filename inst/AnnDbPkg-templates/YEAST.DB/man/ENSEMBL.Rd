@@ -1,26 +1,23 @@
 \name{@ANNOBJPREFIX@ENSEMBL}
 \alias{@ANNOBJPREFIX@ENSEMBL}
 \alias{@ANNOBJPREFIX@ENSEMBL2ORF}
-\title{Map Ensembl gene accession numbers with Entrez Gene identifiers}  
+\title{Map Ensembl gene accession numbers with SGD Gene identifiers}  
 \description{ 
   @ANNOBJPREFIX@ENSEMBL is an R object that contains mappings between 
-  Entrez Gene identifiers and Ensembl gene accession numbers.    
+  SGD Gene identifiers and Ensembl gene accession numbers.    
 }
 \details{
-  This object is a simple mapping of Entrez Gene identifiers
-  \url{http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene} to Ensembl
+  This object is a simple mapping of SGD Gene identifiers
+  \url{ftp://genome-ftp.stanford.edu/pub/yeast/data_download} to Ensembl
   gene Accession Numbers.
   
-  Mappings were based on data provided by BOTH of these sources:
-  \url{http://www.ensembl.org/biomart/martview/}
+  Mappings were based on data provided by ALL of these sources:
+  \url{ftp://ftp.ensembl.org/pub/current_fasta}
+  \url{ftp://genome-ftp.stanford.edu/pub/yeast/data_download}
   \url{ftp://ftp.ncbi.nlm.nih.gov/gene/DATA}
 
   This mapping is a combination of NCBI to ensembl IDs from BOTH NCBI
-  and ensembl.  Users who wish to only use mappings from NCBI are
-  encouraged to see the ncbi2ensembl table in the appropriate organism
-  package.  Users who wish to only use mappings from ensembl are
-  encouraged to see the ensembl2ncbi table which is also found in the
-  appropriate organism packages.  These mappings are based upon the ensembl
+  and ensembl.  These mappings are based upon the ensembl
   table which is contains data from BOTH of these sources in an effort
   to maximize the chances that you will find a match.
 
@@ -29,7 +26,7 @@
 
 \examples{
     x <- @ANNOBJPREFIX@ENSEMBL
-    # Get the entrez gene IDs that are mapped to an Ensembl ID
+    # Get the SGD gene IDs that are mapped to an Ensembl ID
     mapped_genes <- mappedkeys(x)
     # Convert to a list
     xx <- as.list(x[mapped_genes])
@@ -43,7 +40,7 @@
     # Convert to a list
     xx <- as.list(@ANNOBJPREFIX@ENSEMBL2ORF)
     if(length(xx) > 0){
-       # Gets the entrez gene IDs for the first five Ensembl IDs
+       # Gets the SGD gene IDs for the first five Ensembl IDs
        xx[1:5]
        # Get the first one
        xx[[1]]

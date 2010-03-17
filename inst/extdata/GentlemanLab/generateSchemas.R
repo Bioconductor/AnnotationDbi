@@ -27,6 +27,7 @@ pkgs = c(
   "KEGG_DB" = "KEGG.db", 
   "PFAM_DB" = "PFAM.db",
   "INPARANOID_DB" = "hom.Hs.inp.db",
+  "COELICOLOR_DB" = "org.Sco.eg.db",
   "ANOPHELES_DB" = "org.Ag.eg.db", 
   "ARABIDOPSIS_DB" = "org.At.tair.db", 
   "BOVINE_DB" = "org.Bt.eg.db", 

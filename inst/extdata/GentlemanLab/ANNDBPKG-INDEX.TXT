@@ -1196,6 +1196,17 @@ AnnObjTarget: Chicken
 species: Chicken
 biocViews: AnnotationData, Gallus_gallus
 
+
+Package: org.Sco.eg.db
+Version: 2.3.6
+PkgTemplate: COELICOLOR.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/org.Sco.eg.sqlite
+AnnObjPrefix: org.Sco.eg
+AnnObjTarget: Streptomyces coelicolor
+species: Streptomyces coelicolor
+biocViews: AnnotationData, Streptomyces_coelicolor
+
+
 Package: org.Sc.eg.db
 Version: 2.3.6
 PkgTemplate: YEASTNCBI.DB
@@ -1204,8 +1215,6 @@ AnnObjPrefix: org.Sc.eg
 AnnObjTarget: Yeast
 species: Yeast
 biocViews: AnnotationData, Saccharomyces_cerevisiae
-
-
 
 Package: org.Pt.eg.db
 Version: 2.3.6
