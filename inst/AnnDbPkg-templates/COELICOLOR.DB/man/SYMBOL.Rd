@@ -8,7 +8,7 @@
 }
 \details{
   Each entrez gene identifier is mapped to the a common abbreviation for 
-  the corresponding gene. An \code{NA} is reported if there is no known
+  the corresponding gene. The locus tag is assigned as symbol if there is no known
   abbreviation for a given gene.
   
   Symbols typically consist of 3 letters that define either a single
