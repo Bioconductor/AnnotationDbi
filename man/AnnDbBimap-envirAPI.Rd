@@ -52,7 +52,7 @@
   #contents(object, all.names)
 
   ## Additional convenience method
-  sample(x, size, replace=FALSE, prob=NULL)
+  sample(x, size, replace=FALSE, prob=NULL, ...)
 }
 
 \arguments{

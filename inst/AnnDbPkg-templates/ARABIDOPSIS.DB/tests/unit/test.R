@@ -23,7 +23,7 @@ getGODate <- function(){
 
 getPkgDate <-function(){
   require("@PKGNAME@")
-  dbmeta(eval(call(what = paste(gsub(".db$","","@PKGNAME@"),
+  dbmeta(eval(call(name = paste(gsub(".db$","","@PKGNAME@"),
                      "_dbconn",sep=""))), "GOSOURCEDATE")
 }
 
