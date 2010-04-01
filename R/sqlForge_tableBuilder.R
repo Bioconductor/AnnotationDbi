@@ -1638,6 +1638,15 @@ appendAraCycEnzyme <- function(db, subStrs, printSchema){
      ") 
   sqliteQuickSQL(db, sql)
 
+  sql<- paste("
+    DELETE FROM enzyme
+     WHERE rowid NOT IN (
+      SELECT rowid FROM enzyme
+      GROUP BY _id, ec_name
+      HAVING min(rowid));
+     ") 
+  sqliteQuickSQL(db, sql)
+
   sql<- paste("    CREATE INDEX Fenzyme ON enzyme (_id);") 
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
