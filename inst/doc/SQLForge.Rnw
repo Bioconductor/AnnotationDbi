@@ -239,6 +239,28 @@ named after the schemas that they correspond to.  So for example
 schema, and is used to produce chip based annotation packages of that
 type.
 
+\subsection{Installing your custom package}
+
+To install your package in Unix simply use R CMD INSTALL <packageName>
+at the command line.  But if you are on Windows or Mac, you may have
+to instead use \Rfunction{install.packages} from within R.  This will
+work because this kind of simple annotation package does not contain
+any code that has to be compiled.  So you can simply call
+\Rfunction{install.packages} and set the repos parameter to NULL and
+the type parameter to "source". The final R command will look
+something like this:
+
+<<install, eval=FALSE>>=
+install.packages("packageNameAndPath", repos=NULL, type="source")
+@ 
+
+Of course, you still have to type the path to your source directory
+correctly as the 1st argument.  It is recommended that you use the
+autocomplete feature in R as you enter it so that you get the path
+specified correctly.
+
+
+
 \section{For Advanced users: How to add extra data into your packages}
 
 Sometimes you may find that you want to add extra supplementary data
