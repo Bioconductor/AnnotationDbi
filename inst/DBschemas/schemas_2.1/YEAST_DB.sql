@@ -111,6 +111,26 @@ CREATE TABLE ensembl (
       ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
       FOREIGN KEY (_id) REFERENCES  sgd  (_id)
     );
+CREATE TABLE ensembl2ncbi (
+      _id INTEGER NOT NULL,                         -- REFERENCES  sgd 
+      ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
+      FOREIGN KEY (_id) REFERENCES  sgd  (_id)
+    );
+CREATE TABLE ncbi2ensembl (
+      _id INTEGER NOT NULL,                         -- REFERENCES  sgd 
+      ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
+      FOREIGN KEY (_id) REFERENCES  sgd  (_id)
+    );
+CREATE TABLE ensembl_prot (
+      _id INTEGER NOT NULL,                          -- REFERENCES  sgd 
+      prot_id VARCHAR(20) NOT NULL,                  -- Ensembl Protein ID
+      FOREIGN KEY (_id) REFERENCES  sgd  (_id)
+    );
+CREATE TABLE ensembl_trans (
+      _id INTEGER NOT NULL,                          -- REFERENCES  sgd 
+      trans_id VARCHAR(20) NOT NULL,                  -- Ensembl Transcript ID
+      FOREIGN KEY (_id) REFERENCES  sgd  (_id)
+    );
 CREATE TABLE uniprot (
       _id INTEGER NOT NULL,                         -- REFERENCES  sgd 
       uniprot_id VARCHAR(20) NOT NULL,              -- uniprot id
@@ -147,5 +167,9 @@ CREATE INDEX Fsmart ON smart (_id);
 CREATE INDEX Finterpro ON interpro (_id);
 CREATE INDEX Fgene ON genes(_id);
 CREATE INDEX Fensembl ON ensembl (_id);
+CREATE INDEX Fensembl2ncbi ON ensembl2ncbi (_id);
+CREATE INDEX Fncbi2ensembl ON ncbi2ensembl (_id);
+CREATE INDEX Fensemblp ON ensembl_prot (_id);
+CREATE INDEX Fensemblt ON ensembl_trans (_id);
 CREATE INDEX Funiprot ON uniprot (_id);
 CREATE INDEX Frefseq ON refseq (_id);

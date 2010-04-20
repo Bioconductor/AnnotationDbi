@@ -22,8 +22,6 @@ cleanSrcMap <- function(file) {
     insVals
 }
 
-
-
 cleanRefSeqs <- function(baseMap){
     baseMap = as.matrix(baseMap)
     baseMap[,2] = sub("\\.\\d+?$", "", baseMap[,2], perl=TRUE)
@@ -48,10 +46,13 @@ makeBaseMaps <- function(csvFileName,
     ##1st read it in.
     csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", colClasses="character")
     #Then look at the 1st line and if not ok, then TRY AGAIN and skip the 1st 12 lines...
-    if(length(grep("Probe.+?Set.+?ID",colnames(csvFile)[1], perl=TRUE))==0){
-        csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", 
-                            colClasses="character", skip = 12)        
-    }
+    ## if(length(grep("Probe.+?Set.+?ID",colnames(csvFile)[1], perl=TRUE))==0){
+    ##     csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", 
+    ##                         colClasses="character", skip = 12)        
+    ## }
+    dataStart = grep("Probe.+?Set.+?ID",csvFile[,1],perl=TRUE)
+    csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---",colClasses="character", skip = dataStart)
+    
     probe <- csvFile[,1]
     gb <- csvFile[, GenBankIDName]
     eg <- csvFile[, EntrezGeneIDName]

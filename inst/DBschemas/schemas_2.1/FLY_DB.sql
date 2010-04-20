@@ -112,6 +112,21 @@ CREATE TABLE alias (
       alias_symbol VARCHAR(80) NOT NULL,            -- gene symbol or alias
       FOREIGN KEY (_id) REFERENCES  genes  (_id)
     );
+CREATE TABLE ensembl (
+      _id INTEGER NOT NULL,                         -- REFERENCES  genes 
+      ensembl_id VARCHAR(20) NOT NULL,              -- ensembl id
+      FOREIGN KEY (_id) REFERENCES  genes  (_id)
+    );
+CREATE TABLE ensembl_prot (
+      _id INTEGER NOT NULL,                          -- REFERENCES  genes 
+      prot_id VARCHAR(20) NOT NULL,                  -- Ensembl Protein ID
+      FOREIGN KEY (_id) REFERENCES  genes  (_id)
+    );
+CREATE TABLE ensembl_trans (
+      _id INTEGER NOT NULL,                          -- REFERENCES  genes 
+      trans_id VARCHAR(20) NOT NULL,                  -- Ensembl Transcript ID
+      FOREIGN KEY (_id) REFERENCES  genes  (_id)
+    );
 CREATE TABLE uniprot (
       _id INTEGER NOT NULL,                         -- REFERENCES  genes 
       uniprot_id VARCHAR(20) NOT NULL,              -- uniprot id
@@ -158,6 +173,9 @@ CREATE INDEX Fkegg ON kegg (_id);
 CREATE INDEX Fec ON ec (_id);
 CREATE INDEX Fchromosome_locations ON chromosome_locations (_id);
 CREATE INDEX Falias ON alias (_id);
+CREATE INDEX Fensembl ON ensembl (_id);
+CREATE INDEX Fensemblp ON ensembl_prot (_id);
+CREATE INDEX Fensemblt ON ensembl_trans (_id);
 CREATE INDEX Funiprot ON uniprot (_id);
 CREATE INDEX Fflybase ON flybase (_id);
 CREATE INDEX Fflybasecg ON flybase_cg (_id);
