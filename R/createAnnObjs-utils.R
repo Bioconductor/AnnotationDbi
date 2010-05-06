@@ -291,3 +291,24 @@ makeSeedList <- function(species, fields)
 
     INPARANOID_DB_AnnDbBimap_seeds   
 }
+
+
+##Define helpful startup messages for especially ornery packages:
+annoStartupMessages <- function(type){
+  msg <- switch(type,           
+                "exon_probeset" = paste("\n This package is based on exon",
+                  "probesets. For a more gene-centric view, use the",
+                  "transcriptcluster version of this package."),
+                "unsupported" = paste("\n Users are warned that some or all of",
+                  "the manufacturer supplied files that this package is based",
+                  "on have been labeled as unsupported by their sources"),
+                "lumi" = paste("This package is using or is likely to need",
+                  "access to special nuID identifiers.  Users can learn about",
+                  "these identifiers from vignette documentation provided with",
+                  "the lumi package.")
+                )
+
+  msg <- paste("\n",paste(strwrap(msg, exdent=2),collapse="\n"),
+               "\n",sep="")
+
+}
