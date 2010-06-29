@@ -80,6 +80,14 @@ AnnObjPrefix: hgu133plus2
 species: Human
 manufacturer: Affymetrix
 
+Package: hgu219.db
+Version: 2.4.3
+PkgTemplate: HUMANCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/hgu219.sqlite
+AnnObjPrefix: hgu219
+species: Human
+manufacturer: Affymetrix
+
 Package: hgu95a.db
 Version: 2.4.3
 PkgTemplate: HUMANCHIP.DB
