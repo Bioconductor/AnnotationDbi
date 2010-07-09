@@ -8,7 +8,7 @@ message(cat("Prepending Metadata"))
       value VARCHAR(255))
     ;")
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""))}
- #  sqliteQuickSQL(db, sql) This table was set up in the previous step (was always set up before this)
+  sqliteQuickSQL(db, sql) ##This table was set up in the previous step (was always set up before this) ==> NO apparently it was NOT!
  # TODO: move this printschema statement to the makeBaseMaps section.
 
   ##This is where the version number for the schema is inserted.
@@ -123,8 +123,7 @@ message(cat("Prepending Metadata"))
   sqliteQuickSQL(db, sql)
 
 
-
-  sql<- paste("    CREATE TABLE map_metadata (
+  sql<- paste("    CREATE TABLE IF NOT EXISTS map_metadata (
       map_name VARCHAR(80) NOT NULL,
       source_name VARCHAR(80) NOT NULL,
       source_url VARCHAR(255) NOT NULL,
@@ -133,7 +132,7 @@ message(cat("Prepending Metadata"))
   if(printSchema==TRUE){write(paste(sql,"\n"), file=paste(subStrs[["outDir"]],"/",subStrs[["prefix"]],".sql", sep=""), append=TRUE)}
   sqliteQuickSQL(db, sql)
 
-  sql<- paste("    CREATE TABLE map_counts (
+  sql<- paste("    CREATE TABLE IF NOT EXISTS map_counts (
       map_name VARCHAR(80) PRIMARY KEY,
       count INTEGER NOT NULL
     );")
@@ -176,7 +175,7 @@ appendGenes <- function(db, subStrs, printSchema){
   sqliteQuickSQL(db, sql)
 
 
-  sqliteQuickSQL(db, "ANALYZE;")
+  ##sqliteQuickSQL(db, "ANALYZE;")
 
   #Get only map_metadata for this table at this time:
   sql<- paste("
@@ -2637,8 +2636,8 @@ appendPostMeta <- function(db, subStrs){
 
   #we ALWAYS have to drop the base "probe map"
   sqliteQuickSQL(db, "DROP TABLE probe_map;")
-  sqliteQuickSQL(db, "VACUUM probe_map;")
-  sqliteQuickSQL(db, "ANALYZE;")  
+  ##sqliteQuickSQL(db, "VACUUM probe_map;")
+  ##sqliteQuickSQL(db, "ANALYZE;")  
 }
 
 
@@ -2729,7 +2728,7 @@ appendGeneric <- function(db, subStrs, printSchema, table, matchID, field, fileN
   #print(sql)
   sqliteQuickSQL(db, sql)
   
-}
+} 
 
 
 
@@ -2921,7 +2920,7 @@ dropRedundantTables <- function(db, subStrs){
       sql <- paste("DROP TABLE ",list[[i]],";",sep="")
       sqliteQuickSQL(db, sql)
   }
-  sqliteQuickSQL(db, "VACUUM;")
+  ## sqliteQuickSQL(db, "VACUUM;")
 }
 
 

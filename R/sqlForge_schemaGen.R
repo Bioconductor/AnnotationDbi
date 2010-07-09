@@ -67,9 +67,10 @@ popHUMANCHIPDB <- function(affy,
     appendPostMeta(db, subStrs=subStrs)
     
     simplifyProbes(db, subStrs=subStrs)
-    dropRedundantTables(db, subStrs=subStrs)
-    
+    dropRedundantTables(db, subStrs=subStrs)    
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -122,6 +123,8 @@ popHUMANDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -197,6 +200,8 @@ popMOUSECHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -249,6 +254,8 @@ popMOUSEDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -323,6 +330,8 @@ popRATCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 #This is the formula for RAT_DB  
@@ -372,6 +381,8 @@ popRATDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -425,6 +436,8 @@ popARABIDOPSISCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db, subStrs=subStrs, printSchema=printSchema)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -465,6 +478,8 @@ popARABIDOPSISDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db, subStrs=subStrs, printSchema=printSchema)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -542,6 +557,8 @@ popFLYCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -593,6 +610,8 @@ popFLYDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -641,6 +660,8 @@ popYEASTCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -698,6 +719,8 @@ popYEASTDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -733,6 +756,8 @@ popMALARIADB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -806,6 +831,8 @@ popZEBRAFISHCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -856,6 +883,8 @@ popZEBRAFISHDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -922,6 +951,8 @@ popECOLICHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -959,6 +990,8 @@ popECOLIDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1037,6 +1070,8 @@ popCANINECHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1084,6 +1119,8 @@ popCANINEDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1158,6 +1195,8 @@ popBOVINECHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1207,6 +1246,8 @@ popBOVINEDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1280,6 +1321,8 @@ popWORMCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1326,6 +1369,8 @@ popWORMDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1400,6 +1445,8 @@ popPIGCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1443,6 +1490,8 @@ popPIGDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1519,6 +1568,8 @@ popCHICKENCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
         
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1569,6 +1620,8 @@ popCHICKENDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1629,6 +1682,8 @@ popCHIMPDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1680,6 +1735,8 @@ popRHESUSDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1731,6 +1788,8 @@ popANOPHELESDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1810,6 +1869,8 @@ popXENOPUSCHIPDB <- function(affy,
     dropRedundantTables(db, subStrs=subStrs)
 
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1861,6 +1922,8 @@ popXENOPUSDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
 }
 
 
@@ -1923,6 +1986,8 @@ popYEASTNCBIDB <- function(prefix,
     appendPostMeta(db, subStrs=subStrs)
     
     dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)
 }
 
 
@@ -1996,6 +2061,13 @@ generate.schema <- function(name = "HUMANCHIP_DB", pkg = "hgu95av2.db", path = "
 
 
 
+analyzeVacuumDisconnect <- function(drv,outputDir,prefix){
+  db <- dbConnect(drv, dbname = file.path(outputDir,
+                  paste(prefix,".sqlite", sep="")) )
+  sqliteQuickSQL(db, "ANALYZE;")
+  sqliteQuickSQL(db, "VACUUM;")
+  dbDisconnect(db)  
+}
 
 
 
