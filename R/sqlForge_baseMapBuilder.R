@@ -50,8 +50,8 @@ makeBaseMaps <- function(csvFileName,
     ##     csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", 
     ##                         colClasses="character", skip = 12)        
     ## }
-    dataStart = grep("Probe.+?Set.+?ID",csvFile[,1],perl=TRUE)
-    csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---",colClasses="character", skip = dataStart)
+##     dataStart = grep("Probe.+?Set.+?ID",csvFile[,1],perl=TRUE)
+##     csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---",colClasses="character", skip = dataStart)
     
     probe <- csvFile[,1]
     gb <- csvFile[, GenBankIDName]
