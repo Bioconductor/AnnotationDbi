@@ -23,7 +23,8 @@ exclude <- c(
     "ratCHRLOC.sqlite",
     "flyCHRLOC.sqlite"
 )
-
+orgs = list.files(srcdir, pattern="^org")
+exclude = c(exclude, orgs)
 sqlitefiles <- list.files(srcdir, pattern="\\.sqlite$")
 sqlitefiles <- sqlitefiles[!(sqlitefiles %in% exclude)]
 pkgs <- paste(substr(sqlitefiles, 1, nchar(sqlitefiles)-7), ".db", sep="")

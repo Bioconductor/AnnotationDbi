@@ -310,7 +310,7 @@ with those entrez gene IDs.
 
 \Rpackage{org.Hs.eg.db} packages.
 <<Question #3, echo=FALSE, results=hide>>=
-rs = ls(revmap(org.Hs.egREFSEQ))[1:3]
+rs = ls(revmap(org.Hs.egREFSEQ))[4:6]
 EGs = mget(rs, revmap(org.Hs.egREFSEQ), ifnotfound=NA)
 ##Then get the GO terms.
 GOs = mget(unlist(EGs), org.Hs.egGO, ifnotfound=NA)

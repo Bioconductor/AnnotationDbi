@@ -4,7 +4,7 @@ Description: @PKGTITLE@ assembled using data from public repositories
 Version: @PKGVERSION@
 Author: @AUTHOR@
 Maintainer: @MAINTAINER@
-Depends: R (>= 2.7.0), methods, AnnotationDbi (>= @ANNDBIVERSION@), org.Bt.eg.db
+Depends: R (>= 2.7.0), methods, AnnotationDbi (>= @ANNDBIVERSION@), org.Bt.eg.db (>= @ORGVERSION@)
 Suggests: annotate
 Imports: methods, AnnotationDbi
 License: @LIC@

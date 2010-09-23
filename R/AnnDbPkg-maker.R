@@ -226,6 +226,7 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
           template_path <- x@PkgTemplate
         }
         ann_dbi_version <- installed.packages()['AnnotationDbi','Version']
+        org_version <- installed.packages()['org.Hs.eg.db','Version']
         symvals <- list(
             DBSCHEMA=x@DBschema,
             PKGTITLE=x@Title,
@@ -242,7 +243,8 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
             LIC=x@License,
             BIOCVIEWS=x@biocViews,
             DBFILE=dbfile_basename,
-            ANNDBIVERSION=ann_dbi_version
+            ANNDBIVERSION=ann_dbi_version,
+            ORGVERSION=org_version
         )
         man_dir <- file.path(template_path, "man")
         if (file.exists(man_dir)) {
