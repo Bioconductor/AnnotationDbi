@@ -192,8 +192,8 @@
 
         #Then use the mouse organism based packages to convert these IDs
         #back to an Entrez Gene ID again (this time for mouse). 
-        mouseEGIds <- mget(unlist(mouseProtIds),org.Mm.egMGI2EG,ifnotfound=NA)
-
+        mouseEGIds <- mget(unlist(mouseProtIds),
+                           org.Mm.egENSEMBLPROT2EG,ifnotfound=NA)
         #Now go ahead and have a look at the output
         mouseEGIds
     }

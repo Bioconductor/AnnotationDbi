@@ -1,4 +1,3 @@
-suppressMessages(library("hgu95av2.db"))
 suppressMessages(library("RUnit"))
 
 options(warn=1)
