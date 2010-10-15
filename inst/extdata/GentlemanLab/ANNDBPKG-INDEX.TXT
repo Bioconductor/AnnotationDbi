@@ -1083,6 +1083,39 @@ manufacturer: Affymetrix
 
 
 
+### =========================================================================
+### ECOLICHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: ECOLICHIP.DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+Package: ecoli2.db
+Version: 2.4.6
+PkgTemplate: ECOLICHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/ecoli2.sqlite
+AnnObjPrefix: ecoli2
+species: Escherichia coli
+manufacturer: Affymetrix
+
+
+
+
+
+
 
 
 ### =========================================================================

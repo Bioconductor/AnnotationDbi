@@ -305,7 +305,12 @@ annoStartupMessages <- function(type){
                 "lumi" = paste("This package is using or is likely to need",
                   "access to special nuID identifiers.  Users can learn about",
                   "these identifiers from vignette documentation provided with",
-                  "the lumi package.")
+                  "the lumi package."),
+                "partial" = paste("This package is providing annotations for",
+                  "only one of the species that are supported by this",
+                  "platform. You may want to get other annotations from other",
+                  "sources/packages in order to cover all the species that are",
+                  "represented by probes on this platform.")
                 )
 
   msg <- paste("\n",paste(strwrap(msg, exdent=2),collapse="\n"),
