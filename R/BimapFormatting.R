@@ -92,7 +92,7 @@
 .formatList <- function(x, names, replace.single=NULL, replace.multiple=NULL)
 {
     if (length(x) != 0)
-        x <- l2e(x)
+        x <- list2env(x)
     doReplaceSingle <- length(replace.single) != 0L
     doReplaceMultiple <- length(replace.multiple) != 0L
     formatVal <- function(key)
@@ -357,7 +357,7 @@ setMethod("as.list", "GOTermsAnnDbBimap",
 
 .alignAnnList <- function(ann_list, keys)
 {
-    y <- l2e(ann_list)
+    y <- list2env(ann_list)
     key2val <- function(key)
     {
         val <- y[[key]]

@@ -277,7 +277,7 @@ setMethod("revmap", "AnnDbBimap",
 )
 
 setMethod("revmap", "environment",
-    function(x) l2e(reverseSplit(as.list(x)))
+    function(x) list2env(reverseSplit(as.list(x)))
 )
 
 setMethod("revmap", "list",
