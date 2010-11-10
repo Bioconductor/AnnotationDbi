@@ -1,4 +1,3 @@
-
 ## Just a utility to prevent empty IDs from ever causing any more mayhem
 cleanSrcMap <- function(file) {
     fileVals <- read.delim(file=file, header=FALSE, sep="\t", quote="", colClasses = "character")
@@ -37,22 +36,32 @@ printOutBaseMaps <- function(baseMap, pkgName, otherSrcObjs){
     }
 }
 
+
+## scrubs Affy file of comments and returns a data.frame that is free of them
+scrubAffyFileComments <- function(file){
+  ## 1st use readLines to pull in file and clean out the cruft.
+  con <- file(file)
+  rows <- readLines(con)
+  filtInd <- grep("^#", rows)
+  if(length(filtInd)>0){## check if there were actually any comments
+    rows <- rows[-filtInd] ##if so, remove those lines.
+  }
+  tmpFl <- tempfile()
+  write(rows, file=tmpFl)
+  res <- read.csv(tmpFl, as.is=TRUE, na.strings="---", colClasses="character")
+  unlink(tmpFl)
+  close(con)
+  res
+}
+
 makeBaseMaps <- function(csvFileName,
                           GenBankIDName="Representative.Public.ID",
                           EntrezGeneIDName="Entrez.Gene",
                           targetDir="."
                           ) {
-    ##in the case where we have read in an affy file, we want to 1st check to see if that file has or has not already had the 1st 12 lines removed.
-    ##1st read it in.
-    csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", colClasses="character")
-    #Then look at the 1st line and if not ok, then TRY AGAIN and skip the 1st 12 lines...
-    ## if(length(grep("Probe.+?Set.+?ID",colnames(csvFile)[1], perl=TRUE))==0){
-    ##     csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", 
-    ##                         colClasses="character", skip = 12)        
-    ## }
-##     dataStart = grep("Probe.+?Set.+?ID",csvFile[,1],perl=TRUE)
-##     csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---",colClasses="character", skip = dataStart)
-    
+    ##csvFile <- read.csv(csvFileName, as.is=TRUE, na.strings="---", colClasses="character")
+    csvFile <- scrubAffyFileComments(csvFileName)
+      
     probe <- csvFile[,1]
     gb <- csvFile[, GenBankIDName]
     eg <- csvFile[, EntrezGeneIDName]
@@ -260,6 +269,7 @@ probe2gene <- function(baseMap, otherSrc,
 }
 
 
+
 getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc, chipSrc, 
 				otherSrc=character(0),
 				baseMapType="gbNRef", 
@@ -278,13 +288,9 @@ getMapForBiocChipPkg <- function(csvFileName, pkgName, chipMapSrc, chipSrc,
     }
     #The 1st item in baseMaps is always the genbank ID
     if (baseMapType == "eg"){
-        ##baseMap <- cleanSrcMap(egMapFile)
         baseMap <- as.data.frame(baseMaps[[2]])
     } else {
-        ##baseMap <- cleanSrcMap(gbMapFile)
         baseMap <- as.data.frame(baseMaps[[1]])
-        ##otherSrc <- c(egMapFile, otherSrc)
-        ##this part should be ok, but an issue is creeping in from above...
         otherSrcObjs[[length(otherSrcObjs) + 1]] <- as.data.frame(baseMaps[[2]])
     }
     
