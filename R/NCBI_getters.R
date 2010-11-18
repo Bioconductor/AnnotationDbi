@@ -130,19 +130,52 @@ getGeneStuff <- function(x){
 ##      stop("This is not the ID you are looking for")
   speciesName <- unlist(xpathApply(res, "//Org-ref_taxname", xmlValue))
 
-  ## pubmed IDs
+  ## miniDocs are the individual entrez Gene records
   miniDocs <- lapply(getNodeSet(res, "//Entrezgene"), xmlDoc)
+  
+  ## pubmed IDs
   pmidPath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId"
   pmids <- lapply(miniDocs, function(x)
                   unlist(xpathApply(x, pmidPath, xmlValue)))
 
+  ## TODO: get chrome installed in case it can help
+  ## TODO: put will have to subset each miniDoc into subnodes and then
+  ## retrieve just the onest that meet the criteria for GO etc.
+
+  ## This will retrieve just the GO IDs
+  GOIDPath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_id"
+  GOids <- lapply(miniDocs, function(x)
+                  unlist(xpathApply(x, GOIDPath, xmlValue)))
+
+  ## But really, I want to do better, I want to select out the sub-nodes that
+  ## have "GO" in them, and then pull out the IDs, and not rely on the path to
+  ## be unique for the GO terms (when it might also be similar for say KEGG
+  ## terms)
+
   
   
-                  
+  
+  ## Data sanity checks:
+  ## All genes should be from the same critter:
+  ## TODO: move the checks on EG uniqueness to outside of this function
+  if(length(unique(entrezGeneID)) != length(entrezGeneID))
+     stop("Some of the entrez gene IDs have been repeated.")
+  if(length(unique(speciesName))>1)
+    stop("The IDs being processed need to all be from the same species.")
+     
+  ## The following checks can stay at this level though
+  if(unique(entrezGeneID %in% x) %in% FALSE) ##if any don't match
+    stop("The entrez Genes discovered don't match the IDs being looked up!")
+  if(length(x) > length(entrezGeneID))
+    warning("Some of the entrez Genes beings sought were not found.")
+  if(length(entrezGeneID) > length(x))
+    stop("There are more EGs being found than we expected.")
+  
   ## return a list of things
   list(entrez = entrezGeneID,
        species = speciesName,
-       pmids = pmids)
+       pmids = pmids,
+       GOids = GOids)
   
 }
 
