@@ -24,77 +24,101 @@
 
 
 
-
-
-## What I want is almost certainly something more like this.  Do I want x to
-## be 1 or 500 things?  I think i want it to be 500.  So then how can I
-## separate these elements from each other???
-## For now, it seems I *may* need to make it so that x is just one thing,
-## since I don't have a good way within the XML that comes back, of finding
-## which things from a 1:many relationship (like pmid) belong to which gene...
+## ## Helper function to get subsets of the XML.
+## .getMiniDocs <- function(set, xmlPath){
+##   lapply(getNodeSet(set, xmlPath), xmlDoc)
+## }
 
 
 ## getGeneStuff <- function(x){
-##   require(XML)
+##   #require(XML)
 ##   baseUrl <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
 ##   xsep <- paste(x, collapse=",")
 ##   url <- paste(baseUrl,"db=gene&id=",xsep,"&retmode=xml", sep="")
-  
-  
-##   ## NOW we have to parse some XML
-##   res <- xmlParse(url)
+    
+##   ## NOW we have to parse the available XML
+##   EGSet <- xmlParse(url)
 ##   ## And then just grab back out everything we possibly can...
-##   entrezGeneID <- unlist(xpathApply(res, "//Gene-track_geneid", xmlValue))
+##   entrezGeneID <- unlist(xpathApply(EGSet, "//Gene-track_geneid", xmlValue))
 ##   ## TODO: vectorize the following check (or decide on a different strategy)
 ## ##   if(entrezGeneID != as.character(x))
 ## ##      stop("This is not the ID you are looking for")
-##   speciesName <- unlist(xpathApply(res, "//Org-ref_taxname", xmlValue))
+##   speciesName <- unlist(xpathApply(EGSet, "//Org-ref_taxname", xmlValue))
 
-##   pmNodes <- getNodeSet(res, "//Entrezgene")
-##   ##xmlGetAttr
-##   ##xmlValue
-##   ##pmids <- sapply(pmNodes, xpathApply, "//PubMedId", xmlValue)
-
-##   ## length(unlist(xpathApply(pmNodes[[1]], "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId", xmlValue)))
-
-##   ## test <- sapply(pmNodes, xmlValue, "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId")
-
-##   ## test <- sapply(pmNodes, xmlValue, "//PubMedId")
-
-##   ## closer (except that xpathApply is using ONLY the entire tree to search
-##   ## which puts us back to square 1)
-##   ## tst <- sapply(pmNodes, function(x) xpathApply(x, "//PubMedId", xmlValue))
-  
+##   ## miniDocs are the individual entrez Gene records
+##   ##miniDocs <- lapply(getNodeSet(EGSet, "//Entrezgene"), xmlDoc)
+##   miniDocs <- .getMiniDocs(EGSet, "//Entrezgene")
     
-## ## So this is getting closer as we now know that we must xmlDoc() our nodes.
-## ##   tst <- lapply(pmNodes, function(x) unlist(xpathApply(xmlDoc(x),
-## ##                                                        "//PubMedId", xmlValue)))
-
-##   ## NOW lets just get this thing to be more specific:
+##   ## pubmed IDs
 ##   pmidPath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId"
-##   tst <- lapply(pmNodes, function(x) unlist(xpathApply(xmlDoc(x),
-##                                                        pmidPath, xmlValue)))
+##   pmids <- lapply(miniDocs, function(x)
+##                   unlist(xpathApply(x, pmidPath, xmlValue)))
+
+##   ## TODO: get chrome installed in case it can help
+##   ## TODO: put will have to subset each miniDoc into subnodes and then
+##   ## retrieve just the onest that meet the criteria for GO etc.
+
+## ##   ## This will retrieve just the GO IDs
+## ##   GOIDPath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_id"
+## ##   GOids <- lapply(miniDocs, function(x)
+## ##                   unlist(xpathApply(x, GOIDPath, xmlValue)))
+
+##   ## But really, I want to do better, I want to select out the sub-nodes that
+##   ## have "GO" in them, and then pull out the IDs, and not rely on the path to
+##   ## be unique for the GO terms (when it might also be similar for say KEGG
+##   ## terms)
 
   
-                  
+##   ## TODO: I need to check that each GOnode has a <Dbtag_db>"GO"</Dbtag_db>
+  
+##   GONodePath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source//Other-source"
+##   ##goNodes <- getNodeSet(EGSet, GONodePath)
+##   ##miniGOs <- lapply(getNodeSet(EGSet, GONodePath), xmlDoc)
+##   miniGOs <- lapply(miniDocs, .getMiniDocs, GONodePath)  
+  
+##   GOIDPath <- "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_id"
+##   GOEvidencePath <- "/Other-source/Other-source_post-text"
+##   GOids <- lapply(miniGOs[[1]], function(x)
+##                   unlist(xpathApply(x, GOIDPath, xmlValue)))
+##   ##I really need to do a double loop to extract this because of the double
+##   ##list (wrap below operation into a function we can call).  And even then, I
+##   ##still have to check that it's a GO ID each time Call all three functions
+##   ##together and check output of the GO getting one 1st). I am not sure that
+##   ##it isn't just simpler to just extract out all the terms as was done above
+##   ##(much more simply) and then to just cbind them all into a data.frame and
+##   ##then remove rows that didn't cooperate.  Especially since I will want to
+##   ##have them in a data.frame eventually anyhow.
+##   GOEvidCodes <- lapply(miniGOs[[1]], function(x)
+##                   unlist(xpathApply(x, GOEvidencePath, xmlValue)))
+  
+  
+##   ## Data sanity checks:
+##   ## All genes should be from the same critter:
+##   ## TODO: move the checks on EG uniqueness to outside of this function
+##   if(length(unique(entrezGeneID)) != length(entrezGeneID))
+##      stop("Some of the entrez gene IDs have been repeated.")
+##   if(length(unique(speciesName))>1)
+##     stop("The IDs being processed need to all be from the same species.")
+     
+##   ## The following checks can stay at this level though
+##   if(unique(entrezGeneID %in% x) %in% FALSE) ##if any don't match
+##     stop("The entrez Genes discovered don't match the IDs being looked up!")
+##   if(length(x) > length(entrezGeneID))
+##     warning("Some of the entrez Genes beings sought were not found.")
+##   if(length(entrezGeneID) > length(x))
+##     stop("There are more EGs being found than we expected.")
+  
 ##   ## return a list of things
 ##   list(entrez = entrezGeneID,
 ##        species = speciesName,
-##        pmids = pmids)
+##        pmids = pmids,
+##        GOids = GOids)
   
 ## }
 
 
 
 
-## And there is also the SLOW solution...  but we don't want that...
-## OR the slow solution...  (takes 12 minutes for 1000 records which is
-## probably too slow for 40,000 records)
-
-## system.time(lapply(egs, getGeneStuff))
-
-
-## More TODO: make something to retrieve the EGs from a taxid
 
 
 
@@ -112,6 +136,115 @@
 
 
 
+
+
+
+
+
+
+## helper for padding GOIds
+padGOIds <- function(GOIds){
+  pads <- 7-nchar(GOIds)
+  res<-character(length(GOIds))
+  for(i in seq_len(length(GOIds))){
+    res[i] <- paste(paste(rep("0",pads[i]),collapse=""),GOIds[i],sep="")
+  }
+  paste("GO:",res,sep="")
+}
+
+## helper function to retrieve a data.frame with GO info.
+## At some point, the XML may change and require a strategy more like is
+## adopted for retrieving the KEGG IDs
+getGOInfo <- function(doc){
+
+  ## This will retrieve just the GO IDs
+  GOIDPath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_id"
+  GOIds <- unlist(xpathApply(doc, GOIDPath, xmlValue))
+  GOIds <- padGOIds(GOIds)
+
+  ## This will retrieve just the GO Evidence codes
+  GOEviPath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source/Other-source_post-text"
+  GOEvidence <- unlist(xpathApply(doc, GOEviPath, xmlValue))
+  GOEvidence <- gsub("evidence: ", "", GOEvidence)
+
+  ## This will retrieve what kind of annotation it is (sanity check
+  GOPath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source/Other-source_src/Dbtag/Dbtag_db"
+  GOStatus <- unlist(xpathApply(doc, GOPath, xmlValue))
+
+  ##Assemble these into a data.frame and filter
+  result <- data.frame(GOId=GOIds, evidenceCode=GOEvidence, dataType=GOStatus,
+                       stringsAsFactors=FALSE)
+  result <- result[grep("GO", result[,3]),]
+  result[,1:2]
+}
+
+
+
+#####################################################################
+## helper functions for retrieving KEGG data. (NOT simpler than GO!)
+
+## Generic way to get src Docs
+
+.getOtherSrcDocs <- function(doc){
+  ## for each doc, get other Source nodes and make mini-docs
+  otherSourcePath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source"
+  srcDocs <- lapply(getNodeSet(doc, otherSourcePath), xmlDoc)
+  srcDocs
+}
+
+## retrieve Db tag from such an other source doc.
+.getDBTag <- function(srcDoc){
+  dbTagPath <- "/Other-source/Other-source_src/Dbtag/Dbtag_db"
+  dbTag <- unlist(xpathApply(srcDoc, dbTagPath, xmlValue))
+  if(is.null(dbTag)) dbTag <- "Bummer, the dbTag is NULL."
+  dbTag
+}
+
+getKEGGInfo <- function(doc){
+
+##   ## This will retrieve just the KEGG IDs
+##   KEGGIDPath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_str"
+##   KEGGIds <- unlist(xpathApply(doc, KEGGIDPath, xmlValue))
+
+##   ## This will retrieve the kind of annotation (sanity check again)
+##   KEGGPath <-"/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source/Other-source_src/Dbtag/Dbtag_db"
+##   KEGGStatus <- unlist(xpathApply(doc, KEGGPath, xmlValue))
+  
+##   ##Assemble these into a data.frame and filter
+##   result <- data.frame(KEGGId=KEGGIds, dataType=KEGGStatus,
+##                        stringsAsFactors=FALSE)
+##   result <- result[grep("KEGG", result[,2]),]
+##   result[,1] ## I probably want to leave it as a df.. (for later when I go to add it to a DB)
+
+
+  ## New strategy.  We have to check as we go and only retrieve things that
+  ## match
+  srcDocs <- .getOtherSrcDocs(doc)
+
+  ## This is the path for a source node to get the KEGG info (if its a KEGG
+  ## doc)
+  KEGGIDPath <- "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_str"
+
+##   KEGGIDs = character()
+##   for(i in seq_len(length(srcDocs))){
+##     if(.getDBTag(srcDocs[[i]])=="KEGG"){
+##       KEGGIDs = c(KEGGIDs,
+##         unlist(xpathApply(srcDocs[[i]], KEGGIDPath, xmlValue)))
+##     }
+##   }
+  
+  checkNode <- function(doc){
+    if(.getDBTag(doc)=="KEGG"){
+      return(unlist(xpathApply(doc, KEGGIDPath, xmlValue)))
+    }
+  }
+  KEGGIDs <- unlist(lapply(srcDocs, checkNode))
+  
+  KEGGIDs
+}
+
+## TODO: switch to gathering the KEGG pathway data (instead of just the KEGG
+## ID)- also useful just not what we want.
 
 
 
@@ -122,37 +255,25 @@ getGeneStuff <- function(x){
   url <- paste(baseUrl,"db=gene&id=",xsep,"&retmode=xml", sep="")
     
   ## NOW we have to parse the available XML
-  res <- xmlParse(url)
+  EGSet <- xmlParse(url)
   ## And then just grab back out everything we possibly can...
-  entrezGeneID <- unlist(xpathApply(res, "//Gene-track_geneid", xmlValue))
+  entrezGeneID <- unlist(xpathApply(EGSet, "//Gene-track_geneid", xmlValue))
   ## TODO: vectorize the following check (or decide on a different strategy)
 ##   if(entrezGeneID != as.character(x))
 ##      stop("This is not the ID you are looking for")
-  speciesName <- unlist(xpathApply(res, "//Org-ref_taxname", xmlValue))
+  speciesName <- unlist(xpathApply(EGSet, "//Org-ref_taxname", xmlValue))
 
   ## miniDocs are the individual entrez Gene records
-  miniDocs <- lapply(getNodeSet(res, "//Entrezgene"), xmlDoc)
-  
-  ## pubmed IDs
-  pmidPath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId"
-  pmids <- lapply(miniDocs, function(x)
-                  unlist(xpathApply(x, pmidPath, xmlValue)))
-
-  ## TODO: get chrome installed in case it can help
-  ## TODO: put will have to subset each miniDoc into subnodes and then
-  ## retrieve just the onest that meet the criteria for GO etc.
-
-  ## This will retrieve just the GO IDs
-  GOIDPath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_id"
-  GOids <- lapply(miniDocs, function(x)
-                  unlist(xpathApply(x, GOIDPath, xmlValue)))
-
-  ## But really, I want to do better, I want to select out the sub-nodes that
-  ## have "GO" in them, and then pull out the IDs, and not rely on the path to
-  ## be unique for the GO terms (when it might also be similar for say KEGG
-  ## terms)
-
-  
+  miniDocs <- lapply(getNodeSet(EGSet, "//Entrezgene"), xmlDoc)
+    
+  ## pubmed Ids
+  pmIdPath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId"
+  pmIds <- lapply(miniDocs, function(x)
+                  unlist(xpathApply(x, pmIdPath, xmlValue)))
+  ## GO Ids
+  GOIds <- lapply(miniDocs, getGOInfo)
+  ## KEGG Ids (needs a more nested approach than GO)
+  KEGGIds <- lapply(miniDocs, getKEGGInfo)
   
   
   ## Data sanity checks:
@@ -174,8 +295,8 @@ getGeneStuff <- function(x){
   ## return a list of things
   list(entrez = entrezGeneID,
        species = speciesName,
-       pmids = pmids,
-       GOids = GOids)
+       pmIds = pmIds,
+       GOIds = GOIds)
   
 }
 
@@ -200,3 +321,20 @@ getGeneStuff <- function(x){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+##############################################################################
+## More TODO:
+## 1) make something to retrieve all the EGs from a tax_id.
+## 2) GO IDs will require more processing to make GO2ALL table.  This can be
+## handled in much the same way as it is now, just by using it along with the
+## GO.db package which this workflow will have to depend upon.
