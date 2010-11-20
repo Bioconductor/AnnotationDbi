@@ -50,7 +50,8 @@
 .checkRetrieveNode <- function(doc, dbTagPath, resIDPath, type){
   results = vector("list",length(dbTagPath))
   for(i in seq_len(length(dbTagPath))){
-    if(.getDBTag(doc, dbTagPath[i])==type){
+    if(.getDBTag(doc, dbTagPath[i])==type
+       || (is.null(type) & dbTagPath==resIDPath)){
       results[[i]] <- (unlist(xpathApply(doc, resIDPath[i], xmlValue)))
     }
   }
@@ -144,20 +145,72 @@ getGeneStuff <- function(x){
   ## are retrieving is in the context of certain kinds of tags, or of tags
   ## that contain certain information.
 
-  ## TODO: modify GO to be like KEGG.  There are already problems with
-  ## differening lengths of values for some EG ids...
-  
-  ## One strategy is used to get the GO terms
+  ## custom helper to get and process the GO terms
   GOIds <- lapply(miniDocs, getGOInfo)
 
-
-  
-  ## A more complex strategy is used to get the KEGG terms
+  ## KEGG Gene IDs are NOT the path IDs.
+  otherSourcePath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source"
+  dbTagPath <- "/Other-source/Other-source_src/Dbtag/Dbtag_db"
+  resIDPath_str <- "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_str"
   KEGGGeneIds <- lapply(miniDocs, .getSubNodeInfo, type = "KEGG",
-                    otherSourcePath = "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source",
-                           dbTagPath = "/Other-source/Other-source_src/Dbtag/Dbtag_db",
-                           resIDPath = "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_str")
+                    otherSourcePath = otherSourcePath,
+                           dbTagPath = dbTagPath,
+                           resIDPath = resIDPath_str)
 
+  KEGGPathIds <- lapply(miniDocs, .getSubNodeInfo, type = "KEGG pathway",
+                    otherSourcePath = otherSourcePath,
+                           dbTagPath = dbTagPath,
+                           resIDPath = resIDPath_str)
+
+  unigeneIds <- lapply(miniDocs, .getSubNodeInfo, type = "UniGene",
+                    otherSourcePath = otherSourcePath,
+                           dbTagPath = dbTagPath,
+                           resIDPath = resIDPath_str)
+  resIDPath_id <- "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_id"
+  ## May only want to look for MIM if we are tax ID 9606 (or can be empty here)
+  MIMIds <- lapply(miniDocs, .getSubNodeInfo, type = "MIM",
+                    otherSourcePath = otherSourcePath,
+                           dbTagPath = dbTagPath,
+                           resIDPath = resIDPath_id)
+
+  ## Refseqs are in another couple of places (we can merge these later, or I
+  ## can write a helper like for GO and merge them as we go.)
+  RSOtherSourcePath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary"
+  RSdbTagPath <- "/Gene-commentary/Gene-commentary_heading" 
+  RSResIdTagPathRNA <- "/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_accession" 
+  RSRNAIds <- lapply(miniDocs, .getSubNodeInfo,
+    type = "RefSeqs maintained independently of Annotated Genomes",
+                    otherSourcePath = RSOtherSourcePath,
+                           dbTagPath = RSdbTagPath,
+                           resIDPath = RSResIdTagPathRNA)
+  
+  RSResIdTagPathProt <- "/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_accession"   
+  RSProtIds <- lapply(miniDocs, .getSubNodeInfo,
+    type = "RefSeqs maintained independently of Annotated Genomes",
+                    otherSourcePath = RSOtherSourcePath,
+                           dbTagPath = RSdbTagPath,
+                           resIDPath = RSResIdTagPathProt)
+
+  ## Get official Symbol
+  symbolSourcePath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_properties/Gene-commentary"
+  symbolDbTag <- "/Gene-commentary/Gene-commentary_label"
+  symbolresIDPath <- "/Gene-commentary/Gene-commentary_text"
+  symbolIds <- lapply(miniDocs, .getSubNodeInfo,
+                      type = "Official Symbol",
+                    otherSourcePath = symbolSourcePath,
+                           dbTagPath = symbolDbTag,
+                           resIDPath = symbolresIDPath)
+  ## Get alternate symbols (merge with official ones when making table)
+  ## TODO: would be SAFER to do some of the 1:1 stuff like this too
+  ## Therefore redo how I get EG, PMID, and species name.
+  aliasSourcePath <- "/Entrezgene/Entrezgene_gene/Gene-ref/Gene-ref_syn"
+  aliasDbTag <- "/Gene-ref_syn/Gene-ref_syn_E"
+  aliasresIDPath <- "/Gene-ref_syn/Gene-ref_syn_E"
+  aliasIds <- lapply(miniDocs, .getSubNodeInfo,
+                      type = NULL,
+                    otherSourcePath = aliasSourcePath,
+                           dbTagPath = aliasDbTag,
+                           resIDPath = aliasresIDPath)
 
 
   
@@ -182,7 +235,15 @@ getGeneStuff <- function(x){
        species = speciesName,
        pmIds = pmIds,
        GOIds = GOIds,
-       KEGGGeneIds = KEGGGeneIds)
+       KEGGGeneIds = KEGGGeneIds,
+       KEGGPathIds = KEGGPathIds,
+       aliasIds = aliasIds,
+       symbolIds = symbolIds,
+       RSProtIds = RSProtIds,
+       RSRNAIds = RSRNAIds,
+       MIMIds = MIMIds,
+       unigeneIds = unigeneIds      
+       )
   
 }
 
@@ -219,14 +280,20 @@ getGeneStuff <- function(x){
 
 ##############################################################################
 ## More TODO:
-## 1) Make something to retrieve all the EGs from a tax_id.
+## 1) Make something to retrieve all the EGs from a tax_id. - no obvious way yet
+##
 ## 2) Wrap this so that we can 1) get all the EGs, then retrieve their results
 ## serially into one big super-list for import into a DB.
+##
 ## 3) GO IDs will require more processing to make GO2ALL table.  This can be
 ## handled in much the same way as it is now, just by using it along with the
 ## GO.db package which this workflow will have to depend upon.
+##
 ## 4) Some checking will have to be done as we add contents that are matched
 ## (thinking of the GO terms here) to the DB.  Specifically, each GO ID needs
 ## to have an evidence code and I know from making this work, that some of
 ## them will NOT have that.  Therefore, I have to check as they are formatted
 ## and put into the DB.
+
+
+## Working on #2 1st till NCBI can get back to me
