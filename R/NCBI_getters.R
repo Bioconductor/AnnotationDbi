@@ -99,7 +99,7 @@
 
 .modifyGOs <- function(elem){
   elem[[1]] <- .padGOIds(elem[[1]])
-  elem[[2]] <- gsub("evidence: ", "", elem[[2]])  elem
+  elem[[2]] <- gsub("evidence: ", "", elem[[2]])
 }
 
 ## for GO retrieval I have partially vectorized the helper functions.
@@ -312,55 +312,63 @@ getGeneStuff <- function(x){
 ## NCBI User Services
 
 
-## ## get EGs from an NCBI tax ID
-## getEntrezGenesFromTaxId <- function(taxId){
-##   ## 1st retrieve the WebEnv and QueryKey values
-##   url1 <- paste("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&term=txid",taxId,"%5Borgn%5D+AND+alive%5Bprop%5D&usehistory=y", sep="")
+## get EGs from an NCBI tax ID
+getEntrezGenesFromTaxId <- function(taxId){
+  ## 1st retrieve the WebEnv and QueryKey values
+  url1 <- paste("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&term=txid",taxId,"%5Borgn%5D+AND+alive%5Bprop%5D&usehistory=y", sep="")
    
-##   ## NOW we have to parse the available XML
-##   XML <- xmlParse(url)
-##   ## Some tags can only occur once per gene
-##   ## TODO: wire up the xpath for this
-##   webEnv <- unlist(xpathApply(XML, "//Gene-track_geneid", xmlValue))
-##   queryKey <- unlist(xpathApply(XML, "//Org-ref_taxname", xmlValue))
+  ## NOW we have to parse the available XML
+  XML <- xmlParse(url1)
+  ## Some tags can only occur once per gene
+  ## TODO: wire up the xpath for this
+  webEnv <- unlist(xpathApply(XML, "//WebEnv", xmlValue))
+  queryKey <- unlist(xpathApply(XML, "//QueryKey", xmlValue))
 
-##   ## Then assemble the final URL
-##   url2 <- paste(
-##      "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&WebEnv=",
-##      webEnv, "&query_key=", queryKey, "&rettype=uilist&retmode=text", sep="")
-##   readLines(url2)
-## }
-
-
+  ## Then assemble the final URL
+  url2 <- paste(
+     "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&WebEnv=",
+     webEnv, "&query_key=", queryKey, "&rettype=uilist&retmode=text", sep="")
+  readLines(url2)
+}
 
 
-## ## Wrap the functionality like so:
-## buildEntrezGeneDb <- function(taxId){
-##   ## 1st get a list of EGs
-##   EGs <- getEntrezGenesFromTaxId(taxId)
 
-##   ## Then break it into chunks
-##   chunkSize = 800
-##   numChunks = floor((length(EGs)/chunkSize) + 1)
-##   splitFactor <- rep(1:numChunks, each=chunkSize)
-##   EGChunks <- split(EGs, as.factor(splitFactor))
 
-##   ## Then we just need to apply through and make a super-list
-##   superList <- lapply(EGChunks, getGeneStuff)
+## Wrap the functionality like so:
+buildEntrezGeneDb <- function(taxId){
+  ## 1st get a list of EGs
+  EGs <- getEntrezGenesFromTaxId(taxId)
 
-##   ## Then we need to combine the elements of that list
-##   list = unlist(superList)
+  ## Then break it into chunks
+  chunkSize = 800
+  numChunks = floor(length(EGs)/chunkSize)
+  splitFactor <- rep(1:numChunks, each=chunkSize)
+  EGChunks <- split(EGs, as.factor(splitFactor))
+  EGChunksFinal <- EGChunks[[1]][(chunkSize+1):length(EGChunks[[1]])]
+  EGChunks[[1]] <-  EGChunks[[1]][1:chunkSize]
+  EGChunks <- c(EGChunks,list(EGChunksFinal))
+  
+  ## TODO: There may be some problems with some of the EGs that we get
+  ## from NCBI in this way (having trouble finding an example though)
+  
+  ## temp for testing:  
+  EGChunks = EGChunks[1:2]
+  ## Then we just need to apply through and make a super-list
+  superList <- lapply(EGChunks, getGeneStuff)
 
-##   ## Then we have to make a DB and start populating it with tables for
-##   ## each kind of element.  We will check the length of each list
-##   ## element for contents to make sure that we have stuff to populate
-##   ## before we start to make a table (and thus avoid having an omim
-##   ## table inside of mouse for example)
+  ## Then we need to combine the elements of that list
+  # list = lapply(superList, mergeLists)
 
-##   ## For this, I will write a generic function to make a table, and
-##   ## another generic one to populate it. - actually I think I have
-##   ## something like this already in sqlForge_tableBuilder.R
+  ## Then we have to make a DB and start populating it with tables for
+  ## each kind of element.  We will check the length of each list
+  ## element for contents to make sure that we have stuff to populate
+  ## before we start to make a table (and thus avoid having an omim
+  ## table inside of mouse for example)
+
+  ## For this, I will write a generic function to make a table, and
+  ## another generic one to populate it. - actually I think I have
+  ## something like this already in sqlForge_tableBuilder.R
   
   
   
-## }
+}
