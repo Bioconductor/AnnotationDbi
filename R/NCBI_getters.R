@@ -296,4 +296,16 @@ getGeneStuff <- function(x){
 ## and put into the DB.
 
 
-## Working on #2 1st till NCBI can get back to me
+## NCBI can got back to me
+##An example approach is given below:
+
+## 1) esearch with taxid in the following format:
+## http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&term=txid9606%5Borgn%5D+AND+alive%5Bprop%5D&usehistory=y
+
+## 2) parse out the WebEnv and QueryKey value:
+## http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&WebEnv=NCID_1_39931064_130.14.18.47_9001_1290210718_1522935737&query_key=1&rettype=uilist&retmode=text
+
+## Regards,
+
+## Tao Tao, PhD
+## NCBI User Services
