@@ -100,6 +100,7 @@
 .modifyGOs <- function(elem){
   elem[[1]] <- .padGOIds(elem[[1]])
   elem[[2]] <- gsub("evidence: ", "", elem[[2]])
+  elem
 }
 
 ## for GO retrieval I have partially vectorized the helper functions.
@@ -232,8 +233,8 @@ getGeneStuff <- function(x){
   ## return a list of things
   list(entrez = entrezGeneID,
        species = speciesName,
-       pmIds = pmIds,
-       GOIds = GOIds,
+       pmIds = pmIds, 
+       GOIds = GOIds,  
        KEGGGeneIds = KEGGGeneIds,
        KEGGPathIds = KEGGPathIds,
        aliasIds = aliasIds,
@@ -337,8 +338,11 @@ getEntrezGenesFromTaxId <- function(taxId){
 ## Wrap the functionality like so:
 buildEntrezGeneDb <- function(taxId){
   ## 1st get a list of EGs
-  EGs <- getEntrezGenesFromTaxId(taxId)
-
+  ## EGs <- getEntrezGenesFromTaxId(taxId) ##There is something wrong here?
+  ## Temp hack till I can learn what is wrong with the web service.
+  library(org.Hs.eg.db)
+  EGs <- Lkeys(org.Hs.egCHR)
+  
   ## Then break it into chunks
   chunkSize = 800
   numChunks = floor(length(EGs)/chunkSize)
@@ -352,12 +356,12 @@ buildEntrezGeneDb <- function(taxId){
   ## from NCBI in this way (having trouble finding an example though)
   
   ## temp for testing:  
-  EGChunks = EGChunks[1:2]
+  EGChunks = EGChunks[c(1:2, 57)]
   ## Then we just need to apply through and make a super-list
   superList <- lapply(EGChunks, getGeneStuff)
 
   ## Then we need to combine the elements of that list
-  # list = lapply(superList, mergeLists)
+  # sList = lapply(superList, mergeLists)
 
   ## Then we have to make a DB and start populating it with tables for
   ## each kind of element.  We will check the length of each list
