@@ -99,8 +99,7 @@
 
 .modifyGOs <- function(elem){
   elem[[1]] <- .padGOIds(elem[[1]])
-  elem[[2]] <- gsub("evidence: ", "", elem[[2]])
-  elem
+  elem[[2]] <- gsub("evidence: ", "", elem[[2]])  elem
 }
 
 ## for GO retrieval I have partially vectorized the helper functions.
@@ -286,8 +285,7 @@ getGeneStuff <- function(x){
 ## serially into one big super-list for import into a DB.
 ##
 ## 3) GO IDs will require more processing to make GO2ALL table.  This can be
-## handled in much the same way as it is now, just by using it along with the
-## GO.db package which this workflow will have to depend upon.
+## handled in much the same way as it is now, just by using it along with the## GO.db package which this workflow will have to depend upon.
 ##
 ## 4) Some checking will have to be done as we add contents that are matched
 ## (thinking of the GO terms here) to the DB.  Specifically, each GO ID needs
@@ -296,7 +294,10 @@ getGeneStuff <- function(x){
 ## and put into the DB.
 
 
-## NCBI can got back to me
+
+
+
+## NCBI got back to me
 ##An example approach is given below:
 
 ## 1) esearch with taxid in the following format:
@@ -309,3 +310,57 @@ getGeneStuff <- function(x){
 
 ## Tao Tao, PhD
 ## NCBI User Services
+
+
+## ## get EGs from an NCBI tax ID
+## getEntrezGenesFromTaxId <- function(taxId){
+##   ## 1st retrieve the WebEnv and QueryKey values
+##   url1 <- paste("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&term=txid",taxId,"%5Borgn%5D+AND+alive%5Bprop%5D&usehistory=y", sep="")
+   
+##   ## NOW we have to parse the available XML
+##   XML <- xmlParse(url)
+##   ## Some tags can only occur once per gene
+##   ## TODO: wire up the xpath for this
+##   webEnv <- unlist(xpathApply(XML, "//Gene-track_geneid", xmlValue))
+##   queryKey <- unlist(xpathApply(XML, "//Org-ref_taxname", xmlValue))
+
+##   ## Then assemble the final URL
+##   url2 <- paste(
+##      "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&WebEnv=",
+##      webEnv, "&query_key=", queryKey, "&rettype=uilist&retmode=text", sep="")
+##   readLines(url2)
+## }
+
+
+
+
+## ## Wrap the functionality like so:
+## buildEntrezGeneDb <- function(taxId){
+##   ## 1st get a list of EGs
+##   EGs <- getEntrezGenesFromTaxId(taxId)
+
+##   ## Then break it into chunks
+##   chunkSize = 800
+##   numChunks = floor((length(EGs)/chunkSize) + 1)
+##   splitFactor <- rep(1:numChunks, each=chunkSize)
+##   EGChunks <- split(EGs, as.factor(splitFactor))
+
+##   ## Then we just need to apply through and make a super-list
+##   superList <- lapply(EGChunks, getGeneStuff)
+
+##   ## Then we need to combine the elements of that list
+##   list = unlist(superList)
+
+##   ## Then we have to make a DB and start populating it with tables for
+##   ## each kind of element.  We will check the length of each list
+##   ## element for contents to make sure that we have stuff to populate
+##   ## before we start to make a table (and thus avoid having an omim
+##   ## table inside of mouse for example)
+
+##   ## For this, I will write a generic function to make a table, and
+##   ## another generic one to populate it. - actually I think I have
+##   ## something like this already in sqlForge_tableBuilder.R
+  
+  
+  
+## }
