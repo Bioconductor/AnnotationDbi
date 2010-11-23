@@ -352,9 +352,64 @@ getEntrezGenesFromTaxId <- function(taxId){
   result
 }
 
+##  I will need the following helpers
+.makeCentralTable <- function(entrez, con){
+  message(cat("Creating Genes table"))
+  sql<- paste("    CREATE TABLE genes (
+      _id INTEGER PRIMARY KEY,
+      gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
+    );")
+  sqliteQuickSQL(con, sql)
+
+  gene_id <- data.frame(entrez) ## TODO: data.frame() necessary???
+  sql<- paste("INSERT INTO genes(gene_id) VALUES(?);")
+  dbBeginTransaction(con)
+  dbGetPreparedQuery(con, sql, gene_id)
+  dbCommit(con)
+}
+
+## This one will be special since it will be what we want for the
+## majority of cases. Ideally, it takes the sList and the name of the
+## field to make a table for.
+.makeSimpleTable <- function(entrez,sListItem,item,itemName,con,itemLen=25){
+  message(paste("Creating",item,"table"))
+  ## 1st we need a temp table
+  sql<- paste("    CREATE TEMP TABLE temp_",item," (
+      gene_id INTEGER NOT NULL,
+      item_id VARCHAR(50) NOT NULL           -- Entrez Gene ID
+    );", sep="")
+  sqliteQuickSQL(con, sql)
+  names(sListItem) <- entrez
+  expandedsList <- unlist2(sListItem)
+  item_with_egs<- data.frame(cbind(names(expandedsList),expandedsList)) 
+  sql<- paste("INSERT INTO temp_",item,"(gene_id,item_id) VALUES(?,?);",sep="")
+  dbBeginTransaction(con)
+  dbGetPreparedQuery(con, sql, item_with_egs)
+  dbCommit(con)  
+  sql<- paste("    CREATE TABLE ",item," (
+      _id INTEGER NOT NULL,                         -- REFERENCES genes
+      ",itemName," VARCHAR(",itemLen,") NOT NULL,               -- chromosome name
+      FOREIGN KEY (_id) REFERENCES genes (_id)
+    );") 
+  sqliteQuickSQL(con, sql)
+  sql<- paste("
+    INSERT INTO ",item,"
+     SELECT g._id as _id, i.item_id AS ",itemName,"
+     FROM genes AS g, temp_",item," AS i
+     WHERE g.gene_id=i.gene_id
+     ORDER BY g._id;
+     ", sep="") 
+  sqliteQuickSQL(con, sql)
+  ## Then insert into real table
+}
+
+#.makeGOTable <- function(){}
+
+#.makeMetaTables <- function(){}
+
 
 ## Wrap the functionality like so:
-buildEntrezGeneDb <- function(taxId){
+buildEntrezGeneDb <- function(taxId, file="test.sqlite"){
   ## 1st get a list of EGs
   ## EGs <- getEntrezGenesFromTaxId(taxId) ##There is something wrong here?
   ## Temp hack till I can learn what is wrong with the web service.
@@ -378,15 +433,17 @@ buildEntrezGeneDb <- function(taxId){
   ## Then we just need to apply through and make a super-list
   superListOfLists <- lapply(EGChunks, getGeneStuff)
   sList <- .mergeLists(superListOfLists)
+  #file.remove(file) ##remove the old file when they re-run the code?
+  ## TODO: check 1st.
+  con <- dbConnect(SQLite(), file)
   
-  ## Then we have to make a DB and start populating it with tables for
-  ## each kind of element.  We will check the length of each list
-  ## element for contents to make sure that we have stuff to populate
-  ## before we start to make a table (and thus avoid having an omim
-  ## table inside of mouse for example)
+  .makeCentralTable(sList$entrez, con)
+  .makeSimpleTable(entrez = sList$entrez,
+                   sListItem = sList$pmIds,
+                   item = "pubmed",
+                   itemName = "pubmed_id",
+                   con)
 
-  ## For this, I will write a generic function to make a table, and
-  ## another generic one to populate it. - actually I think I have
-  ## something like this already in sqlForge_tableBuilder.R
-  
+
 }
+
