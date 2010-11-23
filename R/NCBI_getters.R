@@ -335,12 +335,30 @@ getEntrezGenesFromTaxId <- function(taxId){
 
 
 
+## Then we need to combine the elements of that list
+## presumed usage: foo = .mergeLists(superList)
+.mergeLists <- function(listOfLists){
+  ## mergeLists just takes two lists at a time, and merges them by
+  ## concatenating their contents.
+  list1 <- listOfLists[[1]]
+  result <- vector("list", length(list1))
+  for(i in seq_len(length(list1))){
+    for(j in seq_len(length(listOfLists))){
+      result[[i]] <- c(result[[i]], listOfLists[[j]][[i]])
+    }
+  }
+  ## keep the names
+  names(result) = names(list1)
+  result
+}
+
+
 ## Wrap the functionality like so:
 buildEntrezGeneDb <- function(taxId){
   ## 1st get a list of EGs
   ## EGs <- getEntrezGenesFromTaxId(taxId) ##There is something wrong here?
   ## Temp hack till I can learn what is wrong with the web service.
-  library(org.Hs.eg.db)
+  # library(org.Hs.eg.db)
   EGs <- Lkeys(org.Hs.egCHR)
   
   ## Then break it into chunks
@@ -358,11 +376,9 @@ buildEntrezGeneDb <- function(taxId){
   ## temp for testing:  
   EGChunks = EGChunks[c(1:2, 57)]
   ## Then we just need to apply through and make a super-list
-  superList <- lapply(EGChunks, getGeneStuff)
-
-  ## Then we need to combine the elements of that list
-  # sList = lapply(superList, mergeLists)
-
+  superListOfLists <- lapply(EGChunks, getGeneStuff)
+  sList <- .mergeLists(superListOfLists)
+  
   ## Then we have to make a DB and start populating it with tables for
   ## each kind of element.  We will check the length of each list
   ## element for contents to make sure that we have stuff to populate
@@ -372,7 +388,5 @@ buildEntrezGeneDb <- function(taxId){
   ## For this, I will write a generic function to make a table, and
   ## another generic one to populate it. - actually I think I have
   ## something like this already in sqlForge_tableBuilder.R
-  
-  
   
 }
