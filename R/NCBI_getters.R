@@ -118,7 +118,7 @@ getGOInfo <- function(doc){
 
 
 getGeneStuff <- function(x){
-  #require(XML)
+  require(XML)
   baseUrl <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
   xsep <- paste(x, collapse=",")
   url <- paste(baseUrl,"db=gene&id=",xsep,"&retmode=xml", sep="")
@@ -407,32 +407,27 @@ getEntrezGenesFromTaxId <- function(taxId){
 
 #.makeMetaTables <- function(){}
 
+#.makeTablesIndices <- function(){}
+
 
 ## Wrap the functionality like so:
-buildEntrezGeneDb <- function(taxId, file="test.sqlite"){
-  ## 1st get a list of EGs
-  ## EGs <- getEntrezGenesFromTaxId(taxId) ##There is something wrong here?
-  ## Temp hack till I can learn what is wrong with the web service.
-  # library(org.Hs.eg.db)
-  EGs <- Lkeys(org.Hs.egCHR)
-  
+buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
+  EGs <- entrezGenes
   ## Then break it into chunks
-  chunkSize = 800
-  numChunks = floor(length(EGs)/chunkSize)
-  splitFactor <- rep(1:numChunks, each=chunkSize)
-  EGChunks <- split(EGs, as.factor(splitFactor))
-  EGChunksFinal <- EGChunks[[1]][(chunkSize+1):length(EGChunks[[1]])]
-  EGChunks[[1]] <-  EGChunks[[1]][1:chunkSize]
-  EGChunks <- c(EGChunks,list(EGChunksFinal))
-  
-  ## TODO: There may be some problems with some of the EGs that we get
-  ## from NCBI in this way (having trouble finding an example though)
-  
-  ## temp for testing:  
-  EGChunks = EGChunks[c(1:2, 57)]
-  ## Then we just need to apply through and make a super-list
-  superListOfLists <- lapply(EGChunks, getGeneStuff)
-  sList <- .mergeLists(superListOfLists)
+  if(length(EGs)<800){
+    sList <- getGeneStuff(EGs)
+  }else{
+    chunkSize = 800
+    numChunks = floor(length(EGs)/chunkSize)
+    splitFactor <- rep(1:numChunks, each=chunkSize)
+    EGChunks <- split(EGs, as.factor(splitFactor))
+    EGChunksFinal <- EGChunks[[1]][(chunkSize+1):length(EGChunks[[1]])]
+    EGChunks[[1]] <-  EGChunks[[1]][1:chunkSize]
+    EGChunks <- c(EGChunks,list(EGChunksFinal))
+    ## Then we just need to apply through and make a super-list
+    superListOfLists <- lapply(EGChunks, getGeneStuff)
+    sList <- .mergeLists(superListOfLists)
+  }
   #file.remove(file) ##remove the old file when they re-run the code?
   ## TODO: check 1st.
   con <- dbConnect(SQLite(), file)

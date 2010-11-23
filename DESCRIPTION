@@ -8,7 +8,7 @@ Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.7.0), methods, utils, Biobase (>= 1.17.0)
 Imports: methods, utils, Biobase, DBI, RSQLite
 Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db, human.db0,
-          hgu95av2cdf, affy, KEGG.db 
+          hgu95av2cdf, affy, KEGG.db, XML
 Collate: 00RTobjs.R
          unlist2.R
          AllGenerics.R

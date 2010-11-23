@@ -174,5 +174,9 @@ export(
     print.probetable,
     getProbeDataAffy,
     getProbeData_1lq,
-    makeProbePackage
+    makeProbePackage,
+
+    ## from R/NCBI_getters.R
+    buildEntrezGeneDb,
+    getEntrezGenesFromTaxId
 )
