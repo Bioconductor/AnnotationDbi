@@ -117,10 +117,10 @@ getGOInfo <- function(doc){
 
 
 
-getGeneStuff <- function(x){
+getGeneStuff <- function(entrezGenes){
   require(XML)
   baseUrl <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
-  xsep <- paste(x, collapse=",")
+  xsep <- paste(entrezGenes, collapse=",")
   url <- paste(baseUrl,"db=gene&id=",xsep,"&retmode=xml", sep="")
     
   ## NOW we have to parse the available XML
@@ -200,6 +200,12 @@ getGeneStuff <- function(x){
                     otherSourcePath = symbolSourcePath,
                            dbTagPath = symbolDbTag,
                            resIDPath = symbolresIDPath)
+  ## Get official Name
+  fullNames <- lapply(miniDocs, .getSubNodeInfo,
+                      type = "Official Full Name",
+                    otherSourcePath = symbolSourcePath, ##same path as symbols
+                           dbTagPath = symbolDbTag,
+                           resIDPath = symbolresIDPath)
   ## Get alternate symbols (merge with official ones when making table)
   ## TODO: would be SAFER to do some of the 1:1 stuff like this too
   ## Therefore redo how I get EG, PMID, and species name.
@@ -223,11 +229,11 @@ getGeneStuff <- function(x){
     stop("The IDs being processed need to all be from the same species.")
      
   ## The following checks can stay at this level though
-  if(unique(entrezGeneID %in% x) %in% FALSE) ##if any don't match
+  if(unique(entrezGeneID %in% entrezGenes) %in% FALSE) ##if any don't match
     stop("The entrez Genes discovered don't match the IDs being looked up!")
-  if(length(x) > length(entrezGeneID))
+  if(length(entrezGenes) > length(entrezGeneID))
     warning("Some of the entrez Genes beings sought were not found.")
-  if(length(entrezGeneID) > length(x))
+  if(length(entrezGeneID) > length(entrezGenes))
     stop("There are more EGs being found than we expected.")
   
   ## return a list of things
@@ -237,8 +243,9 @@ getGeneStuff <- function(x){
        GOIds = GOIds,  
        KEGGGeneIds = KEGGGeneIds,
        KEGGPathIds = KEGGPathIds,
-       aliasIds = aliasIds,
+       aliasIds = aliasIds, ## requires preprocessing to match up?
        symbolIds = symbolIds,
+       fullNames = fullNames,
        RSProtIds = RSProtIds,
        RSRNAIds = RSRNAIds,
        MIMIds = MIMIds,
@@ -246,54 +253,6 @@ getGeneStuff <- function(x){
        )
   
 }
-
-
-
-## egs = c("10","100")
-
-## ## Some quick performance tests:
-## library(org.Hs.eg.db)
-## ##egs = Lkeys(org.Hs.egCHR)[1:100]
-## ## 100 is pretty fast
-
-
-## ## TODO: Above about 800 records, the URL seems to be longer than the web
-## ## server will respond too.  So I will have to process the list of EGs in
-## ## "chunks", but otherwise the basic operations appear to be vectorizable.  So
-## ## to do "chunks", I only need a convenient way to merge the list results.
-## ## egs = Lkeys(org.Hs.egCHR)[1:800]
-
-
-## system.time(getGeneStuff(egs))
-
-
-
-
-
-
-
-
-
-
-
-
-
-##############################################################################
-## More TODO:
-## 1) Make something to retrieve all the EGs from a tax_id. - no obvious way yet
-##
-## 2) Wrap this so that we can 1) get all the EGs, then retrieve their results
-## serially into one big super-list for import into a DB.
-##
-## 3) GO IDs will require more processing to make GO2ALL table.  This can be
-## handled in much the same way as it is now, just by using it along with the## GO.db package which this workflow will have to depend upon.
-##
-## 4) Some checking will have to be done as we add contents that are matched
-## (thinking of the GO terms here) to the DB.  Specifically, each GO ID needs
-## to have an evidence code and I know from making this work, that some of
-## them will NOT have that.  Therefore, I have to check as they are formatted
-## and put into the DB.
-
 
 
 
@@ -335,8 +294,7 @@ getEntrezGenesFromTaxId <- function(taxId){
 
 
 
-## Then we need to combine the elements of that list
-## presumed usage: foo = .mergeLists(superList)
+## Then we need to combine the sub-lists found withing our "super"-list
 .mergeLists <- function(listOfLists){
   ## mergeLists just takes two lists at a time, and merges them by
   ## concatenating their contents.
@@ -352,9 +310,21 @@ getEntrezGenesFromTaxId <- function(taxId){
   result
 }
 
+## General helper for merging two simple lists
+.combineTwoLists <- function(list1,list2){
+  if(length(list1) != length(list2)){
+    stop("lists must be equal length to be merged")}
+  result <- vector("list",length(list1))
+  for(i in seq_len(length(list1))){
+    result[[i]] <- c(list1[[i]], list2[[i]])
+  }
+  result
+}
+
+
 ##  I will need the following helpers
 .makeCentralTable <- function(entrez, con){
-  message(cat("Creating Genes table"))
+  message(cat("Creating genes table"))
   sql<- paste("    CREATE TABLE genes (
       _id INTEGER PRIMARY KEY,
       gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
@@ -369,42 +339,76 @@ getEntrezGenesFromTaxId <- function(taxId){
 }
 
 ## This one will be special since it will be what we want for the
-## majority of cases. Ideally, it takes the sList and the name of the
-## field to make a table for.
-.makeSimpleTable <- function(entrez,sListItem,item,itemName,con,itemLen=25){
-  message(paste("Creating",item,"table"))
+## majority of cases. Ideally, it takes the EGs, the list of values to
+## go with them, along with the tableName and fieldName
+.makeSimpleTable <- function(entrez, fieldVals, table,
+                             fieldName, con, fieldNameLen=25){
+  message(paste("Creating",table,"table"))
   ## 1st we need a temp table
-  sql<- paste("    CREATE TEMP TABLE temp_",item," (
+  sql<- paste("    CREATE TEMP TABLE temp_",table," (
       gene_id INTEGER NOT NULL,
-      item_id VARCHAR(50) NOT NULL           -- Entrez Gene ID
+      field_id VARCHAR(50) NOT NULL           
     );", sep="")
   sqliteQuickSQL(con, sql)
-  names(sListItem) <- entrez
-  expandedsList <- unlist2(sListItem)
-  item_with_egs<- data.frame(cbind(names(expandedsList),expandedsList)) 
-  sql<- paste("INSERT INTO temp_",item,"(gene_id,item_id) VALUES(?,?);",sep="")
+  names(fieldVals) <- entrez
+  expandedsList <- unlist2(fieldVals)
+  fieldVals_with_egs<- data.frame(cbind(names(expandedsList),expandedsList)) 
+  sql<- paste("INSERT INTO temp_",table,"(gene_id,field_id) VALUES(?,?);",sep="")
   dbBeginTransaction(con)
-  dbGetPreparedQuery(con, sql, item_with_egs)
+  dbGetPreparedQuery(con, sql, fieldVals_with_egs)
   dbCommit(con)  
-  sql<- paste("    CREATE TABLE ",item," (
+  sql<- paste("    CREATE TABLE ",table," (
       _id INTEGER NOT NULL,                         -- REFERENCES genes
-      ",itemName," VARCHAR(",itemLen,") NOT NULL,               -- chromosome name
+      ",fieldName," VARCHAR(",fieldNameLen,") NOT NULL,               -- data
       FOREIGN KEY (_id) REFERENCES genes (_id)
     );") 
   sqliteQuickSQL(con, sql)
   sql<- paste("
-    INSERT INTO ",item,"
-     SELECT g._id as _id, i.item_id AS ",itemName,"
-     FROM genes AS g, temp_",item," AS i
+    INSERT INTO ",table,"
+     SELECT g._id as _id, i.field_id AS ",fieldName,"
+     FROM genes AS g, temp_",table," AS i
      WHERE g.gene_id=i.gene_id
      ORDER BY g._id;
      ", sep="") 
   sqliteQuickSQL(con, sql)
-  ## Then insert into real table
+}
+
+## start with the arguments
+.makeGeneInfoTable <- function(entrez, names, symbols, con){
+  message(paste("Creating gene_info table"))
+  ## 1st we need a temp table
+  sql<- paste("    CREATE TEMP TABLE temp_gene_info (
+      gene_id INTEGER NOT NULL,
+      gene_name VARCHAR(255) NOT NULL,
+      symbol VARCHAR(80) NOT NULL 
+    );", sep="")
+  sqliteQuickSQL(con, sql)
+  if(length(entrez) != length(names) || length(entrez) != length(symbols)){
+    stop("Input values for .makeGeneInfoTable must be equal.")}
+  frame <- as.data.frame(cbind(entrez,names,symbols))
+  sql<- paste("INSERT INTO temp_gene_info(gene_id,gene_name,symbol) VALUES(?,?,?);",sep="")
+  dbBeginTransaction(con)
+  dbGetPreparedQuery(con, sql, frame)
+  dbCommit(con)  
+  sql<- paste("    CREATE TABLE gene_info (
+      _id INTEGER NOT NULL,                         -- REFERENCES genes
+      gene_name VARCHAR(255) NOT NULL,              -- gene name
+      symbol VARCHAR(80) NOT NULL,                  -- gene symbol
+      FOREIGN KEY (_id) REFERENCES genes (_id)
+    );") 
+  sqliteQuickSQL(con, sql)
+  sql<- paste("
+    INSERT INTO gene_info
+     SELECT g._id as _id, tgi.gene_name, tgi.symbol
+     FROM genes AS g, temp_gene_info AS tgi
+     WHERE g.gene_id=tgi.gene_id
+     ORDER BY g._id;
+     ", sep="") 
+  sqliteQuickSQL(con, sql)
 }
 
 #.makeGOTable <- function(){}
-
+  
 #.makeMetaTables <- function(){}
 
 #.makeTablesIndices <- function(){}
@@ -433,12 +437,64 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   con <- dbConnect(SQLite(), file)
   
   .makeCentralTable(sList$entrez, con)
+  .makeGeneInfoTable(entrez = sList$entrez,
+                     names = unlist(sList$fullNames),
+                     symbols = unlist(sList$symbolIds),
+                     con)
   .makeSimpleTable(entrez = sList$entrez,
-                   sListItem = sList$pmIds,
-                   item = "pubmed",
-                   itemName = "pubmed_id",
+                   fieldVals = sList$pmIds,
+                   table = "pubmed",
+                   fieldName = "pubmed_id",
                    con)
-
-
+  .makeSimpleTable(entrez = sList$entrez,
+                   fieldVals = .combineTwoLists(sList$alias,
+                                                sList$symbol),
+                   table = "alias",
+                   fieldName = "alias_symbol",
+                   con)
+  .makeSimpleTable(entrez = sList$entrez,
+                   fieldVals = sList$KEGGPathIds,
+                   table = "kegg",
+                   fieldName = "path_id",
+                   con)
+  .makeSimpleTable(entrez = sList$entrez,
+                   fieldVals = .combineTwoLists(sList$RSProtIds,
+                                                sList$RSRNAIds),
+                   table = "refseq",
+                   fieldName = "accession",
+                   con)
+  .makeSimpleTable(entrez = sList$entrez,
+                   fieldVals = sList$MIMIds,
+                   table = "omim",
+                   fieldName = "omim_id",
+                   con)
+  .makeSimpleTable(entrez = sList$entrez,
+                   fieldVals = sList$unigeneIds,
+                   table = "unigene",
+                   fieldName = "unigene_id",
+                   con)
 }
+
+
+
+
+
+
+##############################################################################
+## More TODO:
+## 1) Make something to retrieve all the EGs from a tax_id. - no obvious way yet
+##
+## 2) Wrap this so that we can 1) get all the EGs, then retrieve their results
+## serially into one big super-list for import into a DB.
+##
+## 3) GO IDs will require more processing to make GO2ALL table.  This can be
+## handled in much the same way as it is now, just by using it along with the## GO.db package which this workflow will have to depend upon.
+##
+## 4) Some checking will have to be done as we add contents that are matched
+## (thinking of the GO terms here) to the DB.  Specifically, each GO ID needs
+## to have an evidence code and I know from making this work, that some of
+## them will NOT have that.  Therefore, I have to check as they are formatted
+## and put into the DB.
+
+
 

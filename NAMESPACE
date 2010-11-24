@@ -178,5 +178,6 @@ export(
 
     ## from R/NCBI_getters.R
     buildEntrezGeneDb,
-    getEntrezGenesFromTaxId
+    getEntrezGenesFromTaxId,
+    getGeneStuff
 )
