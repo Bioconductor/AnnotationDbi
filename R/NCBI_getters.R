@@ -383,6 +383,86 @@ getEntrezGenesFromTaxId <- function(taxId){
 #.makeTablesIndices <- function(){}
 
 
+
+
+## making the GO tables is complicated, because we have to 1) split things up
+## based on which ontology they harken from (which means these things must be
+## looked up) and 2) produce both a table of the GO terms we have collected
+## here already and also produce a table of the go_xx_all terms with their
+## parent nodes included.  For a total of 6 tables in all.
+
+## For any gene, the GO list might be empty, but for each list we have two
+## pieces of data to extract, and for each of those, we want to also
+## retrieve a 3rd piece of data, (the ontology) Fortunately, this last bit
+## is easy to do.
+
+## if our GOIds object is called foo:
+## tolower(Ontology(unlist(foo$GOIds)[1])) would give me the 1st Ontology
+
+## to get our ancestor GO IDs, we will just use the ancestor mappings from
+## the latest GO.db package.  for example, if we had GO term "GO:0044183",
+## we would do mget("GO:0044183", GOMFANCESTOR, ifnotfound=NA), (and filter
+## out "all"), then give each of those "answers" the same evidence code that
+## was used for our seed term of "GO:0044183".
+
+
+.unwindGOs <- function(GOIds, entrez, type){
+  res <- vector("list",length(GOIds))
+  for(i in seq_len(length(GOIds))){
+    for(j in seq_len(length(GOIds[[i]]))){
+      res[[i]] <- c(res[[i]], unlist2(GOIds[[i]][[j]][[type]]))
+    }
+  }
+  names(res) <- entrez
+  res
+}
+
+.makeGOTables <- function(entrez, GOIds, con){
+  ## So I think this is my strategy:
+  ## Step 1: collapse the list of genes and GO terms down to a data.frame. - done
+  ## Step 2: gather the ontology information for each term. -done
+  ## Step 3: populate the three go_xx tables with a helper function that uses
+  ## a modified .makeSimpleTable() (separate out the code to collapse the eg
+  ## and other data into a data.frame 1st which will now be passed in) and
+  ## pass in a data.frame to each call, THEN do the same here with a
+  ## data.frame that is split based on the ontology column  - done.
+  ## Step 4: make a helper function that expands a data.frame from Step 3 into
+  ## a a frame that also holds the parent terms for each GO ID, by adding rows
+  ## for all parent terms (with same evidence codes) and then using unique to
+  ## drop redundant rows. (which will happen if there are parent nodes among
+  ## the leaf terms already).
+  ## Step 5: call .makeSimpleTable again with the new data.frame.
+
+  ## GOIds is a list of equal length to the entrez IDs
+  if(length(entrez) != length(GOIds)){
+    stop("There must be a list of GOIds")}
+  go_id <- unlist2(.unwindGOs(GOIds, entrez, type=1))
+  evidence <- unlist2(.unwindGOs(GOIds, entrez, type=2))
+  ontology <- Ontology(go_id)
+  baseFrame <- cbind(gene_id = names(go_id), go_id=go_id,
+                     evidence=evidence, ontology=ontology)
+  bp <- data.frame(matrix(split(baseFrame, ontology)$BP,
+               byrow=FALSE, nrow=length(grep("BP",ontology))))[,1:3]
+  mf <- data.frame(matrix(split(baseFrame, ontology)$MF,
+               byrow=FALSE, nrow=length(grep("MF",ontology))))[,1:3]
+  cc <- data.frame(matrix(split(baseFrame, ontology)$CC,
+               byrow=FALSE, nrow=length(grep("CC",ontology))))[,1:3]
+  headerNames = c("gene_id","go_id","evidence")
+  names(bp) <- headerNames
+  names(mf) <- headerNames
+  names(cc) <- headerNames
+
+  .makeSimpleTable(bp, table = "go_bp", con, fieldNameLens=c(10,3))
+  
+  .makeSimpleTable(mf, table = "go_mf", con, fieldNameLens=c(10,3))
+  
+  .makeSimpleTable(cc, table = "go_cc", con, fieldNameLens=c(10,3))
+
+  ## Now we have to expand the three data.frames
+  
+}
+
+
 ## Wrap the functionality like so:
 buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   EGs <- entrezGenes
@@ -429,10 +509,10 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
                    table = "omim", con)
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$unigeneIds, "unigene_id"),
-                   table = "unigene", con)                   
-##   .makeGOTable(entrez = sList$entrez,
-##                GOIDs = unlist(sList$GOIds),
-##                con)
+                   table = "unigene", con)
+  
+  .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
+  
 }
 
 
@@ -462,46 +542,3 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
 
 
 
-
-## making the GO tables is complicated, because we have to 1) split things up
-## based on which ontology they harken from (which means these things must be
-## looked up) and 2) produce both a table of the GO terms we have collected
-## here already and also produce a table of the go_xx_all terms with their
-## parent nodes included.  For a total of 6 tables in all.
-
-## For any gene, the GO list might be empty, but for each list we have two
-## pieces of data to extract, and for each of those, we want to also
-## retrieve a 3rd piece of data, (the ontology) Fortunately, this last bit
-## is easy to do.
-
-## if our GOIds object is called foo:
-## tolower(Ontology(unlist(foo$GOIds)[1])) would give me the 1st Ontology
-
-## to get our ancestor GO IDs, we will just use the ancestor mappings from
-## the latest GO.db package.  for example, if we had GO term "GO:0044183",
-## we would do mget("GO:0044183", GOMFANCESTOR, ifnotfound=NA), (and filter
-## out "all"), then give each of those "answers" the same evidence code that
-## was used for our seed term of "GO:0044183".
-
-.makeGOTable <- function(entrez, GOIds, con){
-  ## GOIds is a list of equal length to the entrez IDs
-  if(length(entrez) != length(GOIds)){
-    stop("There must be a list of GOIds")}
-  
-  ## So I think this is my strategy:
-  ## Step 1: collapse the list of genes and GO terms down to a data.frame.
-  ## Step 2: gather the ontology information for each term.
-  ## Step 3: populate the three go_xx tables with a helper function that uses
-  ## a modified .makeSimpleTable() (separate out the code to collapse the eg
-  ## and other data into a data.frame 1st which will now be passed in) and
-  ## pass in a data.frame to each call, THEN do the same here with a
-  ## data.frame that is split based on the ontology column  - done.
-  ## Step 4: make a helper function that expands a data.frame from Step 3 into
-  ## a a frame that also holds the parent terms for each GO ID, by adding rows
-  ## for all parent terms (with same evidence codes) and then using unique to
-  ## drop redundant rows. (which will happen if there are parent nodes among
-  ## the leaf terms already).
-  ## Step 5: call .makeSimpleTable again with the new data.frame.
-
-  
-}
