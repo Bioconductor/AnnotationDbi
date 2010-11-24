@@ -338,77 +338,46 @@ getEntrezGenesFromTaxId <- function(taxId){
   dbCommit(con)
 }
 
-## This one will be special since it will be what we want for the
-## majority of cases. Ideally, it takes the EGs, the list of values to
-## go with them, along with the tableName and fieldName
-.makeSimpleTable <- function(entrez, fieldVals, table,
-                             fieldName, con, fieldNameLen=25){
-  message(paste("Creating",table,"table"))
-  ## 1st we need a temp table
-  sql<- paste("    CREATE TEMP TABLE temp_",table," (
-      gene_id INTEGER NOT NULL,
-      field_id VARCHAR(50) NOT NULL           
-    );", sep="")
-  sqliteQuickSQL(con, sql)
+## this just makes a nice named data.frame from your data list
+.makeSimpleDF <- function(entrez, fieldVals, name){
   names(fieldVals) <- entrez
-  expandedsList <- unlist2(fieldVals)
-  fieldVals_with_egs<- data.frame(cbind(names(expandedsList),expandedsList)) 
-  sql<- paste("INSERT INTO temp_",table,"(gene_id,field_id) VALUES(?,?);",sep="")
-  dbBeginTransaction(con)
-  dbGetPreparedQuery(con, sql, fieldVals_with_egs)
-  dbCommit(con)  
+  expandedList <- unlist2(fieldVals)
+  result <- data.frame(cbind(names(expandedList),expandedList)) 
+  colnames(result) <- c("gene_id", name)
+  result
+}
+
+## now lets make this work for the case where we pass in a data.frame 
+.makeSimpleTable <- function(fieldVals, table,
+                             con, fieldNameLens=25){
+  message(paste("Creating",table,"table")) 
+  ## For temp table, lets do it like this:
+  dbWriteTable(con, "temp", fieldVals, row.names=FALSE)
+  ## Then we have to create our real table.
+  tableFieldLines <- paste(paste(names(fieldVals)[-1]," VARCHAR(",
+                           fieldNameLens,") NOT NULL,    -- data"),
+                           collapse="\n       ")
   sql<- paste("    CREATE TABLE ",table," (
       _id INTEGER NOT NULL,                         -- REFERENCES genes
-      ",fieldName," VARCHAR(",fieldNameLen,") NOT NULL,               -- data
+      ",tableFieldLines,"
       FOREIGN KEY (_id) REFERENCES genes (_id)
     );") 
   sqliteQuickSQL(con, sql)
+  selFieldLines <- paste(paste("t.",names(fieldVals)[-1],sep=""),collapse=",")
   sql<- paste("
     INSERT INTO ",table,"
-     SELECT g._id as _id, i.field_id AS ",fieldName,"
-     FROM genes AS g, temp_",table," AS i
-     WHERE g.gene_id=i.gene_id
+     SELECT g._id as _id, ",selFieldLines,"
+     FROM genes AS g, temp AS t
+     WHERE g.gene_id=t.gene_id
      ORDER BY g._id;
      ", sep="") 
   sqliteQuickSQL(con, sql)
+
+  ## drop the temp table
+  sqliteQuickSQL(con, "DROP TABLE temp;")
 }
 
-## start with the arguments
-.makeGeneInfoTable <- function(entrez, names, symbols, con){
-  message(paste("Creating gene_info table"))
-  ## 1st we need a temp table
-  sql<- paste("    CREATE TEMP TABLE temp_gene_info (
-      gene_id INTEGER NOT NULL,
-      gene_name VARCHAR(255) NOT NULL,
-      symbol VARCHAR(80) NOT NULL 
-    );", sep="")
-  sqliteQuickSQL(con, sql)
-  if(length(entrez) != length(names) || length(entrez) != length(symbols)){
-    stop("Input values for .makeGeneInfoTable must be equal.")}
-  frame <- as.data.frame(cbind(entrez,names,symbols))
-  sql<- paste("INSERT INTO temp_gene_info(gene_id,gene_name,symbol) VALUES(?,?,?);",sep="")
-  dbBeginTransaction(con)
-  dbGetPreparedQuery(con, sql, frame)
-  dbCommit(con)  
-  sql<- paste("    CREATE TABLE gene_info (
-      _id INTEGER NOT NULL,                         -- REFERENCES genes
-      gene_name VARCHAR(255) NOT NULL,              -- gene name
-      symbol VARCHAR(80) NOT NULL,                  -- gene symbol
-      FOREIGN KEY (_id) REFERENCES genes (_id)
-    );") 
-  sqliteQuickSQL(con, sql)
-  sql<- paste("
-    INSERT INTO gene_info
-     SELECT g._id as _id, tgi.gene_name, tgi.symbol
-     FROM genes AS g, temp_gene_info AS tgi
-     WHERE g.gene_id=tgi.gene_id
-     ORDER BY g._id;
-     ", sep="") 
-  sqliteQuickSQL(con, sql)
-}
 
-#.makeGOTable <- function(){}
-  
 #.makeMetaTables <- function(){}
 
 #.makeTablesIndices <- function(){}
@@ -437,44 +406,34 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   con <- dbConnect(SQLite(), file)
   
   .makeCentralTable(sList$entrez, con)
-  .makeGeneInfoTable(entrez = sList$entrez,
-                     names = unlist(sList$fullNames),
-                     symbols = unlist(sList$symbolIds),
-                     con)
-  .makeSimpleTable(entrez = sList$entrez,
-                   fieldVals = sList$pmIds,
-                   table = "pubmed",
-                   fieldName = "pubmed_id",
-                   con)
-  .makeSimpleTable(entrez = sList$entrez,
-                   fieldVals = .combineTwoLists(sList$alias,
-                                                sList$symbol),
-                   table = "alias",
-                   fieldName = "alias_symbol",
-                   con)
-  .makeSimpleTable(entrez = sList$entrez,
-                   fieldVals = sList$KEGGPathIds,
-                   table = "kegg",
-                   fieldName = "path_id",
-                   con)
-  .makeSimpleTable(entrez = sList$entrez,
-                   fieldVals = .combineTwoLists(sList$RSProtIds,
-                                                sList$RSRNAIds),
-                   table = "refseq",
-                   fieldName = "accession",
-                   con)
-  .makeSimpleTable(entrez = sList$entrez,
-                   fieldVals = sList$MIMIds,
-                   table = "omim",
-                   fieldName = "omim_id",
-                   con)
-  .makeSimpleTable(entrez = sList$entrez,
-                   fieldVals = sList$unigeneIds,
-                   table = "unigene",
-                   fieldName = "unigene_id",
-                   con)
+  .makeSimpleTable(data.frame(gene_id = sList$entrez,
+                              gene_name = unlist(sList$fullNames),
+                              symbol = unlist(sList$symbolIds)),
+                   table = "gene_info", con, fieldNameLens=c(255,80))
+  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+                                 fieldVals = sList$pmIds, "pubmed_id"),
+                   table = "pubmed", con)
+  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+                                 fieldVals = .combineTwoLists(sList$alias,
+                                   sList$symbol), "alias_symbol"),
+                   table = "alias", con)
+  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+                                 fieldVals = sList$KEGGPathIds, "path_id"),
+                   table = "kegg", con)
+  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+                                 fieldVals = .combineTwoLists(sList$RSProtIds,
+                                   sList$RSRNAIds), "accession"),
+                   table = "refseq", con)                   
+  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+                                 fieldVals = sList$MIMIds, "omim_id"),
+                   table = "omim", con)
+  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+                                 fieldVals = sList$unigeneIds, "unigene_id"),
+                   table = "unigene", con)                   
+##   .makeGOTable(entrez = sList$entrez,
+##                GOIDs = unlist(sList$GOIds),
+##                con)
 }
-
 
 
 
@@ -498,3 +457,51 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
 
 
 
+
+
+
+
+
+
+## making the GO tables is complicated, because we have to 1) split things up
+## based on which ontology they harken from (which means these things must be
+## looked up) and 2) produce both a table of the GO terms we have collected
+## here already and also produce a table of the go_xx_all terms with their
+## parent nodes included.  For a total of 6 tables in all.
+
+## For any gene, the GO list might be empty, but for each list we have two
+## pieces of data to extract, and for each of those, we want to also
+## retrieve a 3rd piece of data, (the ontology) Fortunately, this last bit
+## is easy to do.
+
+## if our GOIds object is called foo:
+## tolower(Ontology(unlist(foo$GOIds)[1])) would give me the 1st Ontology
+
+## to get our ancestor GO IDs, we will just use the ancestor mappings from
+## the latest GO.db package.  for example, if we had GO term "GO:0044183",
+## we would do mget("GO:0044183", GOMFANCESTOR, ifnotfound=NA), (and filter
+## out "all"), then give each of those "answers" the same evidence code that
+## was used for our seed term of "GO:0044183".
+
+.makeGOTable <- function(entrez, GOIds, con){
+  ## GOIds is a list of equal length to the entrez IDs
+  if(length(entrez) != length(GOIds)){
+    stop("There must be a list of GOIds")}
+  
+  ## So I think this is my strategy:
+  ## Step 1: collapse the list of genes and GO terms down to a data.frame.
+  ## Step 2: gather the ontology information for each term.
+  ## Step 3: populate the three go_xx tables with a helper function that uses
+  ## a modified .makeSimpleTable() (separate out the code to collapse the eg
+  ## and other data into a data.frame 1st which will now be passed in) and
+  ## pass in a data.frame to each call, THEN do the same here with a
+  ## data.frame that is split based on the ontology column  - done.
+  ## Step 4: make a helper function that expands a data.frame from Step 3 into
+  ## a a frame that also holds the parent terms for each GO ID, by adding rows
+  ## for all parent terms (with same evidence codes) and then using unique to
+  ## drop redundant rows. (which will happen if there are parent nodes among
+  ## the leaf terms already).
+  ## Step 5: call .makeSimpleTable again with the new data.frame.
+
+  
+}
