@@ -378,34 +378,7 @@ getEntrezGenesFromTaxId <- function(taxId){
 }
 
 
-#.makeMetaTables <- function(){}
-
-#.makeTablesIndices <- function(){}
-
-
-
-
-## making the GO tables is complicated, because we have to 1) split things up
-## based on which ontology they harken from (which means these things must be
-## looked up) and 2) produce both a table of the GO terms we have collected
-## here already and also produce a table of the go_xx_all terms with their
-## parent nodes included.  For a total of 6 tables in all.
-
-## For any gene, the GO list might be empty, but for each list we have two
-## pieces of data to extract, and for each of those, we want to also
-## retrieve a 3rd piece of data, (the ontology) Fortunately, this last bit
-## is easy to do.
-
-## if our GOIds object is called foo:
-## tolower(Ontology(unlist(foo$GOIds)[1])) would give me the 1st Ontology
-
-## to get our ancestor GO IDs, we will just use the ancestor mappings from
-## the latest GO.db package.  for example, if we had GO term "GO:0044183",
-## we would do mget("GO:0044183", GOMFANCESTOR, ifnotfound=NA), (and filter
-## out "all"), then give each of those "answers" the same evidence code that
-## was used for our seed term of "GO:0044183".
-
-
+## used to collapse GO lists to a data frame
 .unwindGOs <- function(GOIds, entrez, type){
   res <- vector("list",length(GOIds))
   for(i in seq_len(length(GOIds))){
@@ -417,22 +390,24 @@ getEntrezGenesFromTaxId <- function(taxId){
   res
 }
 
-.makeGOTables <- function(entrez, GOIds, con){
-  ## So I think this is my strategy:
-  ## Step 1: collapse the list of genes and GO terms down to a data.frame. - done
-  ## Step 2: gather the ontology information for each term. -done
-  ## Step 3: populate the three go_xx tables with a helper function that uses
-  ## a modified .makeSimpleTable() (separate out the code to collapse the eg
-  ## and other data into a data.frame 1st which will now be passed in) and
-  ## pass in a data.frame to each call, THEN do the same here with a
-  ## data.frame that is split based on the ontology column  - done.
-  ## Step 4: make a helper function that expands a data.frame from Step 3 into
-  ## a a frame that also holds the parent terms for each GO ID, by adding rows
-  ## for all parent terms (with same evidence codes) and then using unique to
-  ## drop redundant rows. (which will happen if there are parent nodes among
-  ## the leaf terms already).
-  ## Step 5: call .makeSimpleTable again with the new data.frame.
+## used to gather ancestor nodes for GO terms
+.expandGOFrame <- function(frame, AncestMap){
+  ## I want to apply through the original frame and call for the ancestor
+  ancList <- mget(as.character(frame$go_id), AncestMap, ifnotfound=NA)
+  names(ancList) <- frame$gene_id
+  eviCodes <- mget(as.character(frame$go_id), AncestMap, ifnotfound=NA)
+  names(eviCodes) <- frame$evidence
+  expAncList <- unlist2(ancList)
+  expEviCodes <- unlist2(eviCodes)
+  extraRows <- data.frame(gene_id=names(expAncList), go_id=expAncList,
+                          evidence=names(expEviCodes))
+  ##remove rows where go_id="all"
+  extraRows <- extraRows[extraRows$go_id != "all",]
+  unique(rbind(frame,extraRows))
+}
 
+## used to make the 6 custom GO tables
+.makeGOTables <- function(entrez, GOIds, con){
   ## GOIds is a list of equal length to the entrez IDs
   if(length(entrez) != length(GOIds)){
     stop("There must be a list of GOIds")}
@@ -458,9 +433,26 @@ getEntrezGenesFromTaxId <- function(taxId){
   
   .makeSimpleTable(cc, table = "go_cc", con, fieldNameLens=c(10,3))
 
-  ## Now we have to expand the three data.frames
+  ## Now we have to expand the three data.frames to include all ancestor terms 
+  bp_all <- .expandGOFrame(bp, GOBPANCESTOR)
+  mf_all <- .expandGOFrame(mf, GOMFANCESTOR)
+  cc_all <- .expandGOFrame(cc, GOCCANCESTOR)
+
+  .makeSimpleTable(bp_all, table = "go_bp_all", con, fieldNameLens=c(10,3))
   
+  .makeSimpleTable(mf_all, table = "go_mf_all", con, fieldNameLens=c(10,3))
+  
+  .makeSimpleTable(cc_all, table = "go_cc_all", con, fieldNameLens=c(10,3))
+
 }
+
+
+
+## TODO: flesh out the following:
+
+#.makeMetaTables <- function(){}
+
+#.makeTablesIndices <- function(){}
 
 
 ## Wrap the functionality like so:
@@ -521,24 +513,13 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
 
 ##############################################################################
 ## More TODO:
-## 1) Make something to retrieve all the EGs from a tax_id. - no obvious way yet
 ##
-## 2) Wrap this so that we can 1) get all the EGs, then retrieve their results
+## 1) Wrap this so that we can 1) get all the EGs, then retrieve their results
 ## serially into one big super-list for import into a DB.
 ##
-## 3) GO IDs will require more processing to make GO2ALL table.  This can be
-## handled in much the same way as it is now, just by using it along with the## GO.db package which this workflow will have to depend upon.
-##
-## 4) Some checking will have to be done as we add contents that are matched
+## 2) Some checking will have to be done as we add contents that are matched
 ## (thinking of the GO terms here) to the DB.  Specifically, each GO ID needs
 ## to have an evidence code and I know from making this work, that some of
 ## them will NOT have that.  Therefore, I have to check as they are formatted
 ## and put into the DB.
-
-
-
-
-
-
-
 
