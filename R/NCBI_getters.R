@@ -327,7 +327,7 @@ getEntrezGenesFromTaxId <- function(taxId){
 
 ##  I will need the following helpers
 .makeCentralTable <- function(entrez, con){
-  message("Creating genes table")
+  message("Creating genes table:")
   sql<- paste("    CREATE TABLE genes (
       _id INTEGER PRIMARY KEY,
       gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
@@ -339,7 +339,7 @@ getEntrezGenesFromTaxId <- function(taxId){
   dbBeginTransaction(con)
   dbGetPreparedQuery(con, sql, gene_id)
   dbCommit(con)
-  message("genes table finshed.")
+  message("genes table finshed")
 }
 
 ## conversion Utility:
@@ -365,20 +365,25 @@ getEntrezGenesFromTaxId <- function(taxId){
   result
 }
 
-## now lets make this work for the case where we pass in a data.frame 
-.makeSimpleTable <- function(fieldVals, table,
-                             con, fieldNameLens=25){
-  message(paste("Creating",table,"table")) 
+## The following takes a data.frame and produces a simple table from that.  It
+## expects that the 1st column of that data.frame will always be entrez gene
+## IDs.  All fields are assumed to be varchars of size equal to the values in
+## fieldNameLens.  TODO: The cols in data have to be named and of equal
+## length.  indFields is a character vector with the names of fields that we
+## want indexed.  By default only _id will be indexed.
+.makeSimpleTable <- function(data, table, con, fieldNameLens=25,
+                             indFields="_id"){
+  message(paste("Creating",table,"table:")) 
   ## For temp table, lets do it like this:
-  if(dim(fieldVals)[1] == 0){
+  if(dim(data)[1] == 0){
     ## if we don't have anything to put into the table, then we don't even
-    ## want there to make a table.
+    ## want to make a table.
     warning(paste("no values found for table: ",table, sep=""))
     return()
   }else{
-    dbWriteTable(con, "temp", fieldVals, row.names=FALSE)
+    dbWriteTable(con, "temp", data, row.names=FALSE)
     ## Then we have to create our real table.
-    tableFieldLines <- paste(paste(names(fieldVals)[-1]," VARCHAR(",
+    tableFieldLines <- paste(paste(names(data)[-1]," VARCHAR(",
                                  fieldNameLens,") NOT NULL,    -- data"),
                            collapse="\n       ")
     sql<- paste("    CREATE TABLE ",table," (
@@ -387,7 +392,7 @@ getEntrezGenesFromTaxId <- function(taxId){
       FOREIGN KEY (_id) REFERENCES genes (_id)
     );") 
     sqliteQuickSQL(con, sql)
-    selFieldLines <- paste(paste("t.",names(fieldVals)[-1],sep=""),collapse=",")
+    selFieldLines <- paste(paste("t.",names(data)[-1],sep=""),collapse=",")
     sql<- paste("
     INSERT INTO ",table,"
      SELECT g._id as _id, ",selFieldLines,"
@@ -397,6 +402,13 @@ getEntrezGenesFromTaxId <- function(taxId){
      ", sep="") 
     sqliteQuickSQL(con, sql)
 
+    ## Add index to all fields in indFields (default is all)
+    for(i in seq_len(length(indFields))){
+    sqliteQuickSQL(con,
+        paste("CREATE INDEX ",table,"_",indFields[i],"_ind ON ",table,
+              " (",indFields[i],");", sep=""))      
+    }
+    
     ## drop the temp table
     sqliteQuickSQL(con, "DROP TABLE temp;")
   }
@@ -462,22 +474,28 @@ getEntrezGenesFromTaxId <- function(taxId){
     names(mf) <- headerNames
     names(cc) <- headerNames
     
-    .makeSimpleTable(bp, table = "go_bp", con, fieldNameLens=c(10,3))
+    .makeSimpleTable(bp, table = "go_bp", con, fieldNameLens=c(10,3),
+                     indFields = c("_id", "go_id"))
     
-    .makeSimpleTable(mf, table = "go_mf", con, fieldNameLens=c(10,3))
+    .makeSimpleTable(mf, table = "go_mf", con, fieldNameLens=c(10,3),
+                     indFields = c("_id", "go_id"))
     
-    .makeSimpleTable(cc, table = "go_cc", con, fieldNameLens=c(10,3))
+    .makeSimpleTable(cc, table = "go_cc", con, fieldNameLens=c(10,3),
+                     indFields = c("_id", "go_id"))
     
     ## Now expand the three data.frames to incl all ancestor terms 
     bp_all <- .expandGOFrame(bp, GOBPANCESTOR)
     mf_all <- .expandGOFrame(mf, GOMFANCESTOR)
     cc_all <- .expandGOFrame(cc, GOCCANCESTOR)
     
-    .makeSimpleTable(bp_all, table = "go_bp_all", con, fieldNameLens=c(10,3))
+    .makeSimpleTable(bp_all, table = "go_bp_all", con, fieldNameLens=c(10,3),
+                     indFields = c("_id", "go_id"))
     
-    .makeSimpleTable(mf_all, table = "go_mf_all", con, fieldNameLens=c(10,3))
+    .makeSimpleTable(mf_all, table = "go_mf_all", con, fieldNameLens=c(10,3),
+                     indFields = c("_id", "go_id"))
     
-    .makeSimpleTable(cc_all, table = "go_cc_all", con, fieldNameLens=c(10,3))
+    .makeSimpleTable(cc_all, table = "go_cc_all", con, fieldNameLens=c(10,3),
+                     indFields = c("_id", "go_id"))
   }else{
     ## as with other tables, if we have nothing to populate, then we don't
     ## want to even make a table!
@@ -490,8 +508,6 @@ getEntrezGenesFromTaxId <- function(taxId){
 
 #.makeMetaTables <- function(){}
 
-#.makeTablesIndices <- function(){}
-
 
 ## Wrap the functionality like so:
 buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
@@ -503,7 +519,7 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
     chunkSize = 800
     numChunks = floor(length(EGs)/chunkSize)
     splitFactor <- rep(1:numChunks, each=chunkSize)
-    EGChunks <- split(EGs, as.factor(splitFactor))
+    EGChunks <- split(EGs, as.factor(splitFactor)) ## this causes a warning :(
     EGChunksFinal <- EGChunks[[1]][(chunkSize+1):length(EGChunks[[1]])]
     EGChunks[[1]] <-  EGChunks[[1]][1:chunkSize]
     EGChunks <- c(EGChunks,list(EGChunksFinal))
@@ -516,7 +532,7 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   con <- dbConnect(SQLite(), file)
   
   .makeCentralTable(sList$entrez, con)
-  ## following fails on 20:30
+  ## gene_info table is special
   ## I need to make the data.frame and do some minor filtering.
   gene_infoData <- data.frame(
     gene_id = sList$entrez,
@@ -525,7 +541,9 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   gene_infoData <- ## still have to remove lines with no data! 
     gene_infoData[!is.na(gene_infoData[,2]) & !is.na(gene_infoData[,2]),]
   .makeSimpleTable(gene_infoData,
-                   table = "gene_info", con, fieldNameLens=c(255,80))
+                   table = "gene_info", con, fieldNameLens=c(255,80),
+                   indFields = character())
+  
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$pmIds, "pubmed_id"),
                    table = "pubmed", con)
@@ -546,7 +564,7 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$unigeneIds, "unigene_id"),
                    table = "unigene", con)
-
+  ## GO tables are special
   .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
 }
 
