@@ -327,7 +327,7 @@ getEntrezGenesFromTaxId <- function(taxId){
 
 ##  I will need the following helpers
 .makeCentralTable <- function(entrez, con){
-  message(cat("Creating genes table"))
+  message("Creating genes table")
   sql<- paste("    CREATE TABLE genes (
       _id INTEGER PRIMARY KEY,
       gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
@@ -339,6 +339,7 @@ getEntrezGenesFromTaxId <- function(taxId){
   dbBeginTransaction(con)
   dbGetPreparedQuery(con, sql, gene_id)
   dbCommit(con)
+  message("genes table finshed.")
 }
 
 ## conversion Utility:
@@ -355,10 +356,12 @@ getEntrezGenesFromTaxId <- function(taxId){
   names(fieldVals) <- entrez
   fieldVals <- .convertNullToNA(fieldVals)
   expandedList <- unlist2(fieldVals)
-  result <- data.frame(cbind(names(expandedList),expandedList)) 
+  result <- data.frame(names(expandedList), expandedList,
+                       stringsAsFactors=FALSE) 
   colnames(result) <- c("gene_id", name)
   ## now I have to remove any rows with NA values across the whole row.
   result <- result[!is.na(result[,2]),]
+  row.names(result) <- NULL ##1:dim(result)[1]
   result
 }
 
@@ -397,6 +400,7 @@ getEntrezGenesFromTaxId <- function(taxId){
     ## drop the temp table
     sqliteQuickSQL(con, "DROP TABLE temp;")
   }
+  message(paste(table,"table finished"))
 }
 
 
@@ -513,28 +517,25 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   
   .makeCentralTable(sList$entrez, con)
   ## following fails on 20:30
-  ## I need to make the data.frame and do some custom filtering.
+  ## I need to make the data.frame and do some minor filtering.
   gene_infoData <- data.frame(
     gene_id = sList$entrez,
     gene_name = unlist(.convertNullToNA(as.list(sList$fullNames))),
     symbol = unlist(.convertNullToNA(as.list(sList$symbolIds))))
-  gene_infoData <- ## still have to remove lines with no data
+  gene_infoData <- ## still have to remove lines with no data! 
     gene_infoData[!is.na(gene_infoData[,2]) & !is.na(gene_infoData[,2]),]
   .makeSimpleTable(gene_infoData,
                    table = "gene_info", con, fieldNameLens=c(255,80))
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$pmIds, "pubmed_id"),
                    table = "pubmed", con)
-  ## following fails somewhere between 300:400 - fixed
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = .combineTwoLists(sList$alias,
                                    sList$symbol), "alias_symbol"),
                    table = "alias", con)
-  ## following fails on 20:30 - fixed
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$KEGGPathIds, "path_id"),
                    table = "kegg", con)
-  ## following fails on 1:10 - fixed
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = .combineTwoLists(sList$RSProtIds,
                                    sList$RSRNAIds), "accession"),
@@ -545,9 +546,8 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$unigeneIds, "unigene_id"),
                    table = "unigene", con)
-  ## these also fail on 300 or even 300:400 (no GO values problem) - fixed
+
   .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
-  
 }
 
 
