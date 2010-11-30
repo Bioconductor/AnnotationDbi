@@ -316,11 +316,14 @@ getEntrezGenesFromTaxId <- function(taxId){
     stop("lists must be equal length to be merged")}
   result <- vector("list",length(list1))
   for(i in seq_len(length(list1))){
-    result[[i]] <- c(list1[[i]], list2[[i]])
+    if(is.null(list1[[i]]) && is.null(list2[[i]])){
+      result[[i]] <- NA
+    }else{
+      result[[i]] <- c(list1[[i]], list2[[i]])
+    }
   }
   result
 }
-
 
 ##  I will need the following helpers
 .makeCentralTable <- function(entrez, con){
@@ -338,12 +341,24 @@ getEntrezGenesFromTaxId <- function(taxId){
   dbCommit(con)
 }
 
-## this just makes a nice named data.frame from your data list
+## conversion Utility:
+.convertNullToNA <- function(list){
+  ind <- unlist(lapply(list, is.null))
+  list[ind] <- NA
+  list
+}
+
+## this just makes a nice named data.frame from your data lists
 .makeSimpleDF <- function(entrez, fieldVals, name){
+  if(length(entrez) != length(fieldVals))
+    stop("To make data.frame from list + vector, both must be equal len.")
   names(fieldVals) <- entrez
+  fieldVals <- .convertNullToNA(fieldVals)
   expandedList <- unlist2(fieldVals)
   result <- data.frame(cbind(names(expandedList),expandedList)) 
   colnames(result) <- c("gene_id", name)
+  ## now I have to remove any rows with NA values across the whole row.
+  result <- result[!is.na(result[,2]),]
   result
 }
 
@@ -352,29 +367,34 @@ getEntrezGenesFromTaxId <- function(taxId){
                              con, fieldNameLens=25){
   message(paste("Creating",table,"table")) 
   ## For temp table, lets do it like this:
-  dbWriteTable(con, "temp", fieldVals, row.names=FALSE)
-  ## Then we have to create our real table.
-  tableFieldLines <- paste(paste(names(fieldVals)[-1]," VARCHAR(",
-                           fieldNameLens,") NOT NULL,    -- data"),
+  if(dim(fieldVals)[1] == 0){
+    warning(paste("no values found for table: ",table, sep=""))
+    return()
+  }else{
+    dbWriteTable(con, "temp", fieldVals, row.names=FALSE)
+    ## Then we have to create our real table.
+    tableFieldLines <- paste(paste(names(fieldVals)[-1]," VARCHAR(",
+                                 fieldNameLens,") NOT NULL,    -- data"),
                            collapse="\n       ")
-  sql<- paste("    CREATE TABLE ",table," (
+    sql<- paste("    CREATE TABLE ",table," (
       _id INTEGER NOT NULL,                         -- REFERENCES genes
       ",tableFieldLines,"
       FOREIGN KEY (_id) REFERENCES genes (_id)
     );") 
-  sqliteQuickSQL(con, sql)
-  selFieldLines <- paste(paste("t.",names(fieldVals)[-1],sep=""),collapse=",")
-  sql<- paste("
+    sqliteQuickSQL(con, sql)
+    selFieldLines <- paste(paste("t.",names(fieldVals)[-1],sep=""),collapse=",")
+    sql<- paste("
     INSERT INTO ",table,"
      SELECT g._id as _id, ",selFieldLines,"
      FROM genes AS g, temp AS t
      WHERE g.gene_id=t.gene_id
      ORDER BY g._id;
      ", sep="") 
-  sqliteQuickSQL(con, sql)
+    sqliteQuickSQL(con, sql)
 
-  ## drop the temp table
-  sqliteQuickSQL(con, "DROP TABLE temp;")
+    ## drop the temp table
+    sqliteQuickSQL(con, "DROP TABLE temp;")
+  }
 }
 
 
@@ -478,20 +498,24 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   con <- dbConnect(SQLite(), file)
   
   .makeCentralTable(sList$entrez, con)
-  .makeSimpleTable(data.frame(gene_id = sList$entrez,
-                              gene_name = unlist(sList$fullNames),
-                              symbol = unlist(sList$symbolIds)),
-                   table = "gene_info", con, fieldNameLens=c(255,80))
+  ## following fails on 20:30
+##   .makeSimpleTable(data.frame(gene_id = sList$entrez,
+##                               gene_name = unlist(sList$fullNames),
+##                               symbol = unlist(sList$symbolIds)),
+##                    table = "gene_info", con, fieldNameLens=c(255,80))
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$pmIds, "pubmed_id"),
                    table = "pubmed", con)
-  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
-                                 fieldVals = .combineTwoLists(sList$alias,
-                                   sList$symbol), "alias_symbol"),
-                   table = "alias", con)
+  ## following fails somewhere between 300:400 - fixed????
+##   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+##                                  fieldVals = .combineTwoLists(sList$alias,
+##                                    sList$symbol), "alias_symbol"),
+##                    table = "alias", con)
+  ## following fails on 20:30 - fixed
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$KEGGPathIds, "path_id"),
                    table = "kegg", con)
+  ## following fails on 1:10 - fixed
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = .combineTwoLists(sList$RSProtIds,
                                    sList$RSRNAIds), "accession"),
@@ -503,7 +527,8 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
                                  fieldVals = sList$unigeneIds, "unigene_id"),
                    table = "unigene", con)
   
-  .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
+  ## these also fail between 300:400
+##   .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
   
 }
 

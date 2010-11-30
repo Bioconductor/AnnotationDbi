@@ -47,7 +47,7 @@
   ## temporarily, lets use known EGs to run tests
   library(org.Hs.eg.db)
   EGs <- Lkeys(org.Hs.egCHR)
-  EGs <- EGs[1:4] ## Obviously NOT a typical step.
+  EGs <- EGs[c(20:23)] ## Obviously NOT a typical step.
   buildEntrezGeneDb(EGs, file=tempfile())
 }
 
