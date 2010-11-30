@@ -368,6 +368,8 @@ getEntrezGenesFromTaxId <- function(taxId){
   message(paste("Creating",table,"table")) 
   ## For temp table, lets do it like this:
   if(dim(fieldVals)[1] == 0){
+    ## if we don't have anything to put into the table, then we don't even
+    ## want there to make a table.
     warning(paste("no values found for table: ",table, sep=""))
     return()
   }else{
@@ -403,7 +405,11 @@ getEntrezGenesFromTaxId <- function(taxId){
   res <- vector("list",length(GOIds))
   for(i in seq_len(length(GOIds))){
     for(j in seq_len(length(GOIds[[i]]))){
-      res[[i]] <- c(res[[i]], unlist2(GOIds[[i]][[j]][[type]]))
+      if( is.null(unlist2(GOIds[[i]][[j]][[type]])) ){
+        res[[i]] <- NA
+      }else{
+        res[[i]] <- c(res[[i]], unlist2(GOIds[[i]][[j]][[type]]))
+      }
     }
   }
   names(res) <- entrez
@@ -431,41 +437,49 @@ getEntrezGenesFromTaxId <- function(taxId){
   ## GOIds is a list of equal length to the entrez IDs
   if(length(entrez) != length(GOIds)){
     stop("There must be a list of GOIds")}
-  go_id <- unlist2(.unwindGOs(GOIds, entrez, type=1))
-  evidence <- unlist2(.unwindGOs(GOIds, entrez, type=2))
-  ontology <- Ontology(go_id)
-  baseFrame <- cbind(gene_id = names(go_id), go_id=go_id,
-                     evidence=evidence, ontology=ontology)
-  bp <- data.frame(matrix(split(baseFrame, ontology)$BP,
-               byrow=FALSE, nrow=length(grep("BP",ontology))))[,1:3]
-  mf <- data.frame(matrix(split(baseFrame, ontology)$MF,
-               byrow=FALSE, nrow=length(grep("MF",ontology))))[,1:3]
-  cc <- data.frame(matrix(split(baseFrame, ontology)$CC,
-               byrow=FALSE, nrow=length(grep("CC",ontology))))[,1:3]
-  headerNames = c("gene_id","go_id","evidence")
-  names(bp) <- headerNames
-  names(mf) <- headerNames
-  names(cc) <- headerNames
-
-  .makeSimpleTable(bp, table = "go_bp", con, fieldNameLens=c(10,3))
-  
-  .makeSimpleTable(mf, table = "go_mf", con, fieldNameLens=c(10,3))
-  
-  .makeSimpleTable(cc, table = "go_cc", con, fieldNameLens=c(10,3))
-
-  ## Now we have to expand the three data.frames to include all ancestor terms 
-  bp_all <- .expandGOFrame(bp, GOBPANCESTOR)
-  mf_all <- .expandGOFrame(mf, GOMFANCESTOR)
-  cc_all <- .expandGOFrame(cc, GOCCANCESTOR)
-
-  .makeSimpleTable(bp_all, table = "go_bp_all", con, fieldNameLens=c(10,3))
-  
-  .makeSimpleTable(mf_all, table = "go_mf_all", con, fieldNameLens=c(10,3))
-  
-  .makeSimpleTable(cc_all, table = "go_cc_all", con, fieldNameLens=c(10,3))
-
+  uw_gos <- .unwindGOs(GOIds, entrez, type=1)
+  if(length(is.na(uw_gos)) == length(uw_gos)){
+    go_id <- unlist2(uw_gos)
+    evidence <- unlist2(.unwindGOs(GOIds, entrez, type=2))
+    ontology <- Ontology(go_id)
+    baseFrame <- cbind(gene_id = names(go_id), go_id=go_id,
+                       evidence=evidence, ontology=ontology)
+    bp <- data.frame(matrix(split(baseFrame, ontology)$BP,
+                            byrow=FALSE,
+                            nrow=length(grep("BP",ontology))))[,1:3]
+    mf <- data.frame(matrix(split(baseFrame, ontology)$MF,
+                            byrow=FALSE,
+                            nrow=length(grep("MF",ontology))))[,1:3]
+    cc <- data.frame(matrix(split(baseFrame, ontology)$CC,
+                            byrow=FALSE,
+                            nrow=length(grep("CC",ontology))))[,1:3]
+    headerNames = c("gene_id","go_id","evidence")
+    names(bp) <- headerNames
+    names(mf) <- headerNames
+    names(cc) <- headerNames
+    
+    .makeSimpleTable(bp, table = "go_bp", con, fieldNameLens=c(10,3))
+    
+    .makeSimpleTable(mf, table = "go_mf", con, fieldNameLens=c(10,3))
+    
+    .makeSimpleTable(cc, table = "go_cc", con, fieldNameLens=c(10,3))
+    
+    ## Now expand the three data.frames to incl all ancestor terms 
+    bp_all <- .expandGOFrame(bp, GOBPANCESTOR)
+    mf_all <- .expandGOFrame(mf, GOMFANCESTOR)
+    cc_all <- .expandGOFrame(cc, GOCCANCESTOR)
+    
+    .makeSimpleTable(bp_all, table = "go_bp_all", con, fieldNameLens=c(10,3))
+    
+    .makeSimpleTable(mf_all, table = "go_mf_all", con, fieldNameLens=c(10,3))
+    
+    .makeSimpleTable(cc_all, table = "go_cc_all", con, fieldNameLens=c(10,3))
+  }else{
+    ## as with other tables, if we have nothing to populate, then we don't
+    ## want to even make a table!
+    return() 
+  }
 }
-
 
 
 ## TODO: flesh out the following:
@@ -493,24 +507,29 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
     superListOfLists <- lapply(EGChunks, getGeneStuff)
     sList <- .mergeLists(superListOfLists)
   }
-  #file.remove(file) ##remove the old file when they re-run the code?
-  ## TODO: check 1st.
+  ## TODO: check if there is a file and if so just remove it.
+  ## file.remove(file) ##remove the old file when they re-run the code?
   con <- dbConnect(SQLite(), file)
   
   .makeCentralTable(sList$entrez, con)
   ## following fails on 20:30
-##   .makeSimpleTable(data.frame(gene_id = sList$entrez,
-##                               gene_name = unlist(sList$fullNames),
-##                               symbol = unlist(sList$symbolIds)),
-##                    table = "gene_info", con, fieldNameLens=c(255,80))
+  ## I need to make the data.frame and do some custom filtering.
+  gene_infoData <- data.frame(
+    gene_id = sList$entrez,
+    gene_name = unlist(.convertNullToNA(as.list(sList$fullNames))),
+    symbol = unlist(.convertNullToNA(as.list(sList$symbolIds))))
+  gene_infoData <- ## still have to remove lines with no data
+    gene_infoData[!is.na(gene_infoData[,2]) & !is.na(gene_infoData[,2]),]
+  .makeSimpleTable(gene_infoData,
+                   table = "gene_info", con, fieldNameLens=c(255,80))
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$pmIds, "pubmed_id"),
                    table = "pubmed", con)
-  ## following fails somewhere between 300:400 - fixed????
-##   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
-##                                  fieldVals = .combineTwoLists(sList$alias,
-##                                    sList$symbol), "alias_symbol"),
-##                    table = "alias", con)
+  ## following fails somewhere between 300:400 - fixed
+  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+                                 fieldVals = .combineTwoLists(sList$alias,
+                                   sList$symbol), "alias_symbol"),
+                   table = "alias", con)
   ## following fails on 20:30 - fixed
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$KEGGPathIds, "path_id"),
@@ -519,16 +538,15 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = .combineTwoLists(sList$RSProtIds,
                                    sList$RSRNAIds), "accession"),
-                   table = "refseq", con)                   
+                   table = "refseq", con)
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$MIMIds, "omim_id"),
                    table = "omim", con)
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$unigeneIds, "unigene_id"),
                    table = "unigene", con)
-  
-  ## these also fail between 300:400
-##   .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
+  ## these also fail on 300 or even 300:400 (no GO values problem) - fixed
+  .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
   
 }
 
