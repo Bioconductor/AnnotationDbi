@@ -23,6 +23,34 @@
 
 
 
+## Another way to approach this is something like this:
+## str(sapply(EG, function(elt) unlist(xpathApply(xmlDoc(elt), "//PubMedId", xmlValue))))
+
+## where foo is the whole doc ie.
+## foo = xmlParse(url)
+## for (i in 1:n) print(xpathApply(foo, sprintf("count(//Entrezgene[%d]//PubMedId)", i)))
+## for (i in 1:n) print(xpathApply(foo, sprintf("//Entrezgene[%d]//PubMedId/text()", i), xmlValue))
+
+## or
+## make queries
+## xpq = sprintf("//Entrezgene[%d]//PubMedId", 1:n)
+## lapply(xpq, xpathApply, doc=foo, fun=xmlValue)
+
+## Other notes from discussion of Xpath with Martin on how to use XPath to
+## retrieve more from a node without allocating a node...
+## library(XML)
+## base <-
+## url <-
+## sprintf("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=%s&retmode=xml",
+##                "1,10,100")
+## eg <- xmlParse(url)
+## sets <- getNodeSet(eg, "//Entrezgene")
+## res <-
+##     xpathApply(sets[[1]],
+## "//Other-source[//Dbtag_db/text()='GO']//Object-id_id/text()", xmlValue)
+
+## xpathApply(eg, "count(//Dbtag_db[text()='GO'])")
+## xpathApply(eg, "//Dbtag_db[text()='GO']/text()")
 
 
 
@@ -115,14 +143,9 @@ getGOInfo <- function(doc){
   GOIds
 }
 
-## wrapping up getGeneStuff just so I can take out the trash?
-getGeneStuff <- function(entrezGenes){
-  result <- .getGeneStuff(entrezGenes)
-  gc()
-  result ## Did this really help?  Hard to say for sure..
-}
 
-.getGeneStuff <- function(entrezGenes){
+
+getGeneStuff <- function(entrezGenes){
   require(XML)
   baseUrl <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
   xsep <- paste(entrezGenes, collapse=",")
@@ -248,7 +271,7 @@ getGeneStuff <- function(entrezGenes){
        GOIds = GOIds,  
        KEGGGeneIds = KEGGGeneIds,
        KEGGPathIds = KEGGPathIds,
-       aliasIds = aliasIds, ## requires preprocessing to match up?
+       aliasIds = aliasIds, 
        symbolIds = symbolIds,
        fullNames = fullNames,
        RSProtIds = RSProtIds,
@@ -560,7 +583,7 @@ getEntrezGenesFromTaxId <- function(taxId){
 getDataAndAddToDb <- function(EGChunk, con){      
     list <- getGeneStuff(EGChunk)
     .makeOrgDB(list, con)
-    gc()
+    print(gc())
 }
 
 ## Wrap the functionality like so:
@@ -585,7 +608,10 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
 ##     superListOfLists <- lapply(EGChunks, getGeneStuff)
 ##     sList <- .mergeLists(superListOfLists)
 ##     .makeOrgDB(sList, con)
-    lapply(EGChunks, getDataAndAddToDb, con)
+    ##lapply(EGChunks, getDataAndAddToDb, con)
+    for(chunk in EGChunks){
+      getDataAndAddToDb(chunk, con)
+    }
   }
 }
 
