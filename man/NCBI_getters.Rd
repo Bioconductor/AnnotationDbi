@@ -48,8 +48,20 @@
   library(org.Hs.eg.db)
   EGs <- Lkeys(org.Hs.egCHR)
   EGs <- EGs[c(1:10)] ## Obviously NOT a typical step.
-  buildEntrezGeneDb(EGs, file=tempfile())
+  buildEntrezGeneDb(EGs) ##, file=tempfile())
 
+  library(org.Hs.eg.db)
+  EGs <- Lkeys(org.Hs.egCHR)
+  EGs <- EGs[c(11:20)] ## Obviously NOT a typical step.
+  buildEntrezGeneDb(EGs)
+ 
+  library(org.Hs.eg.db)
+  EGs <- Lkeys(org.Hs.egCHR)
+  EGs <- EGs[c(11:20)] ## Obviously NOT a typical step.
+  buildEntrezGeneDb(EGs,file=tempfile())
+
+
+  
 }
 
 \keyword{interface}

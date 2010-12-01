@@ -115,9 +115,14 @@ getGOInfo <- function(doc){
   GOIds
 }
 
-
-
+## wrapping up getGeneStuff just so I can take out the trash?
 getGeneStuff <- function(entrezGenes){
+  result <- .getGeneStuff(entrezGenes)
+  gc()
+  result ## Did this really help?  Hard to say for sure..
+}
+
+.getGeneStuff <- function(entrezGenes){
   require(XML)
   baseUrl <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
   xsep <- paste(entrezGenes, collapse=",")
@@ -327,8 +332,8 @@ getEntrezGenesFromTaxId <- function(taxId){
 
 ##  I will need the following helpers
 .makeCentralTable <- function(entrez, con){
-  message("Creating genes table:")
-  sql<- paste("    CREATE TABLE genes (
+  message("Populating genes table:")
+  sql<- paste("    CREATE TABLE IF NOT EXISTS genes (
       _id INTEGER PRIMARY KEY,
       gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
     );")
@@ -339,7 +344,7 @@ getEntrezGenesFromTaxId <- function(taxId){
   dbBeginTransaction(con)
   dbGetPreparedQuery(con, sql, gene_id)
   dbCommit(con)
-  message("genes table finshed")
+  message("genes table filled")
 }
 
 ## conversion Utility:
@@ -373,12 +378,13 @@ getEntrezGenesFromTaxId <- function(taxId){
 ## want indexed.  By default only _id will be indexed.
 .makeSimpleTable <- function(data, table, con, fieldNameLens=25,
                              indFields="_id"){
-  message(paste("Creating",table,"table:")) 
+  message(paste("Populating",table,"table:"))
   ## For temp table, lets do it like this:
   if(dim(data)[1] == 0){
     ## if we don't have anything to put into the table, then we don't even
     ## want to make a table.
-    warning(paste("no values found for table: ",table, sep=""))
+    warning(paste("no values found for table ",table,
+                  " in this data chunk.", sep=""))
     return()
   }else{
     dbWriteTable(con, "temp", data, row.names=FALSE)
@@ -386,7 +392,7 @@ getEntrezGenesFromTaxId <- function(taxId){
     tableFieldLines <- paste(paste(names(data)[-1]," VARCHAR(",
                                  fieldNameLens,") NOT NULL,    -- data"),
                            collapse="\n       ")
-    sql<- paste("    CREATE TABLE ",table," (
+    sql<- paste("    CREATE TABLE IF NOT EXISTS",table," (
       _id INTEGER NOT NULL,                         -- REFERENCES genes
       ",tableFieldLines,"
       FOREIGN KEY (_id) REFERENCES genes (_id)
@@ -405,14 +411,15 @@ getEntrezGenesFromTaxId <- function(taxId){
     ## Add index to all fields in indFields (default is all)
     for(i in seq_len(length(indFields))){
     sqliteQuickSQL(con,
-        paste("CREATE INDEX ",table,"_",indFields[i],"_ind ON ",table,
+        paste("CREATE INDEX IF NOT EXISTS ",
+              table,"_",indFields[i],"_ind ON ",table,
               " (",indFields[i],");", sep=""))      
     }
     
     ## drop the temp table
     sqliteQuickSQL(con, "DROP TABLE temp;")
   }
-  message(paste(table,"table finished"))
+  message(paste(table,"table filled"))
 }
 
 
@@ -429,6 +436,7 @@ getEntrezGenesFromTaxId <- function(taxId){
     }
   }
   names(res) <- entrez
+  res <- .convertNullToNA(res)
   res
 }
 
@@ -452,12 +460,12 @@ getEntrezGenesFromTaxId <- function(taxId){
 .makeGOTables <- function(entrez, GOIds, con){
   ## GOIds is a list of equal length to the entrez IDs
   if(length(entrez) != length(GOIds)){
-    stop("There must be a list of GOIds")}
+    stop("There must be a list of GOIds")}  
   uw_gos <- .unwindGOs(GOIds, entrez, type=1)
-  if(length(is.na(uw_gos)) == length(uw_gos)){
+  if(length(uw_gos[is.na(uw_gos)]) != length(uw_gos)){
     go_id <- unlist2(uw_gos)
     evidence <- unlist2(.unwindGOs(GOIds, entrez, type=2))
-    ontology <- Ontology(go_id)
+    ontology <- Ontology(go_id) ## This step REQUIRES that there be GO IDs
     baseFrame <- cbind(gene_id = names(go_id), go_id=go_id,
                        evidence=evidence, ontology=ontology)
     bp <- data.frame(matrix(split(baseFrame, ontology)$BP,
@@ -499,6 +507,8 @@ getEntrezGenesFromTaxId <- function(taxId){
   }else{
     ## as with other tables, if we have nothing to populate, then we don't
     ## want to even make a table!
+    warning(paste("no values found for any GO tables",
+                  " in this data chunk.", sep=""))
     return() 
   }
 }
@@ -509,27 +519,7 @@ getEntrezGenesFromTaxId <- function(taxId){
 #.makeMetaTables <- function(){}
 
 
-## Wrap the functionality like so:
-buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
-  EGs <- entrezGenes
-  ## Then break it into chunks
-  if(length(EGs)<800){
-    sList <- getGeneStuff(EGs)
-  }else{
-    chunkSize <- 800
-    numChunks <- length(EGs) %/% chunkSize
-    remChunks <- length(EGs) %% chunkSize
-    splitFactor <- rep(seq_len(numChunks), each=chunkSize)
-    splitFactor <- c(splitFactor, rep(numChunks+1, each=remChunks))
-    EGChunks <- split(EGs, splitFactor)    
-    ## Then we just need to apply through and make a super-list
-    superListOfLists <- lapply(EGChunks, getGeneStuff)
-    sList <- .mergeLists(superListOfLists)
-  }
-  ## TODO: check if there is a file and if so just remove it.
-  ## file.remove(file) ##remove the old file when they re-run the code?
-  con <- dbConnect(SQLite(), file)
-  
+.makeOrgDB <- function(sList, con){
   .makeCentralTable(sList$entrez, con)
   ## gene_info table is special
   ## I need to make the data.frame and do some minor filtering.
@@ -565,6 +555,38 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
                    table = "unigene", con)
   ## GO tables are special
   .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
+}
+
+getDataAndAddToDb <- function(EGChunk, con){      
+    list <- getGeneStuff(EGChunk)
+    .makeOrgDB(list, con)
+    gc()
+}
+
+## Wrap the functionality like so:
+buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
+  EGs <- entrezGenes
+  ## TODO: check if there is a file and if so just remove it.
+  ## file.remove(file) ##remove the old file when they re-run the code?
+  con <- dbConnect(SQLite(), file)
+
+  ## Then break it into chunks
+  if(length(EGs)<800){
+    sList <- getGeneStuff(EGs)
+    .makeOrgDB(sList, con)
+  }else{
+    chunkSize <- 800
+    numChunks <- length(EGs) %/% chunkSize
+    remChunks <- length(EGs) %% chunkSize
+    splitFactor <- rep(seq_len(numChunks), each=chunkSize)
+    splitFactor <- c(splitFactor, rep(numChunks+1, each=remChunks))
+    EGChunks <- split(EGs, splitFactor)    
+    ## Then we just need to apply through and make a super-list
+##     superListOfLists <- lapply(EGChunks, getGeneStuff)
+##     sList <- .mergeLists(superListOfLists)
+##     .makeOrgDB(sList, con)
+    lapply(EGChunks, getDataAndAddToDb, con)
+  }
 }
 
 
