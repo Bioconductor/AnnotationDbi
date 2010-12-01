@@ -516,13 +516,12 @@ buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   if(length(EGs)<800){
     sList <- getGeneStuff(EGs)
   }else{
-    chunkSize = 800
-    numChunks = floor(length(EGs)/chunkSize)
-    splitFactor <- rep(1:numChunks, each=chunkSize)
-    EGChunks <- split(EGs, as.factor(splitFactor)) ## this causes a warning :(
-    EGChunksFinal <- EGChunks[[1]][(chunkSize+1):length(EGChunks[[1]])]
-    EGChunks[[1]] <-  EGChunks[[1]][1:chunkSize]
-    EGChunks <- c(EGChunks,list(EGChunksFinal))
+    chunkSize <- 800
+    numChunks <- length(EGs) %/% chunkSize
+    remChunks <- length(EGs) %% chunkSize
+    splitFactor <- rep(seq_len(numChunks), each=chunkSize)
+    splitFactor <- c(splitFactor, rep(numChunks+1, each=remChunks))
+    EGChunks <- split(EGs, splitFactor)    
     ## Then we just need to apply through and make a super-list
     superListOfLists <- lapply(EGChunks, getGeneStuff)
     sList <- .mergeLists(superListOfLists)
