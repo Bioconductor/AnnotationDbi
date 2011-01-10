@@ -26,15 +26,15 @@
 ## Another way to approach this is something like this:
 ## str(sapply(EG, function(elt) unlist(xpathApply(xmlDoc(elt), "//PubMedId", xmlValue))))
 
-## where foo is the whole doc ie.
-## foo = xmlParse(url)
-## for (i in 1:n) print(xpathApply(foo, sprintf("count(//Entrezgene[%d]//PubMedId)", i)))
-## for (i in 1:n) print(xpathApply(foo, sprintf("//Entrezgene[%d]//PubMedId/text()", i), xmlValue))
+## where EGSet is the whole doc ie.
+## EGSet = xmlParse(url)
+## for (i in 1:n) print(xpathApply(EGSet, sprintf("count(//Entrezgene[%d]//PubMedId)", i)))
+## for (i in 1:n) print(xpathApply(EGSet, sprintf("//Entrezgene[%d]//PubMedId/text()", i), xmlValue))
 
 ## or
 ## make queries
 ## xpq = sprintf("//Entrezgene[%d]//PubMedId", 1:n)
-## lapply(xpq, xpathApply, doc=foo, fun=xmlValue)
+## lapply(xpq, xpathApply, doc=EGSet, fun=xmlValue)
 
 ## Other notes from discussion of Xpath with Martin on how to use XPath to
 ## retrieve more from a node without allocating a node...
@@ -145,140 +145,206 @@ getGOInfo <- function(doc){
 
 
 
-getGeneStuff <- function(entrezGenes){
+getGeneStuff <- function(entrezGenes, dir = "files"){
   require(XML)
   baseUrl <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
   xsep <- paste(entrezGenes, collapse=",")
   url <- paste(baseUrl,"db=gene&id=",xsep,"&retmode=xml", sep="")
-    
+
   ## NOW we have to parse the available XML
   EGSet <- xmlParse(url)
-  ## Some tags can only occur once per gene
-  entrezGeneID <- unlist(xpathApply(EGSet, "//Gene-track_geneid", xmlValue))
-  speciesName <- unlist(xpathApply(EGSet, "//Org-ref_taxname", xmlValue))
 
-  ## But most information is either more complex than that or is stored in a
-  ## more complex way by the XML
-  ## miniDocs are the individual entrez Gene records
+## Here we will save the files out to a dir
   miniDocs <- lapply(getNodeSet(EGSet, "//Entrezgene"), xmlDoc)
-
-  ## Sometimes we are lucky and the information we want has an obviously
-  ## unique tag.
-  ## Like pubmed Ids
-  pmIdPath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId"
-  pmIds <- lapply(miniDocs, function(x)
-                  unlist(xpathApply(x, pmIdPath, xmlValue)))
-
-  ## But sometimes we have to do some more checking to make sure that what we
-  ## are retrieving is in the context of certain kinds of tags, or of tags
-  ## that contain certain information.
-
-  ## custom helper to get and process the GO terms
-  GOIds <- lapply(miniDocs, getGOInfo)
-
-  ## KEGG Gene IDs are NOT the path IDs.
-  otherSourcePath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source"
-  dbTagPath <- "/Other-source/Other-source_src/Dbtag/Dbtag_db"
-  resIDPath_str <- "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_str"
-  KEGGGeneIds <- lapply(miniDocs, .getSubNodeInfo, type = "KEGG",
-                    otherSourcePath = otherSourcePath,
-                           dbTagPath = dbTagPath,
-                           resIDPath = resIDPath_str)
-
-  KEGGPathIds <- lapply(miniDocs, .getSubNodeInfo, type = "KEGG pathway",
-                    otherSourcePath = otherSourcePath,
-                           dbTagPath = dbTagPath,
-                           resIDPath = resIDPath_str)
-
-  unigeneIds <- lapply(miniDocs, .getSubNodeInfo, type = "UniGene",
-                    otherSourcePath = otherSourcePath,
-                           dbTagPath = dbTagPath,
-                           resIDPath = resIDPath_str)
-  resIDPath_id <- "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_id"
-  ## May only want to look for MIM if we are tax ID 9606 (or can be empty here)
-  MIMIds <- lapply(miniDocs, .getSubNodeInfo, type = "MIM",
-                    otherSourcePath = otherSourcePath,
-                           dbTagPath = dbTagPath,
-                           resIDPath = resIDPath_id)
-
-  ## Refseqs are in another couple of places (we can merge these later, or I
-  ## can write a helper like for GO and merge them as we go.)
-  RSOtherSourcePath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary"
-  RSdbTagPath <- "/Gene-commentary/Gene-commentary_heading" 
-  RSResIdTagPathRNA <- "/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_accession" 
-  RSRNAIds <- lapply(miniDocs, .getSubNodeInfo,
-    type = "RefSeqs maintained independently of Annotated Genomes",
-                    otherSourcePath = RSOtherSourcePath,
-                           dbTagPath = RSdbTagPath,
-                           resIDPath = RSResIdTagPathRNA)
+  wd <- getwd()
+  path <- paste(wd, dir, sep="/")
+  if(!file.exists(path)){dir.create(path)}
+  setwd(path)
+  paths <- paste(paste(path, entrezGenes, sep="/"),".xml",sep="")
+  for(i in seq_len(length(miniDocs))){
+    saveXML( miniDocs[[i]], file = paths[[i]])
+  }
+  setwd(wd)
   
-  RSResIdTagPathProt <- "/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_accession"   
-  RSProtIds <- lapply(miniDocs, .getSubNodeInfo,
-    type = "RefSeqs maintained independently of Annotated Genomes",
-                    otherSourcePath = RSOtherSourcePath,
-                           dbTagPath = RSdbTagPath,
-                           resIDPath = RSResIdTagPathProt)
-
-  ## Get official Symbol
-  symbolSourcePath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_properties/Gene-commentary"
-  symbolDbTag <- "/Gene-commentary/Gene-commentary_label"
-  symbolresIDPath <- "/Gene-commentary/Gene-commentary_text"
-  symbolIds <- lapply(miniDocs, .getSubNodeInfo,
-                      type = "Official Symbol",
-                    otherSourcePath = symbolSourcePath,
-                           dbTagPath = symbolDbTag,
-                           resIDPath = symbolresIDPath)
-  ## Get official Name
-  fullNames <- lapply(miniDocs, .getSubNodeInfo,
-                      type = "Official Full Name",
-                    otherSourcePath = symbolSourcePath, ##same path as symbols
-                           dbTagPath = symbolDbTag,
-                           resIDPath = symbolresIDPath)
-  ## Get alternate symbols (merge with official ones when making table)
-  ## TODO: would be SAFER to do some of the 1:1 stuff like this too
-  ## Therefore redo how I get EG, PMID, and species name.
-  aliasSourcePath <- "/Entrezgene/Entrezgene_gene/Gene-ref/Gene-ref_syn"
-  aliasDbTag <- "/Gene-ref_syn/Gene-ref_syn_E"
-  aliasresIDPath <- "/Gene-ref_syn/Gene-ref_syn_E"
-  aliasIds <- lapply(miniDocs, .getSubNodeInfo,
-                      type = NULL,
-                    otherSourcePath = aliasSourcePath,
-                           dbTagPath = aliasDbTag,
-                           resIDPath = aliasresIDPath)
+  ## attempt to remove miniDocs each time?
+  ## (something tells me this is a token gesture only)
+  rm(miniDocs)
+  ## even just doing this (saving the files) takes nearly 30 gigs of RAM before
+  ## too long (but at least it completed).
 
 
   
-  ## Data sanity checks:
-  ## All genes should be from the same critter:
-  ## TODO: move the checks on EG uniqueness to outside of this function
-  if(length(unique(entrezGeneID)) != length(entrezGeneID))
-     stop("Some of the entrez gene IDs have been repeated.")
-  if(length(unique(speciesName))>1)
-    stop("The IDs being processed need to all be from the same species.")
+##   ## Some tags can only occur once per gene
+##   entrezGeneID <- unlist(xpathApply(EGSet, "//Gene-track_geneid", xmlValue))
+##   speciesName <- unlist(xpathApply(EGSet, "//Org-ref_taxname", xmlValue))
+
+##   ## But most information is either more complex than that or is stored in a
+##   ## more complex way by the XML
+##   ## miniDocs are the individual entrez Gene records
+## ##   miniDocs <- lapply(getNodeSet(EGSet, "//Entrezgene"), xmlDoc)
+
+## ## ##   ## Sometimes we are lucky and the information we want has an obviously
+## ## ##   ## unique tag.
+## ## ##   ## Like pubmed Ids
+## ##   pmIdPath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId"
+## ##   pmIds <- lapply(miniDocs, function(x)
+## ##                   unlist(xpathApply(x, pmIdPath, xmlValue)))
+
+
+## ###########################################################################
+## ## Lets try to get rid of the minidocs
+
+## ## miniDocs <- lapply(getNodeSet(EGSet, "//Entrezgene"), xmlDoc)
+  
+##    ##pmIdPath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_refs/Pub/Pub_pmid/PubMedId"
+## ##   pmIds <- lapply(miniDocs, function(x)
+## ##                   unlist(xpathApply(x, pmIdPath, xmlValue)))
+
+##   ## Can try this way: - no improvement?
+## ##   egs <- getNodeSet(EGSet, "//Entrezgene")
+## ##   ###pmIds <- xpathApply(xmlDoc(egs[[1]]), "//PubMedId", xmlValue)
+## ##   pmIds <- sapply(egs, function(x) unlist(xpathApply(xmlDoc(x), "//PubMedId", xmlValue)))
+
+##   ## Can also try this way: - but for 800 genes in a chunk,
+##   ## - at least it tops out at 2 GB (for 800 genes/chunk = better on usage AND
+##   ## - speed with smaller chunks, but it means we bug some server more
+##   ## - often...
+##   ## IT also takes MUCH longer though! (probably because of larger parse space))
+##   n <- length(entrezGenes)
+##   paths <- sprintf("//Entrezgene[%d]//PubMedId", 1:n)
+##   pmids <- lapply(paths, xpathApply, doc=EGSet, fun=xmlValue)
+##   pmIds <- lapply(pmids, unlist)
+
+## ## This is frustrating.  Total process looks to take about 6-12 Gigs of ram (and be pretty slow for parsing only PMIDs ~ 1 hour).  I mean the ram usage is WAY down when I stop calling getNodeSet() (or maybe NOT - since it seems to climb more as things progress), but I am seriously tempted to just save out individual XML files to a tempDir, in an initial step, and then parse one at a time.  Worst part is that it seems to eat MORE ram the further along it goes...
+
+##   ## I should really do this.  At least if I am working from files in a dir, I
+##   ## can have better control over how the parsing is done and where the time
+##   ## is going.
+
+  
+  
+## ##   ## For GO I should be able to do something like this:
+## ##   res <- xpathApply(egs[[1]],
+## ##        "//Other-source[//Dbtag_db/text()='GO']//Object-id_id/text()", xmlValue)
+## ##   ## checks
+## ##   res1 <- xpathApply(egs[[1]], "count(//Dbtag_db[text()='GO'])")
+## ##   res2 <- xpathApply(egs[[1]], "//Dbtag_db[text()='GO']/text()")
+    
+
+
+
+  
+## ##   ## But sometimes we have to do some more checking to make sure that what we
+## ##   ## are retrieving is in the context of certain kinds of tags, or of tags
+## ##   ## that contain certain information.
+
+## ##   ## custom helper to get and process the GO terms
+## ##   GOIds <- lapply(miniDocs, getGOInfo)
+
+## ##   ## KEGG Gene IDs are NOT the path IDs.
+## ##   otherSourcePath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary/Gene-commentary_source/Other-source"
+## ##   dbTagPath <- "/Other-source/Other-source_src/Dbtag/Dbtag_db"
+## ##   resIDPath_str <- "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_str"
+## ##   KEGGGeneIds <- lapply(miniDocs, .getSubNodeInfo, type = "KEGG",
+## ##                     otherSourcePath = otherSourcePath,
+## ##                            dbTagPath = dbTagPath,
+## ##                            resIDPath = resIDPath_str)
+
+## ##   KEGGPathIds <- lapply(miniDocs, .getSubNodeInfo, type = "KEGG pathway",
+## ##                     otherSourcePath = otherSourcePath,
+## ##                            dbTagPath = dbTagPath,
+## ##                            resIDPath = resIDPath_str)
+
+## ##   unigeneIds <- lapply(miniDocs, .getSubNodeInfo, type = "UniGene",
+## ##                     otherSourcePath = otherSourcePath,
+## ##                            dbTagPath = dbTagPath,
+## ##                            resIDPath = resIDPath_str)
+## ##   resIDPath_id <- "/Other-source/Other-source_src/Dbtag/Dbtag_tag/Object-id/Object-id_id"
+## ##   ## May only want to look for MIM if we are tax ID 9606 (or can be empty here)
+## ##   MIMIds <- lapply(miniDocs, .getSubNodeInfo, type = "MIM",
+## ##                     otherSourcePath = otherSourcePath,
+## ##                            dbTagPath = dbTagPath,
+## ##                            resIDPath = resIDPath_id)
+
+## ##   ## Refseqs are in another couple of places (we can merge these later, or I
+## ##   ## can write a helper like for GO and merge them as we go.)
+## ##   RSOtherSourcePath <- "/Entrezgene/Entrezgene_comments/Gene-commentary/Gene-commentary_comment/Gene-commentary"
+## ##   RSdbTagPath <- "/Gene-commentary/Gene-commentary_heading" 
+## ##   RSResIdTagPathRNA <- "/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_accession" 
+## ##   RSRNAIds <- lapply(miniDocs, .getSubNodeInfo,
+## ##     type = "RefSeqs maintained independently of Annotated Genomes",
+## ##                     otherSourcePath = RSOtherSourcePath,
+## ##                            dbTagPath = RSdbTagPath,
+## ##                            resIDPath = RSResIdTagPathRNA)
+  
+## ##   RSResIdTagPathProt <- "/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_products/Gene-commentary/Gene-commentary_accession"   
+## ##   RSProtIds <- lapply(miniDocs, .getSubNodeInfo,
+## ##     type = "RefSeqs maintained independently of Annotated Genomes",
+## ##                     otherSourcePath = RSOtherSourcePath,
+## ##                            dbTagPath = RSdbTagPath,
+## ##                            resIDPath = RSResIdTagPathProt)
+
+## ##   ## Get official Symbol
+## ##   symbolSourcePath <- "/Entrezgene/Entrezgene_properties/Gene-commentary/Gene-commentary_properties/Gene-commentary"
+## ##   symbolDbTag <- "/Gene-commentary/Gene-commentary_label"
+## ##   symbolresIDPath <- "/Gene-commentary/Gene-commentary_text"
+## ##   symbolIds <- lapply(miniDocs, .getSubNodeInfo,
+## ##                       type = "Official Symbol",
+## ##                     otherSourcePath = symbolSourcePath,
+## ##                            dbTagPath = symbolDbTag,
+## ##                            resIDPath = symbolresIDPath)
+## ##   ## Get official Name
+## ##   fullNames <- lapply(miniDocs, .getSubNodeInfo,
+## ##                       type = "Official Full Name",
+## ##                     otherSourcePath = symbolSourcePath, ##same path as symbols
+## ##                            dbTagPath = symbolDbTag,
+## ##                            resIDPath = symbolresIDPath)
+## ##   ## Get alternate symbols (merge with official ones when making table)
+## ##   ## TODO: would be SAFER to do some of the 1:1 stuff like this too
+## ##   ## Therefore redo how I get EG, PMID, and species name.
+## ##   aliasSourcePath <- "/Entrezgene/Entrezgene_gene/Gene-ref/Gene-ref_syn"
+## ##   aliasDbTag <- "/Gene-ref_syn/Gene-ref_syn_E"
+## ##   aliasresIDPath <- "/Gene-ref_syn/Gene-ref_syn_E"
+## ##   aliasIds <- lapply(miniDocs, .getSubNodeInfo,
+## ##                       type = NULL,
+## ##                     otherSourcePath = aliasSourcePath,
+## ##                            dbTagPath = aliasDbTag,
+## ##                            resIDPath = aliasresIDPath)
+
+
+  
+##   ## Data sanity checks:
+##   ## All genes should be from the same critter:
+##   ## TODO: move the checks on EG uniqueness to outside of this function
+##   if(length(unique(entrezGeneID)) != length(entrezGeneID))
+##      stop("Some of the entrez gene IDs have been repeated.")
+##   if(length(unique(speciesName))>1)
+##     stop("The IDs being processed need to all be from the same species.")
      
-  ## The following checks can stay at this level though
-  if(unique(entrezGeneID %in% entrezGenes) %in% FALSE) ##if any don't match
-    stop("The entrez Genes discovered don't match the IDs being looked up!")
-  if(length(entrezGenes) > length(entrezGeneID))
-    warning("Some of the entrez Genes beings sought were not found.")
-  if(length(entrezGeneID) > length(entrezGenes))
-    stop("There are more EGs being found than we expected.")
+##   ## The following checks can stay at this level though
+##   if(unique(entrezGeneID %in% entrezGenes) %in% FALSE) ##if any don't match
+##     stop("The entrez Genes discovered don't match the IDs being looked up!")
+##   if(length(entrezGenes) > length(entrezGeneID))
+##     warning("Some of the entrez Genes beings sought were not found.")
+##   if(length(entrezGeneID) > length(entrezGenes))
+##     stop("There are more EGs being found than we expected.")
   
-  ## return a list of things
-  list(entrez = entrezGeneID,
-       species = speciesName,
-       pmIds = pmIds, 
-       GOIds = GOIds,  
-       KEGGGeneIds = KEGGGeneIds,
-       KEGGPathIds = KEGGPathIds,
-       aliasIds = aliasIds, 
-       symbolIds = symbolIds,
-       fullNames = fullNames,
-       RSProtIds = RSProtIds,
-       RSRNAIds = RSRNAIds,
-       MIMIds = MIMIds,
-       unigeneIds = unigeneIds      
-       )
+##   ## return a list of things
+##   list(entrez = entrezGeneID,
+##        species = speciesName,
+##        pmIds = pmIds##, 
+## ##       GOIds = GOIds##,  
+## ##        KEGGGeneIds = KEGGGeneIds,
+## ##        KEGGPathIds = KEGGPathIds,
+## ##        aliasIds = aliasIds, 
+## ##        symbolIds = symbolIds,
+## ##        fullNames = fullNames,
+## ##        RSProtIds = RSProtIds,
+## ##        RSRNAIds = RSRNAIds,
+## ##        MIMIds = MIMIds,
+## ##        unigeneIds = unigeneIds
+       
+##        )
   
 }
 
@@ -546,59 +612,59 @@ getEntrezGenesFromTaxId <- function(taxId){
   .makeCentralTable(sList$entrez, con)
   ## gene_info table is special
   ## I need to make the data.frame and do some minor filtering.
-  gene_infoData <- data.frame(
-    gene_id = sList$entrez,
-    gene_name = unlist(.convertNullToNA(as.list(sList$fullNames))),
-    symbol = unlist(.convertNullToNA(as.list(sList$symbolIds))))
-  gene_infoData <- ## still have to remove lines with no data! 
-    gene_infoData[!is.na(gene_infoData[,2]) & !is.na(gene_infoData[,2]),]
-  .makeSimpleTable(gene_infoData,
-                   table = "gene_info", con, fieldNameLens=c(255,80),
-                   indFields = character())
+##   gene_infoData <- data.frame(
+##     gene_id = sList$entrez,
+##     gene_name = unlist(.convertNullToNA(as.list(sList$fullNames))),
+##     symbol = unlist(.convertNullToNA(as.list(sList$symbolIds))))
+##   gene_infoData <- ## still have to remove lines with no data! 
+##     gene_infoData[!is.na(gene_infoData[,2]) & !is.na(gene_infoData[,2]),]
+##   .makeSimpleTable(gene_infoData,
+##                    table = "gene_info", con, fieldNameLens=c(255,80),
+##                    indFields = character())
   
   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
                                  fieldVals = sList$pmIds, "pubmed_id"),
                    table = "pubmed", con)
-  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
-                                 fieldVals = .combineTwoLists(sList$alias,
-                                   sList$symbol), "alias_symbol"),
-                   table = "alias", con)
-  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
-                                 fieldVals = sList$KEGGPathIds, "path_id"),
-                   table = "kegg", con)
-  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
-                                 fieldVals = .combineTwoLists(sList$RSProtIds,
-                                   sList$RSRNAIds), "accession"),
-                   table = "refseq", con)
-  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
-                                 fieldVals = sList$MIMIds, "omim_id"),
-                   table = "omim", con)
-  .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
-                                 fieldVals = sList$unigeneIds, "unigene_id"),
-                   table = "unigene", con)
-  ## GO tables are special
-  .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
+##   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+##                                  fieldVals = .combineTwoLists(sList$alias,
+##                                    sList$symbol), "alias_symbol"),
+##                    table = "alias", con)
+##   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+##                                  fieldVals = sList$KEGGPathIds, "path_id"),
+##                    table = "kegg", con)
+##   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+##                                  fieldVals = .combineTwoLists(sList$RSProtIds,
+##                                    sList$RSRNAIds), "accession"),
+##                    table = "refseq", con)
+##   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+##                                  fieldVals = sList$MIMIds, "omim_id"),
+##                    table = "omim", con)
+##   .makeSimpleTable(.makeSimpleDF(entrez = sList$entrez,
+##                                  fieldVals = sList$unigeneIds, "unigene_id"),
+##                    table = "unigene", con)
+##   ## GO tables are special
+##   .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
 }
 
 getDataAndAddToDb <- function(EGChunk, con){      
     list <- getGeneStuff(EGChunk)
-    .makeOrgDB(list, con)
+#    .makeOrgDB(list, con)
     print(gc())
 }
 
 ## Wrap the functionality like so:
 buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
   EGs <- entrezGenes
+  chunkSize <- 400  ## 800 is the max here but is probably NOT optimal
   ## TODO: check if there is a file and if so just remove it.
   ## file.remove(file) ##remove the old file when they re-run the code?
   con <- dbConnect(SQLite(), file)
 
   ## Then break it into chunks
-  if(length(EGs)<800){
+  if(length(EGs)<chunkSize){
     sList <- getGeneStuff(EGs)
     .makeOrgDB(sList, con)
   }else{
-    chunkSize <- 800
     numChunks <- length(EGs) %/% chunkSize
     remChunks <- length(EGs) %% chunkSize
     splitFactor <- rep(seq_len(numChunks), each=chunkSize)
