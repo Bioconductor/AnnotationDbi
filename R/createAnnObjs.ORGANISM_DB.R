@@ -16,9 +16,6 @@ ORGANISM_DB_L2Rlink1 <- list(tablename="genes",
                              Rcolname="_id")
 
 
-## TODO:
-## 1) make a package (make a test script to generate it) - done
-## 2) make a set of generic functions to generate the different kinds of Bimaps
 
 makeAnnDbBiMapSeed <- function(objName,tablename,Rcolname){
     list(
@@ -54,6 +51,7 @@ makeGo3AnnDbBiMapSeed <- function(){
     )  
   )
 }
+
 
 ## for now, there are only two like this, and they are both from an odd table
 ## this may go away in time, so fine for this to be an exception
@@ -96,8 +94,6 @@ makeAnnDbMapSeeds <- function(){
 ## }
 
 
-## 3) write function (called when pkg is loaded) that will generate the seed-list using the functions from 2 and based on which tables are present. 
-
 
 getDBMaps <- function(dbconn){
   ## Get into the DB and list the tables
@@ -108,26 +104,6 @@ getDBMaps <- function(dbconn){
                     "|chromosome_locations",sep=""),
               rawtabs, invert=TRUE)
   tabs <- rawtabs[idx]
-  ## For each table, I need the other IDs For tables where there are more
-  ## than two columns, we can't use this method (these will have to be custom)
-##   getCleanFields <- function(table, dbconn){
-##     field <- dbListFields(dbconn, table)
-##     idx <- grep("^_id$", field, invert=TRUE)
-##     field <- field[idx]
-##     if(length(field)==1){
-##     return(field)}else{stop("Some of the tables have more than 2 columns and are not on the exceptions list.")}
-##   }
-##   fields <- unlist2(lapply(tabs, getCleanFields, dbconn))
-##   df <- data.frame(tabs,fields, stringsAsFactors=FALSE)
-##   ## add missing rows (from this exception)
-##   if(length(grep("gene_info", rawtabs))>0){
-##     if(length(grep("symbol", dbListFields(dbconn, "gene_info")))>0 &&
-##        length(grep("gene_name", dbListFields(dbconn, "gene_info")))>0 ){
-##       df <- rbind(df,c("gene_info","gene_name"))
-##       df <- rbind(df,c("gene_info","symbol"))
-##     }
-##   }
-  
   ## I require a reference frame
   objNames = c("ACCNUM",    "ALIAS2EG",     "CHR",        "ENZYME",   "GENENAME",   "MAP",                   "OMIM",   "PATH",    "PMID",      "REFSEQ",    "SYMBOL",    "UNIGENE",    "ENSEMBL",    "ENSEMBLPROT",  "ENSEMBLTRANS",  "UNIPROT")
   tables   = c("accessions","alias",        "chromosomes","ec",       "gene_info",  "cytogenetic_locations", "omim",   "kegg",    "pubmed",    "refseq",    "gene_info", "unigene",    "ensembl",    "ensembl_prot", "ensembl_trans", "uniprot")
@@ -169,9 +145,6 @@ createORGANISMSeeds <- function(maps, dbconn){
 
 
 
-
-
-
 createAnnObjs.ORGANISM_DB <- function(prefix, objTarget, dbconn, datacache)
 {
     checkDBSCHEMA(dbconn, "ORGANISM_DB")
@@ -186,18 +159,30 @@ createAnnObjs.ORGANISM_DB <- function(prefix, objTarget, dbconn, datacache)
     ORGANISM_DB_AnnDbBimap_seeds <- createORGANISMSeeds(maps, dbconn)
     ann_objs <- createAnnDbBimaps(ORGANISM_DB_AnnDbBimap_seeds, seed0)
 
-##     ## GO2ALL mapping requires GO mappings.
-##     map <- ann_objs$GO2EG
-##     map@rightTables <- Go3tablenames(all=TRUE)
-##     map@objName <- "GO2ALLEGS"
-##     ann_objs$GO2ALLEGS <- map
-##     ## Some pre-caching
-##     Lkeys(ann_objs$GO)
-
-##     ## 2 special maps that are not AnnDbBimap objects (named int vectors)
-##     ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
-##     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
-
+    ## GO2ALL mapping requires GO mappings.
+    if(length(grep("go_bp", dbListTables(dbconn)))>0 &&
+       length(grep("go_cc", dbListTables(dbconn)))>0 &&
+       length(grep("go_mf", dbListTables(dbconn)))>0 &&
+       length(grep("go_bp_all", dbListTables(dbconn)))>0 &&
+       length(grep("go_cc_all", dbListTables(dbconn)))>0 &&
+       length(grep("go_mf_all", dbListTables(dbconn)))>0 ){
+      ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
+      map <- ann_objs$GO2EG
+      map@rightTables <- Go3tablenames(all=TRUE)
+      map@objName <- "GO2ALLEGS"
+      ann_objs$GO2ALLEGS <- map
+      ## Some pre-caching
+      Lkeys(ann_objs$GO)
+    }
+    
+    ## 2 special maps that are not AnnDbBimap objects (named int vectors)
+    if(length(grep("chrlengths", dbListTables(dbconn)))>0){
+      ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+    }
+    if(length(grep("map_counts", dbListTables(dbconn)))>0){
+      ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+    }
+    
     prefixAnnObjNames(ann_objs, prefix)
 }
 
