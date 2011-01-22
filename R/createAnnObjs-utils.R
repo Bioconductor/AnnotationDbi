@@ -59,6 +59,8 @@ createAnnObjs <- function(class, seeds, seed0, envir=NULL)
 ## Function to get all these create statements out of the namespace.
 createAnnObjs.SchemaChoice = function(schema, prefix, target, dbconn, datacache){
     switch(schema,
+           "ORGANISM_DB" = return(AnnotationDbi:::createAnnObjs.ORGANISM_DB(prefix, target, dbconn, datacache)),
+
            "HUMANCROSSCHIP_DB" = return(AnnotationDbi:::createAnnObjs.HUMANCROSSCHIP_DB(prefix, target, dbconn, datacache)),
            
            "HUMANCHIP_DB" = return(AnnotationDbi:::createAnnObjs.HUMANCHIP_DB(prefix, target, dbconn, datacache)),

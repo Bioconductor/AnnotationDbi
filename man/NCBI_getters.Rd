@@ -47,9 +47,14 @@
   ## temporarily, lets use known EGs to run tests
   library(org.Hs.eg.db)
   EGs <- Lkeys(org.Hs.egCHR)
-  EGs <- EGs[c(1:10)] ## Obviously NOT a typical step.
-  buildEntrezGeneDb(EGs,file=tempfile())
-  
+  #EGs <- EGs[c(1:10)] ## Obviously NOT a typical step.
+  system.time(buildEntrezGeneDb(EGs,file=tempfile()))
+
+
+  #debug(getGeneStuff)
+  #buildEntrezGeneDb(EGs,file=tempfile())
+
+
 }
 
 \keyword{interface}

@@ -1,0 +1,14 @@
+Package: @PKGNAME@
+Title: Genome wide annotation for @SPECIES@
+Description: Genome wide annotation for @SPECIES@, primarily based on mapping using Entrez Gene identifiers.
+Version: @PKGVERSION@
+Author: @AUTHOR@
+Maintainer: @MAINTAINER@
+Depends: R (>= 2.7.0), methods, AnnotationDbi (>= @ANNDBIVERSION@)
+Suggests: annotate
+Imports: methods, AnnotationDbi
+License: @LIC@
+organism: @ORGANISM@
+species: @SPECIES@
+biocViews: @BIOCVIEWS@
+
