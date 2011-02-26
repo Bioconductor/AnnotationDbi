@@ -12,7 +12,7 @@
 }
 
 \usage{
-  getGeneStuff(entrezGenes)
+  getGeneStuff(entrezGenes, dir="files")
   buildEntrezGeneDb(entrezGenes, file="test.sqlite")
   getEntrezGenesFromTaxId(taxId)
 }
@@ -27,6 +27,9 @@
     file to write the database to.  Traditionally these end with the
     .sqlite extension.
   }
+  \item{dir}{
+    directory for storing parsed XML.
+  }  
   \item{taxId}{
     A taxonomy ID from NCBI.  You can browse these to select the species
     of interest from their website.
@@ -45,16 +48,14 @@
   ## seems that some of the EGs are not from the taxid specified? (more tests)
   ## EGs <- getEntrezGenesFromTaxId(taxId)
   ## temporarily, lets use known EGs to run tests
-  library(org.Hs.eg.db)
-  EGs <- Lkeys(org.Hs.egCHR)
+  #library(org.Hs.eg.db)
+  #EGs <- Lkeys(org.Hs.egCHR)
   #EGs <- EGs[c(1:10)] ## Obviously NOT a typical step.
-  system.time(buildEntrezGeneDb(EGs,file=tempfile()))
-
+  ## XML is broken, so I need a workaround for this.
+  #system.time(buildEntrezGeneDb(EGs,file=tempfile()))
 
   #debug(getGeneStuff)
   #buildEntrezGeneDb(EGs,file=tempfile())
-
-
 }
 
 \keyword{interface}
