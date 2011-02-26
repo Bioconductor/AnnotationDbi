@@ -1053,6 +1053,38 @@ manufacturer: Affymetrix
 
 
 
+
+### =========================================================================
+### PIGCHIP_DB schema
+### -----------------
+###   Fields:
+###     Package (*)
+###     Title
+###     Version (*)
+###     PkgTemplate: PIGCHIP_DB
+###     DBfile (*)
+###     DBschema
+###     AnnObjPrefix (*)
+###     AnnObjTarget
+###     organism
+###     species
+###     manufacturer
+###     chipName
+###     manufacturerUrl
+###     biocViews
+### Fields marked with an (*) are required.
+
+Package: porcine.db
+Version: 2.4.7
+PkgTemplate: PIGCHIP.DB
+DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/porcine.sqlite
+AnnObjPrefix: porcine
+species: Pig
+manufacturer: Affymetrix
+
+
+
+
 ### =========================================================================
 ### XENOPUSCHIP_DB schema
 ### -----------------
