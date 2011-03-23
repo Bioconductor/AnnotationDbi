@@ -295,27 +295,67 @@ makeSeedList <- function(species, fields)
 }
 
 
-##Define helpful startup messages for especially ornery packages:
-annoStartupMessages <- function(type){
-  msg <- switch(type,           
-                "exon_probeset" = paste("\n This package is based on exon",
+#####################################################################
+## Below are helper functions to define helpful startup messages for
+## especially ornery packages:
+
+choosePackage <- function(pkgType){
+## defines a blackList to choose the type of message based on the pkg name.
+## If you are not in the blackList, then we don't need a message.
+## Default fallthrough message means there is no message.
+  type <- switch(EXPR = pkgType,           
+                 "ecoli2.db" = "partial",
+                 "hugene10stprobeset.db" = "exon_probeset",
+                #"hugene10stv1cdf" = "unsupported", ## not AnnotationDbi
+                 "hugene11stprobeset.db" = "exon_probeset",
+                 "lumiHumanAll.db" = "lumi",
+                 "lumiHumanIDMapping.db" = "lumi",
+                 "lumiMouseAll.db" = "lumi",
+                 "lumiMouseIDMapping.db" = "lumi",
+                 "lumiRatAll.db" = "lumi",
+                 "lumiRatIDMapping.db" = "lumi",
+                 "mogene10stprobeset.db" = "exon_probeset",
+                 "mogene11stprobeset.db" = "exon_probeset",
+                 "ragene10stprobeset.db" = "exon_probeset",
+                 "ragene11stprobeset.db" = "exon_probeset",
+                 "NO_MESSAGE_TYPE"
+                )
+}
+
+
+## This function defines stock messages that can be associated with certain
+## packages.
+## It can also be called directly by people who are outside of the system but
+## want a stock message
+annotMessage <- function(msgType, pkgType){
+  msg <- switch(EXPR = msgType,           
+                "exon_probeset" = paste("\n",pkgType,"is based on exon",
                   "probesets. For a more gene-centric view, use the",
                   "transcriptcluster version of this package."),
-                "unsupported" = paste("\n Users are warned that some or all of",
-                  "the manufacturer supplied files that this package is based",
-                  "on have been labeled as unsupported by their sources"),
-                "lumi" = paste("This package is using or is likely to need",
-                  "access to special nuID identifiers.  Users can learn about",
-                  "these identifiers from vignette documentation provided with",
-                  "the lumi package."),
-                "partial" = paste("This package is providing annotations for",
-                  "only one of the species that are supported by this",
+                "unsupported" = paste("\n Warning from",pkgName,": the data",
+                  "in this package are based on mapping files labeled as",
+                  "'unsupported' by their source."),
+                "lumi" = paste("\n",pkgType,"is using or is likely to",
+                  "need access to special nuID identifiers.  Users can learn",
+                  "about these identifiers from vignette documentation",
+                  "provided with the lumi package."),
+                "partial" = paste("\n",pkgType,"is providing annotations",
+                  "for only one of the species that are supported by this",
                   "platform. You may want to get other annotations from other",
-                  "sources/packages in order to cover all the species that are",
-                  "represented by probes on this platform.")
+                  "sources/packages in order to cover all the species that",
+                  "are represented by probes on this platform."),
+                "NO_MESSAGE_TYPE" = ""
                 )
 
-  msg <- paste("\n",paste(strwrap(msg, exdent=2),collapse="\n"),
-               "\n",sep="")
+  if(msg != ""){
+    msg <- paste("\n",paste(strwrap(msg, exdent=2),collapse="\n"),
+                 "\n",sep="")
+  }else{
+    msg <- ""
+  }
+}
 
+annoStartupMessages <- function(pkgType){
+  msgType <- choosePackage(pkgType)
+  annotMessage(msgType, pkgType)
 }

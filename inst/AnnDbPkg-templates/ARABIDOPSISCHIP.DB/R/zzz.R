@@ -20,13 +20,13 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     ann_objs <- createAnnObjs.SchemaChoice("@DBSCHEMA@", "@ANNOBJPREFIX@", "@ANNOBJTARGET@", dbconn, datacache)
     mergeToNamespaceAndExport(ann_objs, pkgname)
 
-    msg <- paste("\n Warning: All Arabidopsis packages now require you",
-                 "to use the toggleProbes() method in order to expose",
-                 "multiple mappings.")
-    msg <- paste("\n",paste(strwrap(msg, exdent=2),collapse="\n"),
-                 "\n",sep="")
-    packageStartupMessage(msg)
-    
+##     msg <- paste("\n Warning: All Arabidopsis packages now require you",
+##                  "to use the toggleProbes() method in order to expose",
+##                  "multiple mappings.")
+##     msg <- paste("\n",paste(strwrap(msg, exdent=2),collapse="\n"),
+##                  "\n",sep="")
+##     packageStartupMessage(msg)
+    packageStartupMessage(AnnotationDbi:::annoStartupMessages("@ANNOBJPREFIX@.db"))
 }
 
 .onUnload <- function(libpath)

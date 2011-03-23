@@ -29,6 +29,9 @@ sqlitefiles <- list.files(srcdir, pattern="\\.sqlite$")
 sqlitefiles <- sqlitefiles[!(sqlitefiles %in% exclude)]
 pkgs <- paste(substr(sqlitefiles, 1, nchar(sqlitefiles)-7), ".db", sep="")
 
+## ## used for testing only
+## pkgs <- c("hgu95av2.db","ecoli2.db")
+
 library(AnnotationDbi)
 makeAnnDbPkg(pkgs)
 
