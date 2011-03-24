@@ -10,7 +10,7 @@
            "MUSMU"  = {srcSpcAb<-"Mm";
                        srcDBAb<-"eg";
                        require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
-                       inpMap = "org.Mm.egMGI";
+                       inpMap = "org.Mm.egENSEMBLPROT";  
 		       centralID <- "EG"},
            "DROME"  = {srcSpcAb<-"Dm";
                        srcDBAb<-"eg";
