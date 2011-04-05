@@ -2,7 +2,7 @@
 \alias{print.probetable}
 \title{Print method for probetable objects}
 \usage{
-\method{print}{probetable}(x, \dots)
+\method{print}{probetable}(x, maxrows, \dots)
 }
 \description{
   Prints class(x), nrow(x) and ncol(x), but not the elements of x.
@@ -14,6 +14,7 @@
 }
 \arguments{
   \item{x}{an object of S3-class \code{probetable}.}
+  \item{maxrows}{maximum number of rows to print.}
   \item{\dots}{further arguments that get ignored.}
 }
 \seealso{
