@@ -318,6 +318,7 @@ choosePackage <- function(pkgType){
                  "mogene11stprobeset.db" = "exon_probeset",
                  "ragene10stprobeset.db" = "exon_probeset",
                  "ragene11stprobeset.db" = "exon_probeset",
+		 "HuExExonProbesetLocation" = "hg19",
                  "NO_MESSAGE_TYPE"
                 )
 }
@@ -344,6 +345,8 @@ annotMessage <- function(msgType, pkgType){
                   "platform. You may want to get other annotations from other",
                   "sources/packages in order to cover all the species that",
                   "are represented by probes on this platform."),
+		"hg19" = paste("\n The",pkgType,"package was build to match",
+ 		   "the HG19 build."),
                 "NO_MESSAGE_TYPE" = ""
                 )
 
