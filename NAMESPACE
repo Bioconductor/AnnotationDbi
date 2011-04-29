@@ -66,7 +66,7 @@ exportMethods(
     "count.mappedLkeys", "count.mappedRkeys", "count.mappedkeys",
     "show",
     "summary",
-    "toTable",
+    "toTable","as.data.frame",
     "head", "tail",
     "nrow",
     "links",

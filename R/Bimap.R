@@ -1098,6 +1098,8 @@ setMethod("toTable", "AnnDbBimap",
     }
 )
 
+setMethod("as.data.frame", "Bimap", toTable)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "head" and "tail" methods.
