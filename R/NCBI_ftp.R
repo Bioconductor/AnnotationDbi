@@ -67,10 +67,17 @@ files = list("gene2go.gz" = c("tax_id","gene_id","go_id","evidence",
 ## But the following chunck should at least download a file and return a 
 ## (cleaned) data.frame from it
 .downloadData <- function (file) { ## file is something like: "gene2go.gz"
-  url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",file, sep="")
-  tmp <- tempfile()
-  download.file(url, tmp, method="curl", quiet=TRUE)
-  vals <- read.delim(tmp, header=FALSE, sep="\t", skip=1)
+## The following works, but commented so that I can avoid the wrath of NCBI
+#   url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",file, sep="")
+#   tmp <- tempfile()
+#   download.file(url, tmp, method="curl", quiet=TRUE)
+#   vals <- read.delim(tmp, header=FALSE, sep="\t", skip=1)
+#   vals
+  
+## TEMPORARILY, lets work from some local files.
+  url <- paste("/home/mcarlson/proj/mcarlson/",
+               "2011-Mar16/",file, sep="")
+  vals <- read.delim(url, header=FALSE, sep="\t", skip=1)
   vals
 }
 
@@ -125,24 +132,26 @@ files = list("gene2go.gz" = c("tax_id","gene_id","go_id","evidence",
 ## also need somethign to generate the insert statement.
 .generateINSERTStatement <- function (file) {
   Qs <- paste(rep("?",length(file[[1]])),  collapse=",")
-  paste("INSERT INTO ",names(file),"(data) VALUES(",Qs,");",sep="")
+  paste("INSERT INTO ",sub(".gz$","",names(file)),
+  " VALUES(",Qs,");",sep="")
 }
 
 ## need code to generate a table for each of the
 ## file below is like: files[1] or files[2] 
 .createTEMPTable <- function (con, file) {
   data <- .downloadData(names(file))
-  table <- names(file)
+  table <- sub(".gz$","",names(file))
+  if(is.null(table)) stop("Unable to infer a table name.")
   cols <- .generateCols(file)
   message(paste("Populating ",table," table:", sep=""))
-  sql<- paste("    CREATE TABLE IF NOT EXISTS ",table," (
-  ",cols,"
+  sql<- paste("CREATE TABLE IF NOT EXISTS ",table," (",cols,");")
+  # example cols:
   #     _id INTEGER PRIMARY KEY,
   #     gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
-    );")
   sqliteQuickSQL(con, sql)
   
-  data <- data.frame(data) ## TODO: data.frame() necessary???
+  
+  #data <- data.frame(data) ## TODO: data.frame() necessary???
   sql <- .generateINSERTStatement(file)
   # sql<- paste("INSERT INTO ",table,"(data) VALUES(?);",sep="")
   dbBeginTransaction(con)
@@ -153,12 +162,17 @@ files = list("gene2go.gz" = c("tax_id","gene_id","go_id","evidence",
 
 
 ## loop through and make the tables
+.makeBaseDBFromDLs <- function(){
+  con <- dbConnect(SQLite(), "TEST.sqlite")
+  for(i in seq_len(length(files))){
+    .createTEMPTable(con, files[i])
+  }
+}
+
 # con <- dbConnect(SQLite(), "TEST.sqlite")
-# for(i in seq_len(length(files))){
-#   .createTEMPTable(con, files[[i]])
-# }
-
-
+# 
+# debug(.createTEMPTable)
+# .createTEMPTable(con, files[1])
 
 
 
