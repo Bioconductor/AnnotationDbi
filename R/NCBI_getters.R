@@ -419,22 +419,6 @@ getEntrezGenesFromTaxId <- function(taxId){
   result
 }
 
-##  I will need the following helpers
-.makeCentralTable <- function(entrez, con){
-  message("Populating genes table:")
-  sql<- paste("    CREATE TABLE IF NOT EXISTS genes (
-      _id INTEGER PRIMARY KEY,
-      gene_id VARCHAR(10) NOT NULL UNIQUE           -- Entrez Gene ID
-    );")
-  sqliteQuickSQL(con, sql)
-
-  gene_id <- data.frame(entrez) ## TODO: data.frame() necessary???
-  sql<- paste("INSERT INTO genes(gene_id) VALUES(?);")
-  dbBeginTransaction(con)
-  dbGetPreparedQuery(con, sql, gene_id)
-  dbCommit(con)
-  message("genes table filled")
-}
 
 ## conversion Utility:
 .convertNullToNA <- function(list){
@@ -459,58 +443,6 @@ getEntrezGenesFromTaxId <- function(taxId){
   result
 }
 
-## The following takes a data.frame and produces a simple table from that.  It
-## expects that the 1st column of that data.frame will always be entrez gene
-## IDs.  All fields are assumed to be varchars of size equal to the values in
-## fieldNameLens.  TODO: The cols in data have to be named and of equal
-## length.  indFields is a character vector with the names of fields that we
-## want indexed.  By default only _id will be indexed.
-.makeSimpleTable <- function(data, table, con, fieldNameLens=25,
-                             indFields="_id"){
-  message(paste("Populating",table,"table:"))
-  ## For temp table, lets do it like this:
-  if(dim(data)[1] == 0){
-    ## if we don't have anything to put into the table, then we don't even
-    ## want to make a table.
-    warning(paste("no values found for table ",table,
-                  " in this data chunk.", sep=""))
-    return()
-  }else{
-    dbWriteTable(con, "temp", data, row.names=FALSE)
-    ## Then we have to create our real table.
-    tableFieldLines <- paste(paste(names(data)[-1]," VARCHAR(",
-                                 fieldNameLens,") NOT NULL,    -- data"),
-                           collapse="\n       ")
-    sql<- paste("    CREATE TABLE IF NOT EXISTS",table," (
-      _id INTEGER NOT NULL,                         -- REFERENCES genes
-      ",tableFieldLines,"
-      FOREIGN KEY (_id) REFERENCES genes (_id)
-    );") 
-    sqliteQuickSQL(con, sql)
-    selFieldLines <- paste(paste("t.",names(data)[-1],sep=""),collapse=",")
-    sql<- paste("
-    INSERT INTO ",table,"
-     SELECT g._id as _id, ",selFieldLines,"
-     FROM genes AS g, temp AS t
-     WHERE g.gene_id=t.gene_id
-     ORDER BY g._id;
-     ", sep="") 
-    sqliteQuickSQL(con, sql)
-
-    ## Add index to all fields in indFields (default is all)
-    for(i in seq_len(length(indFields))){
-    sqliteQuickSQL(con,
-        paste("CREATE INDEX IF NOT EXISTS ",
-              table,"_",indFields[i],"_ind ON ",table,
-              " (",indFields[i],");", sep=""))      
-    }
-    
-    ## drop the temp table
-    sqliteQuickSQL(con, "DROP TABLE temp;")
-  }
-  message(paste(table,"table filled"))
-}
-
 
 ## used to collapse GO lists to a data frame
 .unwindGOs <- function(GOIds, entrez, type){
@@ -529,24 +461,9 @@ getEntrezGenesFromTaxId <- function(taxId){
   res
 }
 
-## used to gather ancestor nodes for GO terms
-.expandGOFrame <- function(frame, AncestMap){
-  ## I want to apply through the original frame and call for the ancestor
-  ancList <- mget(as.character(frame$go_id), AncestMap, ifnotfound=NA)
-  names(ancList) <- frame$gene_id
-  eviCodes <- mget(as.character(frame$go_id), AncestMap, ifnotfound=NA)
-  names(eviCodes) <- frame$evidence
-  expAncList <- unlist2(ancList)
-  expEviCodes <- unlist2(eviCodes)
-  extraRows <- data.frame(gene_id=names(expAncList), go_id=expAncList,
-                          evidence=names(expEviCodes))
-  ##remove rows where go_id="all"
-  extraRows <- extraRows[extraRows$go_id != "all",]
-  unique(rbind(frame,extraRows))
-}
 
 ## used to make the 6 custom GO tables
-.makeGOTables <- function(entrez, GOIds, con){
+.makeUnWoundGOTables <- function(entrez, GOIds, con){
   ## GOIds is a list of equal length to the entrez IDs
   if(length(entrez) != length(GOIds)){
     stop("There must be a list of GOIds")}  
@@ -643,7 +560,7 @@ getEntrezGenesFromTaxId <- function(taxId){
 ##                                  fieldVals = sList$unigeneIds, "unigene_id"),
 ##                    table = "unigene", con)
 ##   ## GO tables are special
-##   .makeGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
+##   .makeUnWoundGOTables(entrez = sList$entrez, GOIds = sList$GOIds, con)
 }
 
 getDataAndAddToDb <- function(EGChunk, con){      
@@ -653,7 +570,7 @@ getDataAndAddToDb <- function(EGChunk, con){
 }
 
 ## Wrap the functionality like so:
-buildEntrezGeneDb <- function(entrezGenes, file="test.sqlite"){
+buildEntrezGeneDbFromWebServices <- function(entrezGenes, file="test.sqlite"){
   EGs <- entrezGenes
   chunkSize <- 400  ## 800 is the max here but is probably NOT optimal
   ## TODO: check if there is a file and if so just remove it.

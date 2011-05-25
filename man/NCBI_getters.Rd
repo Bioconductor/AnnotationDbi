@@ -1,6 +1,6 @@
-\name{buildEntrezGeneDb}
+\name{buildEntrezGeneDbFromWebServices}
 \alias{getGeneStuff}
-\alias{buildEntrezGeneDb}
+\alias{buildEntrezGeneDbFromWebServices}
 \alias{getEntrezGenesFromTaxId}
 
 
@@ -13,7 +13,7 @@
 
 \usage{
   getGeneStuff(entrezGenes, dir="files")
-  buildEntrezGeneDb(entrezGenes, file="test.sqlite")
+  buildEntrezGeneDbFromWebServices(entrezGenes, file="test.sqlite")
   getEntrezGenesFromTaxId(taxId)
 }
 
@@ -39,9 +39,10 @@
 \value{
   In the case of \code{getEntrezGenesFromTaxId}, this will be a
   character vector of entrez gene IDs.  In the case of
-  \code{buildEntrezGeneDb}, then you will produce a SQLite database.  In
-  the case of \code{getGeneStuff}, then you get back a list of named lists
-  containing parsed XML values for each 800 long chunk of entrez Gene IDs.
+  \code{buildEntrezGeneDbFromWebServices}, then you will produce a
+  SQLite database.  In the case of \code{getGeneStuff}, then you get
+  back a list of named lists containing parsed XML values for each 800
+  long chunk of entrez Gene IDs.
 }
 
 \examples{
@@ -52,10 +53,10 @@
   #EGs <- Lkeys(org.Hs.egCHR)
   #EGs <- EGs[c(1:10)] ## Obviously NOT a typical step.
   ## XML is broken, so I need a workaround for this.
-  #system.time(buildEntrezGeneDb(EGs,file=tempfile()))
+  #system.time(buildEntrezGeneDbFromWebServices(EGs,file=tempfile()))
 
   #debug(getGeneStuff)
-  #buildEntrezGeneDb(EGs,file=tempfile())
+  #buildEntrezGeneDbFromWebServices(EGs,file=tempfile())
 }
 
 \keyword{interface}
