@@ -122,7 +122,12 @@ require(RSQLite)
   con
 }
 
-
+.dropOldTables <- function(fileNames){
+  fileNames <- sub(".gz", "", fileNames)
+  for(i in seq_len(length(fileNames))){
+    sqliteQuickSQL(con, paste("DROP TABLE ",fileNames[i],sep=""))
+  }
+}
 
 #########################################################################
 #########################################################################
@@ -215,33 +220,27 @@ require(RSQLite)
   unique(rbind(frame,extraRows))
 }
 
+## used to make sure that GO IDs that are NOT in the current GO package do not
+## end up in our DB
+.filterGOFrame <- function(frame){
+  frame[frame[["go_id"]] %in% Lkeys(GOTERM),]
+  message("Dropping GO IDs that are too new for the current GO.db")
+}
+
 ## TODO: modify this so that it no longer unwinds lists...
 ## used to make the 6 custom GO tables
-.makeGOTables <- function(entrez, GOIds, con){
-  ## ## GOIds is a list of equal length to the entrez IDs
-  ## if(length(entrez) != length(GOIds)){
-  ##   stop("There must be a list of GOIds")}  
-  ## uw_gos <- .unwindGOs(GOIds, entrez, type=1)
+.makeGOTablesFromNCBI <- function(con){
+  bp <- .filterGOFrame(sqliteQuickSQL(con,
+     "SELECT distinct gene_id, go_id, evidence FROM gene2go
+      WHERE category = 'Process'"))
 
-  
-  ## if(length(uw_gos[is.na(uw_gos)]) != length(uw_gos)){
-  ##   go_id <- unlist2(uw_gos)
-  ##   evidence <- unlist2(.unwindGOs(GOIds, entrez, type=2))
-  ##   ontology <- Ontology(go_id) ## This step REQUIRES that there be GO IDs
-  ##   baseFrame <- cbind(gene_id = names(go_id), go_id=go_id,
-  ##                      evidence=evidence, ontology=ontology)
-  ##   bp <- data.frame(matrix(split(baseFrame, ontology)$BP,
-  ##                           byrow=FALSE,
-  ##                           nrow=length(grep("BP",ontology))))[,1:3]
-  ##   mf <- data.frame(matrix(split(baseFrame, ontology)$MF,
-  ##                           byrow=FALSE,
-  ##                           nrow=length(grep("MF",ontology))))[,1:3]
-  ##   cc <- data.frame(matrix(split(baseFrame, ontology)$CC,
-  ##                           byrow=FALSE,
-  ##                           nrow=length(grep("CC",ontology))))[,1:3]
-
-
-  
+  mf <- .filterGOFrame(sqliteQuickSQL(con,
+     "SELECT distinct gene_id, go_id, evidence FROM gene2go
+      WHERE category = 'Function'"))
+    
+  cc <- .filterGOFrame(sqliteQuickSQL(con,
+     "SELECT distinct gene_id, go_id, evidence FROM gene2go
+      WHERE category = 'Component'")) 
 
     headerNames = c("gene_id","go_id","evidence")
     names(bp) <- headerNames
@@ -270,13 +269,6 @@ require(RSQLite)
     
     .makeSimpleTable(cc_all, table = "go_cc_all", con, fieldNameLens=c(10,3),
                      indFields = c("_id", "go_id"))
-  }else{
-    ## as with other tables, if we have nothing to populate, then we don't
-    ## want to even make a table!
-    warning(paste("no values found for any GO tables",
-                  " in this data chunk.", sep=""))
-    return() 
-  }
 }
 
 
@@ -380,16 +372,12 @@ generateOrgDbFromNCBI <- function(tax_id){
   .makeSimpleTable(ug, table="unigene", con)
   
   ## Make the GO tables:
-  
-  
+  .makeGOTablesFromNCBI(con)
   
   ## Drop all the older tables (which will include the original "gene_info").
-  #.dropOldTables(files)
-  
-  
+  .dropOldTables(names(files))  
   ## Rename "gene_info_temp" to be just "gene_info":
-  #sqliteQuickSQL(con,"ALTER TABLE gene_info_temp RENAME TO gene_info")
-  
+  sqliteQuickSQL(con,"ALTER TABLE gene_info_temp RENAME TO gene_info")
 }
 
 
@@ -397,6 +385,6 @@ generateOrgDbFromNCBI <- function(tax_id){
  ## 1) move over the helper functions from getters that can work with DFs
  ## 2) put them in their own section of the code (label)
 
-## 3) make all necessary glue/mods here to enable their usage
-## 4) keep things generic so that I can use them again for biomaRt stuff
+ ## 3) make all necessary glue/mods here to enable their usage
+ ## 4) keep things generic so that I can use them again for biomaRt stuff
 ## 5) Add code to "name" the database correctly. (get rid of "TEST.sqlite")
