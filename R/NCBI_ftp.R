@@ -149,22 +149,47 @@
 ## But the following chunck should at least download a file and return a 
 ## (cleaned) data.frame from it
 .downloadData <- function (file, tax_id) {
-  colClasses <- c(rep("character", times= length(unlist(file))))
+  colClasses1 <- c("character",rep("NULL", times= length(unlist(file))-1))
+  colClasses2 <- c(rep("character", times= length(unlist(file))))
   ## names(file) is something like: "gene2go.gz"
   message(paste("Getting data for ",names(file),sep=""))
 ## The following works, but commented so that I can avoid the wrath of NCBI
 #   url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",names(file), sep="")
 #   tmp <- tempfile()
 #   download.file(url, tmp, method="curl", quiet=TRUE)
-#   vals <- read.delim(tmp, header=FALSE, sep="\t", skip=1, stringsAsFactors=FALSE, colClasses = colClasses)
+  
+##older way  
+###   vals <- read.delim(tmp, header=FALSE, sep="\t", skip=1, stringsAsFactors=FALSE, colClasses = colClasses)
   
 ## TEMPORARILY, lets work from some local files.
   ## Lets also speed this part up by declaring the column types, and
   ## subsetting out the things that don't match our tax ID.
-  url <- paste("/home/mcarlson/proj/mcarlson/",
+  tmp <- paste("/home/mcarlson/proj/mcarlson/",
                "2011-May24/",names(file), sep="")
-  vals <- read.delim(url, header=FALSE, sep="\t", skip=1, stringsAsFactors=FALSE, colClasses = colClasses)
-
+## end of TEMP stuff
+  
+  if("tax_id" %in% unlist(file)){ ## when there is a tax_id we want to subset
+    tax_ids <- unlist(read.delim(tmp,header=FALSE,sep="\t",skip=1,
+                                 stringsAsFactors=FALSE,
+                                 colClasses = colClasses1))
+    
+    ind <- grep(paste("^",tax_id,"$",sep=""), tax_ids, perl=TRUE)
+    
+    if(length(ind) == 0){## ie there are no matching tax_ids...
+      vals <- data.frame(t(1:length(unlist(file))),stringsAsFactors=FALSE)
+      colnames(vals) <- unlist(file)
+      vals <- vals[FALSE,]
+    }else{
+      vals <- read.delim(tmp, header=FALSE, sep="\t", skip=1+min(ind),
+                         nrows= max(ind) - min(ind) +1,
+                         stringsAsFactors=FALSE,
+                         colClasses = colClasses2)
+    } 
+  }else{
+    vals <- read.delim(tmp, header=FALSE, sep="\t", skip=1,
+                       stringsAsFactors=FALSE,
+                       colClasses = colClasses2)
+  }
 ##   
   ## The following will just keep unwanted data from our temp DB tables.
   ## if there is a tax_id,
@@ -175,6 +200,9 @@
   }
   vals
 }
+
+
+
 
 ## helper to populate base tables
 .populateBaseTable <- function(con, sql, data, table) {
@@ -315,7 +343,8 @@
   }else if(dim(data)[1] == 0 && names(file)=="gene2go.gz"){ ## we need blast2GO
     message(paste("Getting blast2GO data as a substitute for ",table,sep=""))
     data <- .getBlast2GOData(tax_id, con)
-    sql <- paste("INSERT INTO gene2go(tax_id, gene_id, go_id, evidence, go_qualifier, go_description,",
+    sql <- paste("INSERT INTO gene2go(tax_id, gene_id, go_id, evidence, ",
+                 "go_qualifier, go_description,",
                  "pubmed_id, category) VALUES(?,?,?,?,?,?,?,?);")
     .populateBaseTable(con, sql, data, table)
   }else{
