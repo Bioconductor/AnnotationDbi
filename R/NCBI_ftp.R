@@ -224,38 +224,7 @@
   }else{
     stop("It is impossible to match up blasted GO terms with NCBI accessions.")
   }
-  
-  
-  ## 1st attempt (check in, then delete it)
-  ## if there is accession data, then we want to join to it.
-  ## tables <- sqliteQuickSQL(con,"SELECT * FROM sqlite_master")$name
-  ## if("gene2refseq" %in% tables){
-  ##   sqliteQuickSQL(con,
-  ##    "CREATE TABLE rsB2GO(go_id VARCHAR(10) NOT NULL, accession VARCHAR(10))")
-  ##   sql <- "INSERT INTO rsB2GO(go_id, accession) VALUES(?,?);"
-  ##   .populateBaseTable(con, sql, RSVals, "rsB2GO")
-  ##   ## Too slow so lets make some indices (temp)
-  ##   .makeIndex(con, "rsB2GO", "accession")
-  ##   .makeIndex(con, "gene2refseq", "protein_accession")
-  ##   ## then join those to the other tables to get the data we need.
-  ##   ## for RS join to "protein_accession"
-  ##   rs <- sqliteQuickSQL(con,
-  ##    paste("SELECT g.go_id, a.gene_id FROM rsB2GO AS g, gene2refseq AS a",
-  ##          "WHERE g.accession = a.protein_accession"))
-  ## }else if("gene2accession" %in% tables){
-  ##   sqliteQuickSQL(con,
-  ##    "CREATE TABLE gbB2GO(go_id VARCHAR(10) NOT NULL, accession VARCHAR(10))")
-  ##   sql <- "INSERT INTO gbB2GO(go_id, accession) VALUES(?,?);"
-  ##   .populateBaseTable(con, sql, GBVals, "gbB2GO")
-  ##   .makeIndex(con, "gbB2GO", "accession")
-  ##   .makeIndex(con, "gene2accession", "protein_accession")
-  ##   ## for GB join to "protein_accession"
-  ##   gb <- sqliteQuickSQL(con,
-  ##    paste("SELECT g.go_id, a.gene_id FROM gbB2GO AS g, gene2accession AS a",
-  ##          "WHERE g.accession = a.protein_accession"))
-  ## }
-  ## end of 1st attempt
-  
+    
   ## then assemble the data back together to make it look like gene2go so
   ## it can be inserted there.
   rlen <- dim(vals)[1]
@@ -343,7 +312,7 @@
   sql <- .generateTempTableINSERTStatement(file)
   if(dim(data)[1] != 0){ ## ie. there has to be SOME data...
     .populateBaseTable(con, sql, data, table)
-  }else if(dim(data)[1] == 0 && file=="gene2go"){ ## we need blast2GO
+  }else if(dim(data)[1] == 0 && names(file)=="gene2go.gz"){ ## we need blast2GO
     message(paste("Getting blast2GO data as a substitute for ",table,sep=""))
     data <- .getBlast2GOData(tax_id, con)
     sql <- paste("INSERT INTO gene2go(tax_id, gene_id, go_id, evidence, go_qualifier, go_description,",
