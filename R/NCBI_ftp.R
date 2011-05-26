@@ -92,24 +92,24 @@
 ## used to make sure that GO IDs that are NOT in the current GO package do not
 ## end up in our DB
 .filterGOFrame <- function(frame){
-  frame[frame[["go_id"]] %in% Lkeys(GOTERM),]
   message("Dropping GO IDs that are too new for the current GO.db")
+  frame[frame[["go_id"]] %in% Lkeys(GOTERM),]
 }
 
 ## TODO: modify this so that it no longer unwinds lists...
 ## used to make the 6 custom GO tables
 .makeGOTablesFromNCBI <- function(con){
   bp <- .filterGOFrame(sqliteQuickSQL(con,
-     "SELECT distinct gene_id, go_id, evidence FROM gene2go
-      WHERE category = 'Process'"))
+           paste("SELECT distinct gene_id, go_id, evidence FROM gene2go",
+                 "WHERE category = 'Process'")))
 
   mf <- .filterGOFrame(sqliteQuickSQL(con,
-     "SELECT distinct gene_id, go_id, evidence FROM gene2go
-      WHERE category = 'Function'"))
+           paste("SELECT distinct gene_id, go_id, evidence FROM gene2go",
+                 "WHERE category = 'Function'")))
     
   cc <- .filterGOFrame(sqliteQuickSQL(con,
-     "SELECT distinct gene_id, go_id, evidence FROM gene2go
-      WHERE category = 'Component'")) 
+           paste("SELECT distinct gene_id, go_id, evidence FROM gene2go",
+                 "WHERE category = 'Component'"))) 
 
     headerNames = c("gene_id","go_id","evidence")
     names(bp) <- headerNames
@@ -153,10 +153,10 @@
   colClasses2 <- c(rep("character", times= length(unlist(file))))
   ## names(file) is something like: "gene2go.gz"
   message(paste("Getting data for ",names(file),sep=""))
-## The following works, but commented so that I can avoid the wrath of NCBI
-#   url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",names(file), sep="")
-#   tmp <- tempfile()
-#   download.file(url, tmp, method="curl", quiet=TRUE)
+  
+  url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",names(file), sep="")
+  tmp <- tempfile()
+  download.file(url, tmp, method="curl", quiet=TRUE)
   
 ##older way  
 ###   vals <- read.delim(tmp, header=FALSE, sep="\t", skip=1, stringsAsFactors=FALSE, colClasses = colClasses)
@@ -164,8 +164,8 @@
 ## TEMPORARILY, lets work from some local files.
   ## Lets also speed this part up by declaring the column types, and
   ## subsetting out the things that don't match our tax ID.
-  tmp <- paste("/home/mcarlson/proj/mcarlson/",
-               "2011-May24/",names(file), sep="")
+  ## tmp <- paste("/home/mcarlson/proj/mcarlson/",
+  ##              "2011-May24/",names(file), sep="")
 ## end of TEMP stuff
   
   if("tax_id" %in% unlist(file)){ ## when there is a tax_id we want to subset
@@ -366,23 +366,25 @@
   fileNames <- sub(".gz", "", fileNames)
   message(paste("dropping table",fileNames))
   for(i in seq_len(length(fileNames))){
-    sqliteQuickSQL(con, paste("DROP TABLE IF EXISTS",fileNames[i],sep=""))
+    sqliteQuickSQL(con, paste("DROP TABLE IF EXISTS",fileNames[i]))
   }
 }
 
 
-
+.generateOrgDbName <- function(genus, species){
+    specStr <- paste(substr(genus,1,1),species,sep="")
+    paste("org.",specStr,".eg",sep="")
+}
 
 #########################################################################
 ## Generate the database using the helper functions:
 #########################################################################
 
-generateOrgDbFromNCBI <- function(tax_id){
+generateOrgDbFromNCBI <- function(tax_id, genus, species){
   require(RSQLite)
   require(GO.db)
-  ## TODO: "9606_TEST.sqlite" is obviously not ok.
-  con <- dbConnect(SQLite(), paste(tax_id,"_TEST.sqlite",sep=""))
-  
+  dbName <- .generateOrgDbName(genus,species)
+  con <- dbConnect(SQLite(), paste(dbName,".sqlite",sep=""))
   ## I need a list of files, along with their column names 
   ## (needed for schema definitions later)
   ## IF ANY OF THESE gets moved in the source files
@@ -410,13 +412,8 @@ generateOrgDbFromNCBI <- function(tax_id){
   )
 
   
-  ## TEMP commented for speedup
   .makeBaseDBFromDLs(files, tax_id, con)
-  
-  ## TEMP For post DB testing only:
-  ##tax_id = "9606"  
-
-  
+ 
   ## Make the central table
   egs <- sqliteQuickSQL(con, "SELECT distinct gene_id FROM gene_info")[,1]
   .makeCentralTable(egs, con)
@@ -483,37 +480,68 @@ generateOrgDbFromNCBI <- function(tax_id){
 }
 
 
+
 ## TODO (here):
- ## 1) move over the helper functions from getters that can work with DFs
- ## 2) put them in their own section of the code (label)
 
- ## 3) make all necessary glue/mods here to enable their usage
- ## 4) keep things generic so that I can use them again for biomaRt stuff
-## 5) Add code to "name" the database correctly. (get rid of "TEST.sqlite")
-
-## 6) Test the whole thing in one run.
+## 6) Test the whole thing in one run. ( Don't forget to redirect the getData
+## functs to point to NCBI)
 
 ## 7) Add Metadata to the DB. (including MAPCOUNTS where relevant)
 
 ## 8) Make it so that I can automatically make the package around the DB.
-## 9) Don't forget to redirect the getData functs to point to NCBI
-## 10) Right now there is a problem when there is nothing in a table (like no GO terms) - done?
 
 
-## generateOrgDbFromNCBI("9606")
+
+## generateOrgDbFromNCBI("9606", "Homo", "sapiens")
 ## generateOrgDbFromNCBI("1428") ## Bacillus thuringiensis?
 ## Still don't kwow which kind ... Bacillus thuringiensis?
 
+
 ## try zebrafinch?
 
-## generateOrgDbFromNCBI("59729")
+## generateOrgDbFromNCBI("59729", genus = "Taeniopygia" , species = "guttata")
 
-## 11) Some organisms don't have GO terms.  Enable getting these from blast2GO
-## when they are MIA. - done?
-## To do it, all I need to do is take advantage of the fact that blast2GO
-## follows this convention for their files:
 
-## http://bioinfo.cipf.es/b2gfar/_media/species:data:9913.annot.zip?id=species%3A9913&cache=cache
-## Therefore:
-## url = paste("http://bioinfo.cipf.es/b2gfar/_media/species:data:",
-##      tax_id,".annot.zip?id=species%3A",tax_id,"&cache=cache",sep="")
+
+
+
+
+## function to actually just make a package:
+
+makeOrgPkgFromNCBI <- function(tax_id,
+                               genus,
+                               species,
+                               outputDir = ".",
+                               version,
+                               author,
+                               maintainer){
+
+  if(outputDir!="." && file.access(outputDir)[[1]]!=0){
+    stop("Selected outputDir '", outputDir,"' does not exist.")}
+
+  metaDataSrc <- c(DBSCHEMA="ORGANISM_DB",
+                   ORGANISM=paste(genus,species),
+                   SPECIES=species,
+                   MANUFACTURER=manufacturer,
+                   CHIPNAME=chipName,
+                   MANUFACTURERURL=manufacturerUrl)
+
+  generateOrgDbFromNCBI(tax_id=tax_id, genus=genus, species=species)
+  
+  dbName <- .generateOrgDbName(genus,species)
+  
+  seed <- new("AnnDbPkgSeed",
+              Package= paste(dbName,".db",sep=""),
+              Version=version,
+              Author=author,
+              Maintainer=maintainer,
+              PkgTemplate="ORGANISM.DB",
+              AnnObjPrefix=dbName
+              )
+
+  makeAnnDbPkg(seed, paste(outputDir,"/", dbName,".sqlite", sep=""),
+               dest_dir = outputDir)
+  ## cleanup
+  file.remove(paste(dbName,".db",sep=""))
+}
+
