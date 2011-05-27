@@ -160,10 +160,8 @@
   
   
 ## TEMPORARILY, lets work from some local files.
-  url <- paste("/home/mcarlson/proj/mcarlson/",
+  tmp <- paste("/home/mcarlson/proj/mcarlson/",
                "2011-May24/",names(file), sep="")
-  tmp <- tempfile()
-  download.file(url, tmp, method="curl", quiet=TRUE)
 ## end of TEMP stuff
   
   if("tax_id" %in% unlist(file)){ ## when there is a tax_id we want to subset
@@ -578,15 +576,18 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
 ## 6) Test the whole thing in one run. ( Don't forget to redirect the getData
 ## functs to point to NCBI)
 
-## 7) Add Metadata to the DB. (including MAPCOUNTS where relevant)
-
-## 8) Make it so that I can automatically make the package around the DB.
-
-## 9) There may be RCURL bugs lurking.
+## 9) There may be RCURL bugs lurking in the get data section above.
 
 ## 10) I need to document the new functions.
 
 ## 11) Use something better than just date() in the dates (especially for things like GO!)
+
+## 12) Drop the NCBI_getters.R file (test the code 1st to verify that we don't need it).
+
+## 13) Add the ability to make a DB from Ensembl sources (this should be just a few functions and a new template away)
+
+
+## DB building tests.
 
 ## generateOrgDbFromNCBI("9606", "Homo", "sapiens")
 ## generateOrgDbFromNCBI("1428") ## Bacillus thuringiensis?
@@ -596,7 +597,6 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
 ## try zebrafinch?
 
 ## generateOrgDbFromNCBI("59729", genus = "Taeniopygia" , species = "guttata")
-
 
 
 
@@ -637,4 +637,32 @@ makeOrgPkgFromNCBI <- function(tax_id,
   file.remove(paste(dbName,".db",sep=""))
 }
 
-## TODO: clean up the templates (remove unused things like CHRLOCSOURCE etc. or put that stuff into the metadata in anticipation of what we will put in?
+
+
+
+############
+### TEST - works
+############
+
+## library(AnnotationDbi)
+## source("NCBI_ftp.R")
+## tax_id = "59729"
+## genus = "Taeniopygia"
+## species = "guttata"
+## outputDir = "."
+## version = "0.1"
+## author = "me <me@someplace>"
+## maintainer = "me <me@someplace>"
+## dbName <- .generateOrgDbName(genus,species)  
+## seed <- new("AnnDbPkgSeed",
+##             Package= paste(dbName,".db",sep=""),
+##             Version=version,
+##             Author=author,
+##             Maintainer=maintainer,
+##             PkgTemplate="ORGANISM.DB",
+##             AnnObjPrefix=dbName,
+##             organism = paste(genus, species),
+##             species = species,
+##             biocViews = "annotation")
+## makeAnnDbPkg(seed, paste(outputDir,"/", dbName,".sqlite", sep=""),
+##              dest_dir = outputDir)

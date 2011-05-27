@@ -53,40 +53,40 @@ makeGo3AnnDbBiMapSeed <- function(){
 }
 
 
-## for now, there are only two like this, and they are both from an odd table
-## this may go away in time, so fine for this to be an exception
-makeAnnDbMapSeeds <- function(){
-  list(
-     list(
-        objName="CHRLOC",
-        Class="AnnDbMap",
-        L2Rchain=list(
-            ORGANISM_DB_L2Rlink1,
-            list(
-                tablename="chromosome_locations",
-                Lcolname="_id",
-                tagname=c(Chromosome="{seqname}"),
-                Rcolname="start_location"
-            )
-        ),
-        rightColType="integer"
-    ),
-    list(
-        objName="CHRLOCEND",
-        Class="AnnDbMap",
-        L2Rchain=list(
-            ORGANISM_DB_L2Rlink1,
-            list(
-                tablename="chromosome_locations",
-                Lcolname="_id",
-                tagname=c(Chromosome="{seqname}"),
-                Rcolname="end_location"
-            )
-        ),
-        rightColType="integer"
-    )
-  )
-}
+## ## for now, there are only two like this, and they are both from an odd table
+## ## this may go away in time, so fine for this to be an exception
+## makeAnnDbMapSeeds <- function(){
+##   list(
+##      list(
+##         objName="CHRLOC",
+##         Class="AnnDbMap",
+##         L2Rchain=list(
+##             ORGANISM_DB_L2Rlink1,
+##             list(
+##                 tablename="chromosome_locations",
+##                 Lcolname="_id",
+##                 tagname=c(Chromosome="{seqname}"),
+##                 Rcolname="start_location"
+##             )
+##         ),
+##         rightColType="integer"
+##     ),
+##     list(
+##         objName="CHRLOCEND",
+##         Class="AnnDbMap",
+##         L2Rchain=list(
+##             ORGANISM_DB_L2Rlink1,
+##             list(
+##                 tablename="chromosome_locations",
+##                 Lcolname="_id",
+##                 tagname=c(Chromosome="{seqname}"),
+##                 Rcolname="end_location"
+##             )
+##         ),
+##         rightColType="integer"
+##     )
+##   )
+## }
 
 
 ## for future expansion (assuming we ever get access to these)
