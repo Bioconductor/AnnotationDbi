@@ -279,6 +279,11 @@
   data[,8] <- sub("BP","Process",data[,8])
   data[,8] <- sub("CC","Component",data[,8])
   data[,8] <- sub("MF","Function",data[,8])
+  ## cleanup of file left behind by unzip() operation.
+  if(file.exists(paste(tax_id,".annot",sep=""))){
+    file.remove(paste(tax_id,".annot",sep=""))
+  }
+  ## return data
   data
 }
 
