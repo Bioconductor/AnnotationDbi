@@ -144,6 +144,20 @@
 #########################################################################
 #########################################################################
 
+.tryDL <- function(url, tmp){
+  for(i in 1:4){
+     tryResult <- try( download.file(url, tmp, quiet=TRUE) , silent=TRUE)     
+     if(is(tryResult,"try-error") && i < 4){
+         Sys.sleep(20)
+     }else if(is(tryResult,"try-error") && i >= 4){
+         msg = paste("After 3 attempts, AnnotationDbi is still not getting",
+                     "results from the FTP site. Please try again later.",
+                      sep=" ")
+         stop(paste(strwrap(msg,exdent=2), collapse="\n"))
+     }else{ return() }
+  }
+}
+
 ## For now, I am just going to use what I know works 
 ## (even though depending on curl hides a dependency which is BAD umkay):
 ## But the following chunck should at least download a file and return a 
@@ -156,8 +170,8 @@
   
   url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",names(file), sep="")
   tmp <- tempfile()
-  download.file(url, tmp, quiet=TRUE)
-  
+  ##download.file(url, tmp, quiet=TRUE)
+  .tryDL(url, tmp)
   
 ## TEMPORARILY, lets work from some local files.
   ## tmp <- paste("/home/mcarlson/proj/mcarlson/",
@@ -220,7 +234,8 @@
   url = paste("http://bioinfo.cipf.es/b2gfar/_media/species:data:",
         tax_id,".annot.zip",sep="")
   tmp <- tempfile()
-  download.file(url, tmp, quiet=TRUE)
+  ##download.file(url, tmp, quiet=TRUE)
+  .tryDL(url,tmp)
   vals <- read.delim(unzip(tmp), header=FALSE, sep="\t",
                      stringsAsFactors=FALSE)
   ## I will need to so extra stuff here to match up categories etc.
@@ -313,6 +328,19 @@
   paste(cols, collapse =",")
 }
 
+.mergeAndCleanAccession <- function(ac){
+  ## pair 1st col with 2nd, clean and rename
+  acr <- ac[ac[,2]!="-",1:2]
+  colnames(acr)[2] <- "accession"
+  ## pair 1st col with 3rd, clean and rename
+  acp <- ac[ac[,3]!="-",c(1,3)]
+  colnames(acp)[2] <- "accession"
+  ## merge these together
+  ac <- rbind(acr,acp)
+  ## Then clean off the period and trailing digits
+  ac[,2] <- sub("\\.\\d+$","",ac[,2])
+  ac
+}
 
 ## also need somethign to generate the insert statement.
 .generateTempTableINSERTStatement <- function (file) {
@@ -368,8 +396,13 @@
 
 
 .generateOrgDbName <- function(genus, species){
-    specStr <- paste(substr(genus,1,1),species,sep="")
+    specStr <- paste(toupper(substr(genus,1,1)),species,sep="")
     paste("org.",specStr,".eg",sep="")
+}
+
+.getGODate <- function(){
+  GOinf <- dbInfo(GO_dbconn())
+  GOinf[GOinf[["name"]]=="GOSOURCEDATE","value"]
 }
 
 .addMetadata <- function(con, tax_id, genus, species){
@@ -379,13 +412,13 @@
   name <- c("DBSCHEMAVERSION","DBSCHEMA","ORGANISM","SPECIES","CENTRALID",
             "TAXID",
             "EGSOURCEDATE","EGSOURCENAME","EGSOURCEURL",
-            "GOSOURCENAME","GOSOURCEURL","GOSOURCEDATE",
+            "GOSOURCEDATE","GOSOURCENAME","GOSOURCEURL",
             "GOEGSOURCEDATE","GOEGSOURCENAME","GOEGSOURCEURL")
   value<- c("2.1","ORGANISM_DB",paste(genus,species),species,"EG",
             tax_id,
-            date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",
-            date(), "Gene Ontology","ftp://ftp.geneontology.org/pub/go/godata",
-            date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA")
+       date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",
+       .getGODate(), "Gene Ontology","ftp://ftp.geneontology.org/pub/go/godata",
+       date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA")
   data = data.frame(name,value,stringsAsFactors=FALSE)
   sql <- "INSERT INTO metadata (name,value) VALUES(?,?)"
   .populateBaseTable(con, sql, data, "metadata")
@@ -404,7 +437,7 @@
   source_name <- c(rep("Entrez Gene",12),rep("Gene Ontology",2))
   source_url <- c(rep("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",12),
                    rep("ftp://ftp.geneontology.org/pub/go/go",2))
-  source_date <- c(rep(date(),14))
+  source_date <- c(rep(date(),12),rep(.getGODate(),2))
   data = data.frame(map_name,source_name,source_url,
     source_date,stringsAsFactors=FALSE)
   sql <- paste("INSERT INTO map_metadata (map_name,source_name,source_url,",
@@ -448,6 +481,8 @@
              .computeSimpleMapCounts(con, "refseq", "accession"),
              .computeSimpleEGMapCounts(con, "unigene", "unigene_id"),
              .computeSimpleMapCounts(con, "unigene", "unigene_id"),
+             .computeSimpleEGMapCounts(con, "accessions", "accession"),
+             .computeSimpleMapCounts(con, "accessions", "accession"),
              #GO ones 
              .computeSimpleEGMapCounts(con, "alias", "alias_symbol"),
              sqliteQuickSQL(con,"SELECT count(DISTINCT gene_id) FROM genes")
@@ -457,12 +492,11 @@
   .populateBaseTable(con, sql, data, "map_counts")
 }
 
-
 #########################################################################
 ## Generate the database using the helper functions:
 #########################################################################
 
-generateOrgDbFromNCBI <- function(tax_id, genus, species){
+makeOrgDbFromNCBI <- function(tax_id, genus, species){
   require(RSQLite)
   require(GO.db)
   dbName <- .generateOrgDbName(genus,species)
@@ -537,13 +571,15 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
   ## refseq ## requires sub-parsing.
   rs <- sqliteQuickSQL(con,
     "SELECT distinct gene_id,rna_accession,protein_accession FROM gene2refseq")
-  rsr <- rs[rs[,2]!="-",1:2]
-  colnames(rsr)[2] <- "accession"
-  rsp <- rs[rs[,3]!="-",c(1,3)]
-  colnames(rsp)[2] <- "accession"
-  rs <- rbind(rsr,rsp)
-  rs[,2] <- sub("\\.\\d+$","",rs[,2])
+  rs <- .mergeAndCleanAccession(rs)
   .makeSimpleTable(rs, table="refseq", con)
+  
+  ## accessions
+  ac <- sqliteQuickSQL(con,
+     paste("SELECT distinct gene_id,rna_accession,protein_accession",
+           "FROM gene2accession"))
+  ac <- .mergeAndCleanAccession(ac)
+  .makeSimpleTable(ac, table="accessions", con)
   
   ## unigene 
   ug <- sqliteQuickSQL(con,
@@ -563,11 +599,12 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
   ## Add metadata:
   .addMetadata(con, tax_id, genus, species)
   ## Add map_metadata:
-  .addMapMetadata(con, tax_id, genus, species)  
+  .addMapMetadata(con, tax_id, genus, species)
   ## Add map_counts:
   .addMapCounts(con, tax_id, genus, species)
   
 }
+
 
 
 
@@ -577,52 +614,43 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
 ## 6) More tests of the whole thing in one run. ( Don't forget to redirect the
 ## getData functions to point to NCBI)
 
-## 9) There are some RCURL bugs lurking in the get data section above (un-stated curl dependencies).  But also, I just need to make the download code more robust (try a few times like we do for blast functions in annotate).
-
-## 10) I need to document the new function (just expose the package builder).
-
-## 11) Use something better than just date() in the dates (especially for things like GO!)
-
 ## 12) Drop the NCBI_getters.R file (test the code 1st to verify that we don't need it).
 
 ## 13) Add the ability to make a DB from Ensembl sources (this should be just a few functions and a new template away)
 
-## 14) There is probably some work to do still in terms of making the MAPCOUNTS accurate.
-
-## 15) add the ACCNUM mapping.
+## 14) There is more work to do still in terms of making the MAPCOUNTS accurate.
 
 
 
 
 ## DB building tests.
 
-## generateOrgDbFromNCBI("9606", "Homo", "sapiens")
-## generateOrgDbFromNCBI("1428") ## Bacillus thuringiensis?
+## makeOrgDbFromNCBI("9606", "Homo", "sapiens")
+## makeOrgDbFromNCBI("1428") ## Bacillus thuringiensis?
 ## Still don't kwow which kind ... Bacillus thuringiensis?
 
 
-## try zebrafinch?
+## try zebrafinch as a better test than human.
 
-## generateOrgDbFromNCBI("59729", genus = "Taeniopygia" , species = "guttata")
-
-
+## makeOrgDbFromNCBI("59729", genus = "Taeniopygia" , species = "guttata")
 
 
 
-## function to actually just make a package:
 
-makeOrgPkgFromNCBI <- function(tax_id,
-                               genus,
-                               species,
-                               outputDir = ".",
-                               version,
+
+## function to make the package:
+makeOrgPackageFromNCBI <- function(version,
+                               maintainer,
                                author,
-                               maintainer){
+                               outputDir = ".",
+                               tax_id,
+                               genus,
+                               species){
 
   if(outputDir!="." && file.access(outputDir)[[1]]!=0){
     stop("Selected outputDir '", outputDir,"' does not exist.")}
 
-  generateOrgDbFromNCBI(tax_id=tax_id, genus=genus, species=species)
+  makeOrgDbFromNCBI(tax_id=tax_id, genus=genus, species=species)
   
   dbName <- .generateOrgDbName(genus,species)
   
@@ -634,14 +662,17 @@ makeOrgPkgFromNCBI <- function(tax_id,
               PkgTemplate="ORGANISM.DB",
               AnnObjPrefix=dbName,
               organism = paste(genus, species),
-              species = species,
-              biocViews = "annotation")
+              species = paste(genus, species),
+              biocViews = "annotation",
+              manufacturerUrl = "no manufacturer",
+              manufacturer = "no manufacturer",
+              chipName = "no manufacturer")
 
   makeAnnDbPkg(seed, paste(outputDir,"/", dbName,".sqlite", sep=""),
                dest_dir = outputDir)
   
   ## cleanup
-  file.remove(paste(dbName,".db",sep=""))
+  file.remove(paste(dbName,".sqlite",sep=""))
 }
 
 
@@ -670,17 +701,20 @@ makeOrgPkgFromNCBI <- function(tax_id,
 ##             AnnObjPrefix=dbName,
 ##             organism = paste(genus, species),
 ##             species = species,
-##             biocViews = "annotation")
+##             biocViews = "annotation",
+##             manufacturerUrl = "no manufacturer",
+##             manufacturer = "no manufacturer",
+##             chipName = "no manufacturer")
 ## makeAnnDbPkg(seed, paste(outputDir,"/", dbName,".sqlite", sep=""),
 ##              dest_dir = outputDir)
 
 
-## TEST 
+## "Complete" TEST - works
 
-## makeOrgPkgFromNCBI(tax_id = "59729",
-##                    genus = "Taeniopygia",
-##                    species = "guttata",
-##                    outputDir = ".",
-##                    version = "0.1,
-##                    author = "me <me@someplace>",
-##                    maintainer = "me <me@someplace>")
+## makeOrgPackageFromNCBI(version = "0.1",
+##                        author = "me <me@someplace>",
+##                        maintainer = "me <me@someplace>",
+##                        outputDir = ".",
+##                        tax_id = "59729",
+##                        genus = "Taeniopygia",
+##                        species = "guttata")
