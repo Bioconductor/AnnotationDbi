@@ -154,14 +154,14 @@
   ## names(file) is something like: "gene2go.gz"
   message(paste("Getting data for ",names(file),sep=""))
   
-  ## url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",names(file), sep="")
-  ## tmp <- tempfile()
-  ## download.file(url, tmp, method="curl", quiet=TRUE)
+  url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",names(file), sep="")
+  tmp <- tempfile()
+  download.file(url, tmp, quiet=TRUE)
   
   
 ## TEMPORARILY, lets work from some local files.
-  tmp <- paste("/home/mcarlson/proj/mcarlson/",
-               "2011-May24/",names(file), sep="")
+  ## tmp <- paste("/home/mcarlson/proj/mcarlson/",
+  ##              "2011-May24/",names(file), sep="")
 ## end of TEMP stuff
   
   if("tax_id" %in% unlist(file)){ ## when there is a tax_id we want to subset
@@ -220,7 +220,7 @@
   url = paste("http://bioinfo.cipf.es/b2gfar/_media/species:data:",
         tax_id,".annot.zip",sep="")
   tmp <- tempfile()
-  download.file(url, tmp, method="curl", quiet=TRUE)
+  download.file(url, tmp, quiet=TRUE)
   vals <- read.delim(unzip(tmp), header=FALSE, sep="\t",
                      stringsAsFactors=FALSE)
   ## I will need to so extra stuff here to match up categories etc.
@@ -375,7 +375,7 @@
 .addMetadata <- function(con, tax_id, genus, species){
   sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS metadata (name",
                             "VARCHAR(80) PRIMARY KEY,value VARCHAR(255))"))  
-  Sys.sleep(5)
+  Sys.sleep(10)
   name <- c("DBSCHEMAVERSION","DBSCHEMA","ORGANISM","SPECIES","CENTRALID",
             "TAXID",
             "EGSOURCEDATE","EGSOURCENAME","EGSOURCEURL",
@@ -397,7 +397,7 @@
                             "source_name VARCHAR(80) NOT NULL,",
                             "source_url VARCHAR(255) NOT NULL,",
                             "source_date VARCHAR(20) NOT NULL)"))
-  Sys.sleep(5)
+  Sys.sleep(10)
   map_name <- c("ENTREZID","GENENAME","SYMBOL","CHR","ACCNUM","REFSEQ","PMID",
                  "PMID2EG","UNIGENE","ALIAS2EG","GO2EG","GO2ALLEGS",
                  "GO","GO2ALLEGS")
@@ -405,8 +405,8 @@
   source_url <- c(rep("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",12),
                    rep("ftp://ftp.geneontology.org/pub/go/go",2))
   source_date <- c(rep(date(),14))
-  data = data.frame(map_names,source_names,source_urls,
-    source_dates,stringsAsFactors=FALSE)
+  data = data.frame(map_name,source_name,source_url,
+    source_date,stringsAsFactors=FALSE)
   sql <- paste("INSERT INTO map_metadata (map_name,source_name,source_url,",
                "source_date) VALUES(?,?,?,?)")
   .populateBaseTable(con, sql, data, "map_metadata")
@@ -436,7 +436,7 @@
   sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS map_counts ",
                             "(map_name VARCHAR(80) PRIMARY KEY,",
                             "count INTEGER NOT NULL)"))  
-  Sys.sleep(5)
+  Sys.sleep(10)
   map_name <- c("GENENAME","SYMBOL","SYMBOL2EG","CHR","REFSEQ","REFSEQ2EG",
                 "UNIGENE","UNIGENE2EG","GO","GO2EG","GO2ALLEGS","ALIAS2EG",
                 "TOTAL")
@@ -482,7 +482,7 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
         "rna_gi","protein_accession","protein_gi","genomic_dna_accession",
         "genomic_dna_gi","genomic_start","genomic_end","orientation",
         "assembly"),
-    "gene2unigene.gz" = c("gene_id","unigene_id"),
+    "gene2unigene" = c("gene_id","unigene_id"),
     "gene_info.gz" = c("tax_id","gene_id","symbol","locus_tag",
         "synonyms","dbXrefs","chromosome","map_location","description",
         "gene_type","nomenclature_symbol","nomenclature_name",
@@ -571,20 +571,27 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
 
 
 
+
 ## TODO (here):
 
-## 6) Test the whole thing in one run. ( Don't forget to redirect the getData
-## functs to point to NCBI)
+## 6) More tests of the whole thing in one run. ( Don't forget to redirect the
+## getData functions to point to NCBI)
 
-## 9) There may be RCURL bugs lurking in the get data section above.
+## 9) There are some RCURL bugs lurking in the get data section above (un-stated curl dependencies).  But also, I just need to make the download code more robust (try a few times like we do for blast functions in annotate).
 
-## 10) I need to document the new functions.
+## 10) I need to document the new function (just expose the package builder).
 
 ## 11) Use something better than just date() in the dates (especially for things like GO!)
 
 ## 12) Drop the NCBI_getters.R file (test the code 1st to verify that we don't need it).
 
 ## 13) Add the ability to make a DB from Ensembl sources (this should be just a few functions and a new template away)
+
+## 14) There is probably some work to do still in terms of making the MAPCOUNTS accurate.
+
+## 15) add the ACCNUM mapping.
+
+
 
 
 ## DB building tests.
@@ -666,3 +673,14 @@ makeOrgPkgFromNCBI <- function(tax_id,
 ##             biocViews = "annotation")
 ## makeAnnDbPkg(seed, paste(outputDir,"/", dbName,".sqlite", sep=""),
 ##              dest_dir = outputDir)
+
+
+## TEST 
+
+## makeOrgPkgFromNCBI(tax_id = "59729",
+##                    genus = "Taeniopygia",
+##                    species = "guttata",
+##                    outputDir = ".",
+##                    version = "0.1,
+##                    author = "me <me@someplace>",
+##                    maintainer = "me <me@someplace>")
