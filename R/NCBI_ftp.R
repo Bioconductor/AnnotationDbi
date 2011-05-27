@@ -154,18 +154,16 @@
   ## names(file) is something like: "gene2go.gz"
   message(paste("Getting data for ",names(file),sep=""))
   
-  url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",names(file), sep="")
-  tmp <- tempfile()
-  download.file(url, tmp, method="curl", quiet=TRUE)
+  ## url <- paste("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/",names(file), sep="")
+  ## tmp <- tempfile()
+  ## download.file(url, tmp, method="curl", quiet=TRUE)
   
-##older way  
-###   vals <- read.delim(tmp, header=FALSE, sep="\t", skip=1, stringsAsFactors=FALSE, colClasses = colClasses)
   
 ## TEMPORARILY, lets work from some local files.
-  ## Lets also speed this part up by declaring the column types, and
-  ## subsetting out the things that don't match our tax ID.
-  ## tmp <- paste("/home/mcarlson/proj/mcarlson/",
-  ##              "2011-May24/",names(file), sep="")
+  url <- paste("/home/mcarlson/proj/mcarlson/",
+               "2011-May24/",names(file), sep="")
+  tmp <- tempfile()
+  download.file(url, tmp, method="curl", quiet=TRUE)
 ## end of TEMP stuff
   
   if("tax_id" %in% unlist(file)){ ## when there is a tax_id we want to subset
@@ -362,7 +360,7 @@
 }
 
 
-.dropOldTables <- function(fileNames){
+.dropOldTables <- function(con,fileNames){
   fileNames <- sub(".gz", "", fileNames)
   message(paste("dropping table",fileNames))
   for(i in seq_len(length(fileNames))){
@@ -375,6 +373,92 @@
     specStr <- paste(substr(genus,1,1),species,sep="")
     paste("org.",specStr,".eg",sep="")
 }
+
+.addMetadata <- function(con, tax_id, genus, species){
+  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS metadata (name",
+                            "VARCHAR(80) PRIMARY KEY,value VARCHAR(255))"))  
+  Sys.sleep(5)
+  name <- c("DBSCHEMAVERSION","DBSCHEMA","ORGANISM","SPECIES","CENTRALID",
+            "TAXID",
+            "EGSOURCEDATE","EGSOURCENAME","EGSOURCEURL",
+            "GOSOURCENAME","GOSOURCEURL","GOSOURCEDATE",
+            "GOEGSOURCEDATE","GOEGSOURCENAME","GOEGSOURCEURL")
+  value<- c("2.1","ORGANISM_DB",paste(genus,species),species,"EG",
+            tax_id,
+            date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",
+            date(), "Gene Ontology","ftp://ftp.geneontology.org/pub/go/godata",
+            date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA")
+  data = data.frame(name,value,stringsAsFactors=FALSE)
+  sql <- "INSERT INTO metadata (name,value) VALUES(?,?)"
+  .populateBaseTable(con, sql, data, "metadata")
+}
+
+.addMapMetadata <- function(con, tax_id, genus, species){
+  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS map_metadata ",
+                            "(map_name VARCHAR(80) NOT NULL,",
+                            "source_name VARCHAR(80) NOT NULL,",
+                            "source_url VARCHAR(255) NOT NULL,",
+                            "source_date VARCHAR(20) NOT NULL)"))
+  Sys.sleep(5)
+  map_name <- c("ENTREZID","GENENAME","SYMBOL","CHR","ACCNUM","REFSEQ","PMID",
+                 "PMID2EG","UNIGENE","ALIAS2EG","GO2EG","GO2ALLEGS",
+                 "GO","GO2ALLEGS")
+  source_name <- c(rep("Entrez Gene",12),rep("Gene Ontology",2))
+  source_url <- c(rep("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",12),
+                   rep("ftp://ftp.geneontology.org/pub/go/go",2))
+  source_date <- c(rep(date(),14))
+  data = data.frame(map_names,source_names,source_urls,
+    source_dates,stringsAsFactors=FALSE)
+  sql <- paste("INSERT INTO map_metadata (map_name,source_name,source_url,",
+               "source_date) VALUES(?,?,?,?)")
+  .populateBaseTable(con, sql, data, "map_metadata")
+}
+
+## wanted when we want to know how many of something we can get
+.computeSimpleEGMapCounts <- function(con, table, field){
+  sql<- paste("SELECT count(DISTINCT g.gene_id) FROM ",table,
+              " AS t, genes as g WHERE t._id=g._id AND t.",field,
+              " NOT NULL", sep="")
+  message(sql)
+  sqliteQuickSQL(con,sql)
+}
+
+## when we want to know how many of something there is (reverse mapping?)
+.computeSimpleMapCounts <- function(con, table, field){
+  sql<- paste("SELECT count(DISTINCT t.",field,") FROM ",table,
+              " AS t, genes as g WHERE t._id=g._id AND t.",field,
+              " NOT NULL", sep="")
+  message(sql)
+  sqliteQuickSQL(con,sql)
+}
+
+
+## TODO: correct the counts as needed
+.addMapCounts <- function(con, tax_id, genus, species){
+  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS map_counts ",
+                            "(map_name VARCHAR(80) PRIMARY KEY,",
+                            "count INTEGER NOT NULL)"))  
+  Sys.sleep(5)
+  map_name <- c("GENENAME","SYMBOL","SYMBOL2EG","CHR","REFSEQ","REFSEQ2EG",
+                "UNIGENE","UNIGENE2EG","GO","GO2EG","GO2ALLEGS","ALIAS2EG",
+                "TOTAL")
+  count <- c(.computeSimpleEGMapCounts(con, "gene_info", "gene_name"),
+             .computeSimpleEGMapCounts(con, "gene_info", "symbol"),
+             .computeSimpleMapCounts(con, "gene_info", "symbol"),
+             .computeSimpleEGMapCounts(con, "chromosomes", "chromosome"),
+             .computeSimpleEGMapCounts(con, "refseq", "accession"),
+             .computeSimpleMapCounts(con, "refseq", "accession"),
+             .computeSimpleEGMapCounts(con, "unigene", "unigene_id"),
+             .computeSimpleMapCounts(con, "unigene", "unigene_id"),
+             #GO ones 
+             .computeSimpleEGMapCounts(con, "alias", "alias_symbol"),
+             sqliteQuickSQL(con,"SELECT count(DISTINCT gene_id) FROM genes")
+             )
+  data = data.frame(map_name,count,stringsAsFactors=FALSE)
+  sql <- "INSERT INTO map_counts (map_name,count) VALUES(?,?)"
+  .populateBaseTable(con, sql, data, "map_counts")
+}
+
 
 #########################################################################
 ## Generate the database using the helper functions:
@@ -410,7 +494,6 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
     "gene2go.gz" = c("tax_id","gene_id","go_id","evidence",
         "go_qualifier", "go_description","pubmed_id","category")
   )
-
   
   .makeBaseDBFromDLs(files, tax_id, con)
  
@@ -474,9 +557,18 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
   .makeGOTablesFromNCBI(con)
   
   ## Drop all the older tables (which will include the original "gene_info").
-  .dropOldTables(names(files))  
+  .dropOldTables(con,names(files))  
   ## Rename "gene_info_temp" to be just "gene_info":
   sqliteQuickSQL(con,"ALTER TABLE gene_info_temp RENAME TO gene_info")
+
+
+  ## Add metadata:
+  .addMetadata(con, tax_id, genus, species)
+  ## Add map_metadata:
+  .addMapMetadata(con, tax_id, genus, species)  
+  ## Add map_counts:
+  .addMapCounts(con, tax_id, genus, species)
+  
 }
 
 
@@ -490,7 +582,11 @@ generateOrgDbFromNCBI <- function(tax_id, genus, species){
 
 ## 8) Make it so that I can automatically make the package around the DB.
 
+## 9) There may be RCURL bugs lurking.
 
+## 10) I need to document the new functions.
+
+## 11) Use something better than just date() in the dates (especially for things like GO!)
 
 ## generateOrgDbFromNCBI("9606", "Homo", "sapiens")
 ## generateOrgDbFromNCBI("1428") ## Bacillus thuringiensis?
@@ -519,13 +615,6 @@ makeOrgPkgFromNCBI <- function(tax_id,
   if(outputDir!="." && file.access(outputDir)[[1]]!=0){
     stop("Selected outputDir '", outputDir,"' does not exist.")}
 
-  metaDataSrc <- c(DBSCHEMA="ORGANISM_DB",
-                   ORGANISM=paste(genus,species),
-                   SPECIES=species,
-                   MANUFACTURER=manufacturer,
-                   CHIPNAME=chipName,
-                   MANUFACTURERURL=manufacturerUrl)
-
   generateOrgDbFromNCBI(tax_id=tax_id, genus=genus, species=species)
   
   dbName <- .generateOrgDbName(genus,species)
@@ -536,12 +625,16 @@ makeOrgPkgFromNCBI <- function(tax_id,
               Author=author,
               Maintainer=maintainer,
               PkgTemplate="ORGANISM.DB",
-              AnnObjPrefix=dbName
-              )
+              AnnObjPrefix=dbName,
+              organism = paste(genus, species),
+              species = species,
+              biocViews = "annotation")
 
   makeAnnDbPkg(seed, paste(outputDir,"/", dbName,".sqlite", sep=""),
                dest_dir = outputDir)
+  
   ## cleanup
   file.remove(paste(dbName,".db",sep=""))
 }
 
+## TODO: clean up the templates (remove unused things like CHRLOCSOURCE etc. or put that stuff into the metadata in anticipation of what we will put in?
