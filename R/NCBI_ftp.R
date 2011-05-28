@@ -419,7 +419,7 @@
             "EGSOURCEDATE","EGSOURCENAME","EGSOURCEURL",
             "GOSOURCEDATE","GOSOURCENAME","GOSOURCEURL",
             "GOEGSOURCEDATE","GOEGSOURCENAME","GOEGSOURCEURL")
-  value<- c("2.1","ORGANISM_DB",paste(genus,species),species,"EG",
+  value<- c("2.1","ORGANISM_DB",paste(genus,species),paste(genus,species),"EG",
             tax_id,
        date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",
        .getGODate(), "Gene Ontology","ftp://ftp.geneontology.org/pub/go/godata",
