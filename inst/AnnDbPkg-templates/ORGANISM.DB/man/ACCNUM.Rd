@@ -26,15 +26,7 @@
       # Get the first one
       xx[[1]]
     }
-    #For the reverse map ACCNUM2EG:
-    # Convert to a list
-    xx <- as.list(@ANNOBJPREFIX@ACCNUM2EG)
-    if(length(xx) > 0){
-       # Gets the entrez gene identifiers for the first five Entrez Gene IDs
-       xx[1:5]
-       # Get the first one
-       xx[[1]]
-    }
+
 }
 \keyword{datasets}
 

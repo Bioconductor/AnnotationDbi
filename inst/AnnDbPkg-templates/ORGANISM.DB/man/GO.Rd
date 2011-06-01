@@ -54,7 +54,7 @@
   between Gene Ontology identifiers an Gene Ontology terms and other information
   are available in a separate data package named GO.
   
-  Mappings were based on data provided by: @GOSOURCE@
+  Mappings were based on data provided by: @GO2ALLEGSSOURCE@
 
   For the reverse map GO2EG, each GO term maps to a named vector of
   entrez gene identifiers. A GO identifier may be mapped to the same

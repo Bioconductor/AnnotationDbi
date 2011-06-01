@@ -143,10 +143,16 @@
 
 #########################################################################
 #########################################################################
+.downloadAndSaveToTemp <- function(url, tmp){
+  require(RCurl)
+  binRes <- getBinaryURL(url)
+  writeBin(binRes, con=tmp)
+}
 
 .tryDL <- function(url, tmp){
   for(i in 1:4){
-     tryResult <- try( download.file(url, tmp, quiet=TRUE) , silent=TRUE)     
+    ## tryResult <- try( download.file(url, tmp, quiet=TRUE) , silent=TRUE)     
+     tryResult <- try( .downloadAndSaveToTemp(url, tmp) , silent=TRUE)     
      if(is(tryResult,"try-error") && i < 4){
          Sys.sleep(20)
      }else if(is(tryResult,"try-error") && i >= 4){
@@ -158,10 +164,6 @@
   }
 }
 
-## For now, I am just going to use what I know works 
-## (even though depending on curl hides a dependency which is BAD umkay):
-## But the following chunck should at least download a file and return a 
-## (cleaned) data.frame from it
 .downloadData <- function (file, tax_id) {
   colClasses1 <- c("character",rep("NULL", times= length(unlist(file))-1))
   colClasses2 <- c(rep("character", times= length(unlist(file))))
@@ -229,6 +231,69 @@
    paste("CREATE INDEX IF NOT EXISTS",indName,"ON",table,"(",field,")"))
 }
 
+## metadata stuff
+.createMetadataTables <- function(con){
+  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS metadata (name",
+                            "VARCHAR(80) PRIMARY KEY,value VARCHAR(255))"))  
+  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS map_metadata ",
+                            "(map_name VARCHAR(80) NOT NULL,",
+                            "source_name VARCHAR(80) NOT NULL,",
+                            "source_url VARCHAR(255) NOT NULL,",
+                            "source_date VARCHAR(20) NOT NULL)"))
+  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS map_counts ",
+                            "(map_name VARCHAR(80) PRIMARY KEY,",
+                            "count INTEGER NOT NULL)"))    
+}
+
+.addMeta <- function(con, name, value){
+  data = data.frame(name,value,stringsAsFactors=FALSE)
+  sql <- "INSERT INTO metadata (name,value) VALUES(?,?)"
+  .populateBaseTable(con, sql, data, "metadata")
+}
+
+.addMetadata <- function(con, tax_id, genus, species){
+  name <- c("DBSCHEMAVERSION","DBSCHEMA","ORGANISM","SPECIES","CENTRALID",
+            "TAXID",
+            "EGSOURCEDATE","EGSOURCENAME","EGSOURCEURL",
+            "GOSOURCEDATE","GOSOURCENAME","GOSOURCEURL",
+            "GOEGSOURCEDATE","GOEGSOURCENAME","GOEGSOURCEURL")
+  value<- c("2.1","ORGANISM_DB",paste(genus,species),paste(genus,species),"EG",
+            tax_id,
+       date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",
+       .getGODate(), "Gene Ontology","ftp://ftp.geneontology.org/pub/go/godata",
+       date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA")
+  .addMeta(con, name, value)
+}
+
+.addMapMeta <- function(con, map_name, source_name, source_url, source_date){
+  data = data.frame(map_name,source_name,source_url,
+    source_date,stringsAsFactors=FALSE)
+  sql <- paste("INSERT INTO map_metadata (map_name,source_name,source_url,",
+               "source_date) VALUES(?,?,?,?)")
+  .populateBaseTable(con, sql, data, "map_metadata")
+}
+
+.addMapMetadata <- function(con, tax_id, genus, species){
+  map_name <- c("ENTREZID","GENENAME","SYMBOL","CHR","ACCNUM","REFSEQ","PMID",
+                 "PMID2EG","UNIGENE","ALIAS2EG","GO2EG","GO2ALLEGS",
+                 "GO","GO2ALLEGS")
+  source_name <- c(rep("Entrez Gene",12),rep("Gene Ontology",2))
+  source_url <- c(rep("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",12),
+                   rep("ftp://ftp.geneontology.org/pub/go/go",2))
+  source_date <- c(rep(date(),12),rep(.getGODate(),2))
+  .addMapMeta(con, map_name, source_name, source_url, source_date)
+
+  ##clean up unwanted data
+  ## if we used blast2GO, then we need to drop classic GO
+  goSrcs <- sqliteQuickSQL(con,
+             "SELECT source_name FROM map_metadata WHERE map_name='GO2EG'")
+  if("Gene Ontology" %in% goSrcs & "blast2GO" %in% goSrcs){
+    sqliteQuickSQL(con,paste("DELETE FROM map_metadata where map_name",
+                             "='GO2EG' AND source_name='Gene Ontology'"))
+  }
+}
+
+
 ## Use when there is no GO data
 .getBlast2GOData <- function(tax_id, con) {
   url = paste("http://bioinfo.cipf.es/b2gfar/_media/species:data:",
@@ -263,6 +328,18 @@
   }else{
     stop("It is impossible to match up blasted GO terms with NCBI accessions.")
   }
+
+  ## Add to the metadata:
+  name <- c("BL2GOSOURCEDATE","BL2GOSOURCENAME","BL2GOSOURCEURL")
+  value<- c(date(),"blast2GO","http://www.blast2go.de/")
+  .addMeta(con, name, value)
+
+  ## modify and then add back to map_metadata
+  map_name <- c("GO2EG", "GO2ALLEGS")
+  source_name <- c(rep("blast2GO",2))
+  source_url <- c(rep("http://www.blast2go.de/",2))
+  source_date <- c(rep(date(),2))
+  .addMapMeta(con, map_name, source_name, source_url, source_date)
     
   ## then assemble the data back together to make it look like gene2go so
   ## it can be inserted there.
@@ -410,45 +487,6 @@
   GOinf[GOinf[["name"]]=="GOSOURCEDATE","value"]
 }
 
-.addMetadata <- function(con, tax_id, genus, species){
-  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS metadata (name",
-                            "VARCHAR(80) PRIMARY KEY,value VARCHAR(255))"))  
-  Sys.sleep(10)
-  name <- c("DBSCHEMAVERSION","DBSCHEMA","ORGANISM","SPECIES","CENTRALID",
-            "TAXID",
-            "EGSOURCEDATE","EGSOURCENAME","EGSOURCEURL",
-            "GOSOURCEDATE","GOSOURCENAME","GOSOURCEURL",
-            "GOEGSOURCEDATE","GOEGSOURCENAME","GOEGSOURCEURL")
-  value<- c("2.1","ORGANISM_DB",paste(genus,species),paste(genus,species),"EG",
-            tax_id,
-       date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",
-       .getGODate(), "Gene Ontology","ftp://ftp.geneontology.org/pub/go/godata",
-       date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA")
-  data = data.frame(name,value,stringsAsFactors=FALSE)
-  sql <- "INSERT INTO metadata (name,value) VALUES(?,?)"
-  .populateBaseTable(con, sql, data, "metadata")
-}
-
-.addMapMetadata <- function(con, tax_id, genus, species){
-  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS map_metadata ",
-                            "(map_name VARCHAR(80) NOT NULL,",
-                            "source_name VARCHAR(80) NOT NULL,",
-                            "source_url VARCHAR(255) NOT NULL,",
-                            "source_date VARCHAR(20) NOT NULL)"))
-  Sys.sleep(10)
-  map_name <- c("ENTREZID","GENENAME","SYMBOL","CHR","ACCNUM","REFSEQ","PMID",
-                 "PMID2EG","UNIGENE","ALIAS2EG","GO2EG","GO2ALLEGS",
-                 "GO","GO2ALLEGS")
-  source_name <- c(rep("Entrez Gene",12),rep("Gene Ontology",2))
-  source_url <- c(rep("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",12),
-                   rep("ftp://ftp.geneontology.org/pub/go/go",2))
-  source_date <- c(rep(date(),12),rep(.getGODate(),2))
-  data = data.frame(map_name,source_name,source_url,
-    source_date,stringsAsFactors=FALSE)
-  sql <- paste("INSERT INTO map_metadata (map_name,source_name,source_url,",
-               "source_date) VALUES(?,?,?,?)")
-  .populateBaseTable(con, sql, data, "map_metadata")
-}
 
 ## wanted when we want to know how many of something we can get
 .computeSimpleEGMapCounts <- function(con, table, field){
@@ -471,10 +509,6 @@
 
 ## TODO: correct the counts as needed
 .addMapCounts <- function(con, tax_id, genus, species){
-  sqliteQuickSQL(con, paste("CREATE TABLE IF NOT EXISTS map_counts ",
-                            "(map_name VARCHAR(80) PRIMARY KEY,",
-                            "count INTEGER NOT NULL)"))  
-  Sys.sleep(10)
   map_name <- c("GENENAME","SYMBOL","SYMBOL2EG","CHR","REFSEQ","REFSEQ2EG",
                 "UNIGENE","UNIGENE2EG","GO","GO2EG","GO2ALLEGS","ALIAS2EG",
                 "TOTAL")
@@ -506,6 +540,7 @@ makeOrgDbFromNCBI <- function(tax_id, genus, species){
   require(GO.db)
   dbName <- .generateOrgDbName(genus,species)
   con <- dbConnect(SQLite(), paste(dbName,".sqlite",sep=""))
+  .createMetadataTables(con)  ## just makes the tables
   ## I need a list of files, along with their column names 
   ## (needed for schema definitions later)
   ## IF ANY OF THESE gets moved in the source files
@@ -531,8 +566,12 @@ makeOrgDbFromNCBI <- function(tax_id, genus, species){
     "gene2go.gz" = c("tax_id","gene_id","go_id","evidence",
         "go_qualifier", "go_description","pubmed_id","category")
   )
-  
   .makeBaseDBFromDLs(files, tax_id, con)
+  
+  ## Add metadata:
+  .addMetadata(con, tax_id, genus, species)
+  ## Add map_metadata:
+  .addMapMetadata(con, tax_id, genus, species)
  
   ## Make the central table
   egs <- sqliteQuickSQL(con, "SELECT distinct gene_id FROM gene_info")[,1]
@@ -601,11 +640,7 @@ makeOrgDbFromNCBI <- function(tax_id, genus, species){
   sqliteQuickSQL(con,"ALTER TABLE gene_info_temp RENAME TO gene_info")
 
 
-  ## Add metadata:
-  .addMetadata(con, tax_id, genus, species)
-  ## Add map_metadata:
-  .addMapMetadata(con, tax_id, genus, species)
-  ## Add map_counts:
+  ## Add map_counts: (must happen at end)
   .addMapCounts(con, tax_id, genus, species)
   
 }
@@ -616,14 +651,12 @@ makeOrgDbFromNCBI <- function(tax_id, genus, species){
 
 ## TODO (here):
 
-## 6) More tests of the whole thing in one run. ( Don't forget to redirect the
-## getData functions to point to NCBI)
+## 14) There is more work to do still in terms of making the MAPCOUNTS accurate.
+## 15) Make sure than when we use blast2GO, we adjust the metadata accordingly!
 
 ## 12) Drop the NCBI_getters.R file (test the code 1st to verify that we don't need it).
 
 ## 13) Add the ability to make a DB from Ensembl sources (this should be just a few functions and a new template away)
-
-## 14) There is more work to do still in terms of making the MAPCOUNTS accurate.
 
 
 
@@ -688,7 +721,8 @@ makeOrgPackageFromNCBI <- function(version,
 ############
 
 ## library(AnnotationDbi)
-## source("NCBI_ftp.R")
+## #source("NCBI_ftp.R") #
+## source("~/proj/Rpacks/AnnotationDbi/R/NCBI_ftp.R")
 ## tax_id = "59729"
 ## genus = "Taeniopygia"
 ## species = "guttata"
