@@ -234,3 +234,12 @@ setClass("KEGGFrame", contains="AnnotFrame",
                         organism="character"),
          prototype=prototype(organism=""))
 
+
+
+
+##############################################################################
+## Annotations will be the base virtual class for all the annotation packages
+## in the project.
+setClass("AnnotationDb", contains="VIRTUAL")
+
+
