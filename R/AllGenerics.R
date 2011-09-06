@@ -55,3 +55,7 @@ setGeneric("Lfilter", function(x) standardGeneric("Lfilter"))
 setGeneric("Rfilter", function(x) standardGeneric("Rfilter"))
 setGeneric("flatten", function(x, ...) standardGeneric("flatten"))
 
+## AnnotationDb
+setGeneric("loadDb", function(x, dbType, ...)
+           standardGeneric("loadDb"))
+

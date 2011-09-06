@@ -241,4 +241,15 @@ setClass("KEGGFrame", contains="AnnotFrame",
 ## Annotations will be the base virtual class for all the annotation packages
 ## in the project.
 .AnnotationDb <-
-    setRefClass("AnnotationDb", fields=list(conn="SQLiteConnection"))
+    setRefClass("AnnotationDb",
+        fields=list(conn="SQLiteConnection"),
+        methods=list(
+          initialize=function(..., sqliteFile) {
+              .conn <-
+                  if (missing(sqliteFile)) dbConnect(SQLite())
+                  else dbConnect(SQLite(), sqliteFile)
+              callSuper(..., conn=.conn)
+          },
+          finalize=function() {
+              dbDisconnect(.self$conn)
+          }))
