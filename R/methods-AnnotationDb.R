@@ -1,7 +1,7 @@
 AnnotationDb <-
-    function(conn, pkg, ...)
+    function(conn,  ...)
 {
-    .AnnotationDb$new(conn=conn, package=pkg...)
+    .AnnotationDb$new(conn=conn,  ...)
 }
 
 setMethod(show, "AnnotationDb",

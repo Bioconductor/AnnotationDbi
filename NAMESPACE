@@ -114,7 +114,11 @@ exportMethods(
 
     ## more...
     "initialize",
-    "makeAnnDbPkg"
+    "makeAnnDbPkg",
+
+    ##Methods for AnnoationDb
+    # "saveDb",
+    "loadDb"              
 )
 
 export(
