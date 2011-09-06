@@ -240,6 +240,5 @@ setClass("KEGGFrame", contains="AnnotFrame",
 ##############################################################################
 ## Annotations will be the base virtual class for all the annotation packages
 ## in the project.
-setClass("AnnotationDb", contains="VIRTUAL")
-
-
+.AnnotationDb <-
+    setRefClass("AnnotationDb", fields=list(conn="SQLiteConnection"))
