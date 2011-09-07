@@ -102,15 +102,16 @@ setMethod(loadDb, c("character", "character", "character"),
 
 
 ## This is the method people will use
-setMethod(loadDb, c("character", "missing", "missing"), function(x, dbType, dbPackage, ...)
+setMethod(loadDb, c("character", "missing", "missing"),
+    function(x, dbType, dbPackage, ...)
 {
     ## conn <- dbConnect(SQLite(), x)
     ## sql <- 'SELECT value FROM metadata WHERE name="Db type"'
     ## dbType <- dbGetQuery(conn, sql)[[1]]
     conn <- dbConnect(SQLite(), x)
     if(dbExistsTable(conn, "metadata")) {
-        dbType <- try(AnnoationDbi:::.getMetaValue(conn, "Db type"),silent = TRUE)
-        dbPackage <- try(AnnoationDbi:::.getMetaValue(conn, "package"),silent = TRUE)
+        dbType <- try(.getMetaValue(conn, "Db type"),silent = TRUE)
+        dbPackage <- try(.getMetaValue(conn, "package"),silent = TRUE)
             if(is(dbType, "try-error") || is(dbPackage, "try-error")){
               stop("The Database is missing metadata required to establish either the database type or the package where that type is defined.")
             }
