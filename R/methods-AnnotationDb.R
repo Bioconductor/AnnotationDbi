@@ -14,11 +14,11 @@ AnnotationDb <-
 setMethod("show", "AnnotationDb",
     function(object)
     {
-        cat(class(object)," object:\n")
-        metadata <- metadata(object)
-        for (i in seq_len(nrow(metadata))) {
-            cat("| ", metadata[i, "name"], ": ", metadata[i, "value"],
-                "\n", sep="")
-        }
+        cat(class(object), "object:\n")
+        ## metadata <- metadata(object)
+        ## for (i in seq_len(nrow(metadata))) {
+        ##     cat("| ", metadata[i, "name"], ": ", metadata[i, "value"],
+        ##         "\n", sep="")
+        ## }
     }
 )

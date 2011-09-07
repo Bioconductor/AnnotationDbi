@@ -96,8 +96,8 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
 setMethod(loadDb, c("character", "character", "character"),
     function(x, dbType, dbPackage, ...)
 {
-    require(dbPackage)
-    getRefClass(dbType)$new(sqliteFile=x, ...)
+    require(dbPackage, character.only=TRUE)
+    getRefClass(dbType, where=getNamespace(dbPackage))$new(sqliteFile=x, ...)
 })
 
 
@@ -110,11 +110,18 @@ setMethod(loadDb, c("character", "missing", "missing"),
     ## dbType <- dbGetQuery(conn, sql)[[1]]
     conn <- dbConnect(SQLite(), x)
     if(dbExistsTable(conn, "metadata")) {
-        dbType <- try(.getMetaValue(conn, "Db type"),silent = TRUE)
-        dbPackage <- try(.getMetaValue(conn, "package"),silent = TRUE)
-            if(is(dbType, "try-error") || is(dbPackage, "try-error")){
-              stop("The Database is missing metadata required to establish either the database type or the package where that type is defined.")
-            }
+        dbType <- tryCatch({
+            .getMetaValue(conn, "Db type")
+        }, error=function(err) {
+            stop("the database is missing 'Db type' metadata\n  error: ",
+                 conditionMessage(err))
+        })
+        dbPackage <- tryCatch({
+            .getMetaValue(conn, "package")
+        }, error=function(err) {
+            stop("the database is missing 'package' metadata\n  error: ",
+                 conditionMessage(err))
+        })
     }
     dbDisconnect(conn)
     loadDb(x, dbType, dbPackage, ...)
