@@ -3,6 +3,7 @@ import(utils)
 import(Biobase)
 import(DBI)
 import(RSQLite)
+importMethodsFrom(IRanges, metadata)
 
 exportClasses(
     ## from R/AllClasses.R
@@ -118,7 +119,8 @@ exportMethods(
 
     ##Methods for AnnoationDb
     # "saveDb",
-    "loadDb"              
+    "loadDb",
+    "metadata"
 )
 
 export(

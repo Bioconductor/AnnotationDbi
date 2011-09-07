@@ -128,14 +128,3 @@ setMethod(loadDb, c("character", "missing", "missing"),
 })
 
 
-## library(AnnotationDbi)
-## library(RSQLite)
-## library(GenomicFeatures);
-
-## fl = system.file("extdata", "UCSC_knownGene_sample.sqlite", package="GenomicFeatures")
-## conn = dbConnect(SQLite(), fl)
-## loadDb(fl)                                 ## bug
-## loadFeatures(fl)                           ## other bug
-## GenomicFeatures:::TranscriptDb(conn)       ## bug
-## AnnotationDbi:::loadDb(fl)                 ## other bug
-

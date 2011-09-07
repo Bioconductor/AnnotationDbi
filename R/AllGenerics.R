@@ -59,3 +59,4 @@ setGeneric("flatten", function(x, ...) standardGeneric("flatten"))
 setGeneric("loadDb", function(x, dbType, dbPackage, ...)
            standardGeneric("loadDb"))
 
+setGeneric("dbConn", function(x) standardGeneric("dbConn"))
