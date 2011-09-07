@@ -96,29 +96,38 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
 setMethod(loadDb, c("character", "character", "character"),
     function(x, dbType, dbPackage, ...)
 {
-    #require(dbPackage)
-    getRefClass(dbType)$new(sqliteFile=x)
+    require(dbPackage)
+    getRefClass(dbType)$new(sqliteFile=x, ...)
 })
 
+
 ## This is the method people will use
-setMethod(loadDb, c("character", "missing", "missing"),
-    function(x, dbType, dbPackage, ...)
+setMethod(loadDb, c("character", "missing", "missing"), function(x, dbType, dbPackage, ...)
 {
     ## conn <- dbConnect(SQLite(), x)
     ## sql <- 'SELECT value FROM metadata WHERE name="Db type"'
     ## dbType <- dbGetQuery(conn, sql)[[1]]
     conn <- dbConnect(SQLite(), x)
     if(dbExistsTable(conn, "metadata")) {
-        dbType <- try(.getMetaValue(conn, "Db type"),silent = TRUE)
-        dbPackage <- try(.getMetaValue(conn, "package"),silent = TRUE)
+        dbType <- try(AnnoationDbi:::.getMetaValue(conn, "Db type"),silent = TRUE)
+        dbPackage <- try(AnnoationDbi:::.getMetaValue(conn, "package"),silent = TRUE)
             if(is(dbType, "try-error") || is(dbPackage, "try-error")){
-              stop("The Database is missing metdata required to establish either the database type or the package where that type is defined.")
+              stop("The Database is missing metadata required to establish either the database type or the package where that type is defined.")
             }
     }
     dbDisconnect(conn)
     loadDb(x, dbType, dbPackage, ...)
 })
 
+
+## library(AnnotationDbi)
+## library(RSQLite)
+## library(GenomicFeatures);
+
 ## fl = system.file("extdata", "UCSC_knownGene_sample.sqlite", package="GenomicFeatures")
-## AnnotationDbi:::loadDb(fl)
+## conn = dbConnect(SQLite(), fl)
+## loadDb(fl)                                 ## bug
+## loadFeatures(fl)                           ## other bug
+## GenomicFeatures:::TranscriptDb(conn)       ## bug
+## AnnotationDbi:::loadDb(fl)                 ## other bug
 
