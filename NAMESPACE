@@ -118,7 +118,7 @@ exportMethods(
     "makeAnnDbPkg",
 
     ##Methods for AnnoationDb
-    # "saveDb",
+    "saveDb",
     "loadDb",
     "metadata"
 )

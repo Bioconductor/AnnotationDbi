@@ -50,11 +50,26 @@ setMethod("show", "AnnotationDb",
 
 
 
+
+setMethod("saveDb", "TranscriptDb",
+          function(x, file)
+          {
+            if (!isSingleString(file))
+              stop("'file' must be a single string")
+            sqliteCopyDatabase(dbConn(x), file)
+          }
+)
+
+
+
+
+
+
+
+
 ## library(AnnotationDbi)
 ## library(RSQLite)
-## library(GenomicFeatures);
-
-## fl = system.file("extdata", "UCSC_knownGene_sample.sqlite", package="GenomicFeatures")
+## library(GenomicFeatures); fl = system.file("extdata", "UCSC_knownGene_sample.sqlite", package="GenomicFeatures")
 ## conn = dbConnect(SQLite(), fl)
 ## loadDb(fl)                                 ## bug
 ## loadFeatures(fl)                           ## other bug

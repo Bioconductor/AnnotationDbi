@@ -58,5 +58,7 @@ setGeneric("flatten", function(x, ...) standardGeneric("flatten"))
 ## AnnotationDb
 setGeneric("loadDb", function(x, dbType, dbPackage, ...)
            standardGeneric("loadDb"))
+setGeneric("saveDb", signature="x",
+           function(x, file) standardGeneric("saveDb"))
 
 setGeneric("dbConn", function(x) standardGeneric("dbConn"))
