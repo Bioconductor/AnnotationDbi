@@ -119,8 +119,13 @@ setMethod(loadDb, c("character", "missing", "missing"),
         dbPackage <- tryCatch({
             .getMetaValue(conn, "package")
         }, error=function(err) {
-            stop("the database is missing 'package' metadata\n  error: ",
-                 conditionMessage(err))
+            ## TEMP: if it's a TranscriptDb or FeatureDb, lets give it a pass.
+            if(dbType == "TranscriptDb" || dbType == "TranscriptDb"){
+              dbPackage <- "GenomicFeatures"
+            }else{
+              stop("the database is missing 'package' metadata\n  error: ",
+                   conditionMessage(err))
+          }
         })
     }
     dbDisconnect(conn)
