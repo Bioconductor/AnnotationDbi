@@ -120,7 +120,7 @@ setMethod(loadDb, c("character", "missing", "missing"),
             .getMetaValue(conn, "package")
         }, error=function(err) {
             ## TEMP: if it's a TranscriptDb or FeatureDb, lets give it a pass.
-            if(dbType == "TranscriptDb" || dbType == "TranscriptDb"){
+            if(dbType == "TranscriptDb" || dbType == "FeatureDb"){
               dbPackage <- "GenomicFeatures"
             }else{
               stop("the database is missing 'package' metadata\n  error: ",
