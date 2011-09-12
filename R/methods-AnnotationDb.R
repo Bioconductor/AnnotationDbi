@@ -51,7 +51,7 @@ setMethod("show", "AnnotationDb",
 
 
 
-setMethod("saveDb", "TranscriptDb",
+setMethod("saveDb", "AnnotationDb",
           function(x, file)
           {
             if (!isSingleString(file))
