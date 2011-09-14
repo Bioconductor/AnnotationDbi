@@ -17,11 +17,7 @@
   can be seen within the bands. The sub-bands are also numbered from the
   centromere out toward the telomere. Thus, a label of 7q31.2 indicates
   that the band is on chromosome 7, q arm, band 3, sub-band 1, and
-  sub-sub-band 2.   
-
-  The physical location of each band on a chromosome can be obtained
-  from another object named "organism"CYTOLOC in a separate data
-  package for human(humanCHRLOC), mouse(mouseCHRLOC), and rat(ratCHRLOC).  
+  sub-sub-band 2.
   
   Mappings were based on data provided by: @MAPSOURCE@
 

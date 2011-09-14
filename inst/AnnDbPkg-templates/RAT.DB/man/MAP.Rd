@@ -12,10 +12,6 @@
   chromosomal locations for a given gene. An \code{NA} is reported for
   any entrez gene identifiers that cannot be mapped to a cytoband at this time.
   
-  The physical location of each band on a chromosome can be obtained
-  from another object named "organism"CYTOLOC in a separate data
-  package for human(humanCHRLOC), mouse(mouseCHRLOC), and rat(ratCHRLOC).  
-  
   Mappings were based on data provided by: @MAPSOURCE@
 
 }
