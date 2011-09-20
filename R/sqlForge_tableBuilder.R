@@ -17,6 +17,18 @@ message(cat("Prepending Metadata"))
      ") 
   sqliteQuickSQL(db, sql)
 
+  ##This is where the Db type and package are set up
+  sql<- paste("
+    INSERT INTO metadata VALUES('Db type', '",subStrs[["Db_type"]],"');
+     ", sep="") 
+  sqliteQuickSQL(db, sql)
+  ##This is where the version number for the schema is inserted.
+  sql<- paste("
+    INSERT INTO metadata VALUES('package', 'AnnotationDbi');
+     ") 
+  sqliteQuickSQL(db, sql)
+
+
 
   ## This handles the metadata for all the local packages
   if(length(names(metaDataSrc)) == 0){

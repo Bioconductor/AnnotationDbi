@@ -35,7 +35,7 @@ popHUMANCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -86,7 +86,7 @@ popHUMANDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -165,7 +165,7 @@ popMOUSECHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="mouse","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="mouse","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -217,7 +217,7 @@ popMOUSEDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="mouse","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="mouse","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -296,7 +296,7 @@ popRATCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="rat","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="rat","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
@@ -346,7 +346,7 @@ popRATDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="rat","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="rat","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -407,7 +407,7 @@ popARABIDOPSISCHIPDB <- function(affy,
                                 outputDir = outputDir)
     
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -449,7 +449,7 @@ popARABIDOPSISDB <- function(prefix,
                              printSchema=FALSE){
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="TAIR","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="TAIR","org"="arabidopsis","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -524,7 +524,7 @@ popFLYCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="fly","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="fly","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
@@ -576,7 +576,7 @@ popFLYDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="fly","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="fly","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
@@ -632,7 +632,7 @@ popYEASTCHIPDB <- function(affy,
     getMapForYeastChipPkg(affy, fileName=fileName, pkgName=prefix, outputDir=outputDir)    
     
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="yeast","cntrTab"="sgd", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="yeast","cntrTab"="sgd", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -676,7 +676,7 @@ popYEASTDB <- function(prefix,
                        printSchema=FALSE){
     
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="sgd","coreID"="systematic_name","suffix"="ORF","org"="yeast","cntrTab"="sgd", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="sgd","coreID"="systematic_name","suffix"="ORF","org"="yeast","cntrTab"="sgd", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -736,7 +736,7 @@ popMALARIADB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="ORF","org"="malaria","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="ORF","org"="malaria","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -797,7 +797,7 @@ popZEBRAFISHCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="zebrafish","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="zebrafish","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -848,7 +848,7 @@ popZEBRAFISHDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="zebrafish","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="zebrafish","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -926,7 +926,7 @@ popECOLICHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="ecoli","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="ecoli","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -968,7 +968,7 @@ popECOLIDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="ecoli","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="ecoli","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1039,7 +1039,7 @@ popCANINECHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="canine","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="canine","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1087,7 +1087,7 @@ popCANINEDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="canine","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="canine","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1162,7 +1162,7 @@ popBOVINECHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="bovine","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="bovine","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1212,7 +1212,7 @@ popBOVINEDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="bovine","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="bovine","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1289,7 +1289,7 @@ popWORMCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="worm","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="worm","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1338,7 +1338,7 @@ popWORMDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="worm","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="worm","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1416,7 +1416,7 @@ popPIGCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="pig","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="pig","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1462,7 +1462,7 @@ popPIGDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="pig","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="pig","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1535,7 +1535,7 @@ popCHICKENCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="chicken","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="chicken","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1586,7 +1586,7 @@ popCHICKENDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="chicken","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="chicken","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1648,7 +1648,7 @@ popCHIMPDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="chimp","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="chimp","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1701,7 +1701,7 @@ popRHESUSDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="rhesus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="rhesus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1754,7 +1754,7 @@ popANOPHELESDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="anopheles","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="anopheles","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1832,7 +1832,7 @@ popXENOPUSCHIPDB <- function(affy,
     }
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="xenopus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)    
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="xenopus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1888,7 +1888,7 @@ popXENOPUSDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="xenopus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="xenopus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
@@ -1949,7 +1949,7 @@ popYEASTNCBIDB <- function(prefix,
                          outputDir=outputDir)
 
     #define the substitution needed by the support functions.
-    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir)
+    subStrs <- c("coreTab"="genes","coreID"="gene_id","suffix"="EG","org"="human","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="OrgDb")
     require("RSQLite")
     drv <- dbDriver("SQLite")
     db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )
