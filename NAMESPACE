@@ -27,7 +27,7 @@ exportClasses(
 
     ## Virtual mother-class for all Annoations
     "AnnotationDb",
-              
+
 
     ## from R/GOTerms.R
     "GOTerms",
@@ -39,7 +39,7 @@ exportClasses(
     "GOFrame",
     "GOAllFrame",
     "KEGGFrame"
-              
+
 )
 
 exportMethods(
@@ -95,8 +95,8 @@ exportMethods(
     "getGOFrameData",
     "KEGGFrame",
     "getKEGGFrameData",
-              
-              
+
+
     ## from R/BimapFormatting.R
     "as.list",
     #"toLList", "toRList", "toList",
@@ -120,7 +120,9 @@ exportMethods(
     ##Methods for AnnoationDb
     "saveDb",
     "loadDb",
-    "metadata"
+    "metadata",
+    "cols",
+    "select"
 )
 
 export(
@@ -128,7 +130,7 @@ export(
 
     ## from R/AnnDbObj-lowAPI.R
     showQCData,
-       
+
     ## from R/SQL.R
     debugSQL,
 
@@ -158,7 +160,7 @@ export(
     toSQLStringSet,
 
     ## help functions for making sqlite files
-    populateDB,       
+    populateDB, 
 
     ## wrapper functions for making chip packages
     makeDBPackage,
@@ -167,7 +169,7 @@ export(
     available.db0pkgs,
     available.dbschemas, 
     available.chipdbschemas,
-       
+ 
     #Convenience function to make the intermediate DB pkgs
     wrapBaseDBPackages,
 
@@ -175,7 +177,7 @@ export(
     inpIDMapper,
     intraIDMapper,
     idConverter,
-       
+ 
     #Needs to be exported from RSQLite
     summary,
 
@@ -183,10 +185,10 @@ export(
     ## buildEntrezGeneDb,
     ## getEntrezGenesFromTaxId,
     ## getGeneStuff,
-    
+ 
     ## This one will make you an org package:
     makeOrgPackageFromNCBI,
-       
+ 
     ## from R/makeProbePackage.R
     print.probetable,
     getProbeDataAffy,

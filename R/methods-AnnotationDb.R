@@ -26,14 +26,13 @@ AnnotationDb <-
 ## using AnnotationDbi:::dbConn(db), Also AnnDbBiMaps have something called
 ## dbconn() (lowercase "c") - blergh...
 setMethod("dbConn", "AnnotationDb",
-       function(x) x$conn
+    function(x) x$conn
 )
 
 ## Overload metadata for AnnotationDb
 setMethod("metadata", "AnnotationDb",
-       function(x) dbReadTable(dbConn(x), "metadata")
+    function(x) dbReadTable(dbConn(x), "metadata")
 )
-
 
 ## Try to make this generic
 setMethod("show", "AnnotationDb",
@@ -48,23 +47,22 @@ setMethod("show", "AnnotationDb",
     }
 )
 
-
-
-
 setMethod("saveDb", "AnnotationDb",
-          function(x, file)
-          {
-            if (!isSingleString(file))
-              stop("'file' must be a single string")
-            sqliteCopyDatabase(dbConn(x), file)
-          }
+    function(x, file)
+    {
+        if (!isSingleString(file))
+          stop("'file' must be a single string")
+        sqliteCopyDatabase(dbConn(x), file)
+    }
 )
 
-
-
-
-
-
+setMethod("cols", "AnnotationDb",
+    function(x) 
+    {
+        tables <- dbListTables(x)
+        sapply(tables, dbListFields, conn=x)
+    }
+)
 
 
 ## library(AnnotationDbi)

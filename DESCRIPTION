@@ -2,7 +2,7 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.15.17
+Version: 1.15.18
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.7.0), methods, utils, Biobase (>= 1.17.0)
@@ -21,8 +21,8 @@ Collate: 00RTobjs.R
          BimapFormatting.R
          AnnDbBimap-envirAPI.R
          flatten.R
-	 methods-AnnotationDb.R
-	 loadDb.R
+         methods-AnnotationDb.R
+         loadDb.R
          createAnnObjs-utils.R
          createAnnObjs.ORGANISM_DB.R
          createAnnObjs.HUMANCHIP_DB.R
@@ -39,7 +39,7 @@ Collate: 00RTobjs.R
          createAnnObjs.CHICKENCHIP_DB.R
          createAnnObjs.ECOLICHIP_DB.R
          createAnnObjs.ARABIDOPSISCHIP_DB.R
-	 createAnnObjs.XENOPUSCHIP_DB.R
+         createAnnObjs.XENOPUSCHIP_DB.R
          createAnnObjs.HUMAN_DB.R
          createAnnObjs.MALARIA_DB.R
          createAnnObjs.MOUSE_DB.R
@@ -75,8 +75,8 @@ Collate: 00RTobjs.R
          sqlForge_wrapBaseDBPkgs.R
          inpIDMapper.R
          makeProbePackage.R
-	 NCBI_ftp.R
-	 NCBI_getters.R
+         NCBI_ftp.R
+         NCBI_getters.R
          zzz.R
 License: Artistic-2.0
 biocViews: Annotation, Infrastructure

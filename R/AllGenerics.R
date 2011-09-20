@@ -68,7 +68,7 @@ setGeneric("cols", signature="x",
            function(x) standardGeneric("cols"))
 
 setGeneric("select", signature="db",
-           function(db, keys, cols, ...) standardGeneric("keys"))
+           function(db, keys, cols, ...) standardGeneric("select"))
 
 
 
