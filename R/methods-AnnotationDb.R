@@ -64,6 +64,12 @@ setMethod("cols", "AnnotationDb",
     }
 )
 
+setMethod("names", "AnnotationDb",
+    function(x) 
+    {
+        dbListTables(x$conn)
+    }
+)
 
 ## library(AnnotationDbi)
 ## library(RSQLite)
