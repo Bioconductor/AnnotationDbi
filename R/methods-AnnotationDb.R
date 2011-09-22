@@ -59,8 +59,8 @@ setMethod("saveDb", "AnnotationDb",
 setMethod("cols", "AnnotationDb",
     function(x) 
     {
-        tables <- dbListTables(x)
-        sapply(tables, dbListFields, conn=x)
+        tables <- dbListTables(x$conn)
+        sapply(tables, dbListFields, conn=x$conn)
     }
 )
 
