@@ -253,3 +253,12 @@ setClass("KEGGFrame", contains="AnnotFrame",
           finalize=function() {
               dbDisconnect(.self$conn)
           }))
+
+.OrgDb <-
+    setRefClass("OrgDb", contains="AnnotationDb")
+
+.ChipDb <-
+    setRefClass("ChipDb", contains="AnnotationDb")
+
+.InparanoidDb <-
+    setRefClass("InparanoidDb", contains="AnnotationDb")
