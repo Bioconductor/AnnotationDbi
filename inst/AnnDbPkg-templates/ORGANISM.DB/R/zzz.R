@@ -22,7 +22,8 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     txdb <- loadDb(system.file("extdata", paste(sPkgname,
       ".sqlite",sep=""), package=pkgname, lib.loc=libname))    
     names <- strsplit(pkgname, split="\\.")
-    dbNewname <- paste(unlist(names)[c(2,3,1,4)],collapse="_")
+    dbNewname <- paste(paste(unlist(names)[c(2,3)],collapse="_"),
+                       "OrgDb",sep="_")
     ns <- asNamespace(pkgname)
     assign(dbNewname, txdb, envir=ns)
     namespaceExport(ns, dbNewname)
