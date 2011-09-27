@@ -67,8 +67,8 @@ setGeneric("dbConn", function(x) standardGeneric("dbConn"))
 setGeneric("cols", signature="x",
            function(x) standardGeneric("cols"))
 
-setGeneric("select", signature="db",
-           function(db, keys = character(0), cols = character(0), ...) standardGeneric("select"))
+setGeneric("select", signature=c("db", "keys", "cols"),
+           function(db, keys, cols, ...) standardGeneric("select"))
 
 
 
