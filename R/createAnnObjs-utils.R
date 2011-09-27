@@ -401,16 +401,18 @@ annoStartupMessages <- function(pkgType){
 ## want their DB objects named).  Basically this code exists so that I can
 ## change this without having to alter a ton of files whenever someone decides
 ## that they don't like our name convention.
-
 dbObjectName <- function(pkgname, dbType){
-  if(dbType=="ChipDb"){
-    names <- strsplit(pkgname, split="\\.")
-    newName <- paste(paste(unlist(names)[1],collapse="_"),
-                     dbType,sep="_")    
-  }else{
-    names <- strsplit(pkgname, split="\\.")
-    newName <- paste(paste(unlist(names)[c(2,3)],collapse="_"),
-                     dbType,sep="_")
-  }
-  newName
+  ## if(dbType=="ChipDb"){
+  ##   names <- strsplit(pkgname, split="\\.")
+  ##   newName <- paste(paste(unlist(names)[1],collapse="_"),
+  ##                    dbType,sep="_")    
+  ## }else{
+  ##   names <- strsplit(pkgname, split="\\.")
+  ##   newName <- paste(paste(unlist(names)[c(2,3)],collapse="_"),
+  ##                    dbType,sep="_")
+  ## }
+  ## newName
+  
+  ## For now we will just use the package name
+  pkgname
 }
