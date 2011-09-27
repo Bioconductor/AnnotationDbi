@@ -20,10 +20,8 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     ## Create the OrgDb object
     sPkgname <- sub(".db$","",pkgname)
     txdb <- loadDb(system.file("extdata", paste(sPkgname,
-      ".sqlite",sep=""), package=pkgname, lib.loc=libname))    
-    names <- strsplit(pkgname, split="\\.")
-    dbNewname <- paste(paste(unlist(names)[c(2,3)],collapse="_"),
-                       "ChipDb",sep="_")
+      ".sqlite",sep=""), package=pkgname, lib.loc=libname))
+    dbNewname <- AnnotationDbi:::dbObjectName(pkgname,"ChipDb")
     ns <- asNamespace(pkgname)
     assign(dbNewname, txdb, envir=ns)
     namespaceExport(ns, dbNewname)
@@ -31,13 +29,6 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     ## Create the AnnObj instances
     ann_objs <- createAnnObjs.SchemaChoice("@DBSCHEMA@", "@ANNOBJPREFIX@", "@ANNOBJTARGET@", dbconn, datacache)
     mergeToNamespaceAndExport(ann_objs, pkgname)
-
-##     msg <- paste("\n Warning: All Arabidopsis packages now require you",
-##                  "to use the toggleProbes() method in order to expose",
-##                  "multiple mappings.")
-##     msg <- paste("\n",paste(strwrap(msg, exdent=2),collapse="\n"),
-##                  "\n",sep="")
-##     packageStartupMessage(msg)
     packageStartupMessage(AnnotationDbi:::annoStartupMessages("@ANNOBJPREFIX@.db"))
 }
 

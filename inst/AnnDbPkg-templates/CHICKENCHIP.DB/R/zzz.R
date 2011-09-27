@@ -21,9 +21,7 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     sPkgname <- sub(".db$","",pkgname)
     txdb <- loadDb(system.file("extdata", paste(sPkgname,
       ".sqlite",sep=""), package=pkgname, lib.loc=libname))    
-    names <- strsplit(pkgname, split="\\.")
-    dbNewname <- paste(paste(unlist(names)[c(2,3)],collapse="_"),
-                       "ChipDb",sep="_")
+    dbNewname <- AnnotationDbi:::dbObjectName(pkgname,"ChipDb")
     ns <- asNamespace(pkgname)
     assign(dbNewname, txdb, envir=ns)
     namespaceExport(ns, dbNewname)
