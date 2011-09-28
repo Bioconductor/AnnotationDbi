@@ -14,6 +14,16 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     assign("dbfile", dbfile, envir=datacache)
     dbconn <- dbFileConnect(dbfile)
     assign("dbconn", dbconn, envir=datacache)
+
+    ## Create the OrgDb object
+    sPkgname <- sub(".db$","",pkgname)
+    txdb <- loadDb(system.file("extdata", paste(sPkgname,
+      ".sqlite",sep=""), package=pkgname, lib.loc=libname))
+    dbNewname <- AnnotationDbi:::dbObjectName(pkgname,"GODb")
+    ns <- asNamespace(pkgname)
+    assign(dbNewname, txdb, envir=ns)
+    namespaceExport(ns, dbNewname)
+
     ## Create the AnnObj instances
     ann_objs <- createAnnObjs.SchemaChoice("@DBSCHEMA@", "@ANNOBJPREFIX@", "@ANNOBJTARGET@", dbconn, datacache)
     mergeToNamespaceAndExport(ann_objs, pkgname)
