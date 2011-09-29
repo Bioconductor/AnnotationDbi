@@ -242,7 +242,7 @@ setClass("KEGGFrame", contains="AnnotFrame",
 ## in the project.
 .AnnotationDb <-
     setRefClass("AnnotationDb",
-        fields=list(conn="SQLiteConnection"),
+        fields=list(conn="SQLiteConnection", packageName="character"),
         methods=list(
           initialize=function(..., sqliteFile) {
               .conn <-

@@ -97,7 +97,8 @@ setMethod(loadDb, c("character", "character", "character"),
     function(x, dbType, dbPackage, ...)
 {
     require(dbPackage, character.only=TRUE)
-    getRefClass(dbType, where=getNamespace(dbPackage))$new(sqliteFile=x, ...)
+    db <- getRefClass(dbType, where=getNamespace(dbPackage))
+    db$new(packageName = dbPackage, sqliteFile=x, ...)
 })
 
 
