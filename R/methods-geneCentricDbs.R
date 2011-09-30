@@ -110,20 +110,24 @@ setMethod("cols", "GODb",
 
 ## Keys methods return the possible primary keys.  So for EG based packages,
 ## this will be the viable entrez gene IDs.
-
+## Must use SELECT DISTINCT for now because some packages like ag.db
+## (Arabidopsis) have repeated probe ids in the probes table (those are the
+## probe ids that hit multiple genes).
+## TODO: When 'x' has the new slot containing the package name, use
+## dbUniqueVals() (defined in SQL.R) and pass pkgname:::datacache to it.
+## dbUniqueVals() is what's used behind the scene by the Lkeys/Rkeys/keys
+## methods for AnnDbBimap objects so the "keys" methods below will give a
+## consistent answer (and will take advantage of the cache).
 setMethod("keys", "OrgDb",
-    function(x) as.character(t(dbGetQuery(dbConn(x),
-                                           "SELECT gene_id FROM genes"))) 
+    function(x) dbQuery(dbConn(x), "SELECT gene_id FROM genes", 1L)
 )
 
 setMethod("keys", "ChipDb",
-    function(x) as.character(t(dbGetQuery(dbConn(x),
-                                           "SELECT probe_id FROM probes")))
+    function(x) dbQuery(dbConn(x), "SELECT DISTINCT probe_id FROM probes", 1L)
 )
 
 setMethod("keys", "GODb",
-    function(x) as.character(t(dbGetQuery(dbConn(x),
-                                           "SELECT go_id FROM go_term")))
+    function(x) dbQuery(dbConn(x), "SELECT go_id FROM go_term", 1L)
 )
 
 ## for Inparanoid, we want to select keys carefully (depeninding on the
