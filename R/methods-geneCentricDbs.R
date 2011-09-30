@@ -2,20 +2,21 @@
 ## the keys provided.  cols is a character vector to specify columns the user
 ## wants back and keys are the keys to look up.
 
-.select <- function(db, keys, cols, idType){
-  con <- dbConn(db)
-  sql <- paste("SELECT * FROM ",
-               paste(cols, collapse=","),
-               " WHERE ", idType ," IN ('",
-               paste(keys, collapse="','"), "') ",
-               sep="")
-  dbGetQuery(con, sql)
-}
+## .select <- function(db, keys, cols, idType){
+##   con <- dbConn(db)
+##   sql <- paste("SELECT * FROM ",
+##                paste(cols, collapse=","),
+##                " WHERE ", idType ," IN ('",
+##                paste(keys, collapse="','"), "') ",
+##                sep="")
+##   dbGetQuery(con, sql)
+## }
 
 ## ## lets just have it merge() bimaps
-## .select <- function(con, keys, cols, idType){  
-
-## }
+.select <- function(db, keys, cols, idType){  
+##  con <- dbConn(db)
+  
+}
 
 
 
@@ -38,14 +39,25 @@ setMethod("select", "GODb",
 
 
 ## TEST CODE:
-## library(org.Tguttata.eg.db)
+## library(org.Hs.eg.db)
 ## ls(2)
-## select(Tguttata_eg_OrgDb)
+
+## con = AnnotationDbi:::dbConn(org.Hs.eg.db)
+
+## keys = keys(org.Hs.eg.db)[1:5]
+## cols= "genes"
+## select(org.Hs.eg.db, keys, cols)
+
+## idType = "gene_id"
 
 
 
-
-
+#############################
+## Internally we want to reconstruct these guys so we can merge() on them
+## c <- cols(GO.db)[7]
+## prefix = "GO"
+## foo = paste(prefix,c,sep="")
+## bar = eval(parse(text=foo))
 
 
 
@@ -123,11 +135,3 @@ setMethod("keys", "GODb",
 
 
 
-## TEST CODE:
-## library(org.Hs.eg.db)
-## con = AnnotationDbi:::dbConn(org.Hs.eg.db)
-## keys = keys(org.Hs.eg.db)[1:5]
-## cols= "genes"
-## select(org.Hs.eg.db, keys, cols)
-
-## idType = "gene_id"

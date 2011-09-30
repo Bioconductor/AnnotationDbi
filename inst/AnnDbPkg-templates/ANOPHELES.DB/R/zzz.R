@@ -20,7 +20,8 @@ datacache <- new.env(hash=TRUE, parent=emptyenv())
     ## Create the OrgDb object
     sPkgname <- sub(".db$","",pkgname)
     txdb <- loadDb(system.file("extdata", paste(sPkgname,
-      ".sqlite",sep=""), package=pkgname, lib.loc=libname))
+      ".sqlite",sep=""), package=pkgname, lib.loc=libname),
+                   packageName=pkgname)
     dbNewname <- AnnotationDbi:::dbObjectName(pkgname,"OrgDb")
     ns <- asNamespace(pkgname)
     assign(dbNewname, txdb, envir=ns)

@@ -29,6 +29,11 @@ setMethod("dbConn", "AnnotationDb",
     function(x) x$conn
 )
 
+## Accesor for packageName
+setMethod("packageName", "AnnotationDb",
+    function(x) x$packageName
+)
+
 ## Overload metadata for AnnotationDb
 setMethod("metadata", "AnnotationDb",
     function(x) dbReadTable(dbConn(x), "metadata")

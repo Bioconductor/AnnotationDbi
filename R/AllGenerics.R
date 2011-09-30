@@ -64,6 +64,8 @@ setGeneric("saveDb", signature="x",
 
 setGeneric("dbConn", function(x) standardGeneric("dbConn"))
 
+setGeneric("packageName", function(x) standardGeneric("packageName"))
+
 setGeneric("cols", signature="x",
            function(x) standardGeneric("cols"))
 
