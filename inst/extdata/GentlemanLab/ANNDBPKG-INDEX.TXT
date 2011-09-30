@@ -1075,7 +1075,7 @@ manufacturer: Affymetrix
 ### Fields marked with an (*) are required.
 
 Package: porcine.db
-Version: 2.4.7
+Version: 2.6.1
 PkgTemplate: PIGCHIP.DB
 DBfile: /mnt/cpb_anno/mcarlson/sanctionedSqlite/porcine.sqlite
 AnnObjPrefix: porcine
