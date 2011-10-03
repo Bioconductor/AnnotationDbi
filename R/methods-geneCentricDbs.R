@@ -12,10 +12,36 @@
 ##   dbGetQuery(con, sql)
 ## }
 
-## ## lets just have it merge() bimaps
-.select <- function(db, keys, cols, idType){  
-##  con <- dbConn(db)
-  
+## a helper to make the strings to objects
+.makeBimapsFromStrings <- function(db, cols){
+  pkgname <- sub(".db$","", AnnotationDbi:::packageName(db))
+  lapply(cols, function(x){
+    eval(parse(text=paste(pkgname, x, sep="")))
+  })
+}
+
+## another helper to merge
+## Be sure to use all.x=TRUE (and all.y=TRUE), then filter on keys in a later
+## step
+.mergeBimaps <- function(objs, keys, keyType){
+  for(i in seq_len(length(objs))){
+    if(i==1){
+      finTab <- toTable(objs[[1]])
+    }else{
+      finTab <- merge(finTab, toTable(objs[[i]]),
+                      by=keyType, all.x=TRUE, all.y=TRUE)
+    }
+  }
+  finTab[finTab[[keyType]] %in% keys,]
+}
+
+                         
+## Select uses merge to combine bimaps.  It needs to know the keyType
+## expected, which will vary with the database (and hence the method).
+.select <- function(db, keys=NULL, cols, keyType){
+  if(is.null(keys)) keys <- keys(db) ## if no keys provided: use them all
+  objs <- .makeBimapsFromStrings(db, cols)
+  .mergeBimaps(objs, keys, keyType=keyType)
 }
 
 
@@ -43,9 +69,9 @@ setMethod("select", "GODb",
 ## ls(2)
 
 ## con = AnnotationDbi:::dbConn(org.Hs.eg.db)
-
+## keys = head(keys(org.Hs.egCHR))
 ## keys = keys(org.Hs.eg.db)[1:5]
-## cols= "genes"
+## cols = c("SYMBOL", "UNIPROT")
 ## select(org.Hs.eg.db, keys, cols)
 
 ## idType = "gene_id"
