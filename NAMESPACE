@@ -194,9 +194,6 @@ export(
     getProbeData_1lq,
     makeProbePackage,
 
-   ## AnnotationDb
-   metadata,
-
-   ## SIFT and PolyPhen require
-   dbGetQuery
+    ## AnnotationDb
+    metadata
 )
