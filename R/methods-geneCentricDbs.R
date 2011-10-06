@@ -2,8 +2,8 @@
 ## the keys provided.  cols is a character vector to specify columns the user
 ## wants back and keys are the keys to look up.
 
-## .select <- function(db, keys, cols, idType){
-##   con <- dbConn(db)
+## .select <- function(x, keys, cols, idType){
+##   con <- dbConn(x)
 ##   sql <- paste("SELECT * FROM ",
 ##                paste(cols, collapse=","),
 ##                " WHERE ", idType ," IN ('",
@@ -13,8 +13,8 @@
 ## }
 
 ## a helper to make the strings to objects
-.makeBimapsFromStrings <- function(db, cols){
-  pkgname <- sub(".db$","", AnnotationDbi:::packageName(db))
+.makeBimapsFromStrings <- function(x, cols){
+  pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
   lapply(cols, function(x){
     eval(parse(text=paste(pkgname, x, sep="")))
   })
@@ -38,28 +38,28 @@
                          
 ## Select uses merge to combine bimaps.  It needs to know the keyType
 ## expected, which will vary with the database (and hence the method).
-.select <- function(db, keys=NULL, cols, keyType){
-  if(is.null(keys)) keys <- keys(db) ## if no keys provided: use them all
-  objs <- .makeBimapsFromStrings(db, cols)
+.select <- function(x, keys=NULL, cols, keyType){
+  if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
+  objs <- .makeBimapsFromStrings(x, cols)
   .mergeBimaps(objs, keys, keyType=keyType)
 }
 
 
 
 setMethod("select", "OrgDb",
-    function(db, keys, cols) .select(db, keys, cols, "gene_id")
+    function(x, keys, cols) .select(x, keys, cols, "gene_id")
 )
 
 setMethod("select", "ChipDb",
-    function(db, keys, cols) .select(db, keys, cols, "probe_id")
+    function(x, keys, cols) .select(x, keys, cols, "probe_id")
 )
 
 setMethod("select", "GODb",
-    function(db, keys, cols) .select(db, keys, cols, "go_id")
+    function(x, keys, cols) .select(x, keys, cols, "go_id")
 )
 
 ## setMethod("select", "InparanoidDb",
-##     function(db, keys, cols) .select(db, keys, cols, "gene_id")
+##     function(x, keys, cols) .select(x, keys, cols, "gene_id")
 ## )
 
 
@@ -95,8 +95,8 @@ setMethod("select", "GODb",
 ## just the table names, or it might be a list of mappings
 
 
-.cols <- function(db){
-  meta <- metadata(db) ##bug I need to get7 the package name!
+.cols <- function(x){
+  meta <- metadata(x) ##bug I need to get7 the package name!
   schema <- meta[meta["name"] == "DBSCHEMA","value"]
   objList <- eval(parse(text=paste("AnnotationDbi:::",schema,
                   "_AnnDbBimap_seeds",sep="")))  

@@ -49,7 +49,9 @@
 
 \arguments{
   \item{x}{
-    A \link{Bimap} object.
+    A \link{Bimap} object. If the method being caled is
+    \code{keys(x)}, then x can also be a AnnotationDb object or one of
+    that objects progeny.
   }
   \item{value}{
     A character vector containing the new keys (must be a subset of the
@@ -64,7 +66,12 @@
   \code{keys(x)} returns the set of all valid keys for map \code{x}.
   For example, \code{keys(hgu95av2GO)} is the set of all probe set IDs
   for chip hgu95av2 from Affymetrix.
-  Note that the double bracket operator \code{[[} for \link{Bimap}
+  
+  Please Note that in addition to \code{Bimap} objest, \code{keys(x)}
+  will also work for \code{AnnotationDb} objects and related objects
+  such as \code{OrgDb} and \code{ChipDb} objects.
+
+  Note also that the double bracket operator \code{[[} for \link{Bimap}
   objects is guaranteed to work only with a valid key and will raise
   an error if the key is invalid.
   (See \code{?`\link{AnnDbBimap-envirAPI}`} for more information
@@ -119,7 +126,10 @@
   \link{Bimap},
   \link{AnnDbBimap-envirAPI},
   \link{Bimap-toTable},
-  \link{BimapFormatting}
+  \link{BimapFormatting},
+  \link{AnnotationDb},
+  \link{select},
+  \link{cols}
 }
 
 \examples{
@@ -145,6 +155,10 @@
   z <- list(k1=NA, k2=letters[1:4], k3="x")
   mappedkeys(z)
   count.mappedkeys(z)
+
+  ## retrieve the set of primary keys for the ChipDb object named 'hgu95av2.db'
+  keys <- keys(hgu95av2.db)
+  head(keys)
 }
 
 \keyword{methods}

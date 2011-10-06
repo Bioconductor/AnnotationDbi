@@ -69,8 +69,8 @@ setGeneric("packageName", function(x) standardGeneric("packageName"))
 setGeneric("cols", signature="x",
            function(x) standardGeneric("cols"))
 
-setGeneric("select", signature=c("db", "keys", "cols"),
-           function(db, keys, cols, ...) standardGeneric("select"))
+setGeneric("select", signature=c("x", "keys", "cols"),
+           function(x, keys, cols, ...) standardGeneric("select"))
 
 
 
