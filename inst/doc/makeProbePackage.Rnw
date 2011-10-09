@@ -68,7 +68,7 @@ can be obtained from the vendor (at
 \Rfile{HG-U95Av2\_probe\_tab.gz} is provided in the \Rfile{extdata}
 subdirectory of the \Rpackage{AnnotationDbi} package.
 
-<<makeprobepackage>>=
+<<makeprobepackage, eval=FALSE>>=
 filename <- system.file("extdata", "HG-U95Av2_probe_tab.gz", 
                           package="AnnotationDbi")
 outdir   <- tempdir()
