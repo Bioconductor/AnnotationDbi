@@ -1,9 +1,7 @@
-.First.lib <- function(lib, pkgname, where) {
-  require(AnnotationDbi)
+.onLoad <- function(libname, pkgname) {
+  require("AnnotationDbi", quietly=TRUE)
   
   ## load the data
-  thepath = system.file(package=pkgname)
-  where   =  as.environment(match(paste("package:", pkgname, sep = ""),search()))
-
+  where = asNamespace(pkgname)
   data(list = pkgname, package = pkgname, envir = where)
 }
