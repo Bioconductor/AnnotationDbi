@@ -68,17 +68,26 @@
     keysMain <- keys(x) ## I have to use all the keys for this  :(
     mainTab <- .mergeBimaps(objs, keysMain, jointype=jointype)
     ## make table from extra mapping
-    objFinTab <- toTable(.makeBimapsFromStrings(x, keytype)[[1]]) ## be only 1
+    objTab <- toTable(.makeBimapsFromStrings(x, keytype)[[1]]) ## be only 1
     ## deduce jointype2
     jointype2 <- .getRKeyName(x, keytype)
     ## use jointype2 to filter and merge in the new table
-    objFinTab <- objFinTab[objFinTab[[jointype2]] %in% keys,]
-    ## still use original jointtype for the final merge
-    res <- merge(objFinTab, mainTab, by=jointype)## merge is like a filter
+    objFinTab <- objTab[objTab[[jointype2]] %in% keys,]
+    ## still use original jointtype for the final merge 
+    ## merge is like a filter...
+    if(class(x) == "OrgDb"){
+      res <- merge(objFinTab, mainTab, by=jointype)
+    }else if(class(x) == "ChipDb"){
+      res <- merge(objFinTab, mainTab, by=jointype2)
+    }else{
+      res <- merge(objFinTab, mainTab, by=jointype2)
+    }
     res <- .resort(res, keys, jointype2)
   }
   res
 }
+
+
 
 
 
@@ -302,12 +311,19 @@ setMethod("keytypes", "GODb",
 
 
 
-## debug(AnnotationDbi:::.select)
 ## debug(AnnotationDbi:::.mergeBimaps)
+
+## debug(AnnotationDbi:::.select)
+
 
 #############################
 ## keytype example
-## keys2 = head(Rkeys(org.Hs.egALIAS2EG))
+
+## library(hgu95av2.db); keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL", "UNIPROT");select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG")
+
 ## cols = c("SYMBOL", "UNIPROT")
 ## select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG")
 
+
+## library(GO.db)
+## select(GO.db, keys(GO.db)[1:4], c("TERM","SYNONYM"))

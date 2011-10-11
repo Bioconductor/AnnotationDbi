@@ -131,8 +131,8 @@ keyunis
 keytypes(hgu95av2.db)
 ## lookup gene symbol and unigene ID based on unigene IDs by setting
 ## the keytype to "UNIGENE" and passing in unigene keys:
-#select(hgu95av2.db, keys=keyunis, cols = c("SYMBOL","UNIGENE"),
-#       keytype="UNIGENE")
+select(hgu95av2.db, keys=keyunis, cols = c("SYMBOL","UNIGENE"),
+       keytype="UNIGENE")
 
 }
 
