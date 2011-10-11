@@ -2,15 +2,14 @@
 ## the keys provided.  cols is a character vector to specify columns the user
 ## wants back and keys are the keys to look up.
 
-## .select <- function(x, keys, cols, idType){
-##   con <- dbConn(x)
-##   sql <- paste("SELECT * FROM ",
-##                paste(cols, collapse=","),
-##                " WHERE ", idType ," IN ('",
-##                paste(keys, collapse="','"), "') ",
-##                sep="")
-##   dbGetQuery(con, sql)
-## }
+.getObjList <- function(x){
+  meta <- metadata(x) 
+  schema <- meta[meta["name"] == "DBSCHEMA","value"]
+  eval(parse(text=paste("AnnotationDbi:::",schema,
+                  "_AnnDbBimap_seeds",sep="")))  
+}
+
+
 
 ## a helper to make the strings to objects
 .makeBimapsFromStrings <- function(x, cols){
@@ -23,58 +22,94 @@
 ## another helper to merge
 ## Be sure to use all.x=TRUE (and all.y=TRUE), then filter on keys in a later
 ## step
-.mergeBimaps <- function(objs, keys, keyType){
+.mergeBimaps <- function(objs, keys, jointype){
   for(i in seq_len(length(objs))){
     if(i==1){
       finTab <- toTable(objs[[1]])
+      finTab <- finTab[finTab[[jointype]] %in% keys,]
     }else{
-      finTab <- merge(finTab, toTable(objs[[i]]),
-                      by=keyType, all.x=TRUE, all.y=TRUE)
+      nextTab <- toTable(objs[[i]])
+      nextTab <- nextTab[nextTab[[jointype]] %in% keys,]
+      finTab <- merge(finTab, nextTab,
+                      by=jointype, all=TRUE)
     }
   }
-  finTab[finTab[[keyType]] %in% keys,]
+  ##finTab[finTab[[jointype]] %in% keys,]
+  finTab
 }
 
-                         
-## Select uses merge to combine bimaps.  It needs to know the keyType
+## helper to get the rightColNames from the keyTypes
+.getRKeyName <- function(x, keytype){
+  objList <- .getObjList(x)
+  names <- unlist(lapply(objList, function(x){x$objName}))  
+  obj <- objList[[grep(keytype, names)]]
+  objChain <- obj$L2Rchain
+  finElem <- objChain[[length(objChain)]]
+  finElem$Rcolname
+}
+
+.resort <- function(tab, keys, jointype){
+  ind = match(tab[[jointype]],keys)
+  names(ind) = as.numeric(rownames(tab))
+  tab[as.numeric(names(sort(ind))),]
+}
+
+## select uses merge to combine bimaps.  It needs to know the jointype
 ## expected, which will vary with the database (and hence the method).
-.select <- function(x, keys=NULL, cols, keyType){
+.select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
-  objs <- .makeBimapsFromStrings(x, cols)
-  .mergeBimaps(objs, keys, keyType=keyType)
+  if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
+  if(keytype %in% c("ENTREZID","PROBEID","GOID")){
+    objs <- .makeBimapsFromStrings(x, cols)
+    res <-.mergeBimaps(objs, keys, jointype=jointype)
+    res <- .resort(res, keys, jointype)
+  }else{ ## not a central ID, so an extra merge is needed
+    objs <- .makeBimapsFromStrings(x, cols)
+    keysMain <- keys(x) ## I have to use all the keys for this  :(
+    mainTab <- .mergeBimaps(objs, keysMain, jointype=jointype)
+    ## make table from extra mapping
+    objFinTab <- toTable(.makeBimapsFromStrings(x, keytype)[[1]]) ## be only 1
+    ## deduce jointype2
+    jointype2 <- .getRKeyName(x, keytype)
+    ## use jointype2 to filter and merge in the new table
+    objFinTab <- objFinTab[objFinTab[[jointype2]] %in% keys,]
+    ## still use original jointtype for the final merge
+    res <- merge(objFinTab, mainTab, by=jointype)## merge is like a filter
+    res <- .resort(res, keys, jointype2)
+  }
+  res
 }
 
 
 
 setMethod("select", "OrgDb",
-    function(x, keys, cols) .select(x, keys, cols, "gene_id")
+    function(x, keys, cols, keytype) {
+          if (missing(keytype)) keytype <- "ENTREZID"
+          .select(x, keys, cols, keytype, jointype="gene_id")
+        }
 )
 
 setMethod("select", "ChipDb",
-    function(x, keys, cols) .select(x, keys, cols, "probe_id")
+    function(x, keys, cols, keytype){
+          if (missing(keytype)) keytype <- "PROBEID"
+          .select(x, keys, cols, keytype, jointype="probe_id")
+        }
 )
 
 setMethod("select", "GODb",
-    function(x, keys, cols) .select(x, keys, cols, "go_id")
+    function(x, keys, cols, keytype){
+          if (missing(keytype)) keytype <- "GOID"
+          .select(x, keys, cols, keytype, jointype="go_id")
+        }
 )
 
 ## setMethod("select", "InparanoidDb",
-##     function(x, keys, cols) .select(x, keys, cols, "gene_id")
+##     function(x, keys, cols, keytype="gene_id"){
+##            .select(x, keys, cols, keytype)}
 ## )
 
 
 
-## TEST CODE:
-## library(org.Hs.eg.db)
-## ls(2)
-
-## con = AnnotationDbi:::dbConn(org.Hs.eg.db)
-## keys = head(keys(org.Hs.egCHR))
-## keys = keys(org.Hs.eg.db)[1:5]
-## cols = c("SYMBOL", "UNIPROT")
-## select(org.Hs.eg.db, keys, cols)
-
-## idType = "gene_id"
 
 
 
@@ -87,25 +122,23 @@ setMethod("select", "GODb",
 
 
 
-
-
-
 ##############################################################################
-## Cols methods return the list of things that users can ask for.  This can be
+## cols methods return the list of things that users can ask for.  This can be
 ## just the table names, or it might be a list of mappings
 
 
 .cols <- function(x){
-  meta <- metadata(x) ##bug I need to get7 the package name!
-  schema <- meta[meta["name"] == "DBSCHEMA","value"]
-  objList <- eval(parse(text=paste("AnnotationDbi:::",schema,
-                  "_AnnDbBimap_seeds",sep="")))  
+  ## meta <- metadata(x) 
+  ## schema <- meta[meta["name"] == "DBSCHEMA","value"]
+  ## objList <- eval(parse(text=paste("AnnotationDbi:::",schema,
+  ##                 "_AnnDbBimap_seeds",sep="")))  
+  objList <- .getObjList(x)
   unlist(lapply(objList, function(x){x$objName}))
 }
 
 
 setMethod("cols", "OrgDb",
-    function(x) .cols(x)
+    function(x) .cols(x) 
 )
 
 setMethod("cols", "ChipDb",
@@ -131,10 +164,7 @@ setMethod("cols", "GODb",
 
 
 
-
-
-
-## Keys methods return the possible primary keys.  So for EG based packages,
+## keys methods return the possible primary keys.  So for EG based packages,
 ## this will be the viable entrez gene IDs.
 ## Must use SELECT DISTINCT for now because some packages like ag.db
 ## (Arabidopsis) have repeated probe ids in the probes table (those are the
@@ -144,16 +174,55 @@ setMethod("cols", "GODb",
 ## dbUniqueVals() is what's used behind the scene by the Lkeys/Rkeys/keys
 ## methods for AnnDbBimap objects so the "keys" methods below will give a
 ## consistent answer (and will take advantage of the cache).
+## helper to get keys
+.getKeysFromString <- function(x, keytype){
+  if(length(keytype) > 1) stop("There can be only one keytype.")
+  ## make a bimap from the keytype
+  map <- .makeBimapsFromStrings(x, keytype)[[1]] ## there is only ever one.
+  ## then get the Rkeys
+  Rkeys(map) 
+}
+
+.makeKeytypeChoice <- function(x, keytype){
+  res <- switch(EXPR = keytype,
+           "ENTREZID" = dbQuery(dbConn(x), "SELECT gene_id FROM genes", 1L),
+           "PROBEID" =  dbQuery(dbConn(x),
+             "SELECT DISTINCT probe_id FROM probes", 1L),
+           .getKeysFromString(x, keytype))
+
+  ## if(keytype == "ENTREZID"){
+  ##   res <- dbQuery(dbConn(x), "SELECT gene_id FROM genes", 1L)
+  ## }else if(keytype == "PROBEID"){
+  ##   res <- dbQuery(dbConn(x),
+  ##                  "SELECT DISTINCT probe_id FROM probes", 1L)
+  ## }else{
+  ##   res <- .getKeysFromString(x, keytype)
+  ## }
+  
+  res
+}
+
+
+## TODO: swap initial SQL query for an Lkeys() call for OrgDb and ChipDb??
 setMethod("keys", "OrgDb",
-    function(x) dbQuery(dbConn(x), "SELECT gene_id FROM genes", 1L)
+    function(x, keytype){
+      if (missing(keytype)) keytype <- "ENTREZID"
+      .makeKeytypeChoice(x, keytype)
+    }
 )
 
 setMethod("keys", "ChipDb",
-    function(x) dbQuery(dbConn(x), "SELECT DISTINCT probe_id FROM probes", 1L)
+    function(x, keytype){
+      if (missing(keytype)) keytype <- "PROBEID"
+      .makeKeytypeChoice(x, keytype)
+    }
 )
 
 setMethod("keys", "GODb",
-    function(x) dbQuery(dbConn(x), "SELECT go_id FROM go_term", 1L)
+    function(x, keytype){
+      if (missing(keytype)) keytype <- "GOID"
+      dbQuery(dbConn(x), "SELECT go_id FROM go_term", 1L)
+    }
 )
 
 ## for Inparanoid, we want to select keys carefully (depeninding on the
@@ -164,4 +233,81 @@ setMethod("keys", "GODb",
 ## )
 
 
+
+
+
+
+
+
+## keytypes method is to allow the user to specify what kind of keytype is
+## passed in to either keys or the select methods.
+## temporarily:this method will be VERY unsophisticated.
+
+setMethod("keytypes", "OrgDb",
+    function(x) cols(x)
+)
+
+setMethod("keytypes", "ChipDb",
+    function(x) cols(x) 
+)
+
+setMethod("keytypes", "GODb",
+    function(x) return("GOID") ## only one type makes sense
+)
+
+
+
+
+
+## TODO:
+##X .5) make keytype so that it uses the mapping names instead of internal stuff
+##X 1) make keytypes so that it returns all possible keytypes
+##X 2) make keys() so that it gets correct keys for correct keytypes
+##X 3) make select() so that it is more efficient (pre-filter)
+##X 4) make select() so that it uses keytypes to initially map in to the correct thing and then call internal funcs.
+## 4.5) Make sure this thing is sorting correctly!
+## 5) document all this stuff.
+
+
+
+
+
+#############################
+## TEST CODE:
+## library(org.Hs.eg.db)
+## ls(2)
+
+## con = AnnotationDbi:::dbConn(org.Hs.eg.db)
+## keys = head(keys(org.Hs.egCHR))
+
+
+## debug(AnnotationDbi:::.getKeysFromString)
+## debug(AnnotationDbi:::.makeKeytypeChoice)
+
+## example of keys that uses keytype
+## keys = keys(org.Hs.eg.db, keytype="ALIAS2EG")[1:4]
+
+## example of keys that does not use keytype
+## keys = keys(org.Hs.eg.db)[1:5]
+
+
+
+## default keytype example
+## keys = keys(org.Hs.eg.db)[1:5]
+## cols = c("SYMBOL", "UNIPROT")
+## select(org.Hs.eg.db, keys, cols)
+
+## idType = "gene_id"
+
+
+
+
+## debug(AnnotationDbi:::.select)
+## debug(AnnotationDbi:::.mergeBimaps)
+
+#############################
+## keytype example
+## keys2 = head(Rkeys(org.Hs.egALIAS2EG))
+## cols = c("SYMBOL", "UNIPROT")
+## select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG")
 

@@ -12,7 +12,8 @@ setGeneric("Rattribnames", function(x) standardGeneric("Rattribnames"))
 setGeneric("Rattribnames<-", signature="x", function(x, value) standardGeneric("Rattribnames<-"))
 setGeneric("Lkeys", function(x) standardGeneric("Lkeys"))
 setGeneric("Rkeys", function(x) standardGeneric("Rkeys"))
-setGeneric("keys", function(x) standardGeneric("keys"))
+setGeneric("keys", signature="x",
+           function(x, keytype) standardGeneric("keys"))
 setGeneric("Lkeys<-", signature="x", function(x, value) standardGeneric("Lkeys<-"))
 setGeneric("Rkeys<-", signature="x", function(x, value) standardGeneric("Rkeys<-"))
 setGeneric("keys<-", signature="x", function(x, value) standardGeneric("keys<-"))
@@ -69,11 +70,11 @@ setGeneric("packageName", function(x) standardGeneric("packageName"))
 setGeneric("cols", signature="x",
            function(x) standardGeneric("cols"))
 
-setGeneric("select", signature=c("x", "keys", "cols"),
-           function(x, keys, cols, ...) standardGeneric("select"))
+setGeneric("keytypes", signature="x",
+           function(x) standardGeneric("keytypes"))
 
-
-
+setGeneric("select", signature="x",
+           function(x, keys, cols, keytype, ...) standardGeneric("select"))
 
 
 

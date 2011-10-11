@@ -25,6 +25,12 @@
 \alias{cols,GODb-method}
 \alias{cols,InparanoidDb-method}
 
+\alias{keytypes}
+\alias{keytypes,OrgDb-method}
+\alias{keytypes,ChipDb-method}
+\alias{keytypes,GODb-method}
+\alias{keytypes,InparanoidDb-method}
+
 % \alias{keys} %Not aliased here because it is already aliased in Bimap-keys.Rd
 % \alias{keys,AnnotationDb-method}
 \alias{keys,OrgDb-method}
@@ -58,7 +64,7 @@
   \code{ChipDb}, \code{OrgDb}, \code{GODb} and \code{InparanoidDb}
 
   \code{keys} returns the primary keys for the database contained in
-  the \code{AnnotationDb} object.  This method is already documented
+  the \code{AnnotationDb} object .  This method is already documented
   in the keys manual page but is mentioned again here because it's
   usage with \code{select} is so intimate.
   
@@ -71,7 +77,8 @@
 
 \usage{
   cols(x)
-  select(x, keys, cols, ...)  
+  keytypes(x)
+  select(x, keys, cols, keytype, ...)  
 }
 
 \arguments{
@@ -83,11 +90,17 @@
   \item{cols}{the cols or kinds of things that can be retrieved from the 
     database.  As with \code{keys}, all possible cols are returned by using the
     \code{cols} method.}
+  \item{keytype}{the keytype that matches the keys used.  For the
+    \code{select} methods, this is used to indicate the kind of ID being used
+    with the keys argument. For the \code{keys} method this is used to
+    indicate which kind of keys are desired from \code{keys}
+  }
   \item{...}{other arguments}
 }
 
 \value{
-  \code{keys} and \code{cols} each return a character vector or possible values.  \code{select} returns a data.frame.
+  \code{keys},\code{cols} and \code{keytypes} each return a character
+    vector or possible values.  \code{select} returns a data.frame.
 }
 
 \author{Marc Carlson}
@@ -108,8 +121,19 @@ cols(hgu95av2.db)
 ## get the 1st 6 possible keys
 keys <- head( keys(hgu95av2.db) )
 keys
-## lookup gene symbol and unigene ID for the 1st 6 keys.
+## lookup gene symbol and unigene ID for the 1st 6 keys
 select(hgu95av2.db, keys=keys, cols = c("SYMBOL","UNIGENE"))
+
+## get keys based on unigene
+keyunis <- head( keys(hgu95av2.db, keytype="UNIGENE") )
+keyunis
+## list supported key types
+keytypes(hgu95av2.db)
+## lookup gene symbol and unigene ID based on unigene IDs by setting
+## the keytype to "UNIGENE" and passing in unigene keys:
+#select(hgu95av2.db, keys=keyunis, cols = c("SYMBOL","UNIGENE"),
+#       keytype="UNIGENE")
+
 }
 
 

@@ -121,6 +121,7 @@ exportMethods(
     "saveDb",
     "loadDb",
     "cols",
+    "keytypes",
     "select"
 )
 
