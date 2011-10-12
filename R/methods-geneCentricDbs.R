@@ -34,7 +34,20 @@
                       by=jointype, all=TRUE)
     }
   }
-  ##finTab[finTab[[jointype]] %in% keys,]
+  finTab
+}
+## alternate for when we cannot pre-filter.
+.mergeBimapsPostFilt <- function(objs, keys, jointype){
+  for(i in seq_len(length(objs))){
+    if(i==1){
+      finTab <- toTable(objs[[1]])
+    }else{
+      nextTab <- toTable(objs[[i]])
+      finTab <- merge(finTab, nextTab,
+                      by=jointype, all=TRUE)
+    }
+  }
+  finTab[finTab[[jointype]] %in% keys,]
   finTab
 }
 
@@ -54,38 +67,70 @@
   tab[as.numeric(names(sort(ind))),]
 }
 
-## select uses merge to combine bimaps.  It needs to know the jointype
-## expected, which will vary with the database (and hence the method).
+
+## Fresh start.  I need to NOT do this as a double merge
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
   if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
   if(keytype %in% c("ENTREZID","PROBEID","GOID")){
     objs <- .makeBimapsFromStrings(x, cols)
     res <-.mergeBimaps(objs, keys, jointype=jointype)
-    res <- .resort(res, keys, jointype)
   }else{ ## not a central ID, so an extra merge is needed
+    if(!(keytype %in% cols)) cols <- c(cols, keytype)
     objs <- .makeBimapsFromStrings(x, cols)
-    keysMain <- keys(x) ## I have to use all the keys for this  :(
-    mainTab <- .mergeBimaps(objs, keysMain, jointype=jointype)
-    ## make table from extra mapping
-    objTab <- toTable(.makeBimapsFromStrings(x, keytype)[[1]]) ## be only 1
-    ## deduce jointype2
-    jointype2 <- .getRKeyName(x, keytype)
-    ## use jointype2 to filter and merge in the new table
-    objFinTab <- objTab[objTab[[jointype2]] %in% keys,]
-    ## still use original jointtype for the final merge 
-    ## merge is like a filter...
-    if(class(x) == "OrgDb"){
-      res <- merge(objFinTab, mainTab, by=jointype)
-    }else if(class(x) == "ChipDb"){
-      res <- merge(objFinTab, mainTab, by=jointype2)
-    }else{
-      res <- merge(objFinTab, mainTab, by=jointype2)
-    }
-    res <- .resort(res, keys, jointype2)
-  }
-  res
+    res <-.mergeBimapsPostFilt(objs, keys, jointype=jointype)
+    ## deduce jointype from the keytype (do NOT use the default one!)
+    jointype <- .getRKeyName(x, keytype)
+  }  
+  .resort(res, keys, jointype)
 }
+
+
+
+
+
+## ## select uses merge to combine bimaps.  It needs to know the jointype
+## ## expected, which will vary with the database (and hence the method).
+## .selectOLD <- function(x, keys=NULL, cols=NULL, keytype, jointype){
+##   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
+##   if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
+##   if(keytype %in% c("ENTREZID","PROBEID","GOID")){
+##     objs <- .makeBimapsFromStrings(x, cols)
+##     res <-.mergeBimaps(objs, keys, jointype=jointype)
+##     res <- .resort(res, keys, jointype)
+##   }else{ ## not a central ID, so an extra merge is needed
+##     objs <- .makeBimapsFromStrings(x, cols)
+##     keysMain <- keys(x) ## I have to use all the keys for this  :(
+##     mainTab <- .mergeBimaps(objs, keysMain, jointype=jointype)
+##     ## make table from extra mapping
+##     objTab <- toTable(.makeBimapsFromStrings(x, keytype)[[1]]) ## be only 1
+##     ## deduce jointype2
+##     jointype2 <- .getRKeyName(x, keytype)
+##     ## still use original jointtype for the final merge 
+##     ## merge is like a filter...
+##     if(class(x) == "OrgDb"){
+##       ## For org pgk, I can count on the gene_id to be in both tables
+##       ## therefore, that is my joint type for the final merge
+##     ## use jointype2 to filter and merge in the new table
+##     objFinTab <- objTab[objTab[[jointype2]] %in% keys,]
+##       res <- merge(objFinTab, mainTab, by=jointype)
+##     }else{
+##       ## use jointype2 to filter and merge in the new table
+##       objFinTab <- objTab
+
+##       ## but for other packages, I need to GET that EG_ID (both times)
+##       objFinTab <- merge(objFinTab,
+##                          toTable(.makeBimapsFromStrings(x, "ENTREZID")[[1]]),
+##                          by=jointype)
+##       mainTab <- merge(mainTab,
+##                        toTable(.makeBimapsFromStrings(x, "ENTREZID")[[1]]),
+##                        by=jointype)
+##       res <- merge(objFinTab, mainTab, by="gene_id") 
+##     }
+##     res <- .resort(res, keys, jointype2)
+##   }
+##   res
+## }
 
 
 
@@ -310,6 +355,7 @@ setMethod("keytypes", "GODb",
 
 
 
+## debug(AnnotationDbi:::.resort)
 
 ## debug(AnnotationDbi:::.mergeBimaps)
 
@@ -325,5 +371,6 @@ setMethod("keytypes", "GODb",
 ## select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG")
 
 
-## library(GO.db)
-## select(GO.db, keys(GO.db)[1:4], c("TERM","SYNONYM"))
+## library(GO.db); select(GO.db, keys(GO.db)[1:4], c("TERM","SYNONYM"))
+
+## library(hgu95av2.db); okeys = keys(hgu95av2.db,keytype="OMIM")[1:4]; cols = c("SYMBOL", "UNIPROT", "PATH"); select(hgu95av2.db, okeys, cols, keytype="OMIM")
