@@ -55,7 +55,7 @@
 .getRKeyName <- function(x, keytype){
   objList <- .getObjList(x)
   names <- unlist(lapply(objList, function(x){x$objName}))  
-  obj <- objList[[grep(keytype, names)]]
+  obj <- objList[[grep(paste("^",keytype,"$",sep=""),names,perl=TRUE)]]
   objChain <- obj$L2Rchain
   finElem <- objChain[[length(objChain)]]
   finElem$Rcolname
