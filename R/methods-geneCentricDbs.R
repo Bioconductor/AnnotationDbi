@@ -72,6 +72,7 @@
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
   if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
+  keys <- keys[!is.na(keys)]
   if(keytype %in% c("ENTREZID","PROBEID","GOID")){
     objs <- .makeBimapsFromStrings(x, cols)
     res <-.mergeBimaps(objs, keys, jointype=jointype)
