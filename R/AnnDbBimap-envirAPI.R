@@ -60,6 +60,9 @@ setMethod("mget", signature(envir="AnnDbBimap"),
             envir@ifnotfound <- as.list(ifnotfound)
         }
         keys(envir) <- x
+        cat("") ## This call to cat() allows the Rsamtools vignette to compile
+                ## on certain Windows machines (e.g. moscato1). This is obviously
+                ## not a permanent solution to that problem.
         as.list(envir)
     }
 )
