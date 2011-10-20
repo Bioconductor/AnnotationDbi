@@ -61,10 +61,30 @@
   finElem$Rcolname
 }
 
+
 .resort <- function(tab, keys, jointype){
+  ## first find keys that will never match up and add rows for them
+  noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
+  for(i in seq_len(length(noMatchKeys))){
+    row <- rep(NA, dim(tab)[2])
+    row[colnames(tab) %in% jointype] <- noMatchKeys[i]
+    tab <- rbind(tab,row)
+  }
+  
+  ## match up and filter our rows that don't match.
   ind = match(tab[[jointype]],keys)
   names(ind) = as.numeric(rownames(tab))
-  tab[as.numeric(names(sort(ind))),]
+  tab <- tab[as.numeric(names(sort(ind))),]
+  
+  ## rearrange to make sure our jointab col is on the left
+  cnames <- c(jointype, colnames(tab)[!(colnames(tab) %in% jointype)])
+  tab <- data.frame(tab[[jointype]],
+             tab[,!(colnames(tab) %in% jointype)])
+
+  ## reset the table rownames and colnames
+  colnames(tab) <- cnames
+  rownames(tab) <- NULL
+  tab
 }
 
 
@@ -76,8 +96,8 @@
   if(keytype %in% c("ENTREZID","PROBEID","GOID")){
     objs <- .makeBimapsFromStrings(x, cols)
     res <-.mergeBimaps(objs, keys, jointype=jointype)
-  }else{ ## not a central ID, so an extra merge is needed
-    if(!(keytype %in% cols)) cols <- c(cols, keytype)
+  }else{ ## not a central ID, so an extra col is required
+    if(!(keytype %in% cols)) cols <- c( keytype, cols)
     objs <- .makeBimapsFromStrings(x, cols)
     res <-.mergeBimapsPostFilt(objs, keys, jointype=jointype)
     ## deduce jointype from the keytype (do NOT use the default one!)
