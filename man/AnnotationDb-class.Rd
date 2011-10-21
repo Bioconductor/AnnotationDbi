@@ -61,18 +61,25 @@
   extract data from an \code{AnnotationDb} object (or any object
   derived from the parent class).  Examples of classes derived from
   the \code{AnnotationDb} object include (but are not limited to):
-  \code{ChipDb}, \code{OrgDb}, \code{GODb} and \code{InparanoidDb}
+  \code{ChipDb}, \code{OrgDb} and \code{GODb}.
 
-  \code{keys} returns the primary keys for the database contained in
-  the \code{AnnotationDb} object .  This method is already documented
-  in the keys manual page but is mentioned again here because it's
-  usage with \code{select} is so intimate.
-  
   \code{cols} shows which kinds of data can be returned for the
   \code{AnnotationDb} object.
-
+  
+  \code{keytypes} allows the user to discover which keytypes can be
+  passed in to \code{select} or \code{keys} and the \code{keytype}
+  argument.
+  
+  \code{keys} returns keys for the database contained in the
+  \code{AnnotationDb} object .  This method is already documented in the
+  keys manual page but is mentioned again here because it's usage with
+  \code{select} is so intimate.  By default it will return the primary
+  keys for the database, but if used with the \code{keytype} argument,
+  it will return the keys from that keytype.
+  
   \code{select} will retrieve the data as a data.frame based on
-  parameters for selected keys and cols.
+  parameters for selected \code{keys} and \code{cols} and \code{keytype}
+  arguments.
 }
 
 \usage{

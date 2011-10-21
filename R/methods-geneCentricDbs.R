@@ -9,8 +9,6 @@
                   "_AnnDbBimap_seeds",sep="")))  
 }
 
-
-
 ## a helper to make the strings to objects
 .makeBimapsFromStrings <- function(x, cols){
   pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
@@ -36,6 +34,7 @@
   }
   finTab
 }
+
 ## alternate for when we cannot pre-filter.
 .mergeBimapsPostFilt <- function(objs, keys, jointype){
   for(i in seq_len(length(objs))){
@@ -99,59 +98,14 @@
   }else{ ## not a central ID, so an extra col is required
     if(!(keytype %in% cols)) cols <- c( keytype, cols)
     objs <- .makeBimapsFromStrings(x, cols)
+    ## merge using the base joinType (based on primary key)
     res <-.mergeBimapsPostFilt(objs, keys, jointype=jointype)
-    ## deduce jointype from the keytype (do NOT use the default one!)
+    ## deduce NEW jointype from the keytype (do NOT use the default one!)
+    ## This jointype is for filtering (which happens next)
     jointype <- .getRKeyName(x, keytype)
   }  
   .resort(res, keys, jointype)
 }
-
-
-
-
-
-## ## select uses merge to combine bimaps.  It needs to know the jointype
-## ## expected, which will vary with the database (and hence the method).
-## .selectOLD <- function(x, keys=NULL, cols=NULL, keytype, jointype){
-##   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
-##   if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
-##   if(keytype %in% c("ENTREZID","PROBEID","GOID")){
-##     objs <- .makeBimapsFromStrings(x, cols)
-##     res <-.mergeBimaps(objs, keys, jointype=jointype)
-##     res <- .resort(res, keys, jointype)
-##   }else{ ## not a central ID, so an extra merge is needed
-##     objs <- .makeBimapsFromStrings(x, cols)
-##     keysMain <- keys(x) ## I have to use all the keys for this  :(
-##     mainTab <- .mergeBimaps(objs, keysMain, jointype=jointype)
-##     ## make table from extra mapping
-##     objTab <- toTable(.makeBimapsFromStrings(x, keytype)[[1]]) ## be only 1
-##     ## deduce jointype2
-##     jointype2 <- .getRKeyName(x, keytype)
-##     ## still use original jointtype for the final merge 
-##     ## merge is like a filter...
-##     if(class(x) == "OrgDb"){
-##       ## For org pgk, I can count on the gene_id to be in both tables
-##       ## therefore, that is my joint type for the final merge
-##     ## use jointype2 to filter and merge in the new table
-##     objFinTab <- objTab[objTab[[jointype2]] %in% keys,]
-##       res <- merge(objFinTab, mainTab, by=jointype)
-##     }else{
-##       ## use jointype2 to filter and merge in the new table
-##       objFinTab <- objTab
-
-##       ## but for other packages, I need to GET that EG_ID (both times)
-##       objFinTab <- merge(objFinTab,
-##                          toTable(.makeBimapsFromStrings(x, "ENTREZID")[[1]]),
-##                          by=jointype)
-##       mainTab <- merge(mainTab,
-##                        toTable(.makeBimapsFromStrings(x, "ENTREZID")[[1]]),
-##                        by=jointype)
-##       res <- merge(objFinTab, mainTab, by="gene_id") 
-##     }
-##     res <- .resort(res, keys, jointype2)
-##   }
-##   res
-## }
 
 
 
@@ -202,26 +156,27 @@ setMethod("select", "GODb",
 ## just the table names, or it might be a list of mappings
 
 
-.cols <- function(x){
+.cols <- function(x, baseType){
   ## meta <- metadata(x) 
   ## schema <- meta[meta["name"] == "DBSCHEMA","value"]
   ## objList <- eval(parse(text=paste("AnnotationDbi:::",schema,
   ##                 "_AnnDbBimap_seeds",sep="")))  
   objList <- .getObjList(x)
-  unlist(lapply(objList, function(x){x$objName}))
+  cols <- unlist(lapply(objList, function(x){x$objName}))
+  c(baseType, cols)
 }
 
 
 setMethod("cols", "OrgDb",
-    function(x) .cols(x) 
+    function(x) .cols(x, baseType="ENTREZID")
 )
 
 setMethod("cols", "ChipDb",
-    function(x) .cols(x)
+    function(x) .cols(x, baseType="PROBEID")
 )
 
 setMethod("cols", "GODb",
-    function(x) .cols(x)
+    function(x) .cols(x, baseType="GOID")
 )
 
 ## something more tricky required for Inparanoid since a single template
@@ -319,11 +274,11 @@ setMethod("keys", "GODb",
 ## temporarily:this method will be VERY unsophisticated.
 
 setMethod("keytypes", "OrgDb",
-    function(x) cols(x)
+    function(x) .cols(x, baseType="ENTREZID")
 )
 
 setMethod("keytypes", "ChipDb",
-    function(x) cols(x) 
+    function(x) .cols(x, baseType="PROBEID") 
 )
 
 setMethod("keytypes", "GODb",
