@@ -186,7 +186,7 @@ setMethod("show", "GOTerms",
   }
   ## TODO, Add evidence codes to GO.sqlite so that we can test this properly
   ## without any hard coding
-  realEviCodes = c("EXP","ISO","ISA","ISM","IGC","RCA","NR","IMP","IGI","IPI","ISS","IDA","IEP","IEA","TAS","NAS","ND","IC")
+  realEviCodes = c("EXP","ISO","ISA","ISM","IGC","RCA","NR","IMP","IGI","IPI","ISS","IBA","IDA","IEP","IEA","TAS","NAS","ND","IC")
   if(is.na(table(GOIDs %in% realGOIDs)["TRUE"])){
     stop("None of elements in the 1st column of your data.frame object are legitimate GO IDs.")
   }

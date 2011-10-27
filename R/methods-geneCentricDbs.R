@@ -104,6 +104,12 @@
 ## .resort drops unwanted rows, rearanges cols and puts things into order that
 ## the keys were initially
 .resort <- function(tab, keys, jointype){
+  ## 1st of all jointype MUST be in the colnames of tab
+  if(!jointype %in% colnames(tab)){
+    stop("Critical column of data is missing from the table to be sorted")}
+  tab <- unique(tab)  ## make sure no rows are duplicated
+  rownames(tab) <- NULL ## reset the rownames (for matching below)
+  ## This row-level uniqueness is required for match() below
   ## first find keys that will never match up and add rows for them
   noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
   for(i in seq_len(length(noMatchKeys))){
@@ -114,7 +120,7 @@
   
   ## match up and filter out rows that don't match.
   ind = match(tab[[jointype]],keys)
-  names(ind) = as.numeric(rownames(tab))
+  names(ind) = as.numeric(rownames(tab)) ## step REQUIRES good rownames
   tab <- tab[as.numeric(names(sort(ind))),]
   
   ## rearrange to make sure our jointab col is on the left
@@ -146,7 +152,9 @@
     ## This jointype is for filtering (which happens next)
     jointype <- .getRKeyName(x, keytype)
   }
-  res <- .resort(res, keys, jointype)
+  if(dim(res)[1]>0){
+    res <- .resort(res, keys, jointype)
+  }
   ## rename col headers, BUT if they are not returned by cols, then we have to
   ## still keep the column name (but adjust it)
   colnames(res) <- .renameColumnsWithRepectForExtras(x,res)
@@ -415,4 +423,4 @@ setMethod("keytypes", "GODb",
 ## 1) ALIAS2EG should just be ALIAS everywhere
 ## 2) ENTREZID should be a cols() option for org packages...
 ## 3) Drop unrequested columns from the result (last thing)
-## 4) Putting "ENTREZID" in for keytype and then giving probe IDs as keys should NOT work for hgu95av2.db, but it does... (it only seems to allow this with the one kind of key)
+## 4) Putting "ENTREZID" in for keytype and then giving probe IDs as keys should NOT work for hgu95av2.db: but it does... (it only seems to allow this with the one kind of key) 
