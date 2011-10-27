@@ -50,7 +50,7 @@
   finTab
 }
 
-## helper to get the rightColNames from the keyTypes
+## helper to get a rightColNames from the keyTypes
 .getRKeyName <- function(x, keytype){
   objList <- .getObjList(x)
   names <- unlist(lapply(objList, function(x){x$objName}))  
@@ -59,8 +59,50 @@
   finElem <- objChain[[length(objChain)]]
   finElem$Rcolname
 }
+## a vectorized version of the above helper.
+.getRKeyNames <- function(x, keytypes){
+  unlist(lapply(keytypes, FUN=.getRKeyName, x=x))
+}
 
+## Helper for matching the short names of mappings with the salient table cols
+.makeColAbbrs <- function(x){
+  objList <- .getObjList(x)
+  cols <- unlist(lapply(objList, function(x){x$objName}))
+  names(cols) <- .getRKeyNames(x, cols)
+  cols
+}
+## Another Helper for getting all possible short mapping names for salient cols
+.getAllColAbbrs<- function(x){
+  cols <- .makeColAbbrs(x)## unique strips off the name so we loop.  :(
+  maybeMissing = c(probe_id="PROBEID", gene_id="ENTREZID")
+  for(i in seq_len(length(maybeMissing))){
+    if(!maybeMissing[i] %in% cols){
+       cols <- c(cols,maybeMissing[i])
+    }
+  }
+  cols
+}
+.renameColumnsWithRepectForExtras <- function(x, res){
+  fcNames <- .getAllColAbbrs(x)
+  secondaryNames <- colnames(res)
+  primaryNames <- fcNames[match(colnames(res), names(fcNames))]
+  ## merge two name types giving preference to primary
+  colNames <- character()
+  if(length(secondaryNames) == length(primaryNames)){
+    for(i in seq_len(length(primaryNames))){
+      if(!is.na(primaryNames[i])){
+        colNames[i] <- primaryNames[i]
+      }else{
+        colNames[i] <- secondaryNames[i]
+      }
+    }    
+  }else{stop("primaryNames and secondaryNames must be same length.")}
+  colNames
+}
 
+## Helper for tidying up the final table.
+## .resort drops unwanted rows, rearanges cols and puts things into order that
+## the keys were initially
 .resort <- function(tab, keys, jointype){
   ## first find keys that will never match up and add rows for them
   noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
@@ -70,7 +112,7 @@
     tab <- rbind(tab,row)
   }
   
-  ## match up and filter our rows that don't match.
+  ## match up and filter out rows that don't match.
   ind = match(tab[[jointype]],keys)
   names(ind) = as.numeric(rownames(tab))
   tab <- tab[as.numeric(names(sort(ind))),]
@@ -103,8 +145,14 @@
     ## deduce NEW jointype from the keytype (do NOT use the default one!)
     ## This jointype is for filtering (which happens next)
     jointype <- .getRKeyName(x, keytype)
-  }  
-  .resort(res, keys, jointype)
+  }
+  res <- .resort(res, keys, jointype)
+  ## rename col headers, BUT if they are not returned by cols, then we have to
+  ## still keep the column name (but adjust it)
+  colnames(res) <- .renameColumnsWithRepectForExtras(x,res)
+  ## IF we have added a col, then we should drop it.
+  ## Still have to do this.
+  res
 }
 
 
@@ -155,15 +203,14 @@ setMethod("select", "GODb",
 ## cols methods return the list of things that users can ask for.  This can be
 ## just the table names, or it might be a list of mappings
 
-
 .cols <- function(x, baseType){
-  ## meta <- metadata(x) 
-  ## schema <- meta[meta["name"] == "DBSCHEMA","value"]
-  ## objList <- eval(parse(text=paste("AnnotationDbi:::",schema,
-  ##                 "_AnnDbBimap_seeds",sep="")))  
-  objList <- .getObjList(x)
-  cols <- unlist(lapply(objList, function(x){x$objName}))
-  c(baseType, cols)
+  cols <- .makeColAbbrs(x)
+  if(!missing(baseType)){
+    cols <- c(baseType, cols)
+  }
+  ## .cols does not care about your names
+  names(cols) <- NULL
+  cols
 }
 
 
@@ -176,7 +223,7 @@ setMethod("cols", "ChipDb",
 )
 
 setMethod("cols", "GODb",
-    function(x) .cols(x, baseType="GOID")
+    function(x) .cols(x) ## does not have a missing baseType
 )
 
 ## something more tricky required for Inparanoid since a single template
@@ -341,12 +388,31 @@ setMethod("keytypes", "GODb",
 #############################
 ## keytype example
 
-## library(hgu95av2.db); keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL", "UNIPROT");select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG")
+## library(hgu95av2.db); keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG"); x = hgu95av2.db; res
 
-## cols = c("SYMBOL", "UNIPROT")
-## select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG")
+
+## Hmm.  This should work:
+## library(org.Hs.eg.db);keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG");
+## neither will this work then:
+## keys = head(keys(org.Hs.eg.db)); cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
+
+## This does (and shouldn't - wrong keytype):
+## keys = head(keys(hgu95av2.db)); cols = c("SYMBOL","ENTREZID", "GO"); res <- select(hgu95av2.db, keys, cols, keytype="ENTREZID")
+
+## This does work (and should):
+## keys = head(keys(hgu95av2.db)); cols = c("SYMBOL","ENTREZID", "GO"); res <- select(hgu95av2.db, keys, cols, keytype="PROBEID")
+
 
 
 ## library(GO.db); select(GO.db, keys(GO.db)[1:4], c("TERM","SYNONYM"))
 
 ## library(hgu95av2.db); okeys = keys(hgu95av2.db,keytype="OMIM")[1:4]; cols = c("SYMBOL", "UNIPROT", "PATH"); select(hgu95av2.db, okeys, cols, keytype="OMIM")
+
+
+
+
+## TODO Bugs/refinements:
+## 1) ALIAS2EG should just be ALIAS everywhere
+## 2) ENTREZID should be a cols() option for org packages...
+## 3) Drop unrequested columns from the result (last thing)
+## 4) Putting "ENTREZID" in for keytype and then giving probe IDs as keys should NOT work for hgu95av2.db, but it does... (it only seems to allow this with the one kind of key)
