@@ -121,13 +121,13 @@
   ## match up and filter out rows that don't match.
   ind = match(tab[[jointype]],keys)
   names(ind) = as.numeric(rownames(tab)) ## step REQUIRES good rownames
-  tab <- tab[as.numeric(names(sort(ind))),]
+  tab <- tab[as.numeric(names(sort(ind))),,drop=FALSE]
   
   ## rearrange to make sure our jointab col is on the left
-  cnames <- c(jointype, colnames(tab)[!(colnames(tab) %in% jointype)])
-  tab <- data.frame(tab[[jointype]],
-             tab[,!(colnames(tab) %in% jointype)])
-
+    cnames <- c(jointype, colnames(tab)[!(colnames(tab) %in% jointype)])
+    tab <- data.frame(tab[[jointype]],
+                      tab[,!(colnames(tab) %in% jointype)])
+  
   ## reset the table rownames and colnames
   colnames(tab) <- cnames
   rownames(tab) <- NULL
@@ -424,3 +424,4 @@ setMethod("keytypes", "GODb",
 ## 2) ENTREZID should be a cols() option for org packages...
 ## 3) Drop unrequested columns from the result (last thing)
 ## 4) Putting "ENTREZID" in for keytype and then giving probe IDs as keys should NOT work for hgu95av2.db: but it does... (it only seems to allow this with the one kind of key) 
+## 5) Add a NEWS page with info. about these changes.
