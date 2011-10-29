@@ -71,8 +71,42 @@
   names(cols) <- .getRKeyNames(x, cols)
   cols
 }
+
+## Need a helper to allow bimap symbols to be remapped on the fly
+## if the string you pass into this is one thing, it gets the other
+## ... and vice versa
+.swapOneSymbolException <- function(x, str){
+  ## 1st we define a vector of things we want to be able to "flip"
+  if(length(str) > 1){
+    stop(".swapOneSymbolException can only process one string at a time")
+  }
+  ## list of things that we will exchange (can be as long as we need,
+  ## but there can be one list here for each class of "x").
+  if(class(x)=="ChipDb"){
+    swpNames <- c(ALIAS="ALIAS2PROBE")
+  }else if(class(x)=="OrgDb"){
+    swpNames <- c(ALIAS="ALIAS2EG")
+  }else{
+    swpNames <- c()
+  }
+  if(str %in% names(swpNames)){
+    res <- unlist(swpNames[grep(str, names(swpNames), fixed=TRUE)])
+  }else if(str %in% swpNames){
+    res <- names(swpNames)[grep(str, swpNames, fixed=TRUE)]
+  }else{
+    res <- str
+  }
+  names(res) <- NULL
+  res
+}
+## here is the vectorized version 
+.swapSymbolExceptions <- function(x, strings){
+  unlist(lapply(strings, .swapOneSymbolException, x=x))
+}
+
+  
 ## Another Helper for getting all possible short mapping names for salient cols
-.getAllColAbbrs<- function(x){
+.getAllColAbbrs <- function(x){
   cols <- .makeColAbbrs(x)## unique strips off the name so we loop.  :(
   maybeMissing = c(probe_id="PROBEID", gene_id="ENTREZID")
   for(i in seq_len(length(maybeMissing))){
@@ -84,6 +118,7 @@
 }
 .renameColumnsWithRepectForExtras <- function(x, res){
   fcNames <- .getAllColAbbrs(x)
+  fcNames <- .swapSymbolExceptions(x, fcNames)
   secondaryNames <- colnames(res)
   primaryNames <- fcNames[match(colnames(res), names(fcNames))]
   ## merge two name types giving preference to primary
@@ -98,6 +133,17 @@
     }    
   }else{stop("primaryNames and secondaryNames must be same length.")}
   colNames
+}
+
+## Remove unwanted ID cols  TODO: make this code a helper
+## We only want to drop columns that really are "adds"
+.cleanOutUnwantedCols <- function(x, res, keytype, oriCols){
+  blackList <- unique(c(keytype, "ENTREZID","PROBEID"))
+  blackList <- blackList[!(blackList %in% oriCols)]
+  fcNames <- .getAllColAbbrs(x)
+  smBlackList <- names(fcNames)[fcNames %in% blackList]
+  res <- res[,!(colnames(res) %in% smBlackList),drop=FALSE]
+  res
 }
 
 ## Helper for tidying up the final table.
@@ -138,33 +184,33 @@
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
   if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
+  ## translate any cute colnames or keytype names back to bimaps
+  cols <- .swapSymbolExceptions(x, cols)
+  keytype <- .swapSymbolExceptions(x, keytype)
+  oriCols <- cols ## snapshot of col requests needed for column filter below
+  
   keys <- keys[!is.na(keys)]
   if(keytype %in% c("ENTREZID","PROBEID","GOID")){
     objs <- .makeBimapsFromStrings(x, cols)
     res <-.mergeBimaps(objs, keys, jointype=jointype)
   }else{ ## not a central ID, so an extra col is required
-    if(!(keytype %in% cols)) cols <- c( keytype, cols)
+    if(!(keytype %in% cols)){ cols <- c( keytype, cols) }
     objs <- .makeBimapsFromStrings(x, cols)
     ## merge using the base joinType (based on primary key)
-    res <-.mergeBimapsPostFilt(objs, keys, jointype=jointype)
+    res <- .mergeBimapsPostFilt(objs, keys, jointype=jointype)
     ## deduce NEW jointype from the keytype (do NOT use the default one!)
     ## This jointype is for filtering (which happens next)
     jointype <- .getRKeyName(x, keytype)
   }
-  
-  ## Remove unwanted ID cols
-  res <- res[,.getRKeyNames(x, cols),drop=FALSE]
-  
+  ## this takes a black list approach for cleaning out unwanted cols
+  res <- .cleanOutUnwantedCols(x, res, keytype, oriCols)  
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
     res <- .resort(res, keys, jointype)
   }
-  
   ## rename col headers, BUT if they are not returned by cols, then we have to
   ## still keep the column name (but adjust it)
   colnames(res) <- .renameColumnsWithRepectForExtras(x,res)
-  ## IF we have added a col, then we should drop it.
-  ## Still have to do this.
   res
 }
 
@@ -221,6 +267,9 @@ setMethod("select", "GODb",
   if(!missing(baseType)){
     cols <- c(baseType, cols)
   }
+  ## translate relevant short bimap names to "cute" names
+  cols <- .swapSymbolExceptions(x, cols) 
+
   ## .cols does not care about your names
   names(cols) <- NULL
   cols
@@ -274,21 +323,13 @@ setMethod("cols", "GODb",
 }
 
 .makeKeytypeChoice <- function(x, keytype){
+  ## have to swap keytype
+  keytype <- .swapSymbolExceptions(x, keytype)
   res <- switch(EXPR = keytype,
            "ENTREZID" = dbQuery(dbConn(x), "SELECT gene_id FROM genes", 1L),
            "PROBEID" =  dbQuery(dbConn(x),
              "SELECT DISTINCT probe_id FROM probes", 1L),
            .getKeysFromString(x, keytype))
-
-  ## if(keytype == "ENTREZID"){
-  ##   res <- dbQuery(dbConn(x), "SELECT gene_id FROM genes", 1L)
-  ## }else if(keytype == "PROBEID"){
-  ##   res <- dbQuery(dbConn(x),
-  ##                  "SELECT DISTINCT probe_id FROM probes", 1L)
-  ## }else{
-  ##   res <- .getKeysFromString(x, keytype)
-  ## }
-  
   res
 }
 
@@ -401,11 +442,17 @@ setMethod("keytypes", "GODb",
 #############################
 ## keytype example
 
-## library(hgu95av2.db); keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG"); x = hgu95av2.db; res
+## library(hgu95av2.db); cols(hgu95av2.db); cols(org.Hs.eg.db); head(keys(org.Hs.eg.db, "ALIAS"))
+
+## library(org.Hs.eg.db); keys2 = head(keys(org.Hs.eg.db, "ALIAS"));cols = c("SYMBOL", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS"); x = hgu95av2.db; res
+
+## debug(AnnotationDbi:::.select)
+
+## library(hgu95av2.db); keys2 = head(keys(hgu95av2.db, "ALIAS"));cols = c("SYMBOL", "GO");res <- select(hgu95av2.db, keys2, cols, keytype="ALIAS"); res
 
 
 ## Hmm.  This should work:
-## library(org.Hs.eg.db);keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG");
+## library(org.Hs.eg.db);keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS");
 
 ## neither will this work then:
 ## keys = head(keys(org.Hs.eg.db)); cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
@@ -414,7 +461,9 @@ setMethod("keytypes", "GODb",
 ## keys = head(keys(hgu95av2.db)); cols = c("SYMBOL","ENTREZID", "GO"); res <- select(hgu95av2.db, keys, cols, keytype="ENTREZID")
 
 ## This does work (and should):
-## keys = head(keys(hgu95av2.db)); cols = c("SYMBOL","ENTREZID", "GO"); res <- select(hgu95av2.db, keys, cols, keytype="PROBEID")
+## library(hgu95av2.db); keys = head(keys(hgu95av2.db)); cols = c("SYMBOL","ENTREZID", "GO"); res <- select(hgu95av2.db, keys, cols, keytype="PROBEID"); head(res)
+
+
 
 
 
@@ -426,12 +475,14 @@ setMethod("keytypes", "GODb",
 
 
 ## TODO Bugs/refinements:
-## 1) ALIAS2EG should just be ALIAS everywhere
-## For this one, the really important part is that I return a column header that says "ALIAS" on it.  But I should also make a .colNameTranslatet() to convert special names into others ones so that they can TYPE "ALIAS" into cols or keys and still get the correct thing happening internally.  This can just be called by both .cols (to flip ALIAS2EG into ALIAS) and then called again later in .select on the cols passed in to flip things back.
 
-## 2) ENTREZID should be a cols() option for org packages...
+## 2) ENTREZID should be a supported cols() option for org packages when calling select
 ## for ENTREZID, I need to just note that when it is an org package that column will already be there, so I just need to 1) not try to make it into a bimap (remove from cols INSIDE of select and then 2) include it in cols once it is being used to filter out columns (in .resort)
 ## NOTE: .getRKeyNames() is OK with ENTREZ ID
+
+## Related TODO: fix this:
+## library(hgu95av2.db); keys = head(keys(hgu95av2.db)); cols = c("SYMBOL","ENTREZID", "GO", "PROBEID"); res <- select(hgu95av2.db, keys, cols, keytype="PROBEID"); head(res)
+
 
 ## 3) Add a NEWS page with info. about these changes.
 
