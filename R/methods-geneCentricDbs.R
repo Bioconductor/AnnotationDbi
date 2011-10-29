@@ -105,31 +105,30 @@
 ## the keys were initially
 .resort <- function(tab, keys, jointype){
   ## 1st of all jointype MUST be in the colnames of tab
-  if(!jointype %in% colnames(tab)){
-    stop("Critical column of data is missing from the table to be sorted")}
   tab <- unique(tab)  ## make sure no rows are duplicated
   rownames(tab) <- NULL ## reset the rownames (for matching below)
-  ## This row-level uniqueness is required for match() below
-  ## first find keys that will never match up and add rows for them
-  noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
-  for(i in seq_len(length(noMatchKeys))){
-    row <- rep(NA, dim(tab)[2])
-    row[colnames(tab) %in% jointype] <- noMatchKeys[i]
-    tab <- rbind(tab,row)
-  }
+  if(jointype %in% colnames(tab)){
+    ## This row-level uniqueness is required for match() below
+    ## first find keys that will never match up and add rows for them
+    noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
+    for(i in seq_len(length(noMatchKeys))){
+      row <- rep(NA, dim(tab)[2])
+      row[colnames(tab) %in% jointype] <- noMatchKeys[i]
+      tab <- rbind(tab,row)
+    }
   
-  ## match up and filter out rows that don't match.
-  ind = match(tab[[jointype]],keys)
-  names(ind) = as.numeric(rownames(tab)) ## step REQUIRES good rownames
-  tab <- tab[as.numeric(names(sort(ind))),,drop=FALSE]
-  
-  ## rearrange to make sure our jointab col is on the left
+    ## match up and filter out rows that don't match.
+    ind = match(tab[[jointype]],keys)
+    names(ind) = as.numeric(rownames(tab)) ## step REQUIRES good rownames
+    tab <- tab[as.numeric(names(sort(ind))),,drop=FALSE]
+    
+    ## rearrange to make sure our jointab col is on the left
     cnames <- c(jointype, colnames(tab)[!(colnames(tab) %in% jointype)])
     tab <- data.frame(tab[[jointype]],
                       tab[,!(colnames(tab) %in% jointype)])
-  
-  ## reset the table rownames and colnames
-  colnames(tab) <- cnames
+    ## reset the table rownames and colnames
+    colnames(tab) <- cnames
+  }
   rownames(tab) <- NULL
   tab
 }
@@ -152,9 +151,15 @@
     ## This jointype is for filtering (which happens next)
     jointype <- .getRKeyName(x, keytype)
   }
+  
+  ## Remove unwanted ID cols
+  res <- res[,.getRKeyNames(x, cols),drop=FALSE]
+  
+  ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
     res <- .resort(res, keys, jointype)
   }
+  
   ## rename col headers, BUT if they are not returned by cols, then we have to
   ## still keep the column name (but adjust it)
   colnames(res) <- .renameColumnsWithRepectForExtras(x,res)
@@ -401,6 +406,7 @@ setMethod("keytypes", "GODb",
 
 ## Hmm.  This should work:
 ## library(org.Hs.eg.db);keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS2EG");
+
 ## neither will this work then:
 ## keys = head(keys(org.Hs.eg.db)); cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
 
@@ -421,7 +427,13 @@ setMethod("keytypes", "GODb",
 
 ## TODO Bugs/refinements:
 ## 1) ALIAS2EG should just be ALIAS everywhere
+## For this one, the really important part is that I return a column header that says "ALIAS" on it.  But I should also make a .colNameTranslatet() to convert special names into others ones so that they can TYPE "ALIAS" into cols or keys and still get the correct thing happening internally.  This can just be called by both .cols (to flip ALIAS2EG into ALIAS) and then called again later in .select on the cols passed in to flip things back.
+
 ## 2) ENTREZID should be a cols() option for org packages...
-## 3) Drop unrequested columns from the result (last thing)
+## for ENTREZID, I need to just note that when it is an org package that column will already be there, so I just need to 1) not try to make it into a bimap (remove from cols INSIDE of select and then 2) include it in cols once it is being used to filter out columns (in .resort)
+## NOTE: .getRKeyNames() is OK with ENTREZ ID
+
+## 3) Add a NEWS page with info. about these changes.
+
+## strange bug:
 ## 4) Putting "ENTREZID" in for keytype and then giving probe IDs as keys should NOT work for hgu95av2.db: but it does... (it only seems to allow this with the one kind of key) 
-## 5) Add a NEWS page with info. about these changes.
