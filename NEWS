@@ -1,0 +1,50 @@
+CHANGES IN VERSION 1.16
+-----------------------
+
+NEW FEATURES
+
+    o New Object types: Org.Db, ChipDb, GODb.  These are loaded when
+    an Annotation package is loaded.
+
+    o select method for these new objects to extract data.frames of
+    available annotations.  Users can specify keys, along with the
+    keytype, and the columns of data that they want extracted from the
+    annotation package.
+
+    o keys now will operate on new objects to expose most ID types as keys
+
+    o keytypes will show which kinds of IDs can be used as a key by select
+
+    o cols will display the kinds of data that can be extracted by select
+
+    o Users who need organism packages for organisms that are
+    annotated at NCBI can now use makeOrgPackageFromNCBI() to generate
+    a basic organism package on the fly
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o New objects are always named after the package that loaded them.
+    So if you just loaded the hgu95av2.db package, your ChipDb object
+    will be called hgu95av2.db
+
+    o new fields are now required in the metadata table of annotation
+    packages to allow the on-the-fly creation of these new objects.
+    If you are constructing a custom package and want to extend this
+    infrastructure, you may need to add some fields to the metadata
+    table.
+
+BUG FIXES
+
+    o makeProbePackage, and other generated Annotation packages have
+    had templates modified so that packages can load and also to
+    enable loading of new objects to allow new features in this
+    release.
+
+    o updated GOFrame constructor to allow use of new types of
+    evidence codes.
+
+    o generated packages will create databases with the appropiate
+    metadata entries for the new objects.
+
+
+

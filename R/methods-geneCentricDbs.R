@@ -209,12 +209,13 @@
   cols <- .cleanupBaseTypesFromCols(x, cols)
   ## then filter any NAs from the keys
   keys <- keys[!is.na(keys)]
-  
-  if(keytype %in% c("ENTREZID","PROBEID","GOID")){
+
+  if(keytype %in% c("ENTREZID","PROBEID","GOID") &&
+     !(keytype %in% "ENTREZID" && class(x)=="ChipDb")){
     objs <- .makeBimapsFromStrings(x, cols)
     res <-.mergeBimaps(objs, keys, jointype=jointype)
   }else{ ## not a central ID, so an extra col is required
-    if(!(keytype %in% cols)){ cols <- c( keytype, cols) }
+    if(!(keytype %in% cols)){ cols <- unique(c( keytype, cols)) }
     objs <- .makeBimapsFromStrings(x, cols)
     ## merge using the base joinType (based on primary key)
     res <- .mergeBimapsPostFilt(objs, keys, jointype=jointype)
@@ -476,7 +477,7 @@ setMethod("keytypes", "GODb",
 #############################
 ## keytype example
 
-## library(hgu95av2.db); cols(hgu95av2.db); cols(org.Hs.eg.db); head(keys(org.Hs.eg.db, "ALIAS")); keys(org.Hs.eg.db, keytype="PROBEID")
+## library(hgu95av2.db); cols(hgu95av2.db); cols(org.Hs.eg.db); head(keys(org.Hs.eg.db, "ALIAS")); keys(org.Hs.eg.db, keytype="PROBEID")## should be an error
 
 ## library(org.Hs.eg.db); keys2 = head(keys(org.Hs.eg.db, "ALIAS"));cols = c("SYMBOL", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS"); head(res); dim(res)
 
@@ -501,9 +502,6 @@ setMethod("keytypes", "GODb",
 ## This does work (and should):
 ## library(hgu95av2.db); keys = head(keys(hgu95av2.db)); cols = c("SYMBOL","ENTREZID", "GO"); res <- select(hgu95av2.db, keys, cols, keytype="PROBEID"); head(res)
 
-## TODO: this one should produce an output...
-## keys = head(keys(hgu95av2.db, "ENTREZID")); cols = c("PROBEID","SYMBOL","ENTREZID", "GO"); res <- select(hgu95av2.db, keys, cols, keytype="ENTREZID"); head(res)
-
 
 
 ## library(GO.db); select(GO.db, keys(GO.db)[1:4], c("TERM","SYNONYM"))
@@ -515,7 +513,13 @@ setMethod("keytypes", "GODb",
 
 ## TODO Bugs/refinements:
 
+## TODO: this one should produce an output... - FIXED
+## keys = head(keys(hgu95av2.db, "ENTREZID")); cols = c("PROBEID","SYMBOL","ENTREZID", "GO"); res <- select(hgu95av2.db, keys, cols, keytype="ENTREZID"); head(res)
+
 ## 3) Add a NEWS page with info. about these changes.
 
-## strange bug:
+
+
+
+## strange bug: - killed
 ## 4) Putting "ENTREZID" in for keytype and then giving probe IDs as keys should NOT work for hgu95av2.db: but it does... (it only seems to allow this with the one kind of key) 

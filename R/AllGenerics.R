@@ -57,7 +57,7 @@ setGeneric("Rfilter", function(x) standardGeneric("Rfilter"))
 setGeneric("flatten", function(x, ...) standardGeneric("flatten"))
 
 ## AnnotationDb
-setGeneric("loadDb", function(x, dbType, dbPackage, ...)
+setGeneric("loadDb", function(file, dbType, dbPackage, ...)
            standardGeneric("loadDb"))
 
 setGeneric("saveDb", signature="x",

@@ -94,22 +94,22 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
 ## in practice (though I guess you could if you really wanted to do extra
 ## typing)
 setMethod(loadDb, c("character", "character", "character"),
-    function(x, dbType, dbPackage, ...)
+    function(file, dbType, dbPackage, ...)
 {
     require(dbPackage, character.only=TRUE)
     db <- getRefClass(dbType, where=getNamespace(dbPackage))
-    db$new(sqliteFile=x, ...)
+    db$new(sqliteFile=file, ...)
 })
 
 
 ## This is the method people will use
 setMethod(loadDb, c("character", "missing", "missing"),
-    function(x, dbType, dbPackage, ...)
+    function(file, dbType, dbPackage, ...)
 {
-    ## conn <- dbConnect(SQLite(), x)
+    ## conn <- dbConnect(SQLite(), file)
     ## sql <- 'SELECT value FROM metadata WHERE name="Db type"'
     ## dbType <- dbGetQuery(conn, sql)[[1]]
-    conn <- dbConnect(SQLite(), x)
+    conn <- dbConnect(SQLite(), file)
     if(dbExistsTable(conn, "metadata")) {
         dbType <- tryCatch({
             .getMetaValue(conn, "Db type")
@@ -130,7 +130,7 @@ setMethod(loadDb, c("character", "missing", "missing"),
         })
     }
     dbDisconnect(conn)
-    loadDb(x, dbType, dbPackage, ...)
+    loadDb(file, dbType, dbPackage, ...)
 })
 
 

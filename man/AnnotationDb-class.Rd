@@ -80,12 +80,24 @@
   \code{select} will retrieve the data as a data.frame based on
   parameters for selected \code{keys} and \code{cols} and \code{keytype}
   arguments.
+
+  \code{saveDb} will take an AnnotationDb object and save the database
+  to the file specified by the path passed in to the \code{file}
+  argument.
+  
+  \code{loadDb} takes a .sqlite database file as an argument and uses
+  data in the metadata table of that file to return an AnnotationDb
+  style object of the appropriate type.
+  
 }
 
 \usage{
   cols(x)
   keytypes(x)
-  select(x, keys, cols, keytype, ...)  
+  select(x, keys, cols, keytype, ...)
+
+  saveDb(x, file)
+  loadDb(file, dbType, dbPackage, ...)
 }
 
 \arguments{
@@ -102,6 +114,10 @@
     with the keys argument. For the \code{keys} method this is used to
     indicate which kind of keys are desired from \code{keys}
   }
+  \item{file}{an \code{sqlite} file path.  A string the represents the
+  full name you want for your sqlite database and also where to put it.}
+  \item{dbType}{dbType - not required}
+  \item{dbPackage}{dbPackage - not required}
   \item{...}{other arguments}
 }
 
