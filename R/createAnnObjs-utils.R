@@ -379,7 +379,7 @@ annotMessage <- function(msgType, pkgType){
                   "produced. This package should now be considered deprecated",
                   "and future versions of Bioconductor may not have it",
                   "available.  One possible alternative to consider is to look",
-                  "at the Reactome.db package"),
+                  "at the reactome.db package"),
                 "exon_probeset" = paste("\n",pkgType,"is based on exon",
                   "probesets. For a more gene-centric view, use the",
                   "transcriptcluster version of this package."),
