@@ -203,7 +203,8 @@
   ## translate any cute colnames or keytype names back to bimaps
   cols <- .swapSymbolExceptions(x, cols)
   keytype <- .swapSymbolExceptions(x, keytype)
-  oriCols <- cols ## snapshot of col requests needed for column filter below
+  ## oriCols is a snapshot of col requests needed for column filter below
+  oriCols <- c(keytype, cols) 
 
   ## now drop a value from cols before we try to make any bimaps
   cols <- .cleanupBaseTypesFromCols(x, cols)
@@ -523,3 +524,13 @@ setMethod("keytypes", "GODb",
 
 ## strange bug: - killed
 ## 4) Putting "ENTREZID" in for keytype and then giving probe IDs as keys should NOT work for hgu95av2.db: but it does... (it only seems to allow this with the one kind of key) 
+
+
+
+
+
+
+
+
+## also need to roll back the removal of the keytype from the columns.
+## library(org.Hs.eg.db);keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS");
