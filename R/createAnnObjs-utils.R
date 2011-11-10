@@ -330,6 +330,12 @@ choosePackage <- function(pkgType){
 		 "illuminaMousev1p1BeadID.db" = "deprecatedMarkDunning",
 		 "illuminaMousev2BeadID.db" = "deprecatedMarkDunning",
 		 "illuminaRatv1BeadID.db" = "deprecatedMarkDunning",
+                 ## Simon, Ferrari and Favero can get a pass till next time
+                 ## Pass given on 11/8/10
+                 ## "hs25kresogen.db" = "deprecatedSimonDeBernard",
+                 ## "mm24kresogen.db" = "deprecatedSimonDeBernard",
+                 "org.Sco.eg.db" = "deprecated",
+                 "KEGG.db" = "stale",
                  "NO_MESSAGE_TYPE"
                 )
 }
@@ -345,6 +351,11 @@ annotMessage <- function(msgType, pkgType){
 	 	  "the package contributor no longer supports it. Please", 
 		  "be advised that this package is now out of date and should",
 		  "not occur in future bioconductor releases."),
+                "deprecatedSimonDeBernard" = paste("\n",pkgType,"is",
+		  "an older package, and the package contributor no",
+		  "longer supports it. Please be advised that this",
+		  "package is now out of date and should not occur in",
+		  "future bioconductor releases."),
 		"deprecatedRaffaeleCalogero" = paste("\n",pkgType,"is",
 		  "an older package, and the package contributor no",
 		  "longer supports it. Please be advised that this",
@@ -363,6 +374,12 @@ annotMessage <- function(msgType, pkgType){
 		  "illumina_XXX_ARRAYADDRESS mapping to convert between", 
 		  "BeadIDs and Illumina IDs. \n\n  *_XXX_ here refers to the",
   		  "species and version for this platform"),
+                "stale" = paste("\n",pkgType,"contains mappings based on older",                  "data because the original resource was removed from the",
+                  "the public domain before the most recent update was",
+                  "produced. This package should now be considered deprecated",
+                  "and future versions of Bioconductor may not have it",
+                  "available.  One possible alternative to consider is to look",
+                  "at the Reactome.db package"),
                 "exon_probeset" = paste("\n",pkgType,"is based on exon",
                   "probesets. For a more gene-centric view, use the",
                   "transcriptcluster version of this package."),
