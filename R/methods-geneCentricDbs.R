@@ -20,30 +20,36 @@
 ## another helper to merge
 ## Be sure to use all.x=TRUE (and all.y=TRUE), then filter on keys in a later
 ## step
+## 1st a helper to remove any pre-existing col duplicates from bimaps.
+.toTableAndCleanCols <- function(map){
+  tab <- toTable(map)
+  tab[,!duplicated(colnames(tab))]
+}
+
 .mergeBimaps <- function(objs, keys, jointype){
   for(i in seq_len(length(objs))){
     if(i==1){
-      finTab <- toTable(objs[[1]])
+      finTab <- .toTableAndCleanCols(objs[[1]])
       finTab <- finTab[finTab[[jointype]] %in% keys,]
     }else{
-      nextTab <- toTable(objs[[i]])
+      nextTab <- .toTableAndCleanCols(objs[[i]])
       nextTab <- nextTab[nextTab[[jointype]] %in% keys,]
       finTab <- merge(finTab, nextTab,
-                      by=jointype, all=TRUE)
+                      by=jointype, all=TRUE, suffixes = c("",""))
     }
   }
   finTab
 }
 
-## alternate for when we cannot pre-filter.
+## slower alternate for when we cannot pre-filter.
 .mergeBimapsPostFilt <- function(objs, keys, jointype){
   for(i in seq_len(length(objs))){
     if(i==1){
-      finTab <- toTable(objs[[1]])
+      finTab <- .toTableAndCleanCols(objs[[1]])
     }else{
-      nextTab <- toTable(objs[[i]])
+      nextTab <- .toTableAndCleanCols(objs[[i]])
       finTab <- merge(finTab, nextTab,
-                      by=jointype, all=TRUE)
+                      by=jointype, all=TRUE, suffixes = c("",""))
     }
   }
   finTab[finTab[[jointype]] %in% keys,]
@@ -116,11 +122,56 @@
   }
   cols
 }
-.renameColumnsWithRepectForExtras <- function(x, res){
+
+## look for exceptions, BUT the logic of the loop used by this helper strictly
+## requires that the names and cols be of the same length. Therefore, only
+## primaryNames that are NOT NA can be passed down to here
+.nameExceptions <- function(names, cols){
+  if(length(names) != length(cols)){ return(names) }else{
+    newNames <- character(length(names))
+    for(i in seq_len(length(cols))){
+      newNames[[i]] <- switch(EXPR = names(names)[[i]],
+                    "go_id" = "GO",
+                    "ipi_id" = ifelse(cols[[i]]=="PFAM","PFAM","PROSITE"),
+                    "accession" = ifelse(cols[[i]]=="ACCNUM","ACCNUM","REFSEQ"),
+                    names[[i]])
+    }
+    names(newNames) <- names(names)
+    return(newNames)
+  }
+}
+
+.addNAsInPlace <- function(names, cols){
+  res <- character(length(names))
+  ## loop needs two counters
+  colsPlace <- 1
+  for(i in seq_len(length(names))){
+    if(!is.na(names)[i]){
+      res[i] <- cols[colsPlace]
+      colsPlace <- colsPlace + 1
+    }else{
+      res[i] <- names[i]
+    }
+  }
+  res
+}
+
+.selectivelyMatchNameExceptions <- function(names, cols){
+  ## 1st we ADD NAs to the cols (in the same places as the oriNames)
+  modCols <- .addNAsInPlace(names, cols)
+  ## Then call method to selectively replace names with original col names.
+  .nameExceptions(names, modCols)
+}
+
+.renameColumnsWithRepectForExtras <- function(x, res, oriCols){
+  colnames(res) <- gsub(".1","",colnames(res))  ## Removes duplicate suffixes.
   fcNames <- .getAllColAbbrs(x)
   fcNames <- .swapSymbolExceptions(x, fcNames)
   secondaryNames <- colnames(res)
   primaryNames <- fcNames[match(colnames(res), names(fcNames))]
+  ## selectively replace certain problematic secondaryNames 
+  primaryNames <- .selectivelyMatchNameExceptions(primaryNames, oriCols)
+  
   ## merge two name types giving preference to primary
   colNames <- character()
   if(length(secondaryNames) == length(primaryNames)){
@@ -130,7 +181,7 @@
       }else{
         colNames[i] <- secondaryNames[i]
       }
-    }    
+    }
   }else{stop("primaryNames and secondaryNames must be same length.")}
   colNames
 }
@@ -235,7 +286,7 @@
   
   ## rename col headers, BUT if they are not returned by cols, then we have to
   ## still keep the column name (but adjust it)
-  colnames(res) <- .renameColumnsWithRepectForExtras(x,res)
+  colnames(res) <- .renameColumnsWithRepectForExtras(x, res, oriCols)
   res
 }
 
