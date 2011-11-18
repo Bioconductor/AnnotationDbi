@@ -158,7 +158,7 @@
 
 .selectivelyMatchNameExceptions <- function(names, cols){
   ## 1st we ADD NAs to the cols (in the same places as the oriNames)
-  modCols <- .addNAsInPlace(names, cols)
+  modCols <- .addNAsInPlace(names, unique(cols))
   ## Then call method to selectively replace names with original col names.
   .nameExceptions(names, modCols)
 }
@@ -585,3 +585,22 @@ setMethod("keytypes", "GODb",
 
 ## also need to roll back the removal of the keytype from the columns.
 ## library(org.Hs.eg.db);keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS");
+
+
+
+
+
+
+
+## Strange bug:
+## the following all work:
+## foo = select(org.Hs.eg.db, keys=head(keys(org.Hs.eg.db),n=2),cols="REFSEQ"); head(foo)
+## foo = select(org.Hs.eg.db, keys=head(keys(org.Hs.eg.db),n=2),cols=c("REFSEQ","ACCNUM")); head(foo)
+## foo = select(org.Hs.eg.db, keys=head(keys(org.Hs.eg.db),n=2),cols=c("ACCNUM")); head(foo)
+
+## But this does NOT work (fixed):
+## foo = select(org.Hs.eg.db, keys=head(keys(org.Hs.eg.db),n=2),cols=head(cols(org.Hs.eg.db))); head(foo); head(cols(org.Hs.eg.db))
+
+## debug(AnnotationDbi:::.nameExceptions)
+## debug(AnnotationDbi:::.addNAsInPlace)
+
