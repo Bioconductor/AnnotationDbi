@@ -244,6 +244,12 @@
 
 ## Fresh start.  I need to NOT do this as a double merge
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
+  ## if asked for what they have, just return that.
+  if(all(cols %in% keytype)  && length(cols)==1){
+    res <- data.frame(keys=keys)
+    colnames(res) <- cols
+    return(res)
+  }
   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
   if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
   ## check that the keytype matches the keys
