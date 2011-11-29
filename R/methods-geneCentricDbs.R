@@ -52,7 +52,7 @@
                       by=jointype, all=TRUE, suffixes = c("",""))
     }
   }
-  finTab[finTab[[jointype]] %in% keys,]
+  finTab <- finTab[finTab[[jointype]] %in% keys,]
   finTab
 }
 
