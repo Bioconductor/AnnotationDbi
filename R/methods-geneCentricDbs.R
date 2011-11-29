@@ -401,7 +401,7 @@ setMethod("cols", "GODb",
   ## make a bimap from the keytype
   map <- .makeBimapsFromStrings(x, keytype)[[1]] ## there is only ever one.
   ## then get the Rkeys
-  Rkeys(map) 
+  Rkeys(map)
 }
 
 .makeKeytypeChoice <- function(x, keytype){
