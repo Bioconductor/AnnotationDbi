@@ -127,7 +127,10 @@
 ## requires that the names and cols be of the same length. Therefore, only
 ## primaryNames that are NOT NA can be passed down to here
 .nameExceptions <- function(names, cols){
-  if(length(names) != length(cols)){ return(names) }else{
+  if(length(names) != length(cols)){
+    warning("cols could not be renamed because length(names) != length(cols)")
+    return(names)
+  }else{
     newNames <- character(length(names))
     for(i in seq_len(length(cols))){
       newNames[[i]] <- switch(EXPR = names(names)[[i]],
@@ -141,24 +144,33 @@
   }
 }
 
-.addNAsInPlace <- function(names, cols){
-  res <- character(length(names))
-  ## loop needs two counters
-  colsPlace <- 1
-  for(i in seq_len(length(names))){
-    if(!is.na(names)[i]){
-      res[i] <- cols[colsPlace]
-      colsPlace <- colsPlace + 1
-    }else{
-      res[i] <- names[i]
+## this just loops through the cols and discovers which ones need extra
+## padding then it makes a new "cols" that has NAs where they will be needed.
+## If I use this, replace .makeBimapsFromStrings with a one row version of
+## same for speedup
+.addNAsInPlace <- function(x, names, cols){
+  res <- character()
+  for(i in seq_len(length(cols))){
+    ## 1st get the number of cols associated
+    if(!cols[i] %in%  c("ENTREZID","GOID","PROBEID")){
+      obj <- .makeBimapsFromStrings(x, cols[i])[[1]]
+      ## colLen <- dim(.toTableAndCleanCols(obj))[2] #slow
+      colLen <- dim(toTable(obj[1]))[2] #fast
+      if(colLen > 2){## add some NA
+        res <- c(res, cols[i], rep(NA, times=colLen-2))
+      }else{## not so much
+        res <- c(res, cols[i])
+      }
+    }else{## cols is 2
+      res <- c(res, cols[i])
     }
-  }
+  }  
   res
 }
 
-.selectivelyMatchNameExceptions <- function(names, cols){
+.selectivelyMatchNameExceptions <- function(x, names, cols){
   ## 1st we ADD NAs to the cols (in the same places as the oriNames)
-  modCols <- .addNAsInPlace(names, unique(cols))
+  modCols <- .addNAsInPlace(x, names, unique(cols))
   ## Then call method to selectively replace names with original col names.
   .nameExceptions(names, modCols)
 }
@@ -169,8 +181,8 @@
   fcNames <- .swapSymbolExceptions(x, fcNames)
   secondaryNames <- colnames(res)
   primaryNames <- fcNames[match(colnames(res), names(fcNames))]
-  ## selectively replace certain problematic secondaryNames 
-  primaryNames <- .selectivelyMatchNameExceptions(primaryNames, oriCols)
+  ## replace problematic names by using original cols requests 
+  primaryNames <- .selectivelyMatchNameExceptions(x, primaryNames, oriCols)
   
   ## merge two name types giving preference to primary
   colNames <- character()

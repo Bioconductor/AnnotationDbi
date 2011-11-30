@@ -64,6 +64,8 @@ test_getRKeyNames <- function(x){
   checkIdentical(res,exp)
 }
 
+
+
 test_makeColAbbrs <- function(x){
   res <- .makeColAbbrs(x)
   checkTrue(length(res) == length(.getObjList(x)))
@@ -84,6 +86,40 @@ test_getAllColAbbrs <- function(x){
 
 
 
+test_nameExceptions <- function(names){  
+  names <- c("ALIAS","SYMBOL","GO","FOOBAZZLE",NA)
+  names(names) <-  c("alias_symbol","symbol","go_id","accession",NA)
+  cols <- c("ALIAS2EG","SYMBOL","GO","REFSEQ",NA)
+  res <- .nameExceptions(names, cols)
+  checkTrue(length(res) == length(names))
+  swappedElem <- res[4]
+  names(swappedElem) <- NULL
+  checkIdentical(swappedElem, cols[4])
+}
+
+
+test_addNAsInPlace <- function(x){
+  names <- c("ALIAS","SYMBOL","GO","FOOBAZZLE",NA)
+  names(names) <-  c("alias_symbol","symbol","go_id","accession",NA)
+  cols <- c("ALIAS2EG","CHRLOC","PFAM","SYMBOL","GO","REFSEQ")
+  res <- .addNAsInPlace(x,cols)
+  exp <- c("ALIAS2EG","CHRLOC",NA,"PFAM",NA,"SYMBOL","GO",NA,NA,"REFSEQ")
+  checkIdentical(res,exp)
+}
+
+
+test_renameColumnsWithRepectForExtras<- function(x, cols, keys, jointype){
+  ## cols can be expected to always include keytypes for testing this helper.
+  cols <- c("CHR","PROSITE","GO","REFSEQ") 
+  objs <- .makeBimapsFromStrings(x, cols=cols)
+  keys <- keys
+  res <- .mergeBimaps(objs, keys, jointype)
+  oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ") 
+  res2 <- .renameColumnsWithRepectForExtras(x, res, oriCols)
+  exp <- c("ENTREZID","CHR","PROSITE","PrositeId","GO","Evidence","Ontology",
+           "REFSEQ")
+  checkIdentical(exp,res2)
+}
 
 
 
