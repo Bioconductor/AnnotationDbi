@@ -56,14 +56,12 @@ test_mergeBimapsPostFilt <- function(x){
   checkTrue(length(unique(tab[[jointype]])) == length(keys))
 }
 
-## What about "ENTREZID"?  Do I need to be ablt to getRKeyNames on that???
-## I don't think so (but should check)
+## "ENTREZID", "PROBEID" and "GOID" do not need getRKeyNames
 test_getRKeyNames <- function(x){
   res <- .getRKeyNames(x, keytypes=c("SYMBOL","GO","PFAM"))
   exp <- c("symbol","go_id","ipi_id")
   checkIdentical(res,exp)
 }
-
 
 
 test_makeColAbbrs <- function(x){
@@ -108,18 +106,67 @@ test_addNAsInPlace <- function(x){
 }
 
 
-test_renameColumnsWithRepectForExtras<- function(x, cols, keys, jointype){
+test_renameColumnsWithRepectForExtras <- function(x, keys, jointype){
   ## cols can be expected to always include keytypes for testing this helper.
-  cols <- c("CHR","PROSITE","GO","REFSEQ") 
+  cols <- c("CHR","PROSITE","GO","REFSEQ")
   objs <- .makeBimapsFromStrings(x, cols=cols)
-  keys <- keys
   res <- .mergeBimaps(objs, keys, jointype)
-  oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ") 
+  oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
   res2 <- .renameColumnsWithRepectForExtras(x, res, oriCols)
   exp <- c("ENTREZID","CHR","PROSITE","PrositeId","GO","Evidence","Ontology",
            "REFSEQ")
   checkIdentical(exp,res2)
 }
 
+## mostly this is making sure I don't throw certain things out.
+## Honestly, I am not 100% sure if .cleanOutUnwantedCols actually ever does
+## throw anything out, but I want to be sure that it does not throw out things
+## like Ontology etc.
+test_cleanOutUnwantedCols <- function(x, keys, jointype){
+  cols <- c("CHR","PROSITE","GO","REFSEQ") 
+  objs <- .makeBimapsFromStrings(x, cols=cols)
+  res <- .mergeBimaps(objs, keys, jointype)
+  oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
+  keytype <- "ENTREZID"
+  res2 <-.cleanOutUnwantedCols(x, res, keytype, oriCols)
+  checkIdentical(colnames(res),colnames(res2))
+}
 
 
+test_cleanupBaseTypesFromCols <- function(x, cols){
+  res <- .cleanupBaseTypesFromCols(x, cols)
+  res2 <- .cleanupBaseTypesFromCols(x, c(cols,"ENTREZID"))
+  checkIdentical(res,res2)
+}
+
+
+## This one is really important as it is generic enough to be reused elsewhere.
+test_resort <- function(x){
+  cols <- c("CHR","SYMBOL", "PFAM")
+  objs <- .makeBimapsFromStrings(x, cols=cols)
+  res <- .mergeBimaps(objs, keys, jointype)
+  ## jumble res to simulate trouble
+  resRO = res[order(sort(res$gene_id,decreasing=TRUE)),]
+  oriCols <- c("ENTREZID","CHR","SYMBOL","PFAM")
+  Rres <- .resort(resRO, keys, jointype)
+  checkIdentical(Rres$gene_id,Rres$gene_id)
+}
+
+## This one to test out some real use cases...
+test_select <- function(x){
+  require(org.Hs.eg.db)
+  keys2 = head(keys(org.Hs.eg.db, "ALIAS"))
+  cols = c("SYMBOL", "GO")
+  res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS")
+  # head(res)## check that it has correct fields present.
+  # dim(res)## check that it is not empty
+  ## broken example?  Or broken because of my fix from yesterday (the one that
+  ## changed the code so that it postfiltered the results) Right now, I am
+  ## leaning towards the latter.  I currently thing that I cannot filter keys
+  ## as I go if my keytype is anything other than an entrez gene ID (because
+  ## of the structure of the DB).
+
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==5)
+  checkIdentical(c("ALIAS","SYMBOL","GO","Evidence","Ontology"), colnames(res))
+}

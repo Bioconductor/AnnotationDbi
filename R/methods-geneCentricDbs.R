@@ -52,7 +52,7 @@
                       by=jointype, all=TRUE, suffixes = c("",""))
     }
   }
-  finTab <- finTab[finTab[[jointype]] %in% keys,]
+#  finTab <- finTab[finTab[[jointype]] %in% keys,] ## this change we canot keep.
   finTab
 }
 
@@ -198,7 +198,7 @@
   colNames
 }
 
-## Remove unwanted ID cols  TODO: make this code a helper
+## Remove unwanted ID cols  
 ## We only want to drop columns that really are "adds"
 .cleanOutUnwantedCols <- function(x, res, keytype, oriCols){
   blackList <- unique(c(keytype, "ENTREZID","PROBEID"))
