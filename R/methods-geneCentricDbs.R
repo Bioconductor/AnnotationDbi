@@ -52,7 +52,9 @@
                       by=jointype, all=TRUE, suffixes = c("",""))
     }
   }
-#  finTab <- finTab[finTab[[jointype]] %in% keys,] ## this change we canot keep.
+  ## We do NOT want to to any actual row-filtering inside this method. It all
+  ## has to be done later, and after we have merged together requested data.
+  ## post filter means we filter LATER on and not while we are merging.
   finTab
 }
 
@@ -135,7 +137,7 @@
     for(i in seq_len(length(cols))){
       newNames[[i]] <- switch(EXPR = names(names)[[i]],
                     "go_id" = "GO",
-                    "ipi_id" = ifelse(cols[[i]]=="PFAM","PFAM","PROSITE"),
+                    "ipi_id" = ifelse(cols[[i]]=="PFAM","IPI","IPI"),
                     "accession" = ifelse(cols[[i]]=="ACCNUM","ACCNUM","REFSEQ"),
                     names[[i]])
     }
@@ -557,7 +559,7 @@ setMethod("keytypes", "GODb",
 
 
 ## works now
-## library(org.Hs.eg.db);keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS");
+## library(org.Hs.eg.db);keys2 = head(Rkeys(org.Hs.egALIAS2EG));cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS")
 
 ## works now
 ## keys = head(keys(org.Hs.eg.db)); cols = c("SYMBOL","ENTREZID", "GO");res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")

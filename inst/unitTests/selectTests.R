@@ -152,21 +152,53 @@ test_resort <- function(x){
   checkIdentical(Rres$gene_id,Rres$gene_id)
 }
 
+test_keys <- function(){
+  checkException(keys(org.Hs.eg.db, keytype="PROBEID"))
+}
+
 ## This one to test out some real use cases...
 test_select <- function(x){
-  require(org.Hs.eg.db)
-  keys2 = head(keys(org.Hs.eg.db, "ALIAS"))
-  cols = c("SYMBOL", "GO")
-  res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS")
-  # head(res)## check that it has correct fields present.
-  # dim(res)## check that it is not empty
-  ## broken example?  Or broken because of my fix from yesterday (the one that
-  ## changed the code so that it postfiltered the results) Right now, I am
-  ## leaning towards the latter.  I currently thing that I cannot filter keys
-  ## as I go if my keytype is anything other than an entrez gene ID (because
-  ## of the structure of the DB).
-
+  require(hgu95av2.db)
+  keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
+  cols <- c("SYMBOL","ENTREZID","PROBEID")
+  res <- select(hgu95av2.db, keys, cols, keytype="ALIAS")
   checkTrue(dim(res)[1]>0)
-  checkTrue(dim(res)[2]==5)
-  checkIdentical(c("ALIAS","SYMBOL","GO","Evidence","Ontology"), colnames(res))
+  checkTrue(dim(res)[2]==4)
+  checkIdentical(c("ALIAS","PROBEID","SYMBOL","ENTREZID"), colnames(res))
+
+  keys <- head(keys(org.Hs.eg.db),n=2)
+  cols <- c("PFAM","ENTREZID", "GO")
+  res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==6)
+  checkIdentical(c("ENTREZID","PFAM","PfamId","GO","Evidence","Ontology"),
+                 colnames(res))
+
+  keys <- head(keys(org.Hs.eg.db,keytype="OMIM"),n=4)
+  cols <- c("SYMBOL", "UNIPROT", "PATH")
+  res <- select(hgu95av2.db, keys, cols, keytype="OMIM")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==4)
+  checkIdentical(c("OMIM","SYMBOL","UNIPROT","PATH"), colnames(res))
+
+  keys <- head(keys(org.Hs.eg.db),n=2)
+  cols <- c("ACCNUM","REFSEQ")
+  res <- select(org.Hs.eg.db, keys, cols)
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ENTREZID","ACCNUM","REFSEQ"), colnames(res))
+
+  require(GO.db)
+  ## TODO: investigate this warning!:
+  res <- select(GO.db, keys(GO.db)[1:4], cols=c("TERM"))
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==6)
+  checkIdentical(c("BPPARENTS","Term","Ontology","Definition","Synonym",
+                   "Secondary"), colnames(res))
+  
+
+  ## bad keys should result in failure
+  keys = head(keys(hgu95av2.db))
+  cols = c("SYMBOL","ENTREZID", "GO")
+  checkException(select(hgu95av2.db, keys, cols, keytype="ENTREZID"))
 }
