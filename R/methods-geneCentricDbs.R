@@ -156,17 +156,24 @@
     ## 1st get the number of cols associated
     if(!cols[i] %in%  c("ENTREZID","GOID","PROBEID")){
       obj <- .makeBimapsFromStrings(x, cols[i])[[1]]
-      ## colLen <- dim(.toTableAndCleanCols(obj))[2] #slow
       colLen <- dim(toTable(obj[1]))[2] #fast
-      if(colLen > 2){## add some NA
+      localCNs <- colnames(toTable(obj[1]))
+      duplevel <- length(localCNs) - length(unique(localCNs))
+      ## Check to see if any colnames are repeating?
+      if(colLen > 2 && duplevel==0){
+        ## then add some NAs
         res <- c(res, cols[i], rep(NA, times=colLen-2))
-      }else{## not so much
+      }
+      else if(colLen > 2 && duplevel>0){
+        ## then add fewer NAs
+        res <- c(res, cols[i], rep(NA, times=(colLen-2-duplevel)))
+      }else{## don't add NAs
         res <- c(res, cols[i])
       }
-    }else{## cols is 2
+    }else{
       res <- c(res, cols[i])
     }
-  }  
+  }
   res
 }
 

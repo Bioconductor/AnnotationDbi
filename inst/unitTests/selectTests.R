@@ -10,6 +10,8 @@
 ## in the annotations etc.
 
 require(org.Hs.eg.db)
+require(GO.db)
+require(hgu95av2.db)
 x <- org.Hs.eg.db
 cols <- c("CHR","PFAM","GO")
 keys <- c(1,10)
@@ -88,7 +90,7 @@ test_nameExceptions <- function(names){
   names <- c("ALIAS","SYMBOL","GO","FOOBAZZLE",NA)
   names(names) <-  c("alias_symbol","symbol","go_id","accession",NA)
   cols <- c("ALIAS2EG","SYMBOL","GO","REFSEQ",NA)
-  res <- .nameExceptions(names, cols)
+  res <- .nameExceptions(names, cols=cols)
   checkTrue(length(res) == length(names))
   swappedElem <- res[4]
   names(swappedElem) <- NULL
@@ -100,8 +102,16 @@ test_addNAsInPlace <- function(x){
   names <- c("ALIAS","SYMBOL","GO","FOOBAZZLE",NA)
   names(names) <-  c("alias_symbol","symbol","go_id","accession",NA)
   cols <- c("ALIAS2EG","CHRLOC","PFAM","SYMBOL","GO","REFSEQ")
-  res <- .addNAsInPlace(x,cols)
+  res <- .addNAsInPlace(x,cols=cols)
   exp <- c("ALIAS2EG","CHRLOC",NA,"PFAM",NA,"SYMBOL","GO",NA,NA,"REFSEQ")
+  checkIdentical(res,exp)
+
+  x = GO.db
+  names <- c("BPPARENTS",NA,NA,NA,NA,NA)
+  names(names) <-  c("go_id",NA,NA,NA,NA,NA)
+  cols <- c("GOID","TERM")
+  res <- .addNAsInPlace(x,cols=cols)
+  exp <- c("GOID","TERM",NA,NA,NA,NA)
   checkIdentical(res,exp)
 }
 
@@ -158,7 +168,6 @@ test_keys <- function(){
 
 ## This one to test out some real use cases...
 test_select <- function(x){
-  require(hgu95av2.db)
   keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
   cols <- c("SYMBOL","ENTREZID","PROBEID")
   res <- select(hgu95av2.db, keys, cols, keytype="ALIAS")
@@ -171,7 +180,7 @@ test_select <- function(x){
   res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==6)
-  checkIdentical(c("ENTREZID","PFAM","PfamId","GO","Evidence","Ontology"),
+  checkIdentical(c("ENTREZID","IPI","PfamId","GO","Evidence","Ontology"),
                  colnames(res))
 
   keys <- head(keys(org.Hs.eg.db,keytype="OMIM"),n=4)
@@ -188,12 +197,14 @@ test_select <- function(x){
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","ACCNUM","REFSEQ"), colnames(res))
 
-  require(GO.db)
   ## TODO: investigate this warning!:
-  res <- select(GO.db, keys(GO.db)[1:4], cols=c("TERM"))
+  ## ALSO this causes a bug (the header should say "GO" and NOT "BPPARENTS")
+  keys <- head(keys(GO.db), n=4)
+  cols <- c("TERM")
+  res <- select(GO.db, keys, cols)
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==6)
-  checkIdentical(c("BPPARENTS","Term","Ontology","Definition","Synonym",
+  checkIdentical(c("GO","Term","Ontology","Definition","Synonym",
                    "Secondary"), colnames(res))
   
 
