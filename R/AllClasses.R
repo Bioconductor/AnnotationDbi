@@ -249,9 +249,6 @@ setClass("KEGGFrame", contains="AnnotFrame",
                   if (missing(sqliteFile)) dbConnect(SQLite())
                   else dbConnect(SQLite(), sqliteFile)
               callSuper(..., conn=.conn)
-          },
-          finalize=function() {
-              dbDisconnect(.self$conn)
           }))
 
 .OrgDb <-
