@@ -97,12 +97,8 @@ setMethod(loadDb, c("character", "character", "character"),
     function(file, dbType, dbPackage, ...)
 {
     require(dbPackage, character.only=TRUE)
-    ## currently:
-    db <- getRefClass(dbType, where=getNamespace(dbPackage))
-    db$new(sqliteFile=file, ...)
-    ## Martin suggests switching to this instead:
-    ## db <- getClassDef(dbType, where=getNamespace(dbPackage))
-    ## new(db, conn = dbConnect(SQLite(), file))
+    db <- getClassDef(dbType, where=getNamespace(dbPackage))
+    new(db, conn = dbConnect(SQLite(), file), ...)
 })
 
 
