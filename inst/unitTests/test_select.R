@@ -18,79 +18,80 @@ keys <- c(1,10)
 jointype <- "gene_id"
 
 
-test_getObjList <- function(x){
-  res <- .getObjList(x)
+test_getObjList <- function(){
+  res <- AnnotationDbi:::.getObjList(x)
   checkTrue(is.list(res))
   checkTrue(is.character(res[[1]][[1]]))
 }
 
-test_makeBimapsFromStrings <- function(x){
-  res <- .makeBimapsFromStrings(x, cols=cols)
+test_makeBimapsFromStrings <- function(){
+  res <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
   checkTrue(is.list(res))
   checkTrue(is(res[[1]], "AnnDbBimap"))
   checkTrue(is(res[[2]], "IpiAnnDbMap"))
   checkTrue(is(res[[3]], "Go3AnnDbBimap"))
 }
 
-test_toTableAndCleanCols <- function(x){
-  res <- .makeBimapsFromStrings(x, cols=cols)
-  tab <- .toTableAndCleanCols(res[[1]])
+test_toTableAndCleanCols <- function(){
+  res <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
+  tab <- AnnotationDbi:::.toTableAndCleanCols(res[[1]])
   checkTrue(is.data.frame(tab))
   checkTrue(length(colnames(tab)) == length(unique(colnames(tab))))
 }
 
-test_mergeBimaps <- function(x){
-  objs <- .makeBimapsFromStrings(x, cols=cols)
+test_mergeBimaps <- function(){
+  objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
   keys <- keys
-  tab <-.mergeBimaps(objs, keys, jointype)
+  tab <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
   checkTrue(length(colnames(tab)) == length(unique(colnames(tab))))
   checkTrue(dim(tab)[2] == 7)
-  checkTrue(dim(tab)[2] == length(keys))
+  checkTrue(dim(tab)[1] >= length(keys))
   checkTrue(length(unique(tab[[jointype]])) == length(keys))
 }
 
-test_mergeBimapsPostFilt <- function(x){
-  objs <- .makeBimapsFromStrings(x, cols="CHR")
+test_mergeBimapsPostFilt <- function(){
+  objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols="CHR")
   keys <- keys
-  tab <-.mergeBimapsPostFilt(objs, keys, jointype="gene_id")
+  tab <-AnnotationDbi:::.mergeBimapsPostFilt(objs, keys, jointype="gene_id")
   checkTrue(length(colnames(tab)) == length(unique(colnames(tab))))
   checkTrue(dim(tab)[2] == 2)
-  checkTrue(length(unique(tab[[jointype]])) == length(keys))
+  checkTrue(length(unique(tab[[jointype]])) >= length(keys))
 }
 
 ## "ENTREZID", "PROBEID" and "GOID" do not need getRKeyNames
-test_getRKeyNames <- function(x){
-  res <- .getRKeyNames(x, keytypes=c("SYMBOL","GO","PFAM"))
+test_getRKeyNames <- function(){
+  res <- AnnotationDbi:::.getRKeyNames(x, keytypes=c("SYMBOL","GO","PFAM"))
   exp <- c("symbol","go_id","ipi_id")
   checkIdentical(res,exp)
 }
 
 
-test_makeColAbbrs <- function(x){
-  res <- .makeColAbbrs(x)
-  checkTrue(length(res) == length(.getObjList(x)))
-  checkIdentical(.getRKeyName(x, res[[1]]), names(res)[1])
+test_makeColAbbrs <- function(){
+  res <- AnnotationDbi:::.makeColAbbrs(x)
+  checkTrue(length(res) == length(AnnotationDbi:::.getObjList(x)))
+  checkIdentical(AnnotationDbi:::.getRKeyName(x, res[[1]]), names(res)[1])
 }
 
-test_swapSymbolExceptions <- function(x){
-  res <- .swapSymbolExceptions(x, strings=c("GO","ALIAS","PFAM","ALIAS2EG"))
+test_swapSymbolExceptions <- function(){
+  res <- AnnotationDbi:::.swapSymbolExceptions(x,
+                           strings=c("GO","ALIAS","PFAM","ALIAS2EG"))
   exp <- c("GO","ALIAS2EG","PFAM","ALIAS")
   checkIdentical(res, exp)
 }
 
-test_getAllColAbbrs <- function(x){
-  res <- .getAllColAbbrs(x)
-  checkTrue(length(res) >= length(.getObjList(x)))
-  checkIdentical(.getRKeyName(x, res[[1]]), names(res)[1])
+test_getAllColAbbrs <- function(){
+  res <- AnnotationDbi:::.getAllColAbbrs(x)
+  checkTrue(length(res) >= length(AnnotationDbi:::.getObjList(x)))
+  checkIdentical(AnnotationDbi:::.getRKeyName(x, res[[1]]), names(res)[1])
 }
 
 
 
-test_nameExceptions <- function(names){  
+test_nameExceptions <- function(){  
   names <- c("ALIAS","SYMBOL","GO","FOOBAZZLE",NA)
   names(names) <-  c("alias_symbol","symbol","go_id","accession",NA)
   cols <- c("ALIAS2EG","SYMBOL","GO","REFSEQ",NA)
-  res <- .nameExceptions(names, cols=cols)
+  res <- AnnotationDbi:::.nameExceptions(names, cols=cols)
   checkTrue(length(res) == length(names))
   swappedElem <- res[4]
   names(swappedElem) <- NULL
@@ -98,11 +99,11 @@ test_nameExceptions <- function(names){
 }
 
 
-test_addNAsInPlace <- function(x){
+test_addNAsInPlace <- function(){
   names <- c("ALIAS","SYMBOL","GO","FOOBAZZLE",NA)
   names(names) <-  c("alias_symbol","symbol","go_id","accession",NA)
   cols <- c("ALIAS2EG","CHRLOC","PFAM","SYMBOL","GO","REFSEQ")
-  res <- .addNAsInPlace(x,cols=cols)
+  res <- AnnotationDbi:::.addNAsInPlace(x,cols=cols)
   exp <- c("ALIAS2EG","CHRLOC",NA,"PFAM",NA,"SYMBOL","GO",NA,NA,"REFSEQ")
   checkIdentical(res,exp)
 
@@ -110,20 +111,20 @@ test_addNAsInPlace <- function(x){
   names <- c("BPPARENTS",NA,NA,NA,NA,NA)
   names(names) <-  c("go_id",NA,NA,NA,NA,NA)
   cols <- c("GOID","TERM")
-  res <- .addNAsInPlace(x,cols=cols)
+  res <- AnnotationDbi:::.addNAsInPlace(x,cols=cols)
   exp <- c("GOID","TERM",NA,NA,NA,NA)
   checkIdentical(res,exp)
 }
 
 
-test_renameColumnsWithRepectForExtras <- function(x, keys, jointype){
+test_renameColumnsWithRepectForExtras <- function(){
   ## cols can be expected to always include keytypes for testing this helper.
   cols <- c("CHR","PROSITE","GO","REFSEQ")
-  objs <- .makeBimapsFromStrings(x, cols=cols)
-  res <- .mergeBimaps(objs, keys, jointype)
+  objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
+  res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
   oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
-  res2 <- .renameColumnsWithRepectForExtras(x, res, oriCols)
-  exp <- c("ENTREZID","CHR","PROSITE","PrositeId","GO","Evidence","Ontology",
+  res2 <- AnnotationDbi:::.renameColumnsWithRepectForExtras(x, res, oriCols)
+  exp <- c("ENTREZID","CHR","IPI","PrositeId","GO","Evidence","Ontology",
            "REFSEQ")
   checkIdentical(exp,res2)
 }
@@ -132,33 +133,33 @@ test_renameColumnsWithRepectForExtras <- function(x, keys, jointype){
 ## Honestly, I am not 100% sure if .cleanOutUnwantedCols actually ever does
 ## throw anything out, but I want to be sure that it does not throw out things
 ## like Ontology etc.
-test_cleanOutUnwantedCols <- function(x, keys, jointype){
+test_cleanOutUnwantedCols <- function(){
   cols <- c("CHR","PROSITE","GO","REFSEQ") 
-  objs <- .makeBimapsFromStrings(x, cols=cols)
-  res <- .mergeBimaps(objs, keys, jointype)
+  objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
+  res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
   oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
   keytype <- "ENTREZID"
-  res2 <-.cleanOutUnwantedCols(x, res, keytype, oriCols)
+  res2 <- AnnotationDbi:::.cleanOutUnwantedCols(x, res, keytype, oriCols)
   checkIdentical(colnames(res),colnames(res2))
 }
 
 
-test_cleanupBaseTypesFromCols <- function(x, cols){
-  res <- .cleanupBaseTypesFromCols(x, cols)
-  res2 <- .cleanupBaseTypesFromCols(x, c(cols,"ENTREZID"))
+test_cleanupBaseTypesFromCols <- function(){
+  res <- AnnotationDbi:::.cleanupBaseTypesFromCols(x, cols)
+  res2 <- AnnotationDbi:::.cleanupBaseTypesFromCols(x, c(cols,"ENTREZID"))
   checkIdentical(res,res2)
 }
 
 
 ## This one is really important as it is generic enough to be reused elsewhere.
-test_resort <- function(x){
+test_resort <- function(){
   cols <- c("CHR","SYMBOL", "PFAM")
-  objs <- .makeBimapsFromStrings(x, cols=cols)
-  res <- .mergeBimaps(objs, keys, jointype)
+  objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
+  res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
   ## jumble res to simulate trouble
   resRO = res[order(sort(res$gene_id,decreasing=TRUE)),]
   oriCols <- c("ENTREZID","CHR","SYMBOL","PFAM")
-  Rres <- .resort(resRO, keys, jointype)
+  Rres <- AnnotationDbi:::.resort(resRO, keys, jointype)
   checkIdentical(Rres$gene_id,Rres$gene_id)
 }
 
@@ -167,7 +168,7 @@ test_keys <- function(){
 }
 
 ## This one to test out some real use cases...
-test_select <- function(x){
+test_select <- function(){
   keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
   cols <- c("SYMBOL","ENTREZID","PROBEID")
   res <- select(hgu95av2.db, keys, cols, keytype="ALIAS")

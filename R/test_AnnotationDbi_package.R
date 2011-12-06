@@ -1,4 +1,4 @@
-.test <- function(dir, pattern = ".*_test\\.R$")
+.test <- function(dir, pattern = "^test_.*\\.R$")
 {
     .failure_details <- function(result) {
         res <- result[[1L]]
