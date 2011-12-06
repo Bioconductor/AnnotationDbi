@@ -3,6 +3,7 @@ import(utils)
 import(Biobase)
 import(DBI)
 import(RSQLite)
+import(BiocGenerics)
 importFrom(IRanges, metadata)
 
 exportClasses(
