@@ -170,11 +170,13 @@ test_resort <- function(){
   oriCols <- c("ENTREZID","CHR","SYMBOL","PFAM")
   Rres <- AnnotationDbi:::.resort(resRO, keys, jointype)
   checkIdentical(Rres$gene_id,Rres$gene_id)
+  checkTrue(class(Rres) =="data.frame")
 
   ## now what if we have MORE keys?
   keys <- c(1, keys, keys) 
   res <- AnnotationDbi:::.resort(resRO, keys, jointype)
-  checkIdentical(as.numeric(as.character(res$gene_id)),keys)    
+  checkIdentical(as.numeric(as.character(res$gene_id)),keys)
+  checkTrue(class(res) =="data.frame")
 }
 
 
@@ -225,9 +227,22 @@ test_select <- function(){
   checkIdentical(c("GO","Term","Ontology","Definition","Synonym",
                    "Secondary"), colnames(res))
   
-
   ## bad keys should result in failure
-  keys = head(keys(hgu95av2.db))
-  cols = c("SYMBOL","ENTREZID", "GO")
+  keys <- head(keys(hgu95av2.db))
+  cols <- c("SYMBOL","ENTREZID", "GO")
   checkException(select(hgu95av2.db, keys, cols, keytype="ENTREZID"))
+
+  ## What if the keys are goofy?
+  keys <- head(keys(org.Hs.eg.db),n=3)
+  keys <- c(1, keys, keys)
+  res <- select(org.Hs.eg.db, keys, cols)
+  checkTrue(class(res) =="data.frame")
+  checkIdentical(keys, as.character(t(res$ENTREZID)))
+  
+  ## What if there is only one col?
+  cols <- c("ENTREZID")
+  res <- select(org.Hs.eg.db, keys, cols)
+  checkTrue(class(res) =="data.frame")
+  checkTrue(dim(res)[2] ==1)  
+  checkIdentical(keys, as.character(t(res$ENTREZID)))
 }

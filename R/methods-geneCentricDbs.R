@@ -23,7 +23,7 @@
 ## 1st a helper to remove any pre-existing col duplicates from bimaps.
 .toTableAndCleanCols <- function(map){
   tab <- toTable(map)
-  tab[,!duplicated(colnames(tab))]
+  tab[,!duplicated(colnames(tab)),drop=FALSE]
 }
 
 .mergeBimaps <- function(objs, keys, jointype){
@@ -237,7 +237,7 @@
 ## Create extra rows
 .generateRows <- function(tab, keys, jointype){
   ind = match(keys, tab[[jointype]])
-  tab <- tab[ind,]
+  tab <- tab[ind,,drop=FALSE]
   rownames(tab) <- NULL
   tab
 }
