@@ -230,9 +230,18 @@
   cols
 }
 
-## Helper for tidying up the final table.
+## Helpers for tidying up the final table.
 ## .resort drops unwanted rows, rearanges cols and puts things into order that
 ## the keys were initially
+
+## Create extra rows
+.generateRows <- function(tab, keys, jointype){
+  ind = match(keys, tab[[jointype]])
+  tab <- tab[ind,]
+  rownames(tab) <- NULL
+  tab
+}
+
 .resort <- function(tab, keys, jointype){
   ## 1st of all jointype MUST be in the colnames of tab
   tab <- unique(tab)  ## make sure no rows are duplicated
@@ -259,6 +268,10 @@
     ## reset the table rownames and colnames
     colnames(tab) <- cnames
   }
+  ## Duplicate any rows as appropriate (based on those keys)
+  tab <- .generateRows(tab, keys, jointype)
+  
+  ## always clean the rownames out
   rownames(tab) <- NULL
   tab
 }
@@ -286,7 +299,11 @@
 
   ## now drop a value from cols before we try to make any bimaps
   cols <- .cleanupBaseTypesFromCols(x, cols)
-  ## then filter any NAs from the keys
+  ## keys should NOT be NAs, but if they are, warn and then filter them.
+  if(length(keys) != length(keys[!is.na(keys)])){
+    warning(paste("You cannot really use NA values as keys.",
+                  "All such keys will be dropped for you and the",
+                  "results will be correspondingly smaller."))}
   keys <- keys[!is.na(keys)]
 
   if(keytype %in% c("ENTREZID","PROBEID","GOID") &&

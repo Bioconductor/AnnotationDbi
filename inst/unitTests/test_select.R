@@ -151,7 +151,16 @@ test_cleanupBaseTypesFromCols <- function(){
 }
 
 
-## This one is really important as it is generic enough to be reused elsewhere.
+## resort and friends are really important as they are generic enough to
+## be reused elsewhere.
+test_generateRows <- function(){
+  ttab = data.frame(warpbreaks[1:10,])
+  tkeys = ttab$breaks
+  tkeys = c(26, tkeys[1:7], tkeys[7], 30, tkeys[8:10], tkeys[10])
+  res <- AnnotationDbi:::.generateRows(ttab, tkeys, jointype)
+  checkTrue(length(tkeys) == dim(res)[1])
+}
+
 test_resort <- function(){
   cols <- c("CHR","SYMBOL", "PFAM")
   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
@@ -161,7 +170,15 @@ test_resort <- function(){
   oriCols <- c("ENTREZID","CHR","SYMBOL","PFAM")
   Rres <- AnnotationDbi:::.resort(resRO, keys, jointype)
   checkIdentical(Rres$gene_id,Rres$gene_id)
+
+  ## now what if we have MORE keys?
+  keys <- c(1, keys, keys) 
+  res <- AnnotationDbi:::.resort(resRO, keys, jointype)
+  checkIdentical(as.numeric(as.character(res$gene_id)),keys)    
 }
+
+
+
 
 test_keys <- function(){
   checkException(keys(org.Hs.eg.db, keytype="PROBEID"))
