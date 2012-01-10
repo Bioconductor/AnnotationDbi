@@ -187,15 +187,19 @@ test_resort <- function(){
   res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
   ## jumble res to simulate trouble
   resRO = res[order(sort(res$gene_id,decreasing=TRUE)),]
-  reqCols <- c("gene_id","chromosome","symbol","ipi_id","PfamId") 
+  reqCols <- c("gene_id","chromosome","symbol","ipi_id","PfamId")
   Rres <- AnnotationDbi:::.resort(resRO, keys, jointype, reqCols)
   checkIdentical(Rres$gene_id,Rres$gene_id)
   checkTrue(class(Rres) =="data.frame")
 
   ## now what if we have MORE keys?
-  keys <- c(1, keys, keys) 
-  res <- AnnotationDbi:::.resort(resRO, keys, jointype, reqCols)
-  checkIdentical(as.numeric(as.character(res$gene_id)),keys)
+  keys <- c(1, keys, keys)
+  cols <- c("CHR","SYMBOL")
+  objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
+  res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
+  reqCols <- c("gene_id","chromosome","symbol")
+  res2 <- AnnotationDbi:::.resort(res, keys, jointype, reqCols)
+  checkIdentical(as.numeric(as.character(res2$gene_id)),keys)
   checkTrue(class(res) =="data.frame")
 }
 
@@ -251,8 +255,9 @@ test_select <- function(){
   keys <- head(keys(hgu95av2.db))
   cols <- c("SYMBOL","ENTREZID", "GO")
   checkException(select(hgu95av2.db, keys, cols, keytype="ENTREZID"))
-
-  ## What if the keys are goofy?
+  
+  ## What if the keys are goofy (we want to test the row-wise "auto-expand")
+  cols <- c("SYMBOL","ENTREZID") ## 1st of all cols should be 1:1 cols
   keys <- head(keys(org.Hs.eg.db),n=3)
   keys <- c(1, keys, keys)
   res <- select(org.Hs.eg.db, keys, cols)

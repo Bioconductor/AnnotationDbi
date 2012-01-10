@@ -357,12 +357,21 @@
   ## if(any(duplicated(tab[[jointype]]))) ## then we have to expand the table...
   ## AND if they are BOTH redundant how do I decide which row to expand?
   ## I think that I have to throw a warning and NOT do this step in that case?
-
-  
-  
-  ind = match(keys, tab[[jointype]])
-  tab <- tab[ind,,drop=FALSE]
-  rownames(tab) <- NULL
+  keyTest <- any(duplicated(keys))
+  rowTest <-  any(duplicated(tab[[jointype]]))             
+  if(!keyTest && !rowTest){ ## already the same - nothing to do
+    tab<-tab
+  }else if(keyTest && !rowTest){ ## Need to account for row dups
+    ind = match(keys, tab[[jointype]])
+    tab <- tab[ind,,drop=FALSE]
+    rownames(tab) <- NULL
+  }else if(!keyTest && !rowTest){ ## Need to account for data dups
+    warning("The data you have requested can only be expressed by duplicating some of the keys you requested.  Some of your keys may appear multiple times in the output")
+    tab<-tab
+  }else if(keyTest && rowTest){ ## Hands in air. - User will get data "as is"
+    warning("The data you have requested can only be expressed by duplicating some of the keys you requested.  Furthermore, it also appears that you have given us some of your keys multiple times.  Normally we would duplicate those rows for you, but this time we can't because of the existing redundancy in the data you have requested.")
+    tab<-tab
+  }
   tab
 }
 
