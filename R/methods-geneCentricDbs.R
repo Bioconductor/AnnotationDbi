@@ -346,6 +346,15 @@
   tab
 }
 
+## helper to remove any columns that are true duplicates
+.dropDuplicatedCols <- function(tab){
+  cols <- colnames(tab)
+  cols <- cols[!duplicated(cols)]  
+  tab <- tab[,cols]
+  tab
+}
+
+
 ## Create extra rows
 ## TODO: there are still problems here.
 ## I have issues where I drop rows from tables that have extra rows of real
@@ -445,10 +454,16 @@
     res <- .resort(res, keys, jointype, oriTabCols)
   }
   
-  
   ## rename col headers, BUT if they are not returned by cols, then we have to
   ## still keep the column name (but adjust it)
   colnames(res) <- .renameColumnsWithRepectForExtras(x, res, oriCols)
+
+  ## This last step removes unwanted column duplicates.  As much as I would like
+  ## to, I CANNOT do this step inside of .resort(), because .resort() is
+  ## dealing only with the actual db-style column names that will sometimes
+  ## have (at least for AnnotationDbi) have legitimate duplications that we do
+  ## NOT want to remove. 
+  res <- .dropDuplicatedCols(res)
   res
 }
 
@@ -766,3 +781,10 @@ setMethod("keytypes", "GODb",
 ## debug(AnnotationDbi:::.nameExceptions)
 ## debug(AnnotationDbi:::.addNAsInPlace)
 
+
+
+
+## Requirements for having a select method that works and plays well with
+## others:
+## 1) Use the same arguments for the method (obvious)
+## 2) remove dulicated columns.
