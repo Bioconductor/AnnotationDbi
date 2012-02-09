@@ -26,6 +26,15 @@
   tab[,!duplicated(colnames(tab)),drop=FALSE]
 }
 
+.filterSuffixes <- function(tab){
+  ## clean up .x and .y extensions?
+  colnames(tab) <- gsub("\\.x","",colnames(tab))
+  colnames(tab) <- gsub("\\.y","",colnames(tab))
+  ## clean up .1's
+  colnames(tab) <- gsub("\\.1","",colnames(tab))  
+  tab
+}
+
 .mergeBimaps <- function(objs, keys, jointype){
   for(i in seq_len(length(objs))){
     if(i==1){
@@ -35,9 +44,10 @@
       nextTab <- .toTableAndCleanCols(objs[[i]])
       nextTab <- nextTab[nextTab[[jointype]] %in% keys,]
       finTab <- merge(finTab, nextTab,
-                      by=jointype, all=TRUE, suffixes = c("",""))
+                      by=jointype, all=TRUE)
     }
   }
+  finTab <- .filterSuffixes(finTab)
   finTab
 }
 
@@ -49,12 +59,13 @@
     }else{
       nextTab <- .toTableAndCleanCols(objs[[i]])
       finTab <- merge(finTab, nextTab,
-                      by=jointype, all=TRUE, suffixes = c("",""))
+                      by=jointype, all=TRUE)
     }
   }
   ## We do NOT want to to any actual row-filtering inside this method. It all
   ## has to be done later, and after we have merged together requested data.
   ## post filter means we filter LATER on and not while we are merging.
+  finTab <- .filterSuffixes(finTab)
   finTab
 }
 
@@ -185,7 +196,7 @@
 }
 
 .renameColumnsWithRepectForExtras <- function(x, res, oriCols){
-  colnames(res) <- gsub(".1","",colnames(res))  ## Removes duplicate suffixes.
+  res <- .filterSuffixes(res) ## Removes duplicate suffixes
   fcNames <- .getAllColAbbrs(x)
   fcNames <- .swapSymbolExceptions(x, fcNames)
   secondaryNames <- colnames(res)
@@ -334,9 +345,7 @@
 
 ## resort the Column Names
 .resortColumns <- function(tab, jointype, reqCols){
-  ## TODO: include better handling of suffixes introduced by merge...
-  colnames(tab) <- gsub(".1","",colnames(tab))  ## Removes duplicate suffixes.
-  
+  tab <- .filterSuffixes(tab) ## Removes duplicate suffixes
   if(all(colnames(tab) %in% reqCols)){  ## this might be too stringent...
     cnames <- c(jointype, reqCols[!(reqCols %in% jointype)])
     indc <- match(cnames, colnames(tab))
@@ -638,12 +647,22 @@ setMethod("keys", "GODb",
 ## passed in to either keys or the select methods.
 ## temporarily:this method will be VERY unsophisticated.
 
+## TODO: would like to find a way to restore these blacklisted types to being
+## able to be used, but I need a way around the lack of an Rkeys() method etc.
+
+keytypesBlackList <- c("CHRLOCEND","CHRLOC","PFAM","PROSITE")
+.filterKeytypes <- function(x, baseType, keytypesBlackList){
+  res <- .cols(x, baseType=baseType)
+  res <- res[!res %in% keytypesBlackList]
+  res
+}
+
 setMethod("keytypes", "OrgDb",
-    function(x) .cols(x, baseType="ENTREZID")
+    function(x) .filterKeytypes(x, baseType="ENTREZID", keytypesBlackList)
 )
 
 setMethod("keytypes", "ChipDb",
-    function(x) .cols(x, baseType="PROBEID") 
+    function(x) .filterKeytypes(x, baseType="PROBEID", keytypesBlackList) 
 )
 
 setMethod("keytypes", "GODb",

@@ -9,6 +9,8 @@
 ## catch some of this, but also I need to anticipate things that will change
 ## in the annotations etc.
 
+##  library(AnnotationDbi);AnnotationDbi:::.test()
+
 require(org.Hs.eg.db)
 require(GO.db)
 require(hgu95av2.db)
