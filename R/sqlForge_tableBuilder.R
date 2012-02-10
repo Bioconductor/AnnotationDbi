@@ -24,7 +24,7 @@ message(cat("Prepending Metadata"))
   sqliteQuickSQL(db, sql)
   ##This is where the version number for the schema is inserted.
   sql<- paste("
-    INSERT INTO metadata VALUES('package', 'AnnotationDbi');
+    INSERT INTO metadata VALUES('Supporting package', 'AnnotationDbi');
      ") 
   sqliteQuickSQL(db, sql)
 

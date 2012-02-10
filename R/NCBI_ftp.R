@@ -257,7 +257,7 @@
             "EGSOURCEDATE","EGSOURCENAME","EGSOURCEURL",
             "GOSOURCEDATE","GOSOURCENAME","GOSOURCEURL",
             "GOEGSOURCEDATE","GOEGSOURCENAME","GOEGSOURCEURL",
-            "Db type","package")
+            "Db type","Supporting package")
   value<- c("2.1","ORGANISM_DB",paste(genus,species),paste(genus,species),"EG",
             tax_id,
        date(), "Entrez Gene","ftp://ftp.ncbi.nlm.nih.gov/gene/DATA",
