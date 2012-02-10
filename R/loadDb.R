@@ -117,6 +117,10 @@ setMethod(loadDb, c("character", "missing", "missing"),
             stop("the database is missing 'Db type' metadata\n  error: ",
                  conditionMessage(err))
         })
+        ## H.P.: 'Supporting package' is the new name for the 'package' entry
+        ## (as of Feb 10, 2012). For now we keep backward compatibility with
+        ## 'package' but at some point (in 1 year? 2 years?), this won't be
+        ## needed anymore.
         dbPackage <- tryCatch({
             .getMetaValue(conn, "Supporting package")
         }, error=function(err1) {
