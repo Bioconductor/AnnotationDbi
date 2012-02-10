@@ -530,6 +530,14 @@ setMethod("select", "GODb",
 ## cols methods return the list of things that users can ask for.  This can be
 ## just the table names, or it might be a list of mappings
 
+.chooseCentralOrgPkgSymbol <- function(centralID){
+  keytype <- switch(EXPR = centralID,
+                    "EG" = "ENTREZID",
+                    "TAIR" = "TAIR",
+                    "ORF" = "ORF")
+  keytype
+}
+
 .cols <- function(x, baseType){
   cols <- .makeColAbbrs(x)
   if(!missing(baseType)){
@@ -540,12 +548,16 @@ setMethod("select", "GODb",
 
   ## .cols does not care about your names
   names(cols) <- NULL
-  cols
+  unique(cols)
 }
 
 
 setMethod("cols", "OrgDb",
-    function(x) .cols(x, baseType="ENTREZID")
+    function(x){
+      centralID <- .getCentralID(x)
+      baseType <- .chooseCentralOrgPkgSymbol(centralID)
+      .cols(x, baseType)
+    }
 )
 
 setMethod("cols", "ChipDb",
@@ -629,12 +641,9 @@ setMethod("cols", "GODb",
 ## TODO: swap initial SQL query for an Lkeys() call for OrgDb and ChipDb??
 setMethod("keys", "OrgDb",
     function(x, keytype){
-      centralID <- .getCentralID(x)
       if(missing(keytype)){
-        keytype <- switch(EXPR = centralID,
-                          "EG" = "ENTREZID",
-                          "TAIR" = "TAIR",
-                          "ORF" = "ORF")
+        centralID <- .getCentralID(x)
+        keytype <- .chooseCentralOrgPkgSymbol(centralID)
       }
       .makeKeytypeChoice(x, keytype)
     }
