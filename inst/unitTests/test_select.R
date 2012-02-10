@@ -12,10 +12,14 @@
 ##  library(AnnotationDbi);AnnotationDbi:::.test()
 
 require(org.Hs.eg.db)
+require(org.At.tair.db)
+require(org.Sc.sgd.db)
 require(GO.db)
 require(hgu95av2.db)
 require("RUnit")
 x <- org.Hs.eg.db
+t <- org.At.tair.db
+s <- org.Sc.sgd.db
 cols <- c("CHR","PFAM","GO")
 keys <- c(1,10)
 jointype <- "gene_id"
@@ -207,8 +211,35 @@ test_resort <- function(){
 
 
 
+test_keytypes <- function(){
+  checkTrue("ENTREZID" %in% keytypes(x))
+  checkTrue("TAIR" %in% keytypes(t))
+  checkTrue("ENTREZID" %in% keytypes(t))
+  checkTrue("ORF" %in% keytypes(s))  
+  checkTrue("ENTREZID" %in% keytypes(s))  
+}
+
 test_keys <- function(){
   checkException(keys(org.Hs.eg.db, keytype="PROBEID"))
+  
+  egHskeys <- as.numeric(head(keys(x)))
+  checkTrue(length(egHskeys[!is.na(egHskeys)])==6)
+  rsHskeys <- head(keys(x, "REFSEQ"))
+  checkTrue(any(grepl("N", rsHskeys)))
+  
+  egAtkeys <- as.numeric(head(keys(t,"ENTREZID")))
+  checkTrue(length(egAtkeys[!is.na(egAtkeys)])==6)
+  rsAtkeys <- head(keys(t, "REFSEQ"))
+  checkTrue(any(grepl("N", rsAtkeys)))
+  tairAtkeys <- head(keys(t, "TAIR"))
+  checkTrue(any(grepl("AT", tairAtkeys)))
+
+  egSckeys <- as.numeric(head(keys(s, "ENTREZID")))
+  checkTrue(length(egSckeys[!is.na(egSckeys)])==6)
+  rsSckeys <- head(keys(s, "REFSEQ"))
+  checkTrue(any(grepl("N", rsSckeys)))
+  orfSckeys <- head(keys(s, "ORF"))
+  checkTrue(any(grepl("A", orfSckeys)))
 }
 
 

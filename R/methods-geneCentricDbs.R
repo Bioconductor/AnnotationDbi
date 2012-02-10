@@ -1,3 +1,9 @@
+## Need an accessor for getting the central ID for a DB (when appropriate)
+.getCentralID <- function(x){
+  as.character(dbQuery(dbConn(x),
+                       "SELECT value FROM metadata WHERE name='CENTRALID'"))
+}
+
 ## Select Methods return the results from looking up things (cols) that match
 ## the keys provided.  cols is a character vector to specify columns the user
 ## wants back and keys are the keys to look up.
@@ -587,10 +593,23 @@ setMethod("cols", "GODb",
 .makeKeytypeChoice <- function(x, keytype){
   ## have to swap keytype
   keytype <- .swapSymbolExceptions(x, keytype)
+  ## Some org packages may have entrez genes in weird places...
+  centralID <- .getCentralID(x)
+  EGgeneTable <- character()
+  if(centralID == "EG" || centralID == "ORF"){
+    EGgeneTable <- "genes"
+  }else if(centralID == "TAIR"){
+    EGgeneTable <- "entrez_genes"
+  }
+  ## now decide
   if(class(x) == "OrgDb"){
     res <- switch(EXPR = keytype,
                   "ENTREZID" = dbQuery(dbConn(x),
+                    paste("SELECT gene_id FROM", EGgeneTable), 1L),
+                  "TAIR" = dbQuery(dbConn(x),
                     "SELECT gene_id FROM genes", 1L),
+                  "ORF" = dbQuery(dbConn(x),
+                    "SELECT systematic_name FROM sgd", 1L),
                   "PROBEID" =
                      stop("PROBEID is not supported for Organism packages"),
                   .getKeysFromString(x, keytype))
@@ -603,28 +622,34 @@ setMethod("cols", "GODb",
                     "SELECT DISTINCT probe_id FROM probes", 1L),
                   .getKeysFromString(x, keytype))
   }
-  res
+  res[!is.na(res)]
 }
 
 
 ## TODO: swap initial SQL query for an Lkeys() call for OrgDb and ChipDb??
 setMethod("keys", "OrgDb",
     function(x, keytype){
-      if (missing(keytype)) keytype <- "ENTREZID"
+      centralID <- .getCentralID(x)
+      if(missing(keytype)){
+        keytype <- switch(EXPR = centralID,
+                          "EG" = "ENTREZID",
+                          "TAIR" = "TAIR",
+                          "ORF" = "ORF")
+      }
       .makeKeytypeChoice(x, keytype)
     }
 )
 
 setMethod("keys", "ChipDb",
     function(x, keytype){
-      if (missing(keytype)) keytype <- "PROBEID"
+      if(missing(keytype)) keytype <- "PROBEID"
       .makeKeytypeChoice(x, keytype)
     }
 )
 
 setMethod("keys", "GODb",
     function(x, keytype){
-      if (missing(keytype)) keytype <- "GOID"
+      if(missing(keytype)) keytype <- "GOID"
       dbQuery(dbConn(x), "SELECT go_id FROM go_term", 1L)
     }
 )
@@ -650,11 +675,16 @@ setMethod("keys", "GODb",
 ## TODO: would like to find a way to restore these blacklisted types to being
 ## able to be used, but I need a way around the lack of an Rkeys() method etc.
 
-keytypesBlackList <- c("CHRLOCEND","CHRLOC","PFAM","PROSITE")
+keytypesBlackList <- c("CHRLOCEND","CHRLOC","PFAM","PROSITE",
+                       "DESCRIPTION", "GENENAME")
 .filterKeytypes <- function(x, baseType, keytypesBlackList){
   res <- .cols(x, baseType=baseType)
   res <- res[!res %in% keytypesBlackList]
-  res
+  ## append the centralID (if not already present)
+  centralID <- .getCentralID(x)
+  if(centralID == "EG"){ centralID <- "ENTREZID" }
+  res <- c(res, centralID)
+  unique(res)
 }
 
 setMethod("keytypes", "OrgDb",
