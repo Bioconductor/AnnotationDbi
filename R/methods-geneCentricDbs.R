@@ -37,9 +37,15 @@
 ## Be sure to use all.x=TRUE (and all.y=TRUE), then filter on keys in a later
 ## step
 ## 1st a helper to remove any pre-existing col duplicates from bimaps.
-.toTableAndCleanCols <- function(map){
+.toTableAndCleanCols <- function(x, map){
   tab <- toTable(map)
-  tab[,!duplicated(colnames(tab)),drop=FALSE]
+  if(map@objName == "ENTREZID" && .getCentralID(x) == "TAIR"){
+    ## in this one strange case, we have to rename the 2nd column
+    colnames(tab)[2] <- c("ENTREZID") 
+  }else{
+    tab <- tab[,!duplicated(colnames(tab)),drop=FALSE]
+  }
+  tab
 }
 
 .filterSuffixes <- function(tab){
@@ -51,13 +57,13 @@
   tab
 }
 
-.mergeBimaps <- function(objs, keys, jointype){
+.mergeBimaps <- function(x, objs, keys, jointype){
   for(i in seq_len(length(objs))){
     if(i==1){
-      finTab <- .toTableAndCleanCols(objs[[1]])
+      finTab <- .toTableAndCleanCols(x, objs[[1]])
       finTab <- finTab[finTab[[jointype]] %in% keys,]
     }else{
-      nextTab <- .toTableAndCleanCols(objs[[i]])
+      nextTab <- .toTableAndCleanCols(x, objs[[i]])
       nextTab <- nextTab[nextTab[[jointype]] %in% keys,]
       finTab <- merge(finTab, nextTab,
                       by=jointype, all=TRUE)
@@ -68,12 +74,12 @@
 }
 
 ## slower alternate for when we cannot pre-filter.
-.mergeBimapsPostFilt <- function(objs, keys, jointype){
+.mergeBimapsPostFilt <- function(x, objs, keys, jointype){
   for(i in seq_len(length(objs))){
     if(i==1){
-      finTab <- .toTableAndCleanCols(objs[[1]])
+      finTab <- .toTableAndCleanCols(x, objs[[1]])
     }else{
-      nextTab <- .toTableAndCleanCols(objs[[i]])
+      nextTab <- .toTableAndCleanCols(x, objs[[i]])
       finTab <- merge(finTab, nextTab,
                       by=jointype, all=TRUE)
     }
@@ -164,10 +170,11 @@
     newNames <- character(length(names))
     for(i in seq_len(length(cols))){
       newNames[[i]] <- switch(EXPR = names(names)[[i]],
-                    "go_id" = "GO",
-                    "ipi_id" = ifelse(cols[[i]]=="PFAM","IPI","IPI"),
-                    "accession" = ifelse(cols[[i]]=="ACCNUM","ACCNUM","REFSEQ"),
-                    "gene_id" = ifelse(cols[[i]]=="ENTREZID","ENTREZID","TAIR"),
+              "go_id" = "GO",
+              "systematic_name" = "ORF",
+              "ipi_id" = ifelse(cols[[i]]=="PFAM","IPI","IPI"),
+              "accession" = ifelse(cols[[i]]=="ACCNUM","ACCNUM","REFSEQ"),
+              "gene_id" = ifelse(cols[[i]]=="ENTREZID","ENTREZID","TAIR"),
                     names[[i]])
     }
     names(newNames) <- names(names)
@@ -319,14 +326,15 @@
     }
   }
   ## I can't just use unique here.  Because primary keys must be in the proper
-  ## location in the result vector.  The primary key is the one that is both
-  ## duplicated AND is in the 1st element.
-  if(res[[1]] %in% res[duplicated(res)]){
-    pkeycol <- res[[1]]
+  ## location in the result vector.  The primary key just the one we see the
+  ## most often. So get the one that recurs, and grab the 1st of those...
+  if(any(duplicated(res))){
+    pkeycol <- res[duplicated(res)][[1]]
   }else{stop("Cannot deduce primary key column.")}
-  pkCapsName <- .getAllColAbbrs(x)[names(.getAllColAbbrs(x)) %in% pkeycol]
-  indPkeyCol <- match(pkCapsName, cols)
-  indPkeyCol <- indPkeyCol[!is.na(indPkeyCol)]
+  
+  pkCapsNames <- .getAllColAbbrs(x)[names(.getAllColAbbrs(x)) %in% pkeycol]  
+  indPkeyCol <- match(pkCapsNames, cols) 
+  indPkeyCol <- indPkeyCol[!is.na(indPkeyCol)] 
   if(length(indPkeyCol)==0){
     ## This meanns that the primary key needs to be removed ENTIRELY.
     res <- res[!(seq_len(length(res)) %in% grep(pkeycol, res))]
@@ -400,7 +408,7 @@
   ## AND if they are BOTH redundant how do I decide which row to expand?
   ## I think that I have to throw a warning and NOT do this step in that case?
   keyTest <- any(duplicated(keys))
-  rowTest <-  any(duplicated(tab[[jointype]]))             
+  rowTest <-  any(duplicated(tab[[jointype]]))         
   if(!keyTest && !rowTest){ ## already the same - nothing to do
     tab<-tab
   }else if(keyTest && !rowTest){ ## Need to account for row dups
@@ -466,14 +474,16 @@
   keys <- keys[!is.na(keys)]
 
   if(keytype %in% c("ENTREZID","PROBEID","GOID","TAIR","ORF") &&
-     !(keytype %in% "ENTREZID" && class(x)=="ChipDb")){
+     !(keytype %in% "ENTREZID" && class(x)=="ChipDb") &&
+     !(keytype %in% "ENTREZID" && .getCentralID(x)=="TAIR") &&
+     !(keytype %in% "ENTREZID" && .getCentralID(x)=="ORF")){
     objs <- .makeBimapsFromStrings(x, cols)
-    res <-.mergeBimaps(objs, keys, jointype=jointype)
+    res <-.mergeBimaps(x, objs, keys, jointype=jointype)
   }else{ ## not a central ID, so an extra col is required
     if(!(keytype %in% cols)){ cols <- unique(c( keytype, cols)) }
     objs <- .makeBimapsFromStrings(x, cols)
     ## merge using the base joinType (based on primary key)
-    res <- .mergeBimapsPostFilt(objs, keys, jointype=jointype)
+    res <- .mergeBimapsPostFilt(x, objs, keys, jointype=jointype)
     ## deduce NEW jointype from the keytype (do NOT use the default one!)
     ## This jointype is for filtering (which happens next)
     jointype <- .getRKeyName(x, keytype)
@@ -484,7 +494,13 @@
 
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
-    res <- .resort(res, keys, jointype, oriTabCols)
+    ##exception for TAIR
+    if(.getCentralID(x) =="TAIR" && "ENTREZID" %in% colnames(res)){
+      colnames(res) <- gsub("ENTREZID","gene_id",colnames(res))
+      res <- .resort(res, keys, jointype, oriTabCols)
+    }else{
+      res <- .resort(res, keys, jointype, oriTabCols)
+    }
   }
   
   ## rename col headers, BUT if they are not returned by cols, then we have to
@@ -500,7 +516,15 @@
   res
 }
 
-
+## Helper for setting the jointype to an appropriate default
+.chooseJointType  <- function(x){
+  if(.getCentralID(x) == "ORF"){
+    jointype <- "systematic_name"
+  }else{
+    jointype <- "gene_id"
+  }
+  jointype
+}
 
 
 
@@ -509,7 +533,8 @@ setMethod("select", "OrgDb",
           if (missing(keytype)){
             keytype <- .chooseCentralOrgPkgSymbol(x)
           }
-          .select(x, keys, cols, keytype, jointype="gene_id")
+          jointype <- .chooseJointType(x)
+          .select(x, keys, cols, keytype, jointype=jointype)
         }
 )
 

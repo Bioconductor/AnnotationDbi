@@ -40,7 +40,7 @@ test_makeBimapsFromStrings <- function(){
 
 test_toTableAndCleanCols <- function(){
   res <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
-  tab <- AnnotationDbi:::.toTableAndCleanCols(res[[1]])
+  tab <- AnnotationDbi:::.toTableAndCleanCols(x, res[[1]])
   checkTrue(is.data.frame(tab))
   checkTrue(length(colnames(tab)) == length(unique(colnames(tab))))
 }
@@ -48,7 +48,7 @@ test_toTableAndCleanCols <- function(){
 test_mergeBimaps <- function(){
   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
   keys <- keys
-  tab <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
+  tab <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
   checkTrue(length(colnames(tab)) == length(unique(colnames(tab))))
   checkTrue(dim(tab)[2] == 7)
   checkTrue(dim(tab)[1] >= length(keys))
@@ -58,7 +58,7 @@ test_mergeBimaps <- function(){
 test_mergeBimapsPostFilt <- function(){
   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols="CHR")
   keys <- keys
-  tab <-AnnotationDbi:::.mergeBimapsPostFilt(objs, keys, jointype="gene_id")
+  tab <-AnnotationDbi:::.mergeBimapsPostFilt(x, objs, keys, jointype="gene_id")
   checkTrue(length(colnames(tab)) == length(unique(colnames(tab))))
   checkTrue(dim(tab)[2] == 2)
   checkTrue(length(unique(tab[[jointype]])) >= length(keys))
@@ -127,7 +127,7 @@ test_renameColumnsWithRepectForExtras <- function(){
   ## cols can be expected to always include keytypes for testing this helper.
   cols <- c("CHR","PROSITE","GO","REFSEQ")
   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
-  res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
+  res <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
   oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
   res2 <- AnnotationDbi:::.renameColumnsWithRepectForExtras(x, res, oriCols)
   exp <- c("ENTREZID","CHR","IPI","PrositeId","GO","Evidence","Ontology",
@@ -142,7 +142,7 @@ test_renameColumnsWithRepectForExtras <- function(){
 test_cleanOutUnwantedCols <- function(){
   cols <- c("CHR","PROSITE","GO","REFSEQ") 
   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
-  res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
+  res <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
   oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
   keytype <- "ENTREZID"
   res2 <- AnnotationDbi:::.cleanOutUnwantedCols(x, res, keytype, oriCols)
@@ -190,7 +190,7 @@ test_generateExtraRows <- function(){
 test_resort <- function(){
   cols <- c("CHR","SYMBOL", "PFAM")
   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
-  res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
+  res <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
   ## jumble res to simulate trouble
   resRO = res[order(sort(res$gene_id,decreasing=TRUE)),]
   reqCols <- c("gene_id","chromosome","symbol","ipi_id","PfamId")
@@ -202,7 +202,7 @@ test_resort <- function(){
   keys <- c(1, keys, keys)
   cols <- c("CHR","SYMBOL")
   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
-  res <- AnnotationDbi:::.mergeBimaps(objs, keys, jointype)
+  res <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
   reqCols <- c("gene_id","chromosome","symbol")
   res2 <- AnnotationDbi:::.resort(res, keys, jointype, reqCols)
   checkIdentical(as.numeric(as.character(res2$gene_id)),keys)
@@ -303,4 +303,47 @@ test_select <- function(){
   checkTrue(class(res) =="data.frame")
   checkTrue(dim(res)[2] ==1)  
   checkIdentical(keys, as.character(t(res$ENTREZID)))
+
+  ## What about when we have to get data from Arabidopsis using various
+  ## keytypes?
+  cols <- c("SYMBOL","CHR")
+  keys <- head(keys(t,"TAIR"))
+  res <- select(t, keys, cols, keytype="TAIR")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("TAIR","SYMBOL","CHR"), colnames(res))
+
+  keys <- head(keys(t,"ENTREZID"))
+  res <- select(t, keys, cols, keytype="ENTREZID")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ENTREZID","SYMBOL","CHR"), colnames(res))
+
+  keys=head(keys(t,"REFSEQ"))
+  res <- select(t, keys, cols , keytype="REFSEQ")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("REFSEQ","SYMBOL","CHR"), colnames(res))
+
+  ## how about different keytypes for yeast?
+  keys <- head(keys(s, "REFSEQ"))
+  cols <- c("CHR","PFAM")
+  res <- select(s, keys, cols, keytype="REFSEQ")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("REFSEQ","CHR","PFAM"), colnames(res))
+
+  keys <- head(keys(s, "ENTREZID"))
+  cols <- c("CHR","PATH")
+  res <- select(s, keys, cols, keytype="ENTREZID")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ENTREZID","CHR","PATH"), colnames(res))
+
+  keys <- head(keys(s, "ORF"))
+  cols <- c("CHR","SGD")
+  res <- select(s, keys, cols, keytype="ORF")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ORF","CHR","SGD"), colnames(res))
 }
