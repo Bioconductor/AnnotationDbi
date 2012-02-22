@@ -140,7 +140,7 @@ test_renameColumnsWithRepectForExtras <- function(){
 ## throw anything out, but I want to be sure that it does not throw out things
 ## like Ontology etc.
 test_cleanOutUnwantedCols <- function(){
-  cols <- c("CHR","PROSITE","GO","REFSEQ") 
+  cols <- c("CHR","PROSITE","GO","REFSEQ")
   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
   res <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
   oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
@@ -244,14 +244,16 @@ test_keys <- function(){
 
 
 ## This one to test out some real use cases...
-test_select <- function(){
+test_select1 <- function(){
   keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
   cols <- c("SYMBOL","ENTREZID","PROBEID")
   res <- select(hgu95av2.db, keys, cols, keytype="ALIAS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("ALIAS","SYMBOL","ENTREZID","PROBEID"), colnames(res))
+}
 
+test_select2 <- function(){
   keys <- head(keys(org.Hs.eg.db),n=2)
   cols <- c("PFAM","ENTREZID", "GO")
   res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
@@ -259,21 +261,27 @@ test_select <- function(){
   checkTrue(dim(res)[2]==6)
   checkIdentical(c("ENTREZID","IPI","PfamId","GO","Evidence","Ontology"),
                  colnames(res))
+}
 
+test_select3 <- function(){
   keys <- head(keys(org.Hs.eg.db,keytype="OMIM"),n=4)
   cols <- c("SYMBOL", "UNIPROT", "PATH")
   res <- select(hgu95av2.db, keys, cols, keytype="OMIM")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("OMIM","SYMBOL","UNIPROT","PATH"), colnames(res))
+}
 
+test_select4 <- function(){
   keys <- head(keys(org.Hs.eg.db),n=2)
   cols <- c("ACCNUM","REFSEQ")
   res <- select(org.Hs.eg.db, keys, cols)
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","ACCNUM","REFSEQ"), colnames(res))
+}
 
+test_select5 <- function(){
   ## TODO: investigate this warning!:
   ## ALSO this causes a bug (the header should say "GO" and NOT "BPPARENTS")
   keys <- head(keys(GO.db), n=4)
@@ -283,12 +291,16 @@ test_select <- function(){
   checkTrue(dim(res)[2]==6)
   checkIdentical(c("GO","Term","Ontology","Definition","Synonym",
                    "Secondary"), colnames(res))
-  
+}
+
+test_select6 <- function(){
   ## bad keys should result in failure
   keys <- head(keys(hgu95av2.db))
   cols <- c("SYMBOL","ENTREZID", "GO")
   checkException(select(hgu95av2.db, keys, cols, keytype="ENTREZID"))
-  
+}
+
+test_select7 <- function(){  
   ## What if the keys are goofy (we want to test the row-wise "auto-expand")
   cols <- c("SYMBOL","ENTREZID") ## 1st of all cols should be 1:1 cols
   keys <- head(keys(org.Hs.eg.db),n=3)
@@ -296,14 +308,28 @@ test_select <- function(){
   res <- select(org.Hs.eg.db, keys, cols)
   checkTrue(class(res) =="data.frame")
   checkIdentical(keys, as.character(t(res$ENTREZID)))
-  
+}
+
+test_select8 <- function(){
   ## What if there is only one col?
   cols <- c("ENTREZID")
   res <- select(org.Hs.eg.db, keys, cols)
   checkTrue(class(res) =="data.frame")
   checkTrue(dim(res)[2] ==1)  
-  checkIdentical(keys, as.character(t(res$ENTREZID)))
+  checkIdentical(as.character(keys), as.character(t(res$ENTREZID)))
+}
 
+test_select9 <- function(){  
+  ## What about when we need to throw away extra cols?
+  uniKeys <- head(keys(org.Hs.eg.db, keytype="UNIPROT"))
+  cols <- c("SYMBOL", "PATH")
+  res <- select(org.Hs.eg.db, keys=uniKeys, cols=cols, keytype="UNIPROT")
+  checkTrue(class(res) =="data.frame")
+  checkTrue(dim(res)[2] ==3)  
+  checkIdentical(c("UNIPROT","SYMBOL","PATH"), colnames(res))
+}
+
+test_select10 <- function(){
   ## What about when we have to get data from Arabidopsis using various
   ## keytypes?
   cols <- c("SYMBOL","CHR")
@@ -324,7 +350,9 @@ test_select <- function(){
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("REFSEQ","SYMBOL","CHR"), colnames(res))
+}
 
+test_select11 <- function(){
   ## how about different keytypes for yeast?
   keys <- head(keys(s, "REFSEQ"))
   cols <- c("CHR","PFAM")
@@ -332,14 +360,14 @@ test_select <- function(){
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("REFSEQ","CHR","PFAM"), colnames(res))
-
+  
   keys <- head(keys(s, "ENTREZID"))
   cols <- c("CHR","PATH")
   res <- select(s, keys, cols, keytype="ENTREZID")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","CHR","PATH"), colnames(res))
-
+  
   keys <- head(keys(s, "ORF"))
   cols <- c("CHR","SGD")
   res <- select(s, keys, cols, keytype="ORF")

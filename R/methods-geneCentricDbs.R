@@ -248,9 +248,10 @@
 .cleanOutUnwantedCols <- function(x, res, keytype, oriCols){
   centralID <- .getCentralID(x)
   blackList <- switch(EXPR = centralID,
+                      "EG" = unique(c(keytype, "ENTREZID","PROBEID")),
                       "ENTREZID" = unique(c(keytype, "ENTREZID","PROBEID")),
                       "ORF" = unique(c(keytype, "ORF","PROBEID")),
-                      "TAIR" = unique(c(keytype, "TAIR","PROBEID")) )
+                      "TAIR" = unique(c(keytype, "TAIR","PROBEID")))
   blackList <- blackList[!(blackList %in% oriCols)]
   fcNames <- .getAllColAbbrs(x)
   smBlackList <- names(fcNames)[fcNames %in% blackList]
