@@ -145,6 +145,8 @@
 #########################################################################
 .downloadAndSaveToTemp <- function(url, tmp){
   require(RCurl)
+  if (!url.exists(url))
+    stop("URL '", url, "' does not exist")
   binRes <- getBinaryURL(url)
   writeBin(binRes, con=tmp)
 }
@@ -690,9 +692,9 @@ makeOrgPackageFromNCBI <- function(version,
   if(outputDir!="." && file.access(outputDir)[[1]]!=0){
     stop("Selected outputDir '", outputDir,"' does not exist.")}
 
+  ## 'outputDir' is not passed to makeOrgDbFromNCBI(). Hence the db file
+  ## is always created in ".". Maybe that could be revisited.
   makeOrgDbFromNCBI(tax_id=tax_id, genus=genus, species=species)
-  
-  dbName <- .generateOrgDbName(genus,species)
   
   seed <- new("AnnDbPkgSeed",
               Package= paste(dbName,".db",sep=""),
@@ -708,11 +710,13 @@ makeOrgPackageFromNCBI <- function(version,
               manufacturer = "no manufacturer",
               chipName = "no manufacturer")
 
-  makeAnnDbPkg(seed, paste(outputDir,"/", dbName,".sqlite", sep=""),
-               dest_dir = outputDir)
+  dbName <- .generateOrgDbName(genus,species)
+  dbfile <- paste(dbName, ".sqlite", sep="")
+  
+  makeAnnDbPkg(seed, dbfile, dest_dir=outputDir)
   
   ## cleanup
-  file.remove(paste(dbName,".sqlite",sep=""))
+  file.remove(dbfile)
 }
 
 
