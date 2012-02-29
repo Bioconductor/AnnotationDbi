@@ -158,8 +158,9 @@
      if(is(tryResult,"try-error") && i < 4){
          Sys.sleep(20)
      }else if(is(tryResult,"try-error") && i >= 4){
-         msg = paste("After 3 attempts, AnnotationDbi is still not getting",
-                     "results from the FTP site. Please try again later.",
+         msg = paste("After 3 attempts, AnnotationDbi is still not able",
+                     "to access the following URL:", url,
+                     "You might want to try again later.",
                       sep=" ")
          stop(paste(strwrap(msg,exdent=2), collapse="\n"))
      }else{ return() }
