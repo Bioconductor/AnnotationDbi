@@ -39,7 +39,7 @@ setMethod("ls", signature(name="Bimap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "mget" new generic.
+### "mget" methods.
 ###
 ### 'mget(x, map)' vs 'as.list(map)':
 ###   1. mget checks its 'x' arg. and gracefully fails if it's not of
@@ -49,7 +49,7 @@ setMethod("ls", signature(name="Bimap"),
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
 
-setMethod("mget", signature(envir="AnnDbBimap"),
+setMethod("mget", signature(x="ANY", envir="AnnDbBimap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         if (missing(ifnotfound))
@@ -81,7 +81,7 @@ setMethod("eapply", signature(env="Bimap"),
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "get" new generic.
+### "get" methods.
 ###
 ### We want this:
 ###   get("1027_at", envir=hgu95av2GO)
@@ -182,7 +182,7 @@ setMethod("$", "AnnDbBimap", function(x, name) x[[name]])
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "contents" methods.
+### "contents" methods.
 ###
 ### The "contents" method for environment objects is defined in Biobase.
 ###
