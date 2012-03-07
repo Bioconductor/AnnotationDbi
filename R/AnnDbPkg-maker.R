@@ -232,7 +232,7 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
 	con1 <- dbConnect(dbDriver("SQLite"), dbfile)
 	type <- dbGetQuery(con1, 
 	     	           "SELECT value FROM metadata WHERE name='Db type'")
-        if(type!="OrgDb"){
+        if(type=="ChipDb"){
             org_version <- installed.packages()['org.Hs.eg.db','Version']
 	}else{org_version <- "no org version date" }
         symvals <- list(

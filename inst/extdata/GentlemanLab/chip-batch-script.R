@@ -35,3 +35,20 @@ pkgs <- paste(substr(sqlitefiles, 1, nchar(sqlitefiles)-7), ".db", sep="")
 library(AnnotationDbi)
 makeAnnDbPkg(pkgs)
 
+
+
+## example for testing things:
+## With a "AnnDbPkgSeed" object:
+## x <- new("AnnDbPkgSeed",
+##          Package="KEGG.db",
+##          Version="0.0.99",
+##          PkgTemplate="KEGG.DB",
+##          AnnObjPrefix="KEGG"
+##          )
+## dbfile <- "/mnt/cpb_anno/mcarlson/sanctionedSqlite/KEGG.sqlite"
+## dest_dir="."
+## no.man=FALSE
+## x <- AnnotationDbi:::initWithDbMetada(x, dbfile)
+## x <- AnnotationDbi:::initComputedSlots(x)
+## dbfile_basename <- basename(dbfile)
+## etc. inside of: setMethod("makeAnnDbPkg", "AnnDbPkgSeed", 
