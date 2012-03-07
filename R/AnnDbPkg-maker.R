@@ -226,7 +226,15 @@ setMethod("makeAnnDbPkg", "AnnDbPkgSeed",
           template_path <- x@PkgTemplate
         }
         ann_dbi_version <- installed.packages()['AnnotationDbi','Version']
-        org_version <- installed.packages()['org.Hs.eg.db','Version']
+	## only define 'org_version' if we are making a chipDb package.
+	## Otherwise it will only cause trouble.
+	
+	con1 <- dbConnect(dbDriver("SQLite"), dbfile)
+	type <- dbGetQuery(con1, 
+	     	           "SELECT value FROM metadata WHERE name='Db type'")
+        if(type!="OrgDb"){
+            org_version <- installed.packages()['org.Hs.eg.db','Version']
+	}else{org_version <- "no org version date" }
         symvals <- list(
             DBSCHEMA=x@DBschema,
             PKGTITLE=x@Title,
