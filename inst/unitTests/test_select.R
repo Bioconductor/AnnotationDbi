@@ -157,25 +157,6 @@ test_cleanupBaseTypesFromCols <- function(){
 }
 
 
-test_locateUsingAdjID <- function(){
-  cols <- c("ALIAS2EG","SYMBOL","ENTREZID","REFSEQ","ACCNUM")
-  indCol <- 3 ## 3rd element is the Primary key for cols
-  res <- c("gene_id","alias_symbol","gene_id","symbol","gene_id","gene_id",
-           "gene_id","accession","gene_id","accession")
-  pkeycol <- "gene_id"
-  exp <- c("alias_symbol","symbol","gene_id","accession","accession")
-  res2 <- AnnotationDbi:::.locateUsingAdjID(x, res, cols, indCol, pkeycol)
-  checkIdentical(exp,res2)
-}
-
-test_getDBHeaderCols <- function(){
-  cols <- c("ENTREZID","CHRLOC","PFAM","GO")
-  res <- AnnotationDbi:::.getDBHeaderCols(x,cols)
-  exp <- c("gene_id","start_location","Chromosome" ,"ipi_id","PfamId",
-           "go_id","Evidence","Ontology")
-  checkIdentical(exp,res)
-}
-
 
 ## resort and friends are really important as they are generic enough to
 ## be reused elsewhere.
@@ -242,8 +223,8 @@ test_keys <- function(){
   checkTrue(any(grepl("A", orfSckeys)))
 }
 
-
-## This one to test out some real use cases...
+#########################################################################
+## These ones are to test out some real use cases...
 test_select1 <- function(){
   keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
   cols <- c("SYMBOL","ENTREZID","PROBEID")
@@ -375,3 +356,38 @@ test_select11 <- function(){
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ORF","CHR","SGD"), colnames(res))
 }
+
+test_select12 <- function(){
+  ## what happens when we use GO as an ID?
+  keys <- "1"
+  cols <- c("GO","ENTREZID")
+  res <- select(x, keys, cols, keytype="ENTREZID")
+  checkTrue(dim(res)[1]>0)   
+  checkTrue(dim(res)[2]==4)
+  checkIdentical(c("ENTREZID","GO","Evidence","Ontology"), colnames(res))
+
+  keys <- "GO:0000018"
+  cols <- c("GO","ENTREZID")
+  res <- select(x, keys, cols, keytype="GO")
+  checkTrue(dim(res)[1]>0)   
+  checkTrue(dim(res)[2]==4)
+  checkIdentical(c("GO","Evidence","Ontology","ENTREZID"), colnames(res))
+
+  keys <- "GO:0000023"
+  cols <- c("GO","ENTREZID")
+  res <- select(t, keys, cols, keytype="GO")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==4)
+  checkIdentical(c("GO","Evidence","Ontology","ENTREZID"), colnames(res)) 
+
+  keys <- "GO:0000023"
+  cols <- c("ENTREZID","TAIR","GO")
+  res <- select(t, keys, cols, keytype="GO")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==5)
+  checkIdentical(c("GO","Evidence","Ontology","ENTREZID","TAIR"), 
+  		colnames(res))
+}
+
+
+

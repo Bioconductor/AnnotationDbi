@@ -149,8 +149,13 @@
 ## Another Helper for getting all possible short mapping names for salient cols
 .getAllColAbbrs <- function(x){
   cols <- .makeColAbbrs(x)## unique strips off the name so we loop.  :(
-  maybeMissing = c(probe_id="PROBEID", gene_id="ENTREZID",
-                   gene_id="TAIR", systematic_name="ORF")
+  maybeMissing <- c(probe_id="PROBEID", gene_id="ENTREZID",
+                   systematic_name="ORF")
+  ## if we have a tair DB, add tair to the list, but otherwise do not.
+  ## reason is b/c it creates a duplicate key situation with 'gene_id'
+  if(.getCentralID(x) == "TAIR"){
+    maybeMissing <- c(c(gene_id="TAIR"), maybeMissing)
+  }
   for(i in seq_len(length(maybeMissing))){
     if(!maybeMissing[i] %in% cols){
        cols <- c(cols,maybeMissing[i])
@@ -160,8 +165,9 @@
 }
 
 ## look for exceptions, BUT the logic of the loop used by this helper strictly
-## requires that the names and cols be of the same length. Therefore, only
-## primaryNames that are NOT NA can be passed down to here
+## requires that the names and cols be of the same length AND IN THE SAME
+## ORDER!. Therefore, only primaryNames that are NOT NA can be passed down to
+## here, and the order of names and cols must be consistent beforehand.
 .nameExceptions <- function(names, cols){
   if(length(names) != length(cols)){
     warning("cols could not be renamed because length(names) != length(cols)")
@@ -220,15 +226,17 @@
   .nameExceptions(names, modCols)
 }
 
-.renameColumnsWithRepectForExtras <- function(x, res, oriCols){
+## used to rename the cols (where appropriate) with all caps labels
+.renameColumnsWithRepectForExtras <- function(x, res, oriCols){  
   res <- .filterSuffixes(res) ## Removes duplicate suffixes
-  fcNames <- .getAllColAbbrs(x)
-  fcNames <- .swapSymbolExceptions(x, fcNames)
-  secondaryNames <- colnames(res)
+  uncleanedfcNames <- .getAllColAbbrs(x)
+  ## THEN clean up symbol exceptions  
+  fcNames <- .swapSymbolExceptions(x, uncleanedfcNames)
   primaryNames <- fcNames[match(colnames(res), names(fcNames))]
-  ## replace problematic names by using original cols requests 
   primaryNames <- .selectivelyMatchNameExceptions(x, primaryNames, oriCols)
-  
+  ## secondary names are just the table names.
+  secondaryNames <- colnames(res)
+
   ## merge two name types giving preference to primary
   colNames <- character()
   if(length(secondaryNames) == length(primaryNames)){
@@ -270,83 +278,6 @@
     cols <- cols[!(cols %in% "PROBEID")]
   }
   cols
-}
-
-
-###############################################################################
-## AnnotationDbi specific col sorting helpers
-
-## These helpers are needed just be AnnotationDbi org packages to help get the
-## table headers in an order that we actually want to return to users.
-.getAdjID <- function(x, adjacent, offset, pkeycol, res){
-      indColAdj <- match(adjacent, .getAllColAbbrs(x))
-      specificColsStr <- names(.getAllColAbbrs(x)[indColAdj])
-      indKeeper <- match(specificColsStr, res) + offset ## correct index
-      indRem <- grep(pkeycol, res) ## list all pkey matches
-      indRem <- indRem[indRem!=indKeeper] ## we still have to keep indKeeper
-      res <- res[!(seq_len(length(res)) %in% indRem)] ## drop the others.
-      res
-}
-## tries to find a way to resolve which of the primary keys is the one we want
-## to keep
-.locateUsingAdjID <- function(x, res, cols,indCol, pkeycol){
-  if(length(cols) > 1 && indCol > 1){ 
-    indAdj <- indCol - 1
-    adjacent <- cols[indAdj]
-    if(!duplicated(cols[cols %in% adjacent])){
-      res <- .getAdjID(x, adjacent, offset=1, pkeycol, res)
-    }else{stop("Too many repetitive keys")}
-  }else if(length(cols) > 1 && indCol == 1){
-    indAdj <- indCol + 1
-    adjacent <- cols[indAdj]
-    if(!duplicated(cols[cols %in% adjacent])){
-      res <- .getAdjID(x, adjacent, offset=-1, pkeycol, res)
-    }else{stop("Too many repetitive keys")}
-  }else if (length(cols)==1){
-    res <- res
-  }
-  res
-}
-
-.getDBHeaderCols <- function(x, cols){
-  res <- character()
-  for(i in seq_len(length(cols))){
-    ## 1st get the number of cols associated
-    if(!cols[i] %in%  c("ENTREZID","GOID","PROBEID","TAIR","ORF")){
-      obj <- .makeBimapsFromStrings(x, cols[i])[[1]]
-      localCNs <- colnames(toTable(obj[1]))
-      res <- c(res, localCNs)
-    }else{
-      localCNs <- switch(cols[i],
-                         "ENTREZID"="gene_id",
-                         "GOID"="go_id",
-                         "PROBEID"="probe_id",
-                         "TAIR"="gene_id",
-                         "ORF"="systematic_name")
-      res <- c(res, localCNs)
-    }
-  }
-  ## I can't just use unique here.  Because primary keys must be in the proper
-  ## location in the result vector.  The primary key just the one we see the
-  ## most often. So get the one that recurs, and grab the 1st of those...
-  if(any(duplicated(res))){
-    pkeycol <- res[duplicated(res)][[1]]
-  }else{stop("Cannot deduce primary key column.")}
-  
-  pkCapsNames <- .getAllColAbbrs(x)[names(.getAllColAbbrs(x)) %in% pkeycol]  
-  indPkeyCol <- match(pkCapsNames, cols) 
-  indPkeyCol <- indPkeyCol[!is.na(indPkeyCol)] 
-  if(length(indPkeyCol)==0){
-    ## This meanns that the primary key needs to be removed ENTIRELY.
-    res <- res[!(seq_len(length(res)) %in% grep(pkeycol, res))]
-    ## Weird exception for GO ONLY (b/c with GO you implicitly want the keys)
-    if(pkeycol=="go_id"){res <- c("go_id",res)}
-  }else{
-    ## I can't use pkeycol because there is more than one of these SO
-    ## I need a solution like the following that will get a specific ID
-    res <- .locateUsingAdjID(x, res, cols, indCol=indPkeyCol, pkeycol)
-  }
-  res
 }
 
 
@@ -440,7 +371,68 @@
 }
 
 
-## Fresh start.  I need to NOT do this as a double merge
+## ## Helper to make sure that oriTabCols is in same order as oriCols
+.resortOriTabCols <- function(oriTabCols, oriCols, x, res){
+  ## One strange exception caused by another "ENTREZID" exception upstream
+  CNAMES <- c(.getAllColAbbrs(x), ENTREZID="ENTREZID")
+  oriTabNames <- CNAMES[match(oriTabCols,names(CNAMES))]
+  names(oriTabNames) <- oriTabCols
+  ## need to split this vector into the correct "pieces" (split by "not an NA")
+  len <- length(oriTabNames)
+  chunks <- list()
+  resInd <- 1 ## index of next chunks
+  prevInd <- 0 ## index of prev chunks
+  for(i in seq_len(len)){
+    cur <- oriTabNames[i]    
+    if(!is.na(cur)){
+      chunks[[resInd]] <- cur
+      prevInd <- resInd
+      resInd <- resInd + 1
+    }else{
+      chunks[[prevInd]] <- c(chunks[[prevInd]], cur)
+    }
+  }  
+  ## get the short names of oriCols (which gives the desired order)
+  CNAMES <- .getAllColAbbrs(x)
+  oriNames <- CNAMES[match(oriCols, CNAMES)]
+  ## helper to look up stuff in chunks (What chunk has the ID?)
+  chunkIdx <- function(str){
+    res <- integer(length(chunks))
+    for(i in seq_len(length(chunks))){
+      if(str %in% chunks[[i]]){
+        res[i] <- i
+      }else{
+        res[i] <- NA
+      }
+    }
+    res <- res[!is.na(res)]
+    res[1] ## return the 1st match...
+  }
+  ## Now I just need to make another loop and reassemble things in order of
+  ## oriNames
+  len <- length(oriNames)
+  result <- character()
+  for(i in seq_len(len)){
+    str <- oriNames[i]
+    idx <- chunkIdx(str)
+    if(!is.na(idx)){
+      result <- c(result, chunks[[idx]]) ## try to deduce the chunk
+    }else{
+      result <- c(result, oriNames[i]) ## if you fail, fallback to oriCols
+    }
+  }
+  ## TAIR exception. 
+  if("ENTREZID" %in% oriCols && "TAIR" %in% oriCols &&
+     .getCentralID(x) == "TAIR"){
+    ## means that we have tair and ENTREZID
+    names(result)[match("ENTREZID",result)] <- "ENTREZID"
+  }
+  ## return the names:
+  names(result)
+}
+
+
+## the core of the select method for GO org and chip packages.
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
   ## if asked for what they have, just return that.
   if(all(cols %in% keytype)  && length(cols)==1){
@@ -463,7 +455,7 @@
 
   ## All this because I need to account for the cols that "expand"
   ## I really do need a new helper here
-  oriTabCols <- .getDBHeaderCols(x, oriCols)
+  ## oriTabCols <- .getDBHeaderCols(x, oriCols)
   
   ## now drop a value from cols before we try to make any bimaps
   cols <- .cleanupBaseTypesFromCols(x, cols)
@@ -489,19 +481,19 @@
     ## This jointype is for filtering (which happens next)
     jointype <- .getRKeyName(x, keytype)
   }
-  
+
   ## this takes a black list approach for cleaning out unwanted cols
   res <- .cleanOutUnwantedCols(x, res, keytype, oriCols)
-
+  
+  ## now is the time to collect the column names that we expect from the DB
+  res <- .filterSuffixes(res)
+  oriTabCols <- colnames(res)
+  ## It's important that these are in the same order as oriCols.
+  oriTabCols <- .resortOriTabCols(oriTabCols, oriCols, x, res)
+  
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
-    ##exception for TAIR
-    if(.getCentralID(x) =="TAIR" && "ENTREZID" %in% colnames(res)){
-      colnames(res) <- gsub("ENTREZID","gene_id",colnames(res))
-      res <- .resort(res, keys, jointype, oriTabCols)
-    }else{
-      res <- .resort(res, keys, jointype, oriTabCols)
-    }
+    res <- .resort(res, keys, jointype, oriTabCols)
   }
   
   ## rename col headers, BUT if they are not returned by cols, then we have to
@@ -514,6 +506,7 @@
   ## have (at least for AnnotationDbi) have legitimate duplications that we do
   ## NOT want to remove. 
   res <- .dropDuplicatedCols(res)
+  rownames(res) <- NULL
   res
 }
 
