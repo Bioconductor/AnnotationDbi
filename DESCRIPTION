@@ -2,7 +2,7 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.17.30
+Version: 1.17.31
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer <maintainer@bioconductor.org>
 Depends: R (>= 2.7.0), methods, utils, BiocGenerics (>= 0.1.13),
@@ -26,7 +26,6 @@ Collate: 00RTobjs.R
          flatten.R
          methods-AnnotationDb.R
          methods-geneCentricDbs.R
-         methods-ReactomeDb.R
          loadDb.R
          createAnnObjs-utils.R
          createAnnObjs.ORGANISM_DB.R
