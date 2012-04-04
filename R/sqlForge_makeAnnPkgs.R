@@ -55,7 +55,10 @@ makeARABIDOPSISCHIP_DB <- function(...){
     .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
     makeDBPackage("ARABIDOPSISCHIP_DB", ...)    
 }
-
+makeRHESUSCHIP_DB <- function(...){
+    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
+    makeDBPackage("RHESUSCHIP_DB", ...)    
+}
 
 .makeHUMANCHIP_DB <- function(affy,
                              prefix,
@@ -741,3 +744,50 @@ makeARABIDOPSISCHIP_DB <- function(...){
 }
 
 
+.makeRHESUSCHIP_DB <- function(affy,
+                           prefix,
+                           fileName,
+                           otherSrc = character(0),
+                           chipMapSrc = system.file("extdata", "chipmapsrc_rhesus.sqlite", package="rhesus.db0"),
+                           chipSrc = system.file("extdata", "chipsrc_rhesus.sqlite", package="rhesus.db0"),
+                           baseMapType,
+                           outputDir = ".",
+                           version,
+                           manufacturer = "Manufacturer not specified",
+                           chipName = "ChipName not specified",
+                           manufacturerUrl = "Manufacturer Url not specified",
+                           author = "Marc Carlson, Seth Falcon, Herve Pages, Nianhua Li",
+                           maintainer = "Biocore Data Team <biocannotation@lists.fhcrc.org>"){
+
+    if(outputDir!="." && file.access(outputDir)[[1]]!=0){stop("Selected outputDir '", outputDir,"' does not exist.")}
+    
+    metaDataSrc <- c(DBSCHEMA="RHESUSCHIP_DB",
+                     ORGANISM="Macaca mulatta",
+                     SPECIES="Rhesus",
+                     MANUFACTURER=manufacturer,
+                     CHIPNAME=chipName,
+                     MANUFACTURERURL=manufacturerUrl)
+
+    popRHESUSCHIPDB(affy = affy,
+                 prefix = prefix,
+                 fileName = fileName,
+                 chipMapSrc = chipMapSrc,
+                 chipSrc = chipSrc,
+                 metaDataSrc = metaDataSrc,
+                 otherSrc = otherSrc,
+                 baseMapType=baseMapType,
+                 outputDir=outputDir,
+                 printSchema=FALSE)
+
+    seed <- new("AnnDbPkgSeed",
+                Package= paste(prefix,".db",sep=""),
+                Version=version,
+                Author=author,
+                Maintainer=maintainer,
+                PkgTemplate="RHESUSCHIP.DB",
+                AnnObjPrefix=prefix
+                )
+
+    makeAnnDbPkg(seed, paste(outputDir,"/", prefix,".sqlite", sep=""), dest_dir = outputDir)
+
+}

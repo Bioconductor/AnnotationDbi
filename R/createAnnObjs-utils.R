@@ -97,7 +97,7 @@ createAnnObjs.SchemaChoice = function(schema, prefix, target, dbconn, datacache)
            "RHESUS_DB"  = return(AnnotationDbi:::createAnnObjs.RHESUS_DB(prefix, target, dbconn, datacache)),
            "ANOPHELES_DB"  = return(AnnotationDbi:::createAnnObjs.ANOPHELES_DB(prefix, target, dbconn, datacache)),
            "XENOPUS_DB"  = return(AnnotationDbi:::createAnnObjs.XENOPUS_DB(prefix, target, dbconn, datacache)),
-           
+           "RHESUSCHIP_DB" = return(AnnotationDbi:::createAnnObjs.RHESUSCHIP_DB(prefix, target, dbconn, datacache)),
            "GO_DB"  = return(AnnotationDbi:::createAnnObjs.GO_DB(prefix, target, dbconn, datacache)),
 
            "KEGG_DB"  = return(AnnotationDbi:::createAnnObjs.KEGG_DB(prefix, target, dbconn, datacache)),
@@ -145,6 +145,7 @@ populateDB = function(schema, ...){
            "ECOLI_DB"  = return(AnnotationDbi:::popECOLIDB(...)),           
            "CHIMP_DB"  = return(AnnotationDbi:::popCHIMPDB(...)),
            "RHESUS_DB"  = return(AnnotationDbi:::popRHESUSDB(...)),
+           "RHESUSCHIP_DB" = return(AnnotationDbi:::popRHESUSCHIPDB(...)),
            "ANOPHELES_DB"  = return(AnnotationDbi:::popANOPHELESDB(...)),
            "XENOPUS_DB"  = return(AnnotationDbi:::popXENOPUSDB(...))
           )
@@ -167,6 +168,7 @@ makeDBPackage = function(schema, ...){
            "PIGCHIP_DB"  = return(AnnotationDbi:::.makePIGCHIP_DB(...)),
            "CHICKENCHIP_DB"  = return(AnnotationDbi:::.makeCHICKENCHIP_DB(...)),
            "XENOPUSCHIP_DB"  = return(AnnotationDbi:::.makeXENOPUSCHIP_DB(...)),
+           "RHESUSCHIP_DB" = return(AnnotationDbi:::.makeRHESUSCHIP_DB(...)),
            "ARABIDOPSISCHIP_DB"  = return(AnnotationDbi:::.makeARABIDOPSISCHIP_DB(...))           
           )
 }

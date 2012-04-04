@@ -1687,6 +1687,79 @@ popCHIMPDB <- function(prefix,
 }
 
 
+#presently this is the formula for RHESUSCHIP_DB
+popRHESUSCHIPDB <- function(affy,
+                         prefix,
+                         fileName,
+                         chipMapSrc = system.file("extdata", "chipmapsrc_rhesus.sqlite", package="rhesus.db0"),
+                         chipSrc = system.file("extdata", "chipsrc_rhesus.sqlite", package="rhesus.db0"),
+                         metaDataSrc,
+                         otherSrc=character(0),
+                         baseMapType="gbNRef",
+                         outputDir=".",
+                         printSchema=FALSE){
+
+    if(affy==TRUE){
+        getMapForBiocChipPkg(
+                             csvFileName=fileName,
+                             pkgName=prefix,
+                             chipMapSrc=chipMapSrc,
+                             chipSrc=chipSrc,
+                             otherSrc=otherSrc,
+                             baseMapType=baseMapType,
+                             outputDir=outputDir
+                             )
+    }
+    else if(affy==FALSE){
+        getMapForOtherChipPkg(
+                              filePath=fileName,
+                              pkgName=prefix,
+                              chipMapSrc=chipMapSrc,
+                              chipSrc=chipSrc,
+                              otherSrc=otherSrc,
+                              baseMapType=baseMapType,
+                              outputDir=outputDir                                
+                              )
+    }
+
+    #define the substitution needed by the support functions.
+    subStrs <- c("coreTab"="probes","coreID"="probe_id","suffix"="PROBE","org"="rhesus","cntrTab"="genes", "prefix"=prefix, "outDir"=outputDir, "Db_type"="ChipDb")    
+    require("RSQLite")
+    drv <- dbDriver("SQLite")
+    db <- dbConnect(drv, dbname = file.path(outputDir, paste(prefix,".sqlite", sep="")) )    
+    sqliteQuickSQL(db, paste("ATTACH DATABASE '",chipSrc,"' AS anno;",sep="") )
+    
+    appendPreMeta(db, subStrs=subStrs, printSchema=printSchema, metaDataSrc=metaDataSrc)
+    appendGenes(db, subStrs=subStrs, printSchema=printSchema)
+    appendProbes(db, subStrs=subStrs, printSchema=printSchema)
+    appendGeneInfo(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendChromosomes(db, subStrs=subStrs, printSchema=printSchema)
+    #appendCytogenicLocs(db, subStrs=subStrs, printSchema=printSchema)
+    appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    appendPubmed(db, subStrs=subStrs, printSchema=printSchema)
+    appendUnigene(db, subStrs=subStrs, printSchema=printSchema)
+    appendChrlengths(db, subStrs=subStrs, printSchema=printSchema)
+    appendGO(db, subStrs=subStrs, printSchema=printSchema)
+    appendGOALL(db, subStrs=subStrs, printSchema=printSchema) 
+    appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
+    appendEC(db, subStrs=subStrs, printSchema=printSchema)
+    appendChromsomeLocs(db, subStrs=subStrs, printSchema=printSchema)
+    #appendPfam(db, subStrs=subStrs, printSchema=printSchema)
+    #appendProsite(db, subStrs=subStrs, printSchema=printSchema)
+    appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    appendEnsembl(db, subStrs=subStrs, printSchema=printSchema)
+    appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+
+    appendPostMeta(db, subStrs=subStrs)
+    
+    simplifyProbes(db, subStrs=subStrs)
+    dropRedundantTables(db, subStrs=subStrs)
+        
+    dbDisconnect(db)
+    
+    analyzeVacuumDisconnect(drv,outputDir,prefix)    
+}
 
 
 #This is the formula for RHESUS_DB  
