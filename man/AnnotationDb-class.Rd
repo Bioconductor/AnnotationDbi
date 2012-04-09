@@ -24,12 +24,14 @@
 \alias{cols,ChipDb-method}
 \alias{cols,GODb-method}
 \alias{cols,InparanoidDb-method}
+\alias{cols,ReactomeDb-method}
 
 \alias{keytypes}
 \alias{keytypes,OrgDb-method}
 \alias{keytypes,ChipDb-method}
 \alias{keytypes,GODb-method}
 \alias{keytypes,InparanoidDb-method}
+\alias{keytypes,ReactomeDb-method}
 
 % \alias{keys} %Not aliased here because it is already aliased in Bimap-keys.Rd
 % \alias{keys,AnnotationDb-method}
@@ -37,6 +39,7 @@
 \alias{keys,ChipDb-method}
 \alias{keys,GODb-method}
 \alias{keys,InparanoidDb-method}
+\alias{keys,ReactomeDb-method}
 
 \alias{select}
 % \alias{select,AnnotationDb-method}
@@ -44,6 +47,7 @@
 \alias{select,ChipDb-method}
 \alias{select,GODb-method}
 \alias{select,InparanoidDb-method}
+\alias{select,ReactomeDb-method}
 
 
 

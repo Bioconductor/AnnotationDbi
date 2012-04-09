@@ -546,10 +546,6 @@ setMethod("select", "GODb",
         }
 )
 
-## setMethod("select", "InparanoidDb",
-##     function(x, keys, cols, keytype="gene_id"){
-##            .select(x, keys, cols, keytype)}
-## )
 
 
 
@@ -599,11 +595,6 @@ setMethod("cols", "GODb",
     function(x) .cols(x) ## does not have a missing baseType
 )
 
-## something more tricky required for Inparanoid since a single template
-## exists for all (basically I need to do.call() a specific function
-## setMethod("cols", "InparanoidDb",
-##     function(x) .cols(x)
-## )
 
 
 
@@ -692,14 +683,6 @@ setMethod("keys", "GODb",
       dbQuery(dbConn(x), "SELECT go_id FROM go_term", 1L)
     }
 )
-
-## for Inparanoid, we want to select keys carefully (depeninding on the
-## organism - which is in the metadata)
-## setMethod("keys", "InparanoidDb",
-##     function(x) as.character(t(dbGetQuery(dbConn(x),
-##                                            "SELECT gene_id FROM genes")))
-## )
-
 
 
 

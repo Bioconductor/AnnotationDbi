@@ -256,3 +256,6 @@ setClass("KEGGFrame", contains="AnnotFrame",
 
 .GODb <-
     setRefClass("GODb", contains="AnnotationDb")
+
+.ReactomeDb <-
+    setRefClass("ReactomeDb", contains="AnnotationDb")
