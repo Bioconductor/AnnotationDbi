@@ -197,5 +197,8 @@ export(
     makeProbePackage,
 
     ## AnnotationDb
-    metadata
+    metadata,
+
+    ## chrNames
+    supportedSeqnameStyles
 )
