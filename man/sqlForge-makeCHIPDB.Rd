@@ -1,19 +1,5 @@
 \name{makeDBPackage}
-
 \alias{makeDBPackage}
-\alias{makeHUMANCHIP_DB}
-\alias{makeMOUSECHIP_DB}
-\alias{makeRATCHIP_DB}
-\alias{makeFLYCHIP_DB}
-\alias{makeZEBRAFISHCHIP_DB}
-\alias{makeECOLICHIP_DB}
-\alias{makeCANINECHIP_DB}
-\alias{makeBOVINECHIP_DB}
-\alias{makeWORMCHIP_DB}
-\alias{makePIGCHIP_DB}
-\alias{makeCHICKENCHIP_DB}
-\alias{makeYEASTCHIP_DB}
-\alias{makeARABIDOPSISCHIP_DB}
 
 \title{Creates a sqlite database, and then makes an annotation package
   with it}

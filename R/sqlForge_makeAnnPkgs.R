@@ -2,59 +2,54 @@
 ##TODO: make these so that they look for the correct kind of chipSrc and chipMapSrc files...  Probably this should be tied to these databases being downloadable to a standard place using biocLite.  For now, its a parameter, but there can be a default location added later.
 
 
-##Need to deprecate all of these functions so that they can be consolidated.
 makeHUMANCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("HUMANCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
 makeMOUSECHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("MOUSECHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
 makeRATCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("RATCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
 makeFLYCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("FLYCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
 makeYEASTCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("YEASTCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makeZEBRAFISHCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("ZEBRAFISHCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makeECOLICHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("ECOLICHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makeCANINECHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("CANINECHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makeBOVINECHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("BOVINECHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makeWORMCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("WORMCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makePIGCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("PIGCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makeCHICKENCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("CHICKENCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makeARABIDOPSISCHIP_DB <- function(...){
-    .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
-    makeDBPackage("ARABIDOPSISCHIP_DB", ...)    
+    .Defunct("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
 }
+
 makeRHESUSCHIP_DB <- function(...){
     .Deprecated("makeDBPackage", package="AnnotationDbi", msg = "This is no longer the function to use for making chip packages. Please use makeDBPackage() instead.")
     makeDBPackage("RHESUSCHIP_DB", ...)    
