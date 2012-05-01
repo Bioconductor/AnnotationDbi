@@ -200,5 +200,6 @@ export(
     metadata,
 
     ## chrNames
-    supportedSeqnameStyles
+    supportedSeqnameStyles,
+    generateSeqnames.db
 )

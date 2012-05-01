@@ -1,0 +1,15 @@
+UCSC,NCBI,ensembl
+chr2L,2L,2L
+chr2LHet,2LHet,2LHet
+chr2R,2R,2R
+chr2RHet,2Rhet,2RHet
+chr3L,3L,3L
+chr3LHet,3LHet,3LHet
+chr3R,3R,3R
+chr3RHet,3RHet,3RHet
+chr4,4,4
+chrU,Un,U
+chrX,X,X
+chrXHet,Xhet,XHet
+chrYHet,Yhet,YHet
+chrM,MT,dmel_mitochondrion_genome

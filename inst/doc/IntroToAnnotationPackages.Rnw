@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{Introduction To Bioconductor Annotation Packages}
+%\VignetteIndexEntry{AnnotationDbi: Introduction To Bioconductor Annotation Packages}
 %\VignetteDepends{org.Hs.eg.db,TxDb.Hsapiens.UCSC.hg19.knownGene,hom.Hs.inp.db}
 
 \documentclass[11pt]{article}
@@ -57,7 +57,7 @@
 
 
 
-\title{Introduction To Bioconductor Annotation Packages}
+\title{AnnotationDbi: Introduction To Bioconductor Annotation Packages}
 \author{Marc Carlson}
 
 \SweaveOpts{keep.source=TRUE}
@@ -315,11 +315,12 @@ namespaceExport(ns, dbNewname)
 @ 
 
 
-When this code is run, the name of the package is used to derive the
-name for the object.  Then that name, is used by \Rmethod{onload} to
-create an \Rclass{InparanoidDb} object.  This object is then assigned to
-the namespace for this package so that at load time it will be loaded
-for the user.
+When the code above is run (at load time) the name of the package (AKA
+"pkgname", which is a parameter that will be passed into
+\Rfunction{.onLoad}) is then used to derive the name for the object.
+Then that name, is used by \Rmethod{onload} to create an
+\Rclass{InparanoidDb} object.  This object is then assigned to the
+namespace for this package so that it will be loaded for the user.
 
 
 

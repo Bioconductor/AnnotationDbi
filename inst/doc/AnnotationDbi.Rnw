@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{AnnotationDbi: How to use bimaps from the ".db" annotation packages}
+%\VignetteIndexEntry{How to use bimaps from the ".db" annotation packages}
 %\VignetteDepends{hgu95av2.db}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
@@ -17,7 +17,7 @@
 %% And solution or answer
 \newenvironment{solution}{\color{blue}}{\bigskip}
 
-\title{AnnotationDbi: How to use bimaps from the ".db" annotation packages}
+\title{How to use bimaps from the ".db" annotation packages}
 \author{Marc Carlson, Herve Pages, Seth Falcon, Nianhua Li}
 
 \SweaveOpts{keep.source=TRUE}
