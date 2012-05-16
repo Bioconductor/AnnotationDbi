@@ -43,16 +43,34 @@ extractSeqnameSet <- function(style="UCSC", species="Homo sapiens"){
 
 ## A function for testing if a vector of data is the correct thing
 ## "TRUE" Usage example
-## testSeqnames(seqnames=c(1:20,"X","MT"),"NCBI","Rattus norvegicus")
+## .testSeqnames("NCBI",seqnames=c(1:20,"X","MT"),"Rattus norvegicus")
 ## "FALSE" Usage example
-## testSeqnames(seqnames=c(1:22,"X","Y","MT"),"NCBI","Rattus norvegicus")
-testSeqnames <- function(seqnames, style="ensembl", species="Homo sapiens"){
+## .testSeqnames("NCBI",seqnames=c(1:22,"X","Y","MT"),"Rattus norvegicus")
+.testSeqnames <- function(style, seqnames, species){
+  ## trueSeq is expected to be the shorter (definitive) list.
   trueSeq <- extractSeqnameSet(style=style,species=species)
-  identical(seqnames, trueSeq)
+  all(trueSeq %in% seqnames)
+}
+
+## vectorized for multiple styles
+## examples
+## testSeqnames(c("ensembl","NCBI"),seqnames=c(1:22,"X","Y","MT"),"Rattus norvegicus")
+testSeqnames <- function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sapiens"){
+  unlist(lapply(styles, .testSeqnames, seqnames=seqnames, species=species))
 }
 
 
+## seqnames = as.character(c(1:5,"Pt","Mt"))
+## styles = c("NCBI","ensembl")
+## species = "Arabidopsis thaliana"
+## testSeqnames(styles,seqnames, species)
 
+## seqnames = as.character(c(paste("chr",1:22,sep=""),paste("chr",c("M","Y","X"),sep=""),"chr6_apd_hap1"))
+## styles = c("UCSC","NCBI","ensembl")
+## species = "Homo sapiens"
+## testSeqnames(styles,seqnames, species)
+
+## seqnames2 = (paste("chr",1:22, sep=""))
 
 
 

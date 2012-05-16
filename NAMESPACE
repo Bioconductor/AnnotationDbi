@@ -201,5 +201,7 @@ export(
 
     ## chrNames
     supportedSeqnameStyles,
+    extractSeqnameSet,
+    testSeqnames,
     generateSeqnames.db
 )
