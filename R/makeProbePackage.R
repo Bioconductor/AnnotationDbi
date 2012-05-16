@@ -70,7 +70,7 @@ print.probetable = function(x, maxrows = 3, ...) {
 ## A function that reads tab-delimited probe sequence
 ## (and other stuff) files from Affymetrix
 getProbeDataAffy <- function(arraytype, datafile,
-                             pkgname = NULL, comparewithcdf = TRUE)
+                             pkgname = NULL, comparewithcdf = FALSE)
 {
   require(affy) || stop("Could not load library affy.")
 

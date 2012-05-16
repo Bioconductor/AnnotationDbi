@@ -3,7 +3,7 @@
 \title{Read a data file describing the probe sequences on an Affymetrix genechip}
 \description{Read a data file describing the probe sequences on an Affymetrix genechip}
 \usage{
-getProbeDataAffy(arraytype, datafile, pkgname = NULL, comparewithcdf = TRUE)
+getProbeDataAffy(arraytype, datafile, pkgname = NULL, comparewithcdf = FALSE)
 }
 \arguments{
   \item{arraytype}{Character. Array type (e.g. 'HG-U133A')}
