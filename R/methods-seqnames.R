@@ -1,5 +1,6 @@
 ###############################################################################
 ## Code to access the special chromosome name conventions DB.
+## The methods in this file are all about access to the seqnames.db database
 
 ## setup for accessing the seqnames DB
 .seqnamesSetup <- function(){
@@ -22,6 +23,20 @@ supportedSeqnameStyles <- function(){
   names(fields) <- tables
   fields
 }
+
+## check whether or not a value is really a supported seqnameStyle
+isSupportedSeqnamesStyle <- function(species, value){
+  species <- sub(" ", "_", species)
+  possible <- supportedSeqnameStyles()
+  availStyles <- possible[[species]]
+  value %in% availStyles
+}
+
+
+## Tests:
+## library(TxDb.Athaliana.BioMart.plantsmart12); txdb = TxDb.Athaliana.BioMart.plantsmart12; isSupportedSeqnamesStyle(species, "NCBI")
+## isSupportedSeqnamesStyle(species, "UCSC")
+
 
 
 ## A function for retrieving one type of data

@@ -39,6 +39,16 @@ setMethod("metadata", "AnnotationDb",
     function(x) dbReadTable(dbConn(x), "metadata")
 )
 
+
+## Get the species AnnotationDb
+setMethod("species", "AnnotationDb",
+    function(x){
+      as.character(dbEasyQuery(dbConn(x),
+        "SELECT value FROM metadata WHERE name='Genus and Species'"))
+    }
+)
+
+
 ## Try to make this generic
 setMethod("show", "AnnotationDb",
     function(object)

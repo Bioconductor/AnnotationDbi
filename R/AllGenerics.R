@@ -67,6 +67,8 @@ setGeneric("dbConn", function(x) standardGeneric("dbConn"))
 
 setGeneric("packageName", function(x) standardGeneric("packageName"))
 
+setGeneric("species", function(x) standardGeneric("species"))
+
 setGeneric("cols", signature="x",
            function(x) standardGeneric("cols"))
 
