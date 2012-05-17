@@ -200,10 +200,13 @@ export(
     ## AnnotationDb
     metadata,
 
-    ## chrNames
+    ## seqnames.db
     supportedSeqnameStyles,
     extractSeqnameSet,
     testSeqnames,
     generateSeqnames.db,
-    isSupportedSeqnamesStyle
+    isSupportedSeqnamesStyle,
+    listAllSupportedStylesBySpecies,
+    listAllSupportedSeqnameStyles,
+    supportedSeqnames
 )

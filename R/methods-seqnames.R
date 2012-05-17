@@ -75,6 +75,7 @@ testSeqnames <- function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sa
 }
 
 
+## Testing:
 ## seqnames = as.character(c(1:5,"Pt","Mt"))
 ## styles = c("NCBI","ensembl")
 ## species = "Arabidopsis thaliana"
@@ -89,7 +90,30 @@ testSeqnames <- function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sa
 
 
 
+## This helper returns a full listing of all style listings in the entire DB.
+## NOTE: this code can probably be made a lot faster if I am willing for it to
+## be less pretty.
+listAllSupportedStylesBySpecies <- function(species){
+  styles <- supportedSeqnameStyles()[[species]]
+  res <- lapply(styles,extractSeqnameSet,species)
+  names(res) <- paste(rep(species, length(styles)),"__" ,styles, sep="")
+  res
+}
 
+
+listAllSupportedSeqnameStyles <- function(){
+  species <- names(supportedSeqnameStyles())
+  ## then call extractSeqnameSet() for each style.
+  unlist(lapply(species,listAllSupportedStylesBySpecies), recursive=FALSE)
+}
+
+
+## This helper takes no arguments and just returns all the possible seqnames in the whole DB (in no particular order, just the unique set).
+supportedSeqnames <- function(){
+  res <- unique(unlist(listAllSupportedSeqnameStyles()))
+  names(res) <- NULL
+  res
+}
 
 
 
