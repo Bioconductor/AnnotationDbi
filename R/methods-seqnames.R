@@ -24,18 +24,18 @@ supportedSeqnameStyles <- function(){
   fields
 }
 
-## check whether or not a value is really a supported seqnameStyle
-isSupportedSeqnamesStyle <- function(species, value){
+## check whether or not a style is really a supported seqnameStyle
+isSupportedSeqnamesStyle <- function(style, species){
   species <- sub(" ", "_", species)
   possible <- supportedSeqnameStyles()
   availStyles <- possible[[species]]
-  value %in% availStyles
+  style %in% availStyles
 }
 
 
 ## Tests:
-## library(TxDb.Athaliana.BioMart.plantsmart12); txdb = TxDb.Athaliana.BioMart.plantsmart12; isSupportedSeqnamesStyle(species, "NCBI")
-## isSupportedSeqnamesStyle(species, "UCSC")
+## library(TxDb.Athaliana.BioMart.plantsmart12); txdb = TxDb.Athaliana.BioMart.plantsmart12; isSupportedSeqnamesStyle("NCBI", species)
+## isSupportedSeqnamesStyle("UCSC", species)
 
 
 
@@ -220,3 +220,13 @@ generateSeqnames.db <- function(version, outdir="."){
 
 
 ## TODO: export generateSeqnames.db and write a manual page for it.
+
+
+
+## ## TODO fix this bug!:
+##   library("TxDb.Hsapiens.UCSC.hg19.knownGene")
+##   txdb = TxDb.Hsapiens.UCSC.hg19.knownGene
+##   species = species(txdb)
+##   style = "NCBI"
+##   listAllSupportedStylesBySpecies(species)
+

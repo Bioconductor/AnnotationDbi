@@ -16,6 +16,9 @@
 \alias{show,AnnotationDb-method}
 \alias{metadata,AnnotationDb-method}
 \alias{names,AnnotationDb-method}
+\alias{species}
+\alias{species,AnnotationDb-method}
+
 
 % select and select related methods
 \alias{cols}
@@ -92,6 +95,9 @@
   \code{loadDb} takes a .sqlite database file as an argument and uses
   data in the metadata table of that file to return an AnnotationDb
   style object of the appropriate type.
+
+  \code{species} shows the genus and species label currently attached to
+  the \code{AnnotationDb} objects database.
   
 }
 
