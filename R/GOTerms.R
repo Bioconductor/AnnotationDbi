@@ -186,12 +186,19 @@ setMethod("show", "GOTerms",
   }
   ## TODO, Add evidence codes to GO.sqlite so that we can test this properly
   ## without any hard coding
-  realEviCodes = c("EXP","ISO","ISA","ISM","IGC","RCA","NR","IMP","IGI","IPI","ISS","IBA","IDA","IEP","IEA","TAS","NAS","ND","IC")
+
+  realEviCodes = c("EXP", "IDA", "IPI", "IMP", "IGI", "IEP", "ISS",
+    "ISO", "ISA", "ISM", "IGC", "IBA", "IBD", "IKR", "IRD", "RCA",
+    "TAS", "NAS", "IC", "ND", "IEA")
+
   if(is.na(table(GOIDs %in% realGOIDs)["TRUE"])){
     stop("None of elements in the 1st column of your data.frame object are legitimate GO IDs.")
   }
-  if(!is.na(table(eviCodes %in% realEviCodes)["FALSE"]) ){  
-    stop("All of the Evidence codes in your data.frame object must be legitimate Evidence Codes.")
+
+  if (any(bad <- !eviCodes %in% realEviCodes)) {
+      msg <- sprintf("invalid GO Evidence codes: '%s'",
+                     paste(unique(eviCodes[bad]), collapse="' '"))
+      stop(msg)
   }
   if(length(x[,1]) != length(x[,2]) || length(x[,1]) != length(x[,3])){
     stop("You need to have evidence codes and genes for all your GO IDs.")
