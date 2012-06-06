@@ -14,6 +14,572 @@
   keytype
 }
 
+
+##############################################################################
+## Methods for mapping keytypes to table and fields
+
+## TODO: add all the keytypes here, and then subset according to org type.
+
+## For GO, I should just define a whole distinct set.
+
+## For Chip packages, they should be nearly the same, but we either have to do
+## some extra complexity to join across DBs OR I can just do one final merge
+## in R.  I may want my own .generateQuery() function for chip packages, or I
+## may just want my own .extractData() function(), and to point to a different
+## "x" when using chip packages.
+
+## ALSO: I will need a way to deduce the org package that goes with each chip
+## package. hgu95av2ORGPKG will (for example) get you this.  DONE:
+.getOrgPkg <- function(x){
+  pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
+  orgPkgName <- eval(parse(text=paste(pkgname, "ORGPKG", sep="")))
+  orgPkgName <- paste(orgPkgName,".db",sep="")
+  eval(parse(text=orgPkgName))
+}
+
+## This gets the exact path to the chip DB.
+.getChipDbFile <- function(x){
+  pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
+  eval(call(paste(pkgname, "_dbfile", sep="")))
+}
+
+## Limitation: I can only have ONE table and ONE field for each list name.
+## So if we have fields like GO that should pull back multiple things, then we
+## have to expand those ahead of time.
+.expandCols <- function(cols){
+  ## known expansions for cols:
+  if("CHRLOC" %in% cols){ ## TODO: THERE HAS to be a better way to do this!
+    after <- match("CHRLOC", cols)
+    cols <- append(cols, c("CHRLOCCHR"),after) 
+  }
+  if("GO" %in% cols){ 
+    after <- match("GO", cols)
+    cols <- append(cols, c("EVIDENCE","ONTOLOGY"),after) 
+  }
+  if("ORF" %in% cols){ 
+    after <- match("ORF", cols)
+    cols <- append(cols, c("SGD"),after) 
+  }  
+  if("COMMON" %in% cols){ 
+    after <- match("COMMON", cols)
+    cols <- append(cols, c("SGD"),after) 
+  } 
+  cols
+}
+
+
+## ORG PKGS CHECKLIST: 
+## org.Ag.eg.sqlite           ## done
+## org.At.tair.sqlite         ## done
+## org.Bt.eg.sqlite           ## done
+## org.Ce.eg.sqlite           ## done
+## org.Cf.eg.sqlite           ## done
+## org.Dm.eg.sqlite           ## done
+## org.Dr.eg.sqlite           ## done
+## org.EcK12.eg.sqlite        ## done
+## org.EcSakai.eg.sqlite      ## done
+## org.Gg.eg.sqlite           ## done
+## org.Hs.eg.sqlite           ## done
+## org.Mm.eg.sqlite           ## done
+## org.Mmu.eg.sqlite          ## done
+## org.Pf.plasmo.sqlite       ## done
+## org.Pt.eg.sqlite           ## done
+## org.Rn.eg.sqlite           ## done
+## org.Sc.sgd.sqlite          ## done
+## org.Ss.eg.sqlite           ## done
+## org.Xl.eg.sqlite           ## done
+## none of the above..        ## STILL TODO: because I ALSO have to add GO views to the auto-generated org packages.
+
+
+
+.defineTables <- function(x){
+  ## 1st the generic/universal things
+  .defTables <- list("ENTREZID" = c("genes","gene_id"),
+                     "PFAM" = c("pfam","pfam_id"),
+                     "PROSITE" = c("pfam","ipi_id"),                     
+                     "ACCNUM" = c("accessions","accession"),
+                     "ALIAS" = c("alias","alias_symbol"),
+                     "ALIAS2EG" = c("alias","alias_symbol"),
+                     "ALIAS2PROBE" = c("alias","alias_symbol"),
+                     "CHR" = c("chromosomes","chromosome"),
+                     "CHRLOCCHR" = c("chromosome_locations","seqname"),
+                     "CHRLOC" = c("chromosome_locations","start_location"),
+                     "CHRLOCEND" = c("chromosome_locations","end_location"),
+                     "ENZYME" = c("ec","ec_number"),
+                     "MAP" = c("cytogenetic_locations","cytogenetic_location"),
+                     "PATH" = c("kegg","path_id"),
+                     "PMID" = c("pubmed","pubmed_id"),
+                     "REFSEQ" = c("refseq","accession"),
+                     "SYMBOL" = c("gene_info","symbol"),
+                     "UNIGENE" = c("unigene","unigene_id"),
+                     "ENSEMBL" = c("ensembl","ensembl_id"),
+                     "ENSEMBLPROT" = c("ensembl_prot","prot_id"),
+                     "ENSEMBLTRANS" = c("ensembl_trans","trans_id"),
+                     "GENENAME" = c("gene_info","gene_name"),
+                     "UNIPROT" = c("uniprot","uniprot_id"),
+                     "GO" = c("go","go_id"),
+                     "EVIDENCE" = c("go","evidence"),
+                     "ONTOLOGY" = c("go","ontology")
+                     
+                     )
+  ## exceptions for ALL OrgDbs ##TODO: not all org packages have these!
+  if(class(x)=="OrgDb"){
+    ## I should probably remove ucsckg from select...
+    #.defTables <- c(.defTables, list("UCSCKG" = c("ucsc","ucsc_id")) )
+  }
+  ## exceptions for ALL ChipDbs
+  if(class(x)=="ChipDb"){
+    .defTables <- c(.defTables, list("PROBEID" = c("c.probes","probe_id")) )
+  }
+
+  ## species specific exceptions
+  if(species(x)=="Anopheles gambiae"){
+    ## drop unsupported mappings
+    .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
+                                                        "ALIAS2EG",
+                                                        "ALIAS2PROBE",
+                                                        "MAP",
+                                                        "CHRLOC",
+                                                        "CHRLOCEND",
+                                                        "CHRLOCCHR",
+                                                        "PFAM",
+                                                        "PROSITE") )]
+  }
+  if(species(x)=="Arabidopsis thaliana"){
+    ## add these
+    .defTables <- c(.defTables, list("TAIR" = c("genes","gene_id"),
+                                     "ARACYC" = c("aracyc","pathway_name"),
+                                     "ARACYCENZYME" = c("enzyme","ec_name")))
+    ## remove these:
+    .defTables <- .defTables[!(names(.defTables) %in% c("ACCNUM",
+                                                        "ALIAS",
+                                                        "ALIAS2EG",
+                                                        "ALIAS2PROBE",
+                                                        "MAP",
+                                                        "UNIGENE",
+                                                        "PFAM",
+                                                        "PROSITE",
+                                                        "ENSEMBL",
+                                                        "ENSEMBLPROT",
+                                                        "ENSEMBLTRANS",
+                                                        "UNIPROT",
+                                                        "ENTREZID",
+                                                        "CHR") )]
+    ## "re-add" these (redefine, so must have been removed in prior step)
+    .defTables <- c(.defTables, list("ENTREZID" = c("entrez_genes","gene_id"),
+                                     "CHR"=c("gene_info","chromosome") ))
+  }
+  if(species(x)=="Bos taurus"){
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP") )]
+  }
+  if(species(x)=="Caenorhabditis elegans"){
+    .defTables <- c(.defTables, list("WORMBASE" = c("wormbase","wormbase_id")))
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
+                                                        "PFAM",
+                                                        "PROSITE") )]
+  }
+  if(species(x)=="Canis familiaris"){
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
+                                                        "PFAM",
+                                                        "PROSITE") )]
+  }
+  if(species(x)=="Drosophila melanogaster"){
+    .defTables <- c(.defTables, list("FLYBASE" = c("flybase","flybase_id"),
+                                  "FLYBASECG" = c("flybase_cg","flybase_cg_id"),
+                                  "FLYBASEPROT" = c("flybase_prot","prot_id")))
+    .defTables <- .defTables[!(names(.defTables) %in% c("PFAM",
+                                                        "PROSITE") )]
+  }
+  if(species(x)=="Danio rerio"){
+    .defTables <- c(.defTables, list("ZFIN" = c("zfin","zfin_id")))
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP"))]
+  }
+  if(species(x)=="Escherichia coli"){
+    .defTables <- .defTables[!(names(.defTables) %in% c("CHR",
+                                                        "MAP",
+                                                        "UNIGENE",
+                                                        "CHRLOC",
+                                                        "CHRLOCEND",
+                                                        "CHRLOCCHR",
+                                                        "PFAM",
+                                                        "PROSITE",
+                                                        "ENSEMBL",
+                                                        "ENSEMBLPROT",
+                                                        "ENSEMBLTRANS",
+                                                        "UNIPROT"))]
+  }
+  if(species(x)=="Gallus gallus"){
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP"))]
+  }
+  if(species(x)=="Homo sapiens"){
+    .defTables <- c(.defTables, list("OMIM" = c("omim","omim_id"),
+                                     "UCSCKG" = c("ucsc","ucsc_id")) )
+  }
+  if(species(x)=="Mus musculus"){
+    .defTables <- c(.defTables, list("MGI" = c("mgi","mgi_id"),
+                                     "UCSCKG" = c("ucsc","ucsc_id")) )
+  }
+  if(species(x)=="Macaca mulatta"){
+    .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
+                                                        "ALIAS2EG",
+                                                        "ALIAS2PROBE",
+                                                        "MAP",
+                                                        "UNIGENE",
+                                                        "PFAM",
+                                                        "PROSITE"))]
+  }
+  if(species(x)=="Plasmodium falciparum"){
+    .defTables <- c(.defTables, list(
+      "ORF" = c("genes","gene_id") ))
+    .defTables <- .defTables[!(names(.defTables) %in% c("ENTREZID",
+                                                        "ACCNUM",
+                                                        "ALIAS",
+                                                        "ALIAS2PROBE",
+                                                        "ALIAS2EG",
+                                                        "CHR",
+                                                        "CHRLOC",
+                                                        "CHRLOCEND",
+                                                        "CHRLOCCHR",
+                                                        "MAP",
+                                                        "PMID",
+                                                        "REFSEQ",
+                                                        "UNIGENE",
+                                                        "PFAM",
+                                                        "PROSITE",
+                                                        "PROSITE",
+                                                        "ENSEMBL",
+                                                        "ENSEMBLPROT",
+                                                        "ENSEMBLTRANS",
+                                                        "UNIPROT") )]
+    .defTables <- c(.defTables, list("ALIAS2ORF" = c("alias","alias_symbol") ))
+  }
+  if(species(x)=="Pan troglodytes"){
+    .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
+                                                        "ALIAS2PROBE",
+                                                        "ALIAS2EG",
+                                                        "MAP",
+                                                        "UNIGENE",
+                                                        "PFAM",
+                                                        "PROSITE") )]
+  }
+  if(species(x)=="Rattus Norvegicus"){
+    .defTables <- .defTables ## no changes (for now)
+  }  
+  if(species(x)=="Saccharomyces cerevisiae"){
+    .defTables <- c(.defTables, list(       
+      "ORF" = c("gene2systematic","systematic_name"),
+      "DESCRIPTION" = c("chromosome_features","feature_description"),
+      "COMMON" = c("gene2systematic","gene_name"),
+      "INTERPRO" = c("interpro","interpro_id"),
+      "SMART" = c("smart","smart_id"),
+      "SGD" = c("sgd","sgd_id") ))
+    .defTables <- .defTables[!(names(.defTables) %in% c("ACCNUM",
+                                                        "MAP",
+                                                        "SYMBOL",
+                                                        "UNIGENE",
+                                                        "PROSITE",
+                                                        "ALIAS",
+                                                        "ALIAS2EG",
+                                                        "ALIAS2PROBE",
+                                                        "CHR") )]
+    .defTables <- c(.defTables, list("ALIAS" = c("gene2alias","alias"),
+                                "CHR" = c("chromosome_features","chromosome") ))
+  }
+  if(species(x)=="Sus scrofa"){
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
+                                                        "CHRLOC",
+                                                        "CHRLOCEND",
+                                                        "CHRLOCCHR",
+                                                        "PFAM",
+                                                        "PROSITE",
+                                                        "ENSEMBL",
+                                                        "ENSEMBLPROT",
+                                                        "ENSEMBLTRANS") )]
+  }
+  if(species(x)=="Xenopus laevis"){
+    .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
+                                                        "ALIAS2PROBE",
+                                                        "ALIAS2EG",
+                                                        "MAP",
+                                                        "CHRLOC",
+                                                        "CHRLOCEND",
+                                                        "CHRLOCCHR",
+                                                        "PFAM",
+                                                        "PROSITE",
+                                                        "ENSEMBL",
+                                                        "ENSEMBLPROT",
+                                                        "ENSEMBLTRANS") )]
+  }
+
+  stockSpecies <- c("Anopheles gambiae",
+                    "Arabidopsis thaliana",
+                    "Bos taurus",
+                    "Caenorhabditis elegans",
+                    "Canis familiaris",
+                    "Drosophila melanogaster",
+                    "Danio rerio",
+                    "Escherichia coli",
+                    "Gallus gallus",
+                    "Homo sapiens",
+                    "Mus musculus",
+                    "Macaca mulatta",
+                    "Plasmodium falciparum",
+                    "Pan troglodytes",
+                    "Rattus Norvegicus",
+                    "Saccharomyces cerevisiae",
+                    "Sus scrofa",
+                    "Xenopus laevis")
+  
+  if(!(species(x) %in% stockSpecies)){
+    ## What follows is a very optimistic list!
+  .defTables <- list("ENTREZID" = c("genes","gene_id"),
+                     "ACCNUM" = c("accessions","accession"),
+                     "ALIAS" = c("alias","alias_symbol"),
+                     "ALIAS2EG" = c("alias","alias_symbol"),
+                     "ALIAS2PROBE" = c("alias","alias_symbol"),
+                     "CHR" = c("chromosomes","chromosome"),
+                     "PMID" = c("pubmed","pubmed_id"),
+                     "REFSEQ" = c("refseq","accession"),
+                     "SYMBOL" = c("gene_info","symbol"),
+                     "UNIGENE" = c("unigene","unigene_id"),
+                     "GENENAME" = c("gene_info","gene_name"),
+                     "GO" = c("go","go_id"),
+                     "EVIDENCE" = c("go","evidence"),
+                     "ONTOLOGY" = c("go","ontology")
+                     )
+  ## TODO: I suspect that to make this work I will have to look at which
+  ## mappings got made and only keep the ones that are present...  Otherwise
+  ## there will be cols listed that are not present in some DBs
+  }
+
+  
+  ## ultimately I think I need GO.db to have it's OWN select methods.
+  ## it's just too many responsibilities for this select to also handle the
+  ## somewhat obscure GO database schema.  So many things will not really work
+  ## untill I do that change (ancestors etc.)
+  if(class(x)=="GODb"){
+    .defTables <- list("GOID" = c("go_term","go_id"),
+                          "TERM" = c("go_term","term"),
+                          "ONTOLOGY" = c("go_term","ontology"),
+                          "DEFINITION" = c("go_term","definition")
+                    ## "BPPARENTS" = c("go_bp_parents","_parent_id"),
+                    ## "CCPARENTS" = c("go_cc_parents","_parent_id"),
+                    ## "MFPARENTS" = c("go_mf_parents","_parent_id"),
+                    ## "BPANCESTOR" = c("",""),
+                    ## "CCANCESTOR" = c("",""),
+                    ## "MFANCESTOR" = c("",""),
+                    ## "OBSOLETE" = c("",""),
+                    ## "SYNONYM" = c("go_synonym","synonym"),
+                    ## "BPCHILDREN" = c("",""),
+                    ## "CCCHILDREN" = c("",""),
+                    ## "MFCHILDREN" = c("",""),
+                    ## "BPOFFSPRING" = c("go_bp_offspring","_offspring_id"),
+                    ## "CCOFFSPRING" = c("go_cc_offspring","_offspring_id"),
+                    ## "MFOFFSPRING" = c("go_mf_offspring","_offspring_id")
+                       )
+  }
+
+  
+  ## then return with this result
+  .defTables
+}
+
+
+## helper for getting out the table OR the field from .defineTables
+.getDBLoc <- function(x, col, value="table"){
+  res <- .defineTables(x)
+  if(col %in% names(res)){
+    res <- res[[col]]
+  }else{stop("No col specified for .keys")}    
+  ## Then test and return appropriate records.
+  if(value=="table"){
+    res <- res[1]
+  }else if(value=="field"){
+    res <- res[2]
+  }
+  res
+}
+
+
+## vectorized version of .getDBLoc
+.getDBLocs <- function(x, cols, value="table"){
+  res <- character(length(cols))
+  for(i in seq_len(length(cols))){
+      res[i] <- .getDBLoc(x, cols[i], value=value)
+  }
+  names(res) <- cols 
+  unique(res)
+}
+
+
+.getFullyQualifiedDBLocs <- function(x, cols){
+  tables <- .getDBLocs(x, cols, value="table")
+  fields <- .getDBLocs(x, cols, value="field")
+  paste(tables, fields, sep=".")
+}
+
+
+## I need a method to generate the sql query.
+## The catch is that whatever tables are needed, I will need to always build
+## by starting out by starting with the genes table.
+## The query will look a BIT like this:
+## sql = "SELECT * FROM genes 
+## LEFT JOIN alias USING (_id) 
+## LEFT JOIN pfam USING (_id)
+## WHERE alias_symbol = 'ITGA7'"
+
+## except that it will use fully qualified names (tablename AND field)
+## AND ALSO, it has to always start with the keytype ...
+## So that means that I have to kind of SORT the dblocs just so that my
+## keytype is in front.  What I really want is just to put my keytype at the
+## front of the cols, call unique and then get the dblocs
+
+## x is the org package object, y is the chip package object. 
+.attachDB <- function(x,y){
+  chipDb <- .getChipDbFile(y)
+  chipSQL <- paste("ATTACH '",chipDb,"' AS c",sep="")
+  message(chipSQL)
+  dbQuery(dbConn(x), chipSQL)
+}
+
+## BUG: In the case where we have PROBEIDS we absolutely MUST include the
+## genes table into the query
+
+.generateQuery <- function(x, cols, keytype, keys){
+  ## If it is a chip package, get the org package instead
+  if(class(x)=="ChipDb"){
+    y <- x
+    ## then flip to using the org package, and actually attach to that.
+    x <- .getOrgPkg(x)
+    try(.attachDB(x,y), silent=TRUE) ## not really a disaster if we fail here
+  }
+  ## Now we have to get the dblocs and then make the query
+  if(exists("y")){
+    dblocs <- .getDBLocs(y, cols)
+    ## if we have c.probes in dblocs, then we MUST join to genes table
+    if("c.probes" %in% dblocs && species(x)!="Saccharomyces cerevisiae"){
+      dblocs <- unique(append(dblocs, c("genes"), match("c.probes", dblocs)))
+    }
+    if("c.probes" %in% dblocs && species(x)=="Saccharomyces cerevisiae"){
+      dblocs <- unique(append(dblocs, c("sgd"), match("c.probes", dblocs)))
+    }
+  }else{
+    dblocs <- .getDBLocs(x, cols)
+  }
+  message(paste(dblocs,collapse=","))
+  ## then make the 1st part of the query.
+  for(i in seq_len(length(dblocs))){
+    if(i==1){
+      res <- paste("SELECT * FROM",dblocs[i])
+    }else{
+      if(species(x)=="Saccharomyces cerevisiae" &&
+         (dblocs[i]=="gene2systematic" || dblocs[i-1]=="gene2systematic")){
+          join <- "systematic_name"
+      }else if(dblocs[i]=="c.probes" || dblocs[i-1]=="c.probes"){
+         ## IOW if joining to OR from c.probes we want "gene_id"
+        if(species(x)=="Saccharomyces cerevisiae"){
+          join <- "systematic_name"
+        }else{
+          join <- "gene_id"
+        }
+      }else{
+        join <- "_id"
+      }
+      res <- c(res, paste("LEFT JOIN ",dblocs[i],"USING (",join,")"))
+    }
+  }
+  res <- paste(res, collapse=" ")
+  ## res
+  ## then use the keytype and keys to append the WHERE clause
+  strKeys <- paste("'",keys,"'",sep="",collapse=",")
+  if(exists("y")){
+    fullKeytype <- .getFullyQualifiedDBLocs(y, keytype)
+  }else{
+    fullKeytype <- .getFullyQualifiedDBLocs(x, keytype)
+  }  
+  where <- paste("WHERE ",fullKeytype,"in (",strKeys,")" )
+  paste(res, where)
+}
+
+## usage:
+## library(org.Hs.eg.db)
+## cols = c("ENTREZID","SYMBOL","PFAM")
+## keytype = "ALIAS"
+## keys = "ITGA7"
+## x = org.Hs.eg.db
+## AnnotationDbi:::.generateQuery(x, cols, keytype, keys)
+
+## cols = c("ENTREZID","SYMBOL","PFAM")
+## keytype = "ENTREZID"; keys = head(keys(org.Hs.eg.db)); x = org.Hs.eg.db
+## AnnotationDbi:::.generateQuery(x, cols, keytype, keys)
+## AnnotationDbi:::.extractData(x, cols, keytype, keys)
+## select(org.Hs.eg.db,keys, cols, "ENTREZID")
+
+## library(hgu95av2.db); x = hgu95av2.db;cols = c("ENTREZID","SYMBOL","PFAM")
+## keytype = "PROBEID"; keys = head(keys(hgu95av2.db))
+## AnnotationDbi:::.generateQuery(x, cols, keytype, keys) ## OK
+## AnnotationDbi:::.extractData(x, cols, keytype, keys)
+## select(hgu95av2.db,keys, cols, keytype)
+
+## cols = c("ENTREZID", "SYMBOL", "CHRLOC")
+## AnnotationDbi:::.extractData(x, cols, keytype, keys)
+## select(hgu95av2.db,keys, cols, keytype)
+
+## cols = c("ENTREZID", "SYMBOL", "GO")
+## AnnotationDbi:::.extractData(x, cols, keytype, keys)
+## select(hgu95av2.db,keys, cols, keytype)
+
+## GO.db example attempt:
+## library(GO.db);x<- GO.db;keys<-head(keys(GO.db)); cols = c("ONTOLOGY", "DEFINITION", "TERM"); keytype="GOID"
+## AnnotationDbi:::.extractData(x, cols, keytype, keys)
+## select(hgu95av2.db,keys, cols, keytype)
+
+
+## I also need a method to call my generated sql and get the data.
+## NOTE: the order that cols come back in is determined by the DB.
+## If I really want them ordered differently, I will have to resort downstream.
+.extractData <- function(x, cols, keytype, keys){
+  ## Take the cols, append the keytype to FRONT
+  cols <- unique(c(keytype, cols))
+  ## do any necessary col expansion:
+  cols <- unique(.expandCols(cols))
+  ## generate the query
+  sql <- .generateQuery(x, cols, keytype, keys)
+  message(sql)
+  ## get field names for relevant cols
+  cols <- unique(c(keytype, cols))
+  headerTables <- .getDBLocs(x, cols, value="field")
+  if(class(x)=="ChipDb"){
+    y <- x ## save for test below
+    x <- .getOrgPkg(x) ## then flip to using the org package
+  }
+  res <- dbQuery(dbConn(x), sql)
+  ## then cleanup by doing a detach:
+  if(exists("y")){
+    dbQuery(dbConn(x), "DETACH DATABASE c")
+  }
+  ## then subset to only relevant cols
+  res[,(colnames(res) %in% headerTables)]
+}
+
+
+## usage:
+## .extractData(x, cols, keytype, keys)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Select Methods return the results from looking up things (cols) that match
 ## the keys provided.  cols is a character vector to specify columns the user
 ## wants back and keys are the keys to look up.
@@ -470,26 +1036,30 @@
      !(keytype %in% "ENTREZID" && class(x)=="ChipDb") &&
      !(keytype %in% "ENTREZID" && .getCentralID(x)=="TAIR") &&
      !(keytype %in% "ENTREZID" && .getCentralID(x)=="ORF")){
-    objs <- .makeBimapsFromStrings(x, cols)
-    res <-.mergeBimaps(x, objs, keys, jointype=jointype)
+#    objs <- .makeBimapsFromStrings(x, cols)
+#    res <-.mergeBimaps(x, objs, keys, jointype=jointype)
+    res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
   }else{ ## not a central ID, so an extra col is required
     if(!(keytype %in% cols)){ cols <- unique(c( keytype, cols)) }
-    objs <- .makeBimapsFromStrings(x, cols)
+#    objs <- .makeBimapsFromStrings(x, cols)
     ## merge using the base joinType (based on primary key)
-    res <- .mergeBimapsPostFilt(x, objs, keys, jointype=jointype)
+#    res <- .mergeBimapsPostFilt(x, objs, keys, jointype=jointype)
+    res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
     ## deduce NEW jointype from the keytype (do NOT use the default one!)
     ## This jointype is for filtering (which happens next)
     jointype <- .getRKeyName(x, keytype)
   }
 
+  ## REMOVE?
   ## this takes a black list approach for cleaning out unwanted cols
   res <- .cleanOutUnwantedCols(x, res, keytype, oriCols)
   
+  ## REMOVE???
   ## now is the time to collect the column names that we expect from the DB
   res <- .filterSuffixes(res)
   oriTabCols <- colnames(res)
   ## It's important that these are in the same order as oriCols.
-  oriTabCols <- .resortOriTabCols(oriTabCols, oriCols, x, res)
+#  oriTabCols <- .resortOriTabCols(oriTabCols, oriCols, x, res)  
   
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
@@ -859,3 +1429,63 @@ setMethod("keytypes", "GODb",
 ## others:
 ## 1) Use the same arguments for the method (obvious)
 ## 2) remove dulicated columns.
+
+
+
+
+
+## Martins slow select example.  It takes advantage of the fact that for
+## simple cases, like the one below, our select method has to gather each
+## piece and then merge them together which costs a lot of time (both to merge
+## and also because we don't pre-subset).
+## Also our code is doing more post-processing (returning prettier results in
+## particular order etc.)
+## Also because our code is blind to what the user wants out, we move ALL of
+## each bimap through memory and don't pare them down till we merge them
+## together and this is ultimately inefficient.
+
+## If the code knew (as Martin did in this case) the relationships between
+## these different elements (perhaps it could learn that graph from the DB),
+## then it could make smarter decisions about how to query.
+
+## library(org.Hs.eg.db)
+## sym <- "ITGA7"
+## system.time(res0 <- toTable(org.Hs.egPFAM[ org.Hs.egALIAS2EG[[sym]] ]))
+## system.time(res1 <- select(org.Hs.eg.db, sym, "PFAM", "ALIAS"))
+## system.time(res3 <- toTable(org.Hs.egGO[ org.Hs.egALIAS2EG[[sym]] ]))
+## system.time(res4 <- select(org.Hs.eg.db, sym, "GO", "ALIAS"))
+
+
+## ALSO: there is something to be said for the notion that we need a general
+## solution to this problem that does NOT involve a Bimap.  Bimaps are nice,
+## but we don't normally have them for a new resource and we might want a
+## faster way to handle these sorts of manipulations when we don't have them.
+
+
+## Basically, I think that I want to use a graph here, but not require one
+## from the user, I need to 1) be able to infer the graph from SQL, 2) be able
+## to path-find through the graph such that all the keys requested are
+## hit. and 3) be able to construct a sensible query from that graph.  Tall
+## order, but a fun problem.
+
+
+## Reasons for generalizing this: 1) I need to be able to do this in ALL
+## databases (not just bimap ones). and 2) We are moving away from bimaps and
+## 3) I want to be able to add mappings to existing bimap based data resources
+## that are actually not available as a bimap (reactome) and 4) I would really
+## like to be able to transparently pull data from another resource and just
+## have it appear to be in one place.  Sort of like we currently do for microRNAs with TranscriptDbs
+
+
+## Really radical thoughts:
+## What if discovery functions just reported based on which databases were
+## installed (instead of just what was in a package?).
+
+## What if select searched across all of these databases to make joins on the
+## fly as appropriate by already knowing how to connect the dots?
+
+## What if we could have select work out how things connect based on the type
+## of package, and some internal information about how those would be joined?
+
+
+

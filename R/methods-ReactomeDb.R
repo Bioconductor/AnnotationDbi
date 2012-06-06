@@ -228,7 +228,7 @@ setMethod("keys", "ReactomeDb",
   sql <- paste("SELECT * FROM", table, "WHERE", colType,"IN",
                paste("(",paste(keys, collapse=","),")",sep="") )
   ## then extract it
-  res <- dbQuery(dbConn(x), sql)
+  dbQuery(dbConn(x), sql)
 }
 
 ## this calls .extractWithSimpleQuery for each table and merges results

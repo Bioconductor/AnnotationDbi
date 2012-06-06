@@ -2617,6 +2617,31 @@ appendYeastNCBISGD <- function(db, subStrs, printSchema){
 
 
 
+## For the org packages, we want GO views that summarize the GO tables conveniently.
+makeGOViews <- function(db){
+  message(cat("Making GO views \n\n"))
+  sql<- paste("
+CREATE VIEW go AS
+SELECT _id,go_id,evidence, 'BP' AS 'ontology' FROM go_bp
+UNION
+SELECT _id,go_id,evidence, 'CC' FROM go_cc
+UNION
+SELECT _id,go_id,evidence, 'MF' FROM go_mf;
+   ",sep="") 
+  sqliteQuickSQL(db, sql)
+
+  sql<- paste("
+CREATE VIEW go_all AS
+SELECT _id,go_id,evidence, 'BP' AS 'ontology'  FROM go_bp_all
+UNION
+SELECT _id,go_id,evidence, 'CC' FROM go_cc_all
+UNION
+SELECT _id,go_id,evidence, 'MF' FROM go_mf_all;
+   ",sep="")
+  
+sqliteQuickSQL(db, sql)
+}
+
 
 
 

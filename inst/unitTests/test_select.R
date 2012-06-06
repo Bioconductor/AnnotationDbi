@@ -228,6 +228,7 @@ test_keys <- function(){
 test_select1 <- function(){
   keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
   cols <- c("SYMBOL","ENTREZID","PROBEID")
+  ## bug with renaming code causes mysterious loss of last column
   res <- select(hgu95av2.db, keys, cols, keytype="ALIAS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
@@ -239,8 +240,9 @@ test_select2 <- function(){
   cols <- c("PFAM","ENTREZID", "GO")
   res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
   checkTrue(dim(res)[1]>0)
-  checkTrue(dim(res)[2]==6)
-  checkIdentical(c("ENTREZID","IPI","PfamId","GO","Evidence","Ontology"),
+  checkTrue(dim(res)[2]==5)
+  ## PfamId should be renamed properly.
+  checkIdentical(c("ENTREZID","PfamId","GO","Evidence","Ontology"),
                  colnames(res))
 }
 
@@ -263,15 +265,15 @@ test_select4 <- function(){
 }
 
 test_select5 <- function(){
-  ## TODO: investigate this warning!:
-  ## ALSO this causes a bug (the header should say "GO" and NOT "BPPARENTS")
   keys <- head(keys(GO.db), n=4)
-  cols <- c("TERM")
+  cols <- c("TERM","ONTOLOGY","DEFINITION")
   res <- select(GO.db, keys, cols)
+  ## bug with naming code: Error in eval(expr, envir, enclos) : object 'GOONTOLOGY' not found
+  ## but retrieval still works OK
+  ## AnnotationDbi:::.extractData(GO.db, cols, keytype="GOID", keys)
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==6)
-  checkIdentical(c("GO","Term","Ontology","Definition","Synonym",
-                   "Secondary"), colnames(res))
+  checkIdentical(c("GO","Term","Ontology","Definition"), colnames(res))
 }
 
 test_select6 <- function(){
@@ -322,6 +324,8 @@ test_select10 <- function(){
 
   keys <- head(keys(t,"ENTREZID"))
   res <- select(t, keys, cols, keytype="ENTREZID")
+  ## Another post process bug (loses ENTREZID info)
+  ## AnnotationDbi:::.extractData(t, cols, keytype="ENTREZID", keys)
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","SYMBOL","CHR"), colnames(res))
@@ -354,6 +358,7 @@ test_select11 <- function(){
   res <- select(s, keys, cols, keytype="ORF")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
+## BUG: order of results has been flipped...
   checkIdentical(c("ORF","CHR","SGD"), colnames(res))
 }
 
@@ -368,7 +373,10 @@ test_select12 <- function(){
 
   keys <- "GO:0000018"
   cols <- c("GO","ENTREZID")
+  ## This fails to retrieve the ENTREZIDs
   res <- select(x, keys, cols, keytype="GO")
+  ## But the FAILURE is happening AFTER the data retrieval step.
+  ## AnnotationDbi:::.extractData(x, cols, keytype="GO", keys)
   checkTrue(dim(res)[1]>0)   
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("GO","Evidence","Ontology","ENTREZID"), colnames(res))

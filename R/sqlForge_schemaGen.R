@@ -119,6 +119,7 @@ popHUMANDB <- function(prefix,
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendUCSCGenes(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -250,6 +251,7 @@ popMOUSEDB <- function(prefix,
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendUCSCGenes(db, subStrs=subStrs, printSchema=printSchema)
     appendMGI(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -377,6 +379,7 @@ popRATDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -476,6 +479,7 @@ popARABIDOPSISDB <- function(prefix,
     appendAraCyc(db, subStrs=subStrs, printSchema=printSchema)
     appendAraCycEnzyme(db, subStrs=subStrs, printSchema=printSchema)
     appendPostMeta(db, subStrs=subStrs)
+    makeGOViews(db)
     
     dbDisconnect(db, subStrs=subStrs, printSchema=printSchema)
     
@@ -606,6 +610,7 @@ popFLYDB <- function(prefix,
     appendFlyBase(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBaseCG(db, subStrs=subStrs, printSchema=printSchema)
     appendFlyBaseProt(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -715,6 +720,7 @@ popYEASTDB <- function(prefix,
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendRefseq(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -752,6 +758,7 @@ popMALARIADB <- function(prefix,
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
 
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)    
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -879,6 +886,7 @@ popZEBRAFISHDB <- function(prefix,
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendZfin(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -986,6 +994,7 @@ popECOLIDB <- function(prefix,
     appendKEGG(db, subStrs=subStrs, printSchema=printSchema)
     appendEC(db, subStrs=subStrs, printSchema=printSchema)
     appendAlias(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1115,6 +1124,7 @@ popCANINEDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1242,6 +1252,7 @@ popBOVINEDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1365,6 +1376,7 @@ popWORMDB <- function(prefix,
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
     appendWormbase(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1486,6 +1498,7 @@ popPIGDB <- function(prefix,
 ##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1616,6 +1629,7 @@ popCHICKENDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1678,6 +1692,7 @@ popCHIMPDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1804,6 +1819,7 @@ popRHESUSDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1857,6 +1873,7 @@ popANOPHELESDB <- function(prefix,
     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -1991,6 +2008,7 @@ popXENOPUSDB <- function(prefix,
 ##     appendEnsemblProt(db, subStrs=subStrs, printSchema=printSchema)
 ##     appendEnsemblTrans(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     
@@ -2055,6 +2073,7 @@ popYEASTNCBIDB <- function(prefix,
     appendYeastNCBILocusTags(db, subStrs=subStrs, printSchema=printSchema)
     appendYeastNCBISGD(db, subStrs=subStrs, printSchema=printSchema)
     appendUniprot(db, subStrs=subStrs, printSchema=printSchema)
+    makeGOViews(db)
     
     appendPostMeta(db, subStrs=subStrs)
     

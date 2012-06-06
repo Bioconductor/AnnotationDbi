@@ -301,7 +301,7 @@
 
 ## Use when there is no GO data
 .getBlast2GOData <- function(tax_id, con) {
-  url = paste("http://bioinfo.cipf.es/b2gfar/_media/species:data:",
+  url = paste("http://www.b2gfar.org/_media/species:data:",
         tax_id,".annot.zip",sep="")
   tmp <- tempfile()
   ##download.file(url, tmp, quiet=TRUE)
@@ -609,8 +609,6 @@ makeOrgDbFromNCBI <- function(tax_id, genus, species){
     "SELECT distinct gene_id, chromosome FROM gene_info")
     .makeSimpleTable(chrs, table="chromosomes", con)
   
-  ## kegg
-  ##(TODO: can use KEGG FTP, NCBI web service, KEGGSOAP or maybe even biomaRt)
   
   ## pubmed
   pm <- sqliteQuickSQL(con,
@@ -643,7 +641,8 @@ makeOrgDbFromNCBI <- function(tax_id, genus, species){
   .dropOldTables(con,names(files))  
   ## Rename "gene_info_temp" to be just "gene_info":
   sqliteQuickSQL(con,"ALTER TABLE gene_info_temp RENAME TO gene_info")
-
+  ## add GO views to the DB
+  makeGOViews(con)
 
   ## Add map_counts: (must happen at end)
   .addMapCounts(con, tax_id, genus, species)
@@ -697,6 +696,9 @@ makeOrgPackageFromNCBI <- function(version,
   ## is always created in ".". Maybe that could be revisited.
   makeOrgDbFromNCBI(tax_id=tax_id, genus=genus, species=species)
   
+  dbName <- .generateOrgDbName(genus,species)
+  dbfile <- paste(dbName, ".sqlite", sep="")
+
   seed <- new("AnnDbPkgSeed",
               Package= paste(dbName,".db",sep=""),
               Version=version,
@@ -710,9 +712,6 @@ makeOrgPackageFromNCBI <- function(version,
               manufacturerUrl = "no manufacturer",
               manufacturer = "no manufacturer",
               chipName = "no manufacturer")
-
-  dbName <- .generateOrgDbName(genus,species)
-  dbfile <- paste(dbName, ".sqlite", sep="")
   
   makeAnnDbPkg(seed, dbfile, dest_dir=outputDir)
   
