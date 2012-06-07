@@ -390,7 +390,7 @@
   res <- .defineTables(x)
   if(col %in% names(res)){
     res <- res[[col]]
-  }else{stop("No col specified for .keys")}    
+  }else{stop(paste("col value",col,"is not defined"))}    
   ## Then test and return appropriate records.
   if(value=="table"){
     res <- res[1]
@@ -442,8 +442,8 @@
   dbQuery(dbConn(x), chipSQL)
 }
 
-## BUG: In the case where we have PROBEIDS we absolutely MUST include the
-## genes table into the query
+
+
 
 .generateQuery <- function(x, cols, keytype, keys){
   ## If it is a chip package, get the org package instead
@@ -1135,15 +1135,26 @@ setMethod("select", "GODb",
 ## cols methods return the list of things that users can ask for.  This can be
 ## just the table names, or it might be a list of mappings
 
+## helper used for dropping out ugly redundant col names.
+.simplifyCols <- function(x, cols){
+  blackList <- c(ALIAS="ALIAS2PROBE",
+                 ALIAS="ALIAS2EG",
+                 CHR="CHRLOCCHR")
+  idx <- match(blackList,cols)
+  cols[idx] <- names(blackList)
+  unique(cols)
+}
 
 .cols <- function(x, baseType){
-  cols <- .makeColAbbrs(x)
+  ## cols <- .makeColAbbrs(x)
+  cols <- names(.defineTables(x))
   if(!missing(baseType)){
     cols <- c(baseType, cols)
   }
   ## translate relevant short bimap names to "cute" names
-  cols <- .swapSymbolExceptions(x, cols) 
-
+  ## cols <- .swapSymbolExceptions(x, cols) 
+  cols <- .simplifyCols(x, cols)
+  
   ## .cols does not care about your names
   names(cols) <- NULL
   unique(cols)
@@ -1186,13 +1197,17 @@ setMethod("cols", "GODb",
 ## methods for AnnDbBimap objects so the "keys" methods below will give a
 ## consistent answer (and will take advantage of the cache).
 ## helper to get keys
-.getKeysFromString <- function(x, keytype){
-  if(length(keytype) > 1) stop("There can be only one keytype.")
-  ## make a bimap from the keytype
-  map <- .makeBimapsFromStrings(x, keytype)[[1]] ## there is only ever one.
-  ## then get the Rkeys
-  Rkeys(map)
+.queryForKeys <- function(x, keytype){
+  if(class(x)=="ChipDb"){
+    x <- .getOrgPkg(x)
+  }
+  table <- .getDBLocs(x, keytype)
+  field <- .getDBLocs(x, keytype, value="field")
+  sql <- paste("SELECT DISTINCT",field,"FROM",table)
+  res <- dbQuery(dbConn(x), sql)
+  t(res)
 }
+
 
 .makeKeytypeChoice <- function(x, keytype){
   ## have to swap keytype
@@ -1216,7 +1231,7 @@ setMethod("cols", "GODb",
                     "SELECT systematic_name FROM sgd", 1L),
                   "PROBEID" =
                      stop("PROBEID is not supported for Organism packages"),
-                  .getKeysFromString(x, keytype))
+                  .queryForKeys(x, keytype))
   }
   if(class(x) == "ChipDb"){
     res <- switch(EXPR = keytype,
@@ -1224,7 +1239,7 @@ setMethod("cols", "GODb",
                     "SELECT gene_id FROM probes", 1L),
                   "PROBEID" =  dbQuery(dbConn(x),
                     "SELECT DISTINCT probe_id FROM probes", 1L),
-                  .getKeysFromString(x, keytype))
+                  .queryForKeys(x, keytype))
   }
   res[!is.na(res)]
 }
@@ -1267,24 +1282,26 @@ setMethod("keys", "GODb",
 ## TODO: would like to find a way to restore these blacklisted types to being
 ## able to be used, but I need a way around the lack of an Rkeys() method etc.
 
-keytypesBlackList <- c("CHRLOCEND","CHRLOC","PFAM","PROSITE",
-                       "DESCRIPTION", "GENENAME")
-.filterKeytypes <- function(x, baseType, keytypesBlackList){
-  res <- .cols(x, baseType=baseType)
-  res <- res[!res %in% keytypesBlackList]
-  ## append the centralID (if not already present)
-  centralID <- .getCentralID(x)
-  if(centralID == "EG"){ centralID <- "ENTREZID" }
-  res <- c(res, centralID)
-  unique(res)
-}
+## keytypesBlackList <- c("CHRLOCEND","CHRLOC","PFAM","PROSITE",
+##                        "DESCRIPTION", "GENENAME")
+## .filterKeytypes <- function(x, baseType, keytypesBlackList){
+##   res <- .cols(x, baseType=baseType)
+##   res <- res[!res %in% keytypesBlackList]
+##   ## append the centralID (if not already present)
+##   centralID <- .getCentralID(x)
+##   if(centralID == "EG"){ centralID <- "ENTREZID" }
+##   res <- c(res, centralID)
+##   unique(res)
+## }
 
 setMethod("keytypes", "OrgDb",
-    function(x) .filterKeytypes(x, baseType="ENTREZID", keytypesBlackList)
+    ## function(x) .filterKeytypes(x, baseType="ENTREZID", keytypesBlackList)
+    function(x) .cols(x, baseType="ENTREZID")
 )
 
 setMethod("keytypes", "ChipDb",
-    function(x) .filterKeytypes(x, baseType="PROBEID", keytypesBlackList) 
+    ## function(x) .filterKeytypes(x, baseType="PROBEID", keytypesBlackList) 
+    function(x) .cols(x, baseType="ENTREZID")
 )
 
 setMethod("keytypes", "GODb",
@@ -1317,7 +1334,7 @@ setMethod("keytypes", "GODb",
 ## keys = head(keys(org.Hs.egCHR))
 
 
-## debug(AnnotationDbi:::.getKeysFromString)
+## debug(AnnotationDbi:::.queryForKeys)
 ## debug(AnnotationDbi:::.makeKeytypeChoice)
 
 ## example of keys that uses keytype
