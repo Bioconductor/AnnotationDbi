@@ -78,12 +78,12 @@ test_makeColAbbrs <- function(){
   checkIdentical(AnnotationDbi:::.getRKeyName(x, res[[1]]), names(res)[1])
 }
 
-test_swapSymbolExceptions <- function(){
-  res <- AnnotationDbi:::.swapSymbolExceptions(x,
-                           strings=c("GO","ALIAS","PFAM","ALIAS2EG"))
-  exp <- c("GO","ALIAS2EG","PFAM","ALIAS")
-  checkIdentical(res, exp)
-}
+## test_swapSymbolExceptions <- function(){
+##   res <- AnnotationDbi:::.swapSymbolExceptions(x,
+##                            strings=c("GO","ALIAS","PFAM","ALIAS2EG"))
+##   exp <- c("GO","ALIAS2EG","PFAM","ALIAS")
+##   checkIdentical(res, exp)
+## }
 
 test_getAllColAbbrs <- function(){
   res <- AnnotationDbi:::.getAllColAbbrs(x)
@@ -123,17 +123,17 @@ test_addNAsInPlace <- function(){
 }
 
 
-test_renameColumnsWithRepectForExtras <- function(){
-  ## cols can be expected to always include keytypes for testing this helper.
-  cols <- c("CHR","PROSITE","GO","REFSEQ")
-  objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
-  res <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
-  oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
-  res2 <- AnnotationDbi:::.renameColumnsWithRepectForExtras(x, res, oriCols)
-  exp <- c("ENTREZID","CHR","IPI","PrositeId","GO","Evidence","Ontology",
-           "REFSEQ")
-  checkIdentical(exp,res2)
-}
+## test_renameColumnsWithRepectForExtras <- function(){
+##   ## cols can be expected to always include keytypes for testing this helper.
+##   cols <- c("CHR","PROSITE","GO","REFSEQ")
+##   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
+##   res <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
+##   oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
+##   res2 <- AnnotationDbi:::.renameColumnsWithRepectForExtras(x, res, oriCols)
+##   exp <- c("ENTREZID","CHR","IPI","PrositeId","GO","Evidence","Ontology",
+##            "REFSEQ")
+##   checkIdentical(exp,res2)
+## }
 
 ## mostly this is making sure I don't throw certain things out.
 ## Honestly, I am not 100% sure if .cleanOutUnwantedCols actually ever does
@@ -228,7 +228,6 @@ test_keys <- function(){
 test_select1 <- function(){
   keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
   cols <- c("SYMBOL","ENTREZID","PROBEID")
-  ## bug with renaming code causes mysterious loss of last column
   res <- select(hgu95av2.db, keys, cols, keytype="ALIAS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
@@ -241,8 +240,7 @@ test_select2 <- function(){
   res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==5)
-  ## PfamId should be renamed properly.
-  checkIdentical(c("ENTREZID","PfamId","GO","Evidence","Ontology"),
+  checkIdentical(c("ENTREZID","PFAM","GO","EVIDENCE","ONTOLOGY"),
                  colnames(res))
 }
 
@@ -256,6 +254,7 @@ test_select3 <- function(){
 }
 
 test_select4 <- function(){
+  ## BUG.  refseq is being dropped unintentionally!
   keys <- head(keys(org.Hs.eg.db),n=2)
   cols <- c("ACCNUM","REFSEQ")
   res <- select(org.Hs.eg.db, keys, cols)
@@ -268,23 +267,18 @@ test_select5 <- function(){
   keys <- head(keys(GO.db), n=4)
   cols <- c("TERM","ONTOLOGY","DEFINITION")
   res <- select(GO.db, keys, cols)
-  ## bug with naming code: Error in eval(expr, envir, enclos) : object 'GOONTOLOGY' not found
-  ## but retrieval still works OK
-  ## AnnotationDbi:::.extractData(GO.db, cols, keytype="GOID", keys)
   checkTrue(dim(res)[1]>0)
-  checkTrue(dim(res)[2]==6)
-  checkIdentical(c("GO","Term","Ontology","Definition"), colnames(res))
+  checkTrue(dim(res)[2]==4)
+  checkIdentical(c("GOID","TERM","ONTOLOGY","DEFINITION"), colnames(res))
 }
 
 test_select6 <- function(){
-  ## bad keys should result in failure
   keys <- head(keys(hgu95av2.db))
   cols <- c("SYMBOL","ENTREZID", "GO")
   checkException(select(hgu95av2.db, keys, cols, keytype="ENTREZID"))
 }
 
 test_select7 <- function(){  
-  ## What if the keys are goofy (we want to test the row-wise "auto-expand")
   cols <- c("SYMBOL","ENTREZID") ## 1st of all cols should be 1:1 cols
   keys <- head(keys(org.Hs.eg.db),n=3)
   keys <- c(1, keys, keys)
@@ -294,7 +288,6 @@ test_select7 <- function(){
 }
 
 test_select8 <- function(){
-  ## What if there is only one col?
   cols <- c("ENTREZID")
   res <- select(org.Hs.eg.db, keys, cols)
   checkTrue(class(res) =="data.frame")
@@ -360,6 +353,11 @@ test_select11 <- function(){
   checkTrue(dim(res)[2]==3)
 ## BUG: order of results has been flipped...
   checkIdentical(c("ORF","CHR","SGD"), colnames(res))
+
+## AND: if you flip things
+  cols <- c("SGD","CHR")
+  res <- select(s, keys, cols, keytype="ORF")
+## suddenly the names are wrong!  
 }
 
 test_select12 <- function(){
@@ -369,31 +367,30 @@ test_select12 <- function(){
   res <- select(x, keys, cols, keytype="ENTREZID")
   checkTrue(dim(res)[1]>0)   
   checkTrue(dim(res)[2]==4)
-  checkIdentical(c("ENTREZID","GO","Evidence","Ontology"), colnames(res))
+  checkIdentical(c("ENTREZID","GO","EVIDENCE","ONTOLOGY"), colnames(res))
 
   keys <- "GO:0000018"
   cols <- c("GO","ENTREZID")
-  ## This fails to retrieve the ENTREZIDs
   res <- select(x, keys, cols, keytype="GO")
-  ## But the FAILURE is happening AFTER the data retrieval step.
-  ## AnnotationDbi:::.extractData(x, cols, keytype="GO", keys)
   checkTrue(dim(res)[1]>0)   
   checkTrue(dim(res)[2]==4)
-  checkIdentical(c("GO","Evidence","Ontology","ENTREZID"), colnames(res))
+  checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID"), colnames(res))
 
   keys <- "GO:0000023"
   cols <- c("GO","ENTREZID")
   res <- select(t, keys, cols, keytype="GO")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
-  checkIdentical(c("GO","Evidence","Ontology","ENTREZID"), colnames(res)) 
+  checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID"), colnames(res)) 
 
   keys <- "GO:0000023"
   cols <- c("ENTREZID","TAIR","GO")
   res <- select(t, keys, cols, keytype="GO")
+  ## BUG: The TAIR column has been filtered just like the refseq/accession one!
+  ## AnnotationDbi:::.extractData(t, cols, keytype="GO", keys)
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==5)
-  checkIdentical(c("GO","Evidence","Ontology","ENTREZID","TAIR"), 
+  checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID","TAIR"), 
   		colnames(res))
 }
 

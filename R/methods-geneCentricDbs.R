@@ -568,6 +568,19 @@
 
 
 
+## helper used for dropping out ugly redundant col names.
+## (BIMAP FREE!)
+.simplifyCols <- function(x, cols){
+  blackList <- c(ALIAS="ALIAS2PROBE",
+                 ALIAS="ALIAS2EG",
+                 CHR="CHRLOCCHR")
+  idx <- match(blackList,cols)
+  idx <- idx[!is.na(idx)]
+  if(length(idx) >0){
+    cols[idx] <- names(blackList)
+  }
+  unique(cols)
+}
 
 
 
@@ -679,37 +692,38 @@
   cols
 }
 
-## Need a helper to allow bimap symbols to be remapped on the fly
-## if the string you pass into this is one thing, it gets the other
-## ... and vice versa
-.swapOneSymbolException <- function(x, str){
-  ## 1st we define a vector of things we want to be able to "flip"
-  if(length(str) > 1){
-    stop(".swapOneSymbolException can only process one string at a time")
-  }
-  ## list of things that we will exchange (can be as long as we need,
-  ## but there can be one list here for each class of "x").
-  if(class(x)=="ChipDb"){
-    swpNames <- c(ALIAS="ALIAS2PROBE")
-  }else if(class(x)=="OrgDb"){
-    swpNames <- c(ALIAS="ALIAS2EG")
-  }else{
-    swpNames <- c()
-  }
-  if(str %in% names(swpNames)){
-    res <- unlist(swpNames[grep(str, names(swpNames), fixed=TRUE)])
-  }else if(str %in% swpNames){
-    res <- names(swpNames)[grep(str, swpNames, fixed=TRUE)]
-  }else{
-    res <- str
-  }
-  names(res) <- NULL
-  res
-}
-## here is the vectorized version 
-.swapSymbolExceptions <- function(x, strings){
-  unlist(lapply(strings, .swapOneSymbolException, x=x))
-}
+## ## Need a helper to allow bimap symbols to be remapped on the fly
+## ## if the string you pass into this is one thing, it gets the other
+## ## ... and vice versa
+## .swapOneSymbolException <- function(x, str){
+##   ## 1st we define a vector of things we want to be able to "flip"
+##   if(length(str) > 1){
+##     stop(".swapOneSymbolException can only process one string at a time")
+##   }
+##   ## list of things that we will exchange (can be as long as we need,
+##   ## but there can be one list here for each class of "x").
+##   if(class(x)=="ChipDb"){
+##     swpNames <- c(ALIAS="ALIAS2PROBE")
+##   }else if(class(x)=="OrgDb"){
+##     swpNames <- c(ALIAS="ALIAS2EG")
+##   }else{
+##     swpNames <- c()
+##   }
+##   if(str %in% names(swpNames)){
+##     res <- unlist(swpNames[grep(str, names(swpNames), fixed=TRUE)])
+##   }else if(str %in% swpNames){
+##     res <- names(swpNames)[grep(str, swpNames, fixed=TRUE)]
+##   }else{
+##     res <- str
+##   }
+##   names(res) <- NULL
+##   res
+## }
+## ## here is the vectorized version 
+## .swapSymbolExceptions <- function(x, strings){
+##   unlist(lapply(strings, .swapOneSymbolException, x=x))
+## }
+
 
   
 ## Another Helper for getting all possible short mapping names for salient cols
@@ -792,30 +806,31 @@
   .nameExceptions(names, modCols)
 }
 
-## used to rename the cols (where appropriate) with all caps labels
-.renameColumnsWithRepectForExtras <- function(x, res, oriCols){  
-  res <- .filterSuffixes(res) ## Removes duplicate suffixes
-  uncleanedfcNames <- .getAllColAbbrs(x)
-  ## THEN clean up symbol exceptions  
-  fcNames <- .swapSymbolExceptions(x, uncleanedfcNames)
-  primaryNames <- fcNames[match(colnames(res), names(fcNames))]
-  primaryNames <- .selectivelyMatchNameExceptions(x, primaryNames, oriCols)
-  ## secondary names are just the table names.
-  secondaryNames <- colnames(res)
+## ## used to rename the cols (where appropriate) with all caps labels
+## .renameColumnsWithRepectForExtras <- function(x, res, oriCols){  
+##   res <- .filterSuffixes(res) ## Removes duplicate suffixes
+##   uncleanedfcNames <- .getAllColAbbrs(x)
+##   ## THEN clean up symbol exceptions  
+##   ## fcNames <- .swapSymbolExceptions(x, uncleanedfcNames)
+##   fcNames <- .simplifyCols(x, uncleanedfcNames)
+##   primaryNames <- fcNames[match(colnames(res), names(fcNames))]
+##   primaryNames <- .selectivelyMatchNameExceptions(x, primaryNames, oriCols)
+##   ## secondary names are just the table names.
+##   secondaryNames <- colnames(res)
 
-  ## merge two name types giving preference to primary
-  colNames <- character()
-  if(length(secondaryNames) == length(primaryNames)){
-    for(i in seq_len(length(primaryNames))){
-      if(!is.na(primaryNames[i])){
-        colNames[i] <- primaryNames[i]
-      }else{
-        colNames[i] <- secondaryNames[i]
-      }
-    }
-  }else{stop("primaryNames and secondaryNames must be same length.")}
-  colNames
-}
+##   ## merge two name types giving preference to primary
+##   colNames <- character()
+##   if(length(secondaryNames) == length(primaryNames)){
+##     for(i in seq_len(length(primaryNames))){
+##       if(!is.na(primaryNames[i])){
+##         colNames[i] <- primaryNames[i]
+##       }else{
+##         colNames[i] <- secondaryNames[i]
+##       }
+##     }
+##   }else{stop("primaryNames and secondaryNames must be same length.")}
+##   colNames
+## }
 
 ## Remove unwanted ID cols  
 ## We only want to drop columns that really are "adds"
@@ -1014,8 +1029,10 @@
     stop("keys must be of the same keytype as the actual keytype")
   }
   ## translate any cute colnames or keytype names back to bimaps
-  cols <- .swapSymbolExceptions(x, cols)
-  keytype <- .swapSymbolExceptions(x, keytype)
+  ## cols <- .swapSymbolExceptions(x, cols)
+  cols <- .simplifyCols(x, cols)
+  ## keytype <- .swapSymbolExceptions(x, keytype)
+  keytype <- .simplifyCols(x, keytype)
   ## oriCols is a snapshot of col requests needed for column filter below
   oriCols <- unique(c(keytype, cols))
 
@@ -1024,7 +1041,7 @@
   ## oriTabCols <- .getDBHeaderCols(x, oriCols)
   
   ## now drop a value from cols before we try to make any bimaps
-  cols <- .cleanupBaseTypesFromCols(x, cols)
+ ## cols <- .cleanupBaseTypesFromCols(x, cols)
   ## keys should NOT be NAs, but if they are, warn and then filter them.
   if(length(keys) != length(keys[!is.na(keys)])){
     warning(paste("You cannot really use NA values as keys.",
@@ -1032,50 +1049,78 @@
                   "results will be correspondingly smaller."))}
   keys <- keys[!is.na(keys)]
 
-  if(keytype %in% c("ENTREZID","PROBEID","GOID","TAIR","ORF") &&
-     !(keytype %in% "ENTREZID" && class(x)=="ChipDb") &&
-     !(keytype %in% "ENTREZID" && .getCentralID(x)=="TAIR") &&
-     !(keytype %in% "ENTREZID" && .getCentralID(x)=="ORF")){
-#    objs <- .makeBimapsFromStrings(x, cols)
-#    res <-.mergeBimaps(x, objs, keys, jointype=jointype)
-    res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
-  }else{ ## not a central ID, so an extra col is required
-    if(!(keytype %in% cols)){ cols <- unique(c( keytype, cols)) }
-#    objs <- .makeBimapsFromStrings(x, cols)
-    ## merge using the base joinType (based on primary key)
-#    res <- .mergeBimapsPostFilt(x, objs, keys, jointype=jointype)
-    res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
-    ## deduce NEW jointype from the keytype (do NOT use the default one!)
-    ## This jointype is for filtering (which happens next)
-    jointype <- .getRKeyName(x, keytype)
-  }
 
-  ## REMOVE?
-  ## this takes a black list approach for cleaning out unwanted cols
-  res <- .cleanOutUnwantedCols(x, res, keytype, oriCols)
   
-  ## REMOVE???
-  ## now is the time to collect the column names that we expect from the DB
+  ## Generate query and extract the data
+  res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
+  ## suffixes almost never happen now that I do SQL generation: ALMOST never.
   res <- .filterSuffixes(res)
-  oriTabCols <- colnames(res)
-  ## It's important that these are in the same order as oriCols.
-#  oriTabCols <- .resortOriTabCols(oriTabCols, oriCols, x, res)  
+  
+
+##   if(keytype %in% c("ENTREZID","PROBEID","GOID","TAIR","ORF") &&
+##      !(keytype %in% "ENTREZID" && class(x)=="ChipDb") &&
+##      !(keytype %in% "ENTREZID" && .getCentralID(x)=="TAIR") &&
+##      !(keytype %in% "ENTREZID" && .getCentralID(x)=="ORF")){
+## #    objs <- .makeBimapsFromStrings(x, cols)
+## #    res <-.mergeBimaps(x, objs, keys, jointype=jointype)
+##     res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
+##   }else{ ## not a central ID, so an extra col is required
+##     if(!(keytype %in% cols)){ cols <- unique(c( keytype, cols)) }
+## #    objs <- .makeBimapsFromStrings(x, cols)
+##     ## merge using the base joinType (based on primary key)
+## #    res <- .mergeBimapsPostFilt(x, objs, keys, jointype=jointype)
+##     res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
+##     ## deduce NEW jointype from the keytype (do NOT use the default one!)
+##     ## This jointype is for filtering (which happens next)
+##     jointype <- .getRKeyName(x, keytype)
+##   }
+
+    
+  ## ## REMOVE B/C at the end we will filter/match with expanded version of
+  ## ## oriCols
+  ## ## this takes a black list approach for cleaning out unwanted cols
+  ## res <- .cleanOutUnwantedCols(x, res, keytype, oriCols)
+  
+##   ## REMOVE???
+##   ## now is the time to collect the column names that we expect from the DB
+##   res <- .filterSuffixes(res)
+##   oriTabCols <- colnames(res)
+##   ## It's important that these are in the same order as oriCols.
+## #  oriTabCols <- .resortOriTabCols(oriTabCols, oriCols, x, res)  
+
+  
+  ## these are the colnames we need to have gotten back from the DB
+  expectedCols <- .expandCols(oriCols)
+  oriTabCols <- .getDBLocs(x, expectedCols, value="field")
+  
+  ## I need to know the jointype...
+  jointype <- .getDBLocs(x, keytype, value="field")
   
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
     res <- .resort(res, keys, jointype, oriTabCols)
   }
+
+  ## Finally, I need to rename all of the columns.
+  ## should look like:
+  colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
+
   
-  ## rename col headers, BUT if they are not returned by cols, then we have to
-  ## still keep the column name (but adjust it)
-  colnames(res) <- .renameColumnsWithRepectForExtras(x, res, oriCols)
+## No longer need to rename with respect for extras because we now expect
+## that every column will have some definition and match up with something.
+  ## ## Rename col headers, BUT if they are not returned by cols,then we have to
+  ## ## still keep the column name (but adjust it)
+  ## colnames(res) <- .renameColumnsWithRepectForExtras(x, res, oriCols)
 
   ## This last step removes unwanted column duplicates.  As much as I would like
   ## to, I CANNOT do this step inside of .resort(), because .resort() is
   ## dealing only with the actual db-style column names that will sometimes
   ## have (at least for AnnotationDbi) have legitimate duplications that we do
-  ## NOT want to remove. 
-  res <- .dropDuplicatedCols(res)
+  ## NOT want to remove.
+  ## I don't think I will need to do this anymore either...
+  ## res <- .dropDuplicatedCols(res)
+
+  
   rownames(res) <- NULL
   res
 }
@@ -1135,15 +1180,6 @@ setMethod("select", "GODb",
 ## cols methods return the list of things that users can ask for.  This can be
 ## just the table names, or it might be a list of mappings
 
-## helper used for dropping out ugly redundant col names.
-.simplifyCols <- function(x, cols){
-  blackList <- c(ALIAS="ALIAS2PROBE",
-                 ALIAS="ALIAS2EG",
-                 CHR="CHRLOCCHR")
-  idx <- match(blackList,cols)
-  cols[idx] <- names(blackList)
-  unique(cols)
-}
 
 .cols <- function(x, baseType){
   ## cols <- .makeColAbbrs(x)
@@ -1211,7 +1247,8 @@ setMethod("cols", "GODb",
 
 .makeKeytypeChoice <- function(x, keytype){
   ## have to swap keytype
-  keytype <- .swapSymbolExceptions(x, keytype)
+  ## keytype <- .swapSymbolExceptions(x, keytype)
+  keytype <- .simplifyCols(x, keytype)
   ## Some org packages may have entrez genes in weird places...
   centralID <- .getCentralID(x)
   EGgeneTable <- character()
@@ -1491,7 +1528,8 @@ setMethod("keytypes", "GODb",
 ## 3) I want to be able to add mappings to existing bimap based data resources
 ## that are actually not available as a bimap (reactome) and 4) I would really
 ## like to be able to transparently pull data from another resource and just
-## have it appear to be in one place.  Sort of like we currently do for microRNAs with TranscriptDbs
+## have it appear to be in one place.  Sort of like we currently do for
+## microRNAs with TranscriptDbs
 
 
 ## Really radical thoughts:
