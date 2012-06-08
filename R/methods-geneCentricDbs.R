@@ -91,12 +91,14 @@
 ## none of the above..        ## STILL TODO: because I ALSO have to add GO views to the auto-generated org packages.
 
 
+## TODO correct all OTHER PROSITE/IPI mappings
 
 .defineTables <- function(x){
   ## 1st the generic/universal things
   .defTables <- list("ENTREZID" = c("genes","gene_id"),
                      "PFAM" = c("pfam","pfam_id"),
-                     "PROSITE" = c("pfam","ipi_id"),                     
+                     "IPI" = c("pfam","ipi_id"),
+                     "PROSITE" = c("prosite_id","ipi_id"),
                      "ACCNUM" = c("accessions","accession"),
                      "ALIAS" = c("alias","alias_symbol"),
                      "ALIAS2EG" = c("alias","alias_symbol"),
@@ -143,6 +145,7 @@
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE") )]
   }
   if(species(x)=="Arabidopsis thaliana"){
@@ -158,6 +161,7 @@
                                                         "MAP",
                                                         "UNIGENE",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE",
                                                         "ENSEMBL",
                                                         "ENSEMBLPROT",
@@ -176,11 +180,13 @@
     .defTables <- c(.defTables, list("WORMBASE" = c("wormbase","wormbase_id")))
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE") )]
   }
   if(species(x)=="Canis familiaris"){
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE") )]
   }
   if(species(x)=="Drosophila melanogaster"){
@@ -188,6 +194,7 @@
                                   "FLYBASECG" = c("flybase_cg","flybase_cg_id"),
                                   "FLYBASEPROT" = c("flybase_prot","prot_id")))
     .defTables <- .defTables[!(names(.defTables) %in% c("PFAM",
+                                                        "IPI",
                                                         "PROSITE") )]
   }
   if(species(x)=="Danio rerio"){
@@ -202,6 +209,7 @@
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE",
                                                         "ENSEMBL",
                                                         "ENSEMBLPROT",
@@ -226,6 +234,7 @@
                                                         "MAP",
                                                         "UNIGENE",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE"))]
   }
   if(species(x)=="Plasmodium falciparum"){
@@ -245,7 +254,7 @@
                                                         "REFSEQ",
                                                         "UNIGENE",
                                                         "PFAM",
-                                                        "PROSITE",
+                                                        "IPI",
                                                         "PROSITE",
                                                         "ENSEMBL",
                                                         "ENSEMBLPROT",
@@ -260,6 +269,7 @@
                                                         "MAP",
                                                         "UNIGENE",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE") )]
   }
   if(species(x)=="Rattus Norvegicus"){
@@ -291,6 +301,7 @@
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE",
                                                         "ENSEMBL",
                                                         "ENSEMBLPROT",
@@ -305,6 +316,7 @@
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
                                                         "PFAM",
+                                                        "IPI",
                                                         "PROSITE",
                                                         "ENSEMBL",
                                                         "ENSEMBLPROT",
@@ -952,65 +964,65 @@
 }
 
 
-## ## Helper to make sure that oriTabCols is in same order as oriCols
-.resortOriTabCols <- function(oriTabCols, oriCols, x, res){
-  ## One strange exception caused by another "ENTREZID" exception upstream
-  CNAMES <- c(.getAllColAbbrs(x), ENTREZID="ENTREZID")
-  oriTabNames <- CNAMES[match(oriTabCols,names(CNAMES))]
-  names(oriTabNames) <- oriTabCols
-  ## need to split this vector into the correct "pieces" (split by "not an NA")
-  len <- length(oriTabNames)
-  chunks <- list()
-  resInd <- 1 ## index of next chunks
-  prevInd <- 0 ## index of prev chunks
-  for(i in seq_len(len)){
-    cur <- oriTabNames[i]    
-    if(!is.na(cur)){
-      chunks[[resInd]] <- cur
-      prevInd <- resInd
-      resInd <- resInd + 1
-    }else{
-      chunks[[prevInd]] <- c(chunks[[prevInd]], cur)
-    }
-  }  
-  ## get the short names of oriCols (which gives the desired order)
-  CNAMES <- .getAllColAbbrs(x)
-  oriNames <- CNAMES[match(oriCols, CNAMES)]
-  ## helper to look up stuff in chunks (What chunk has the ID?)
-  chunkIdx <- function(str){
-    res <- integer(length(chunks))
-    for(i in seq_len(length(chunks))){
-      if(str %in% chunks[[i]]){
-        res[i] <- i
-      }else{
-        res[i] <- NA
-      }
-    }
-    res <- res[!is.na(res)]
-    res[1] ## return the 1st match...
-  }
-  ## Now I just need to make another loop and reassemble things in order of
-  ## oriNames
-  len <- length(oriNames)
-  result <- character()
-  for(i in seq_len(len)){
-    str <- oriNames[i]
-    idx <- chunkIdx(str)
-    if(!is.na(idx)){
-      result <- c(result, chunks[[idx]]) ## try to deduce the chunk
-    }else{
-      result <- c(result, oriNames[i]) ## if you fail, fallback to oriCols
-    }
-  }
-  ## TAIR exception. 
-  if("ENTREZID" %in% oriCols && "TAIR" %in% oriCols &&
-     .getCentralID(x) == "TAIR"){
-    ## means that we have tair and ENTREZID
-    names(result)[match("ENTREZID",result)] <- "ENTREZID"
-  }
-  ## return the names:
-  names(result)
-}
+## ## ## Helper to make sure that oriTabCols is in same order as oriCols
+## .resortOriTabCols <- function(oriTabCols, oriCols, x, res){
+##   ## One strange exception caused by another "ENTREZID" exception upstream
+##   CNAMES <- c(.getAllColAbbrs(x), ENTREZID="ENTREZID")
+##   oriTabNames <- CNAMES[match(oriTabCols,names(CNAMES))]
+##   names(oriTabNames) <- oriTabCols
+##   ## need to split this vector into the correct "pieces" (split by "not an NA")
+##   len <- length(oriTabNames)
+##   chunks <- list()
+##   resInd <- 1 ## index of next chunks
+##   prevInd <- 0 ## index of prev chunks
+##   for(i in seq_len(len)){
+##     cur <- oriTabNames[i]    
+##     if(!is.na(cur)){
+##       chunks[[resInd]] <- cur
+##       prevInd <- resInd
+##       resInd <- resInd + 1
+##     }else{
+##       chunks[[prevInd]] <- c(chunks[[prevInd]], cur)
+##     }
+##   }  
+##   ## get the short names of oriCols (which gives the desired order)
+##   CNAMES <- .getAllColAbbrs(x)
+##   oriNames <- CNAMES[match(oriCols, CNAMES)]
+##   ## helper to look up stuff in chunks (What chunk has the ID?)
+##   chunkIdx <- function(str){
+##     res <- integer(length(chunks))
+##     for(i in seq_len(length(chunks))){
+##       if(str %in% chunks[[i]]){
+##         res[i] <- i
+##       }else{
+##         res[i] <- NA
+##       }
+##     }
+##     res <- res[!is.na(res)]
+##     res[1] ## return the 1st match...
+##   }
+##   ## Now I just need to make another loop and reassemble things in order of
+##   ## oriNames
+##   len <- length(oriNames)
+##   result <- character()
+##   for(i in seq_len(len)){
+##     str <- oriNames[i]
+##     idx <- chunkIdx(str)
+##     if(!is.na(idx)){
+##       result <- c(result, chunks[[idx]]) ## try to deduce the chunk
+##     }else{
+##       result <- c(result, oriNames[i]) ## if you fail, fallback to oriCols
+##     }
+##   }
+##   ## TAIR exception. 
+##   if("ENTREZID" %in% oriCols && "TAIR" %in% oriCols &&
+##      .getCentralID(x) == "TAIR"){
+##     ## means that we have tair and ENTREZID
+##     names(result)[match("ENTREZID",result)] <- "ENTREZID"
+##   }
+##   ## return the names:
+##   names(result)
+## }
 
 
 ## the core of the select method for GO org and chip packages.
@@ -1053,8 +1065,6 @@
   
   ## Generate query and extract the data
   res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
-  ## suffixes almost never happen now that I do SQL generation: ALMOST never.
-  res <- .filterSuffixes(res)
   
 
 ##   if(keytype %in% c("ENTREZID","PROBEID","GOID","TAIR","ORF") &&
@@ -1095,16 +1105,40 @@
   
   ## I need to know the jointype...
   jointype <- .getDBLocs(x, keytype, value="field")
+
+
+
+  ## I need to do my column renaming BEFORE I do resort (because it wants to drop extra columns)
+  ## I need to rename all of the columns.
+##  colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
+  ## AND I need to handle duplicated column names...
+  ## I will need to do something like:
+  ##  .selectivelyMatchNameExceptions(x, primaryNames, oriCols)
+  ## BUT MOVING THIS here seems to have broken unit test #7!
+  ## So I need the column labeling to happen AFTER!
+  ## So maybe I need to just not remove filter suffixes till AFTER we get through .resort???
+
+  ## ALSO: .resort seems to throw away the extra col REGARDLESS of whether or
+  ## not it is the same name (probably because the oriTabCols is just too
+  ## short)
+  ## So: moving the suffix filter does not help...
+
+  ## Basically, I have to find a way to rename BOTH oriTabCols and colnames(res) BEFORE I call .resort().  
+
+  
   
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
     res <- .resort(res, keys, jointype, oriTabCols)
   }
 
-  ## Finally, I need to rename all of the columns.
-  ## should look like:
-  colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
 
+  ## filterSuffixes is actually redundant with .resort() ...
+  ## ## suffixes almost never happen now that I do SQL generation: ALMOST never.
+  ## res <- .filterSuffixes(res)
+  
+  colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
+  
   
 ## No longer need to rename with respect for extras because we now expect
 ## that every column will have some definition and match up with something.
