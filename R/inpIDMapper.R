@@ -117,7 +117,7 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     genes = .cleanup(genes)
 
     ###MGET#2 map to the ID type used by inparanoid.
-    if(exists("protMap")){
+    if(exists("protMap", inherits=FALSE)){
 	inpIDs = mget(as.character(genes), protMap, ifnotfound=NA)
     	##Carry the names for the uniprot IDs over...
     	inpIDs = .reLabel(genes, inpIDs, "inpIDs")
@@ -156,7 +156,7 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     uniqIDs = .cleanup(finIDs)
         
     ###MGET#4 dest species EG don't do this if we are already "there"
-    if(exists("geneMap")){
+    if(exists("geneMap", inherits=FALSE)){
         EGIDs = mget(as.character(uniqIDs), revmap(geneMap), ifnotfound=NA) 
         EGIDs = .reLabel(uniqIDs, EGIDs, "EGIDs")
         EGIDs = .cleanup(EGIDs) #do before the rename, because there may be duplicates)

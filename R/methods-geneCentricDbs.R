@@ -464,8 +464,9 @@
     try(.attachDB(x,y), silent=TRUE) ## not really a disaster if we fail here
     ## because we have a "y" defined, we have to define the dblocs this way:
     dblocs <- .getDBLocs(y, cols)
-    ## And fully qualified keytype is like this
+    ## Fully qualified keytype and species are set up like this
     fullKeytype <- .getFullyQualifiedDBLocs(y, keytype)
+    species <- species(x)
     ## if we have c.probes in dblocs, then we MUST join to genes table
     if("c.probes" %in% dblocs && species(x)!="Saccharomyces cerevisiae"){
       dblocs <- unique(append(dblocs, c("genes"), match("c.probes", dblocs)))
@@ -476,6 +477,7 @@
   }else{ ## this means there is only an org pkg...
     dblocs <- .getDBLocs(x, cols)
     fullKeytype <- .getFullyQualifiedDBLocs(x, keytype)
+    species <- species(x)
   }
   message(paste(dblocs,collapse=","))
   ## then make the 1st part of the query.
@@ -483,12 +485,12 @@
     if(i==1){
       res <- paste("SELECT * FROM",dblocs[i])
     }else{
-      if(species(x)=="Saccharomyces cerevisiae" &&
+      if(species=="Saccharomyces cerevisiae" &&
          (dblocs[i]=="gene2systematic" || dblocs[i-1]=="gene2systematic")){
           join <- "systematic_name"
       }else if(dblocs[i]=="c.probes" || dblocs[i-1]=="c.probes"){
          ## IOW if joining to OR from c.probes we want "gene_id"
-        if(species(x)=="Saccharomyces cerevisiae"){
+        if(species=="Saccharomyces cerevisiae"){
           join <- "systematic_name"
         }else{
           join <- "gene_id"
@@ -561,7 +563,7 @@
   }
   res <- dbQuery(dbConn(x), sql)
   ## then cleanup by doing a detach:
-  if(exists("y")){
+  if(exists("y", inherits=FALSE)){ ## I should not have to use inherits=FALSE?
     dbQuery(dbConn(x), "DETACH DATABASE c")
   }
   ## then subset to only relevant cols
@@ -1607,9 +1609,10 @@ setMethod("keytypes", "GODb",
 ## global namespace are allowed to leak down into the scope of the functions
 ## being called...
 
-
-## NASTY BUG persists!
-## But I MUST be doing something wrong...
+## Bug was able to happen this way:
 ## y = "foo"
 ## source("AnnotationDbi/inst/doc/IntroToAnnotationPackages.R")
 
+## was caused by overly grabby exists() calls combined with the sloppy way
+## that R CMD check leaves variables all over the place when it runs R CMD
+## check.  exists() calls are no longer grabby.
