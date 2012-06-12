@@ -814,31 +814,7 @@
   .nameExceptions(names, modCols)
 }
 
-## ## used to rename the cols (where appropriate) with all caps labels
-## .renameColumnsWithRepectForExtras <- function(x, res, oriCols){  
-##   res <- .filterSuffixes(res) ## Removes duplicate suffixes
-##   uncleanedfcNames <- .getAllColAbbrs(x)
-##   ## THEN clean up symbol exceptions  
-##   ## fcNames <- .swapSymbolExceptions(x, uncleanedfcNames)
-##   fcNames <- .simplifyCols(x, uncleanedfcNames)
-##   primaryNames <- fcNames[match(colnames(res), names(fcNames))]
-##   primaryNames <- .selectivelyMatchNameExceptions(x, primaryNames, oriCols)
-##   ## secondary names are just the table names.
-##   secondaryNames <- colnames(res)
 
-##   ## merge two name types giving preference to primary
-##   colNames <- character()
-##   if(length(secondaryNames) == length(primaryNames)){
-##     for(i in seq_len(length(primaryNames))){
-##       if(!is.na(primaryNames[i])){
-##         colNames[i] <- primaryNames[i]
-##       }else{
-##         colNames[i] <- secondaryNames[i]
-##       }
-##     }
-##   }else{stop("primaryNames and secondaryNames must be same length.")}
-##   colNames
-## }
 
 ## Remove unwanted ID cols  
 ## We only want to drop columns that really are "adds"
@@ -908,19 +884,8 @@
   tab
 }
 
-## helper to remove any columns that are true duplicates
-.dropDuplicatedCols <- function(tab){
-  cols <- colnames(tab)
-  cols <- cols[!duplicated(cols)]  
-  tab <- tab[,cols]
-  tab
-}
-
 
 ## Create extra rows
-## TODO: there are still problems here.
-## I have issues where I drop rows from tables that have extra rows of real
-## info. while tring to match to the keys.
 .generateExtraRows <- function(tab, keys, jointype){
   ## 4 possibilities
   ## if there are not dups, then we skip this function.
@@ -960,66 +925,30 @@
 }
 
 
-## ## ## Helper to make sure that oriTabCols is in same order as oriCols
-## .resortOriTabCols <- function(oriTabCols, oriCols, x, res){
-##   ## One strange exception caused by another "ENTREZID" exception upstream
-##   CNAMES <- c(.getAllColAbbrs(x), ENTREZID="ENTREZID")
-##   oriTabNames <- CNAMES[match(oriTabCols,names(CNAMES))]
-##   names(oriTabNames) <- oriTabCols
-##   ## need to split this vector into the correct "pieces" (split by "not an NA")
-##   len <- length(oriTabNames)
-##   chunks <- list()
-##   resInd <- 1 ## index of next chunks
-##   prevInd <- 0 ## index of prev chunks
-##   for(i in seq_len(len)){
-##     cur <- oriTabNames[i]    
-##     if(!is.na(cur)){
-##       chunks[[resInd]] <- cur
-##       prevInd <- resInd
-##       resInd <- resInd + 1
-##     }else{
-##       chunks[[prevInd]] <- c(chunks[[prevInd]], cur)
-##     }
-##   }  
-##   ## get the short names of oriCols (which gives the desired order)
-##   CNAMES <- .getAllColAbbrs(x)
-##   oriNames <- CNAMES[match(oriCols, CNAMES)]
-##   ## helper to look up stuff in chunks (What chunk has the ID?)
-##   chunkIdx <- function(str){
-##     res <- integer(length(chunks))
-##     for(i in seq_len(length(chunks))){
-##       if(str %in% chunks[[i]]){
-##         res[i] <- i
-##       }else{
-##         res[i] <- NA
-##       }
-##     }
-##     res <- res[!is.na(res)]
-##     res[1] ## return the 1st match...
-##   }
-##   ## Now I just need to make another loop and reassemble things in order of
-##   ## oriNames
-##   len <- length(oriNames)
-##   result <- character()
-##   for(i in seq_len(len)){
-##     str <- oriNames[i]
-##     idx <- chunkIdx(str)
-##     if(!is.na(idx)){
-##       result <- c(result, chunks[[idx]]) ## try to deduce the chunk
-##     }else{
-##       result <- c(result, oriNames[i]) ## if you fail, fallback to oriCols
-##     }
-##   }
-##   ## TAIR exception. 
-##   if("ENTREZID" %in% oriCols && "TAIR" %in% oriCols &&
-##      .getCentralID(x) == "TAIR"){
-##     ## means that we have tair and ENTREZID
-##     names(result)[match("ENTREZID",result)] <- "ENTREZID"
-##   }
-##   ## return the names:
-##   names(result)
-## }
 
+## helper so that we can be ready for when there are multiple things getting
+## duplicated...
+## The current version of these helper functions are not "smart", but it could
+## be made so if needed.  The reason why not smart is because it will be a lot
+## faster if we can get away with it being "dumb" and not looking up the types
+## of values from the DB for each type.
+.replaceValues <- function(dups, fieldNames, expectedCols){
+  newVals <- expectedCols[fieldNames %in% dups]
+  after <- match(dups, fieldNames) - 1 ## -1 b/c we aim to replac: not follow
+  cols <- append(fieldNames, newVals, after)
+  ## then remove the dups values
+  cols[!(cols %in% dups)]
+}
+
+## helper for ambiguous/duplicated columns
+.adjustForDupColNames <- function(res, expectedCols){
+  fieldNames <- colnames(res)
+  ## get duplicated vals
+  dups <- fieldNames[duplicated(fieldNames)]
+  ## for each value of dups, we want to call .replaceValues
+  cols <- unlist(lapply(dups, .replaceValues, fieldNames, expectedCols))
+  cols
+}
 
 ## the core of the select method for GO org and chip packages.
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
@@ -1036,20 +965,14 @@
   if(!(any(ktKeys %in% keys))){
     stop("keys must be of the same keytype as the actual keytype")
   }
-  ## translate any cute colnames or keytype names back to bimaps
-  ## cols <- .swapSymbolExceptions(x, cols)
+
+  ## call .simplifyCols to ensure we use same colnames as cols()
   cols <- .simplifyCols(x, cols)
   ## keytype <- .swapSymbolExceptions(x, keytype)
   keytype <- .simplifyCols(x, keytype)
   ## oriCols is a snapshot of col requests needed for column filter below
   oriCols <- unique(c(keytype, cols))
 
-  ## All this because I need to account for the cols that "expand"
-  ## I really do need a new helper here
-  ## oriTabCols <- .getDBHeaderCols(x, oriCols)
-  
-  ## now drop a value from cols before we try to make any bimaps
- ## cols <- .cleanupBaseTypesFromCols(x, cols)
   ## keys should NOT be NAs, but if they are, warn and then filter them.
   if(length(keys) != length(keys[!is.na(keys)])){
     warning(paste("You cannot really use NA values as keys.",
@@ -1057,43 +980,8 @@
                   "results will be correspondingly smaller."))}
   keys <- keys[!is.na(keys)]
 
-
-  
   ## Generate query and extract the data
   res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
-  
-
-##   if(keytype %in% c("ENTREZID","PROBEID","GOID","TAIR","ORF") &&
-##      !(keytype %in% "ENTREZID" && class(x)=="ChipDb") &&
-##      !(keytype %in% "ENTREZID" && .getCentralID(x)=="TAIR") &&
-##      !(keytype %in% "ENTREZID" && .getCentralID(x)=="ORF")){
-## #    objs <- .makeBimapsFromStrings(x, cols)
-## #    res <-.mergeBimaps(x, objs, keys, jointype=jointype)
-##     res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
-##   }else{ ## not a central ID, so an extra col is required
-##     if(!(keytype %in% cols)){ cols <- unique(c( keytype, cols)) }
-## #    objs <- .makeBimapsFromStrings(x, cols)
-##     ## merge using the base joinType (based on primary key)
-## #    res <- .mergeBimapsPostFilt(x, objs, keys, jointype=jointype)
-##     res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
-##     ## deduce NEW jointype from the keytype (do NOT use the default one!)
-##     ## This jointype is for filtering (which happens next)
-##     jointype <- .getRKeyName(x, keytype)
-##   }
-
-    
-  ## ## REMOVE B/C at the end we will filter/match with expanded version of
-  ## ## oriCols
-  ## ## this takes a black list approach for cleaning out unwanted cols
-  ## res <- .cleanOutUnwantedCols(x, res, keytype, oriCols)
-  
-##   ## REMOVE???
-##   ## now is the time to collect the column names that we expect from the DB
-##   res <- .filterSuffixes(res)
-##   oriTabCols <- colnames(res)
-##   ## It's important that these are in the same order as oriCols.
-## #  oriTabCols <- .resortOriTabCols(oriTabCols, oriCols, x, res)  
-
   
   ## these are the colnames we need to have gotten back from the DB
   expectedCols <- .expandCols(oriCols)
@@ -1102,75 +990,22 @@
   ## I need to know the jointype...
   jointype <- .getDBLocs(x, keytype, value="field")
 
-
-
-  ## I need to do my column renaming BEFORE I do resort (because it wants to drop extra columns)
-  ## I need to rename all of the columns.
-##  colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
-  ## AND I need to handle duplicated column names...
-  ## I will need to do something like:
-  ##  .selectivelyMatchNameExceptions(x, primaryNames, oriCols)
-  ## BUT MOVING THIS here seems to have broken unit test #7!
-  ## So I need the column labeling to happen AFTER!
-  ## So maybe I need to just not remove filter suffixes till AFTER we get through .resort???
-
-  ## ALSO: .resort seems to throw away the extra col REGARDLESS of whether or
-  ## not it is the same name (probably because the oriTabCols is just too
-  ## short)
-  ## So: moving the suffix filter does not help...
-
-  ## Basically, I have to find a way to rename BOTH oriTabCols and colnames(res) BEFORE I call .resort().  
-
-  
-  ## So new plan: step 1 remove suffixes
+  ## Remove suffixes in case there were dups
   res <- .filterSuffixes(res)
-
-  ## now I will have duplicated colnames, but different cols.  I need to take
-  ## these cols and relable them (correctly) so that they have the correct
-  ## labels up front.
-  ## I also know that I have this problem because:
+  ## Then if any suffixes were actually removed, it means there were duplicated
+  ## cols.  Duplicated cols means I have to do some label swapping.
   if( length(oriTabCols) < length(colnames(res))){
-    ## Here is where we handle the case where we have duplicated cols.
-    ## .adjustForDupColNames will basically just have to return a correct
-    ## character vector for the colnames based on the keys in the actual table
-    ## columns.
-    ## So for the example in select 4:
-    ## oriTabCols <- c("gene_id", "ACCNUM", "REFSEQ")
-    ## AND:
-    ## colnames(res) <-  c("gene_id", "ACCNUM", "REFSEQ")
-    oriTabCols <- .adjustForDupColNames(res, oriTabCols, type="oriTabCols" )
-    colnames(res) <- .adjustForDupColNames(res, oriTabCols, type="colnames" )
+    oriTabCols <- .adjustForDupColNames(res, expectedCols)
+    colnames(res) <- .adjustForDupColNames(res, expectedCols)
   }
-
   
   
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
     res <- .resort(res, keys, jointype, oriTabCols)
   }
-
-
-  ## filterSuffixes is actually redundant with .resort() ...
-  ## ## suffixes almost never happen now that I do SQL generation: ALMOST never.
-  ## res <- .filterSuffixes(res)
   
   colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
-  
-  
-## No longer need to rename with respect for extras because we now expect
-## that every column will have some definition and match up with something.
-  ## ## Rename col headers, BUT if they are not returned by cols,then we have to
-  ## ## still keep the column name (but adjust it)
-  ## colnames(res) <- .renameColumnsWithRepectForExtras(x, res, oriCols)
-
-  ## This last step removes unwanted column duplicates.  As much as I would like
-  ## to, I CANNOT do this step inside of .resort(), because .resort() is
-  ## dealing only with the actual db-style column names that will sometimes
-  ## have (at least for AnnotationDbi) have legitimate duplications that we do
-  ## NOT want to remove.
-  ## I don't think I will need to do this anymore either...
-  ## res <- .dropDuplicatedCols(res)
-
   
   rownames(res) <- NULL
   res
@@ -1616,3 +1451,9 @@ setMethod("keytypes", "GODb",
 ## was caused by overly grabby exists() calls combined with the sloppy way
 ## that R CMD check leaves variables all over the place when it runs R CMD
 ## check.  exists() calls are no longer grabby.
+
+
+
+## fieldNames <- c("gene_id","accession","accession")
+## expectedCols <- c("ENTREZID","ACCNUM","REFSEQ")
+## type <- 

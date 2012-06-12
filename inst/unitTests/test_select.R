@@ -78,12 +78,6 @@ test_makeColAbbrs <- function(){
   checkIdentical(AnnotationDbi:::.getRKeyName(x, res[[1]]), names(res)[1])
 }
 
-## test_swapSymbolExceptions <- function(){
-##   res <- AnnotationDbi:::.swapSymbolExceptions(x,
-##                            strings=c("GO","ALIAS","PFAM","ALIAS2EG"))
-##   exp <- c("GO","ALIAS2EG","PFAM","ALIAS")
-##   checkIdentical(res, exp)
-## }
 
 test_getAllColAbbrs <- function(){
   res <- AnnotationDbi:::.getAllColAbbrs(x)
@@ -123,17 +117,6 @@ test_addNAsInPlace <- function(){
 }
 
 
-## test_renameColumnsWithRepectForExtras <- function(){
-##   ## cols can be expected to always include keytypes for testing this helper.
-##   cols <- c("CHR","PROSITE","GO","REFSEQ")
-##   objs <- AnnotationDbi:::.makeBimapsFromStrings(x, cols=cols)
-##   res <- AnnotationDbi:::.mergeBimaps(x, objs, keys, jointype)
-##   oriCols <- c("ENTREZID","CHR","PROSITE","GO","REFSEQ")
-##   res2 <- AnnotationDbi:::.renameColumnsWithRepectForExtras(x, res, oriCols)
-##   exp <- c("ENTREZID","CHR","IPI","PrositeId","GO","Evidence","Ontology",
-##            "REFSEQ")
-##   checkIdentical(exp,res2)
-## }
 
 ## mostly this is making sure I don't throw certain things out.
 ## Honestly, I am not 100% sure if .cleanOutUnwantedCols actually ever does
@@ -253,17 +236,14 @@ test_select3 <- function(){
   checkIdentical(c("OMIM","SYMBOL","UNIPROT","PATH"), colnames(res))
 }
 
-## test_select4 <- function(){
-##   ## BUG.  refseq is being dropped unintentionally!
-## ##   debug(AnnotationDbi:::.select)
-## ##   debug(AnnotationDbi:::.resortColumns)
-##   keys <- head(keys(org.Hs.eg.db),n=2)
-##   cols <- c("ACCNUM","REFSEQ")
-##   res <- select(org.Hs.eg.db, keys, cols)
-##   checkTrue(dim(res)[1]>0)
-##   checkTrue(dim(res)[2]==3)
-##   checkIdentical(c("ENTREZID","ACCNUM","REFSEQ"), colnames(res))
-## }
+test_select4 <- function(){
+  keys <- head(keys(org.Hs.eg.db),n=2)
+  cols <- c("ACCNUM","REFSEQ")
+  res <- select(org.Hs.eg.db, keys, cols)
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ENTREZID","ACCNUM","REFSEQ"), colnames(res))
+}
 
 test_select5 <- function(){
   keys <- head(keys(GO.db), n=4)
@@ -385,15 +365,13 @@ test_select12 <- function(){
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID"), colnames(res)) 
 
-##   keys <- "GO:0000023"
-##   cols <- c("ENTREZID","TAIR","GO")
-##   res <- select(t, keys, cols, keytype="GO")
-##   ## BUG: The TAIR column has been filtered just like the refseq/accession one!
-##   ## AnnotationDbi:::.extractData(t, cols, keytype="GO", keys)
-##   checkTrue(dim(res)[1]>0)
-##   checkTrue(dim(res)[2]==5)
-##   checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID","TAIR"), 
-##   		colnames(res))
+  keys <- "GO:0000023"
+  cols <- c("ENTREZID","TAIR","GO")
+  res <- select(t, keys, cols, keytype="GO")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==5)
+  checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID","TAIR"), 
+  		colnames(res))
 }
 
 
