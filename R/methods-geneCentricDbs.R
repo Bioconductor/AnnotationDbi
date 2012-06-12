@@ -18,7 +18,6 @@
 ##############################################################################
 ## Methods for mapping keytypes to table and fields
 
-## TODO: add all the keytypes here, and then subset according to org type.
 
 ## For GO, I should just define a whole distinct set.
 
@@ -48,7 +47,7 @@
 ## have to expand those ahead of time.
 .expandCols <- function(cols){
   ## known expansions for cols:
-  if("CHRLOC" %in% cols){ ## TODO: THERE HAS to be a better way to do this!
+  if("CHRLOC" %in% cols){ 
     after <- match("CHRLOC", cols)
     cols <- append(cols, c("CHRLOCCHR"),after) 
   }
@@ -88,10 +87,9 @@
 ## org.Sc.sgd.sqlite          ## done
 ## org.Ss.eg.sqlite           ## done
 ## org.Xl.eg.sqlite           ## done
-## none of the above..        ## STILL TODO: because I ALSO have to add GO views to the auto-generated org packages.
+## none of the above..        ## done
 
 
-## TODO correct all OTHER PROSITE/IPI mappings
 
 .defineTables <- function(x){
   ## 1st the generic/universal things
@@ -124,7 +122,7 @@
                      "ONTOLOGY" = c("go","ontology")
                      
                      )
-  ## exceptions for ALL OrgDbs ##TODO: not all org packages have these!
+  ## exceptions for ALL OrgDbs 
   if(class(x)=="OrgDb"){
     ## I should probably remove ucsckg from select...
     #.defTables <- c(.defTables, list("UCSCKG" = c("ucsc","ucsc_id")) )
@@ -464,10 +462,10 @@
     ## then flip to using the org package, and actually attach to that.
     x <- .getOrgPkg(x)
     try(.attachDB(x,y), silent=TRUE) ## not really a disaster if we fail here
-  }
-  ## Now we have to get the dblocs and then make the query
-  if(exists("y")){
+    ## because we have a "y" defined, we have to define the dblocs this way:
     dblocs <- .getDBLocs(y, cols)
+    ## And fully qualified keytype is like this
+    fullKeytype <- .getFullyQualifiedDBLocs(y, keytype)
     ## if we have c.probes in dblocs, then we MUST join to genes table
     if("c.probes" %in% dblocs && species(x)!="Saccharomyces cerevisiae"){
       dblocs <- unique(append(dblocs, c("genes"), match("c.probes", dblocs)))
@@ -475,8 +473,9 @@
     if("c.probes" %in% dblocs && species(x)=="Saccharomyces cerevisiae"){
       dblocs <- unique(append(dblocs, c("sgd"), match("c.probes", dblocs)))
     }
-  }else{
+  }else{ ## this means there is only an org pkg...
     dblocs <- .getDBLocs(x, cols)
+    fullKeytype <- .getFullyQualifiedDBLocs(x, keytype)
   }
   message(paste(dblocs,collapse=","))
   ## then make the 1st part of the query.
@@ -504,11 +503,6 @@
   ## res
   ## then use the keytype and keys to append the WHERE clause
   strKeys <- paste("'",keys,"'",sep="",collapse=",")
-  if(exists("y")){
-    fullKeytype <- .getFullyQualifiedDBLocs(y, keytype)
-  }else{
-    fullKeytype <- .getFullyQualifiedDBLocs(x, keytype)
-  }  
   where <- paste("WHERE ",fullKeytype,"in (",strKeys,")" )
   paste(res, where)
 }
@@ -1126,6 +1120,27 @@
   ## Basically, I have to find a way to rename BOTH oriTabCols and colnames(res) BEFORE I call .resort().  
 
   
+  ## So new plan: step 1 remove suffixes
+  res <- .filterSuffixes(res)
+
+  ## now I will have duplicated colnames, but different cols.  I need to take
+  ## these cols and relable them (correctly) so that they have the correct
+  ## labels up front.
+  ## I also know that I have this problem because:
+  if( length(oriTabCols) < length(colnames(res))){
+    ## Here is where we handle the case where we have duplicated cols.
+    ## .adjustForDupColNames will basically just have to return a correct
+    ## character vector for the colnames based on the keys in the actual table
+    ## columns.
+    ## So for the example in select 4:
+    ## oriTabCols <- c("gene_id", "ACCNUM", "REFSEQ")
+    ## AND:
+    ## colnames(res) <-  c("gene_id", "ACCNUM", "REFSEQ")
+    oriTabCols <- .adjustForDupColNames(res, oriTabCols, type="oriTabCols" )
+    colnames(res) <- .adjustForDupColNames(res, oriTabCols, type="colnames" )
+  }
+
+  
   
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
@@ -1577,4 +1592,24 @@ setMethod("keytypes", "GODb",
 ## of package, and some internal information about how those would be joined?
 
 
+
+
+
+## THE R CMD build bug:
+## For AnnotationDbi:
+## R --vanilla
+## utils::Sweave("IntroToAnnotationPackages.Rnw") ## runs no problem
+## BUT:
+## R --vanilla
+## utils::Sweave("AnnotationDbi.Rnw")
+## utils::Sweave("IntroToAnnotationPackages.Rnw") ## FAILBOAT
+## This failure is happening because the values that are left littered in the
+## global namespace are allowed to leak down into the scope of the functions
+## being called...
+
+
+## NASTY BUG persists!
+## But I MUST be doing something wrong...
+## y = "foo"
+## source("AnnotationDbi/inst/doc/IntroToAnnotationPackages.R")
 

@@ -814,6 +814,10 @@ The version number of R and packages loaded for generating the vignette were:
 sessionInfo()
 @
 
+<<cleanup, echo=FALSE>>=
+rm("y")
+@
+
 
 \end{document}
 
