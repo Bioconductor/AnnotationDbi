@@ -299,8 +299,6 @@ test_select10 <- function(){
 
   keys <- head(keys(t,"ENTREZID"))
   res <- select(t, keys, cols, keytype="ENTREZID")
-  ## Another post process bug (loses ENTREZID info)
-  ## AnnotationDbi:::.extractData(t, cols, keytype="ENTREZID", keys)
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","SYMBOL","CHR"), colnames(res))
@@ -375,5 +373,14 @@ test_select12 <- function(){
   		colnames(res))
 }
 
+test_select13 <- function(){
+  ## what happens with dropping unwanted rows?
+  sym <- "ITGA7"
+  res <- select(x, sym, "PFAM", keytype="ALIAS")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==2)
+  ## make sure no NAs are in res$PFAM
+  checkTrue(length(res$PFAM)== length(res$PFAM[!is.na(res$PFAM)]))
+}
 
 

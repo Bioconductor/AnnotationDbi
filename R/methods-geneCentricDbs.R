@@ -851,11 +851,31 @@
 ## .resort drops unwanted rows, rearanges cols and puts things into order that
 ## the keys were initially
 
+## this one just drops rows where every single element is NA (other than the
+## jointype column - which there ought to be keys for anyways) This is
+## acceptable because any missing keys will be added back in by subsequent
+## steps in .dropUnwantedRows
+.dropNARows <- function(tab, jointype){
+  if(dim(tab)[2] > 1){
+    sub <- tab[,!(colnames(tab) %in% jointype),drop=FALSE]
+    NAs <- is.na(sub)
+    numNAs <- apply(NAs, 1, sum)
+    idx <- !(numNAs == dim(sub)[2])
+    res <- tab[idx,]
+  }else{
+    res <- tab
+  }
+  res
+}
+
 ## drop rows that don't match
 .dropUnwantedRows <- function(tab, keys, jointype){
   ## 1st of all jointype MUST be in the colnames of tab
-  tab <- unique(tab)  ## make sure no rows are duplicated
+  tab <- unique(tab)  ## make sure no rows are duplicated  
   rownames(tab) <- NULL ## reset the rownames (for matching below)
+  ## Now I have to remove rows that are "all NAs" (with exception made for
+  ## keytype)
+  tab <- .dropNARows(tab, jointype)
   ## This row-level uniqueness is required for match() below
   ## first find keys that will never match up and add rows for them
   noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
@@ -1489,3 +1509,8 @@ setMethod("keytypes", "GODb",
 
 
 
+## the na bug
+## sym <- "ITGA7"
+## select(org.Hs.eg.db,sym,"PFAM",keytype="ALIAS");
+
+## Problem: our code that filters rows needs to drop the keytype column before filtering NAs
