@@ -357,9 +357,6 @@
                      "EVIDENCE" = c("go","evidence"),
                      "ONTOLOGY" = c("go","ontology")
                      )
-  ## TODO: I suspect that to make this work I will have to look at which
-  ## mappings got made and only keep the ones that are present...  Otherwise
-  ## there will be cols listed that are not present in some DBs
   }
 
   
@@ -429,26 +426,11 @@
 }
 
 
-## I need a method to generate the sql query.
-## The catch is that whatever tables are needed, I will need to always build
-## by starting out by starting with the genes table.
-## The query will look a BIT like this:
-## sql = "SELECT * FROM genes 
-## LEFT JOIN alias USING (_id) 
-## LEFT JOIN pfam USING (_id)
-## WHERE alias_symbol = 'ITGA7'"
-
-## except that it will use fully qualified names (tablename AND field)
-## AND ALSO, it has to always start with the keytype ...
-## So that means that I have to kind of SORT the dblocs just so that my
-## keytype is in front.  What I really want is just to put my keytype at the
-## front of the cols, call unique and then get the dblocs
-
 ## x is the org package object, y is the chip package object. 
 .attachDB <- function(x,y){
   chipDb <- .getChipDbFile(y)
   chipSQL <- paste("ATTACH '",chipDb,"' AS c",sep="")
-  message(chipSQL)
+  #message(chipSQL)
   dbQuery(dbConn(x), chipSQL)
 }
 
@@ -479,7 +461,7 @@
     fullKeytype <- .getFullyQualifiedDBLocs(x, keytype)
     species <- species(x)
   }
-  message(paste(dblocs,collapse=","))
+  #message(paste(dblocs,collapse=","))
   ## then make the 1st part of the query.
   for(i in seq_len(length(dblocs))){
     if(i==1){
@@ -502,7 +484,6 @@
     }
   }
   res <- paste(res, collapse=" ")
-  ## res
   ## then use the keytype and keys to append the WHERE clause
   strKeys <- paste("'",keys,"'",sep="",collapse=",")
   where <- paste("WHERE ",fullKeytype,"in (",strKeys,")" )
@@ -545,7 +526,7 @@
 
 ## I also need a method to call my generated sql and get the data.
 ## NOTE: the order that cols come back in is determined by the DB.
-## If I really want them ordered differently, I will have to resort downstream.
+## Some resorting is done downstream.
 .extractData <- function(x, cols, keytype, keys){
   ## Take the cols, append the keytype to FRONT
   cols <- unique(c(keytype, cols))
@@ -553,7 +534,7 @@
   cols <- unique(.expandCols(cols))
   ## generate the query
   sql <- .generateQuery(x, cols, keytype, keys)
-  message(sql)
+  #message(sql)
   ## get field names for relevant cols
   cols <- unique(c(keytype, cols))
   headerTables <- .getDBLocs(x, cols, value="field")
@@ -605,35 +586,35 @@
 ## the keys provided.  cols is a character vector to specify columns the user
 ## wants back and keys are the keys to look up.
 
-.getObjList <- function(x){
-  meta <- metadata(x) 
-  schema <- meta[meta["name"] == "DBSCHEMA","value"]
-  eval(parse(text=paste("AnnotationDbi:::",schema,
-                  "_AnnDbBimap_seeds",sep="")))  
-}
+## .getObjList <- function(x){
+##   meta <- metadata(x) 
+##   schema <- meta[meta["name"] == "DBSCHEMA","value"]
+##   eval(parse(text=paste("AnnotationDbi:::",schema,
+##                   "_AnnDbBimap_seeds",sep="")))  
+## }
 
-## a helper to make the strings to objects
-.makeBimapsFromStrings <- function(x, cols){
-  pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
-  lapply(cols, function(x){
-    eval(parse(text=paste(pkgname, x, sep="")))
-  })
-}
+## ## a helper to make the strings to objects
+## .makeBimapsFromStrings <- function(x, cols){
+##   pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
+##   lapply(cols, function(x){
+##     eval(parse(text=paste(pkgname, x, sep="")))
+##   })
+## }
 
-## another helper to merge
-## Be sure to use all.x=TRUE (and all.y=TRUE), then filter on keys in a later
-## step
-## 1st a helper to remove any pre-existing col duplicates from bimaps.
-.toTableAndCleanCols <- function(x, map){
-  tab <- toTable(map)
-  if(map@objName == "ENTREZID" && .getCentralID(x) == "TAIR"){
-    ## in this one strange case, we have to rename the 2nd column
-    colnames(tab)[2] <- c("ENTREZID") 
-  }else{
-    tab <- tab[,!duplicated(colnames(tab)),drop=FALSE]
-  }
-  tab
-}
+## ## another helper to merge
+## ## Be sure to use all.x=TRUE (and all.y=TRUE), then filter on keys in a later
+## ## step
+## ## 1st a helper to remove any pre-existing col duplicates from bimaps.
+## .toTableAndCleanCols <- function(x, map){
+##   tab <- toTable(map)
+##   if(map@objName == "ENTREZID" && .getCentralID(x) == "TAIR"){
+##     ## in this one strange case, we have to rename the 2nd column
+##     colnames(tab)[2] <- c("ENTREZID") 
+##   }else{
+##     tab <- tab[,!duplicated(colnames(tab)),drop=FALSE]
+##   }
+##   tab
+## }
 
 .filterSuffixes <- function(tab){
   ## clean up .x and .y extensions?
@@ -644,61 +625,61 @@
   tab
 }
 
-.mergeBimaps <- function(x, objs, keys, jointype){
-  for(i in seq_len(length(objs))){
-    if(i==1){
-      finTab <- .toTableAndCleanCols(x, objs[[1]])
-      finTab <- finTab[finTab[[jointype]] %in% keys,]
-    }else{
-      nextTab <- .toTableAndCleanCols(x, objs[[i]])
-      nextTab <- nextTab[nextTab[[jointype]] %in% keys,]
-      finTab <- merge(finTab, nextTab,
-                      by=jointype, all=TRUE)
-    }
-  }
-  finTab <- .filterSuffixes(finTab)
-  finTab
-}
+## .mergeBimaps <- function(x, objs, keys, jointype){
+##   for(i in seq_len(length(objs))){
+##     if(i==1){
+##       finTab <- .toTableAndCleanCols(x, objs[[1]])
+##       finTab <- finTab[finTab[[jointype]] %in% keys,]
+##     }else{
+##       nextTab <- .toTableAndCleanCols(x, objs[[i]])
+##       nextTab <- nextTab[nextTab[[jointype]] %in% keys,]
+##       finTab <- merge(finTab, nextTab,
+##                       by=jointype, all=TRUE)
+##     }
+##   }
+##   finTab <- .filterSuffixes(finTab)
+##   finTab
+## }
 
-## slower alternate for when we cannot pre-filter.
-.mergeBimapsPostFilt <- function(x, objs, keys, jointype){
-  for(i in seq_len(length(objs))){
-    if(i==1){
-      finTab <- .toTableAndCleanCols(x, objs[[1]])
-    }else{
-      nextTab <- .toTableAndCleanCols(x, objs[[i]])
-      finTab <- merge(finTab, nextTab,
-                      by=jointype, all=TRUE)
-    }
-  }
-  ## We do NOT want to to any actual row-filtering inside this method. It all
-  ## has to be done later, and after we have merged together requested data.
-  ## post filter means we filter LATER on and not while we are merging.
-  finTab <- .filterSuffixes(finTab)
-  finTab
-}
+## ## slower alternate for when we cannot pre-filter.
+## .mergeBimapsPostFilt <- function(x, objs, keys, jointype){
+##   for(i in seq_len(length(objs))){
+##     if(i==1){
+##       finTab <- .toTableAndCleanCols(x, objs[[1]])
+##     }else{
+##       nextTab <- .toTableAndCleanCols(x, objs[[i]])
+##       finTab <- merge(finTab, nextTab,
+##                       by=jointype, all=TRUE)
+##     }
+##   }
+##   ## We do NOT want to to any actual row-filtering inside this method. It all
+##   ## has to be done later, and after we have merged together requested data.
+##   ## post filter means we filter LATER on and not while we are merging.
+##   finTab <- .filterSuffixes(finTab)
+##   finTab
+## }
 
-## helper to get a rightColNames from the keyTypes
-.getRKeyName <- function(x, keytype){
-  objList <- .getObjList(x)
-  names <- unlist(lapply(objList, function(x){x$objName}))  
-  obj <- objList[[grep(paste("^",keytype,"$",sep=""),names,perl=TRUE)]]
-  objChain <- obj$L2Rchain
-  finElem <- objChain[[length(objChain)]]
-  finElem$Rcolname
-}
-## a vectorized version of the above helper.
-.getRKeyNames <- function(x, keytypes){
-  unlist(lapply(keytypes, FUN=.getRKeyName, x=x))
-}
+## ## helper to get a rightColNames from the keyTypes
+## .getRKeyName <- function(x, keytype){
+##   objList <- .getObjList(x)
+##   names <- unlist(lapply(objList, function(x){x$objName}))  
+##   obj <- objList[[grep(paste("^",keytype,"$",sep=""),names,perl=TRUE)]]
+##   objChain <- obj$L2Rchain
+##   finElem <- objChain[[length(objChain)]]
+##   finElem$Rcolname
+## }
+## ## a vectorized version of the above helper.
+## .getRKeyNames <- function(x, keytypes){
+##   unlist(lapply(keytypes, FUN=.getRKeyName, x=x))
+## }
 
-## Helper for matching the short names of mappings with the salient table cols
-.makeColAbbrs <- function(x){
-  objList <- .getObjList(x)
-  cols <- unlist(lapply(objList, function(x){x$objName}))
-  names(cols) <- .getRKeyNames(x, cols)
-  cols
-}
+## ## Helper for matching the short names of mappings with the salient table cols
+## .makeColAbbrs <- function(x){
+##   objList <- .getObjList(x)
+##   cols <- unlist(lapply(objList, function(x){x$objName}))
+##   names(cols) <- .getRKeyNames(x, cols)
+##   cols
+## }
 
 ## ## Need a helper to allow bimap symbols to be remapped on the fly
 ## ## if the string you pass into this is one thing, it gets the other
@@ -734,116 +715,116 @@
 
 
   
-## Another Helper for getting all possible short mapping names for salient cols
-.getAllColAbbrs <- function(x){
-  cols <- .makeColAbbrs(x)## unique strips off the name so we loop.  :(
-  maybeMissing <- c(probe_id="PROBEID", gene_id="ENTREZID",
-                   systematic_name="ORF")
-  ## if we have a tair DB, add tair to the list, but otherwise do not.
-  ## reason is b/c it creates a duplicate key situation with 'gene_id'
-  if(.getCentralID(x) == "TAIR"){
-    maybeMissing <- c(c(gene_id="TAIR"), maybeMissing)
-  }
-  for(i in seq_len(length(maybeMissing))){
-    if(!maybeMissing[i] %in% cols){
-       cols <- c(cols,maybeMissing[i])
-    }
-  }
-  cols
-}
+## ## Another Helper for getting all possible short mapping names for salient cols
+## .getAllColAbbrs <- function(x){
+##   cols <- .makeColAbbrs(x)## unique strips off the name so we loop.  :(
+##   maybeMissing <- c(probe_id="PROBEID", gene_id="ENTREZID",
+##                    systematic_name="ORF")
+##   ## if we have a tair DB, add tair to the list, but otherwise do not.
+##   ## reason is b/c it creates a duplicate key situation with 'gene_id'
+##   if(.getCentralID(x) == "TAIR"){
+##     maybeMissing <- c(c(gene_id="TAIR"), maybeMissing)
+##   }
+##   for(i in seq_len(length(maybeMissing))){
+##     if(!maybeMissing[i] %in% cols){
+##        cols <- c(cols,maybeMissing[i])
+##     }
+##   }
+##   cols
+## }
 
-## look for exceptions, BUT the logic of the loop used by this helper strictly
-## requires that the names and cols be of the same length AND IN THE SAME
-## ORDER!. Therefore, only primaryNames that are NOT NA can be passed down to
-## here, and the order of names and cols must be consistent beforehand.
-.nameExceptions <- function(names, cols){
-  if(length(names) != length(cols)){
-    warning("cols could not be renamed because length(names) != length(cols)")
-    return(names)
-  }else{
-    newNames <- character(length(names))
-    for(i in seq_len(length(cols))){
-      newNames[[i]] <- switch(EXPR = names(names)[[i]],
-              "go_id" = "GO",
-              "systematic_name" = "ORF",
-              "ipi_id" = ifelse(cols[[i]]=="PFAM","IPI","IPI"),
-              "accession" = ifelse(cols[[i]]=="ACCNUM","ACCNUM","REFSEQ"),
-              "gene_id" = ifelse(cols[[i]]=="ENTREZID","ENTREZID","TAIR"),
-                    names[[i]])
-    }
-    names(newNames) <- names(names)
-    return(newNames)
-  }
-}
+## ## look for exceptions, BUT the logic of the loop used by this helper strictly
+## ## requires that the names and cols be of the same length AND IN THE SAME
+## ## ORDER!. Therefore, only primaryNames that are NOT NA can be passed down to
+## ## here, and the order of names and cols must be consistent beforehand.
+## .nameExceptions <- function(names, cols){
+##   if(length(names) != length(cols)){
+##     warning("cols could not be renamed because length(names) != length(cols)")
+##     return(names)
+##   }else{
+##     newNames <- character(length(names))
+##     for(i in seq_len(length(cols))){
+##       newNames[[i]] <- switch(EXPR = names(names)[[i]],
+##               "go_id" = "GO",
+##               "systematic_name" = "ORF",
+##               "ipi_id" = ifelse(cols[[i]]=="PFAM","IPI","IPI"),
+##               "accession" = ifelse(cols[[i]]=="ACCNUM","ACCNUM","REFSEQ"),
+##               "gene_id" = ifelse(cols[[i]]=="ENTREZID","ENTREZID","TAIR"),
+##                     names[[i]])
+##     }
+##     names(newNames) <- names(names)
+##     return(newNames)
+##   }
+## }
 
-## this just loops through the cols and discovers which ones need extra
-## padding then it makes a new "cols" that has NAs where they will be needed.
-## If I use this, replace .makeBimapsFromStrings with a one row version of
-## same for speedup
-.addNAsInPlace <- function(x, names, cols){
-  res <- character()
-  for(i in seq_len(length(cols))){
-    ## 1st get the number of cols associated
-    if(!cols[i] %in%  c("ENTREZID","GOID","PROBEID","TAIR","ORF")){
-      obj <- .makeBimapsFromStrings(x, cols[i])[[1]]
-      colLen <- dim(toTable(obj[1]))[2] #fast
-      localCNs <- colnames(toTable(obj[1]))
-      duplevel <- length(localCNs) - length(unique(localCNs))
-      ## Check to see if any colnames are repeating?
-      if(colLen > 2 && duplevel==0){
-        ## then add some NAs
-        res <- c(res, cols[i], rep(NA, times=colLen-2))
-      }
-      else if(colLen > 2 && duplevel>0){
-        ## then add fewer NAs
-        res <- c(res, cols[i], rep(NA, times=(colLen-2-duplevel)))
-      }else{## don't add NAs
-        res <- c(res, cols[i])
-      }
-    }else{
-      res <- c(res, cols[i])
-    }
-  }
-  res
-}
+## ## this just loops through the cols and discovers which ones need extra
+## ## padding then it makes a new "cols" that has NAs where they will be needed.
+## ## If I use this, replace .makeBimapsFromStrings with a one row version of
+## ## same for speedup
+## .addNAsInPlace <- function(x, names, cols){
+##   res <- character()
+##   for(i in seq_len(length(cols))){
+##     ## 1st get the number of cols associated
+##     if(!cols[i] %in%  c("ENTREZID","GOID","PROBEID","TAIR","ORF")){
+##       obj <- .makeBimapsFromStrings(x, cols[i])[[1]]
+##       colLen <- dim(toTable(obj[1]))[2] #fast
+##       localCNs <- colnames(toTable(obj[1]))
+##       duplevel <- length(localCNs) - length(unique(localCNs))
+##       ## Check to see if any colnames are repeating?
+##       if(colLen > 2 && duplevel==0){
+##         ## then add some NAs
+##         res <- c(res, cols[i], rep(NA, times=colLen-2))
+##       }
+##       else if(colLen > 2 && duplevel>0){
+##         ## then add fewer NAs
+##         res <- c(res, cols[i], rep(NA, times=(colLen-2-duplevel)))
+##       }else{## don't add NAs
+##         res <- c(res, cols[i])
+##       }
+##     }else{
+##       res <- c(res, cols[i])
+##     }
+##   }
+##   res
+## }
 
-.selectivelyMatchNameExceptions <- function(x, names, cols){
-  ## 1st we ADD NAs to the cols (in the same places as the oriNames)
-  modCols <- .addNAsInPlace(x, names, unique(cols))
-  ## Then call method to selectively replace names with original col names.
-  .nameExceptions(names, modCols)
-}
+## .selectivelyMatchNameExceptions <- function(x, names, cols){
+##   ## 1st we ADD NAs to the cols (in the same places as the oriNames)
+##   modCols <- .addNAsInPlace(x, names, unique(cols))
+##   ## Then call method to selectively replace names with original col names.
+##   .nameExceptions(names, modCols)
+## }
 
 
 
-## Remove unwanted ID cols  
-## We only want to drop columns that really are "adds"
-.cleanOutUnwantedCols <- function(x, res, keytype, oriCols){
-  centralID <- .getCentralID(x)
-  blackList <- switch(EXPR = centralID,
-                      "EG" = unique(c(keytype, "ENTREZID","PROBEID")),
-                      "ENTREZID" = unique(c(keytype, "ENTREZID","PROBEID")),
-                      "ORF" = unique(c(keytype, "ORF","PROBEID")),
-                      "TAIR" = unique(c(keytype, "TAIR","PROBEID")))
-  blackList <- blackList[!(blackList %in% oriCols)]
-  fcNames <- .getAllColAbbrs(x)
-  smBlackList <- names(fcNames)[fcNames %in% blackList]
-  res <- res[,!(colnames(res) %in% smBlackList),drop=FALSE]
-  res
-}
+## ## Remove unwanted ID cols  
+## ## We only want to drop columns that really are "adds"
+## .cleanOutUnwantedCols <- function(x, res, keytype, oriCols){
+##   centralID <- .getCentralID(x)
+##   blackList <- switch(EXPR = centralID,
+##                       "EG" = unique(c(keytype, "ENTREZID","PROBEID")),
+##                       "ENTREZID" = unique(c(keytype, "ENTREZID","PROBEID")),
+##                       "ORF" = unique(c(keytype, "ORF","PROBEID")),
+##                       "TAIR" = unique(c(keytype, "TAIR","PROBEID")))
+##   blackList <- blackList[!(blackList %in% oriCols)]
+##   fcNames <- .getAllColAbbrs(x)
+##   smBlackList <- names(fcNames)[fcNames %in% blackList]
+##   res <- res[,!(colnames(res) %in% smBlackList),drop=FALSE]
+##   res
+## }
 
-## overhead is caused by the fact that on rare occasions cols will
-## contain things that cannot really be made into bimaps
-.cleanupBaseTypesFromCols <- function(x, cols){
-  if(class(x)=="OrgDb"){
-    centralSymbol <- .chooseCentralOrgPkgSymbol(x)
-    cols <- cols[!(cols %in% centralSymbol)]
-  }
-  if(class(x)=="ChipDb"){
-    cols <- cols[!(cols %in% "PROBEID")]
-  }
-  cols
-}
+## ## overhead is caused by the fact that on rare occasions cols will
+## ## contain things that cannot really be made into bimaps
+## .cleanupBaseTypesFromCols <- function(x, cols){
+##   if(class(x)=="OrgDb"){
+##     centralSymbol <- .chooseCentralOrgPkgSymbol(x)
+##     cols <- cols[!(cols %in% centralSymbol)]
+##   }
+##   if(class(x)=="ChipDb"){
+##     cols <- cols[!(cols %in% "PROBEID")]
+##   }
+##   cols
+## }
 
 
 ###############################################################################
