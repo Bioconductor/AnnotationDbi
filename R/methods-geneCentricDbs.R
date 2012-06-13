@@ -63,7 +63,7 @@
     after <- match("COMMON", cols)
     cols <- append(cols, c("SGD"),after) 
   } 
-  cols
+  unique(cols)
 }
 
 
@@ -992,6 +992,19 @@
 
   ## Remove suffixes in case there were dups
   res <- .filterSuffixes(res)
+
+  
+  ## If we can, then we should re-arrange to make sure cols come back in same
+  ## order as they asked for initially.  Expanded cols cannot be re-arranged.
+  if(all(expectedCols %in%  oriCols) &&
+     any(oriCols != expectedCols) ){
+    ## We need to make it so that oriTabCols is in the SAME order as oriCols
+    oriTabCols <- .getDBLocs(x, oriCols, value="field")
+    ## then we need to make expectedCols to match oriCols
+    expectedCols <- oriCols
+  }
+
+  
   ## Then if any suffixes were actually removed, it means there were duplicated
   ## cols.  Duplicated cols means I have to do some label swapping.
   if( length(oriTabCols) < length(colnames(res))){
@@ -1004,7 +1017,7 @@
   if(dim(res)[1]>0){
     res <- .resort(res, keys, jointype, oriTabCols)
   }
-  
+
   colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
   
   rownames(res) <- NULL
@@ -1451,9 +1464,28 @@ setMethod("keytypes", "GODb",
 ## was caused by overly grabby exists() calls combined with the sloppy way
 ## that R CMD check leaves variables all over the place when it runs R CMD
 ## check.  exists() calls are no longer grabby.
+## ALSO, lexical scoping meant that the exists() call being falsely tripped
+## led to a call of species(y) actually being executed when I should never
+## have been
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 ## fieldNames <- c("gene_id","accession","accession")
 ## expectedCols <- c("ENTREZID","ACCNUM","REFSEQ")
 ## type <- 
+
+
+

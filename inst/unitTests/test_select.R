@@ -328,18 +328,19 @@ test_select11 <- function(){
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","CHR","PATH"), colnames(res))
   
-##   keys <- head(keys(s, "ORF"))
-##   cols <- c("CHR","SGD")
-##   res <- select(s, keys, cols, keytype="ORF")
-##   checkTrue(dim(res)[1]>0)
-##   checkTrue(dim(res)[2]==3)
-## ## BUG: order of results has been flipped...
-##   checkIdentical(c("ORF","CHR","SGD"), colnames(res))
+  keys <- head(keys(s, "ORF"))
+  cols <- c("CHR","SGD")
+  res <- select(s, keys, cols, keytype="ORF")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ORF","CHR","SGD"), colnames(res))
 
-## ## AND: if you flip things
-##   cols <- c("SGD","CHR")
-##   res <- select(s, keys, cols, keytype="ORF")
-## ## suddenly the names are wrong!  
+  ## And if you flip things the other way
+  cols <- c("SGD","CHR")
+  res <- select(s, keys, cols, keytype="ORF")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ORF","SGD","CHR"), colnames(res))
 }
 
 test_select12 <- function(){
