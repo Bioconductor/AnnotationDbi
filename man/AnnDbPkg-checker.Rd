@@ -25,7 +25,7 @@
 \author{H. Pages}
 
 \seealso{
-  \link{AnnDbPkg-maker}
+  \code{\link[AnnotationForge:AnnDbPkg-maker]{AnnDbPkg-maker}}
 }
 
 \examples{

@@ -29,12 +29,8 @@ exportClasses(
     ## Virtual mother-class for all Annoations
     "AnnotationDb",
 
-
     ## from R/GOTerms.R
     "GOTerms",
-
-    ## from R/AnnDbPkg-maker.R
-    "AnnDbPkgSeed",
 
     ## Special Frame objects
     "GOFrame",
@@ -116,7 +112,6 @@ exportMethods(
 
     ## more...
     "initialize",
-    "makeAnnDbPkg",
 
     ##Methods for AnnotationDb
     "saveDb",
@@ -148,8 +143,6 @@ export(
     ## from the R/createAnnObjs.*_DB.R files
     createAnnObjs.SchemaChoice,
 
-    ## from R/AnnDbPkg-maker.R
-    loadAnnDbPkgIndex,
 
     ## from R/AnnDbPkg-checker.R
     #checkProperty0,
@@ -161,20 +154,6 @@ export(
     make_go_to_eg_map,
     toSQLStringSet,
 
-    ## help functions for making sqlite files
-    populateDB, 
-
-    ## wrapper functions for making chip packages
-    makeDBPackage,
-
-    createSimpleBimap,
-    available.db0pkgs,
-    available.dbschemas, 
-    available.chipdbschemas,
- 
-    #Convenience function to make the intermediate DB pkgs
-    wrapBaseDBPackages,
-
     #Convenience function to allow automatic mapping of IDs:
     inpIDMapper,
     intraIDMapper,
@@ -183,20 +162,6 @@ export(
     #Needs to be exported from RSQLite
     summary,
 
-    ## from R/NCBI_getters.R (not for release: at least not yet)
-    ## buildEntrezGeneDb,
-    ## getEntrezGenesFromTaxId,
-    ## getGeneStuff,
- 
-    ## This one will make you an org package:
-    makeOrgPackageFromNCBI,
- 
-    ## from R/makeProbePackage.R
-    print.probetable,
-    getProbeDataAffy,
-    getProbeData_1lq,
-    makeProbePackage,
-
     ## AnnotationDb
     metadata,
 
@@ -204,7 +169,6 @@ export(
     supportedSeqnameStyles,
     extractSeqnameSet,
     testSeqnames,
-    generateSeqnames.db,
     isSupportedSeqnamesStyle,
     listAllSupportedStylesBySpecies,
     listAllSupportedSeqnameStyles,

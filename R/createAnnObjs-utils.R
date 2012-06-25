@@ -111,68 +111,6 @@ createAnnObjs.SchemaChoice = function(schema, prefix, target, dbconn, datacache)
 }
 
 
-## Function to get all these populate functions out of the namespace.
-populateDB = function(schema, ...){
-    switch(schema,           
-           "HUMANCHIP_DB" = return(AnnotationDbi:::popHUMANCHIPDB(...)),
-           "MOUSECHIP_DB"  = return(AnnotationDbi:::popMOUSECHIPDB(...)),
-           "RATCHIP_DB"  = return(AnnotationDbi:::popRATCHIPDB(...)),
-           "FLYCHIP_DB"  = return(AnnotationDbi:::popFLYCHIPDB(...)),
-           "YEASTCHIP_DB"  = return(AnnotationDbi:::popYEASTCHIPDB(...)),
-           "ZEBRAFISHCHIP_DB"  = return(AnnotationDbi:::popZEBRAFISHCHIPDB(...)),
-           "ECOLICHIP_DB"  = return(AnnotationDbi:::popECOLICHIPDB(...)),
-           "CANINECHIP_DB"  = return(AnnotationDbi:::popCANINECHIPDB(...)),
-           "BOVINECHIP_DB"  = return(AnnotationDbi:::popBOVINECHIPDB(...)),
-           "WORMCHIP_DB"  = return(AnnotationDbi:::popWORMCHIPDB(...)),
-           "PIGCHIP_DB"  = return(AnnotationDbi:::popPIGCHIPDB(...)),
-           "CHICKENCHIP_DB"  = return(AnnotationDbi:::popCHICKENCHIPDB(...)),
-           "XENOPUSCHIP_DB"  = return(AnnotationDbi:::popXENOPUSCHIPDB(...)),
-           "ARABIDOPSISCHIP_DB"  = return(AnnotationDbi:::popARABIDOPSISCHIPDB(...)),
-           
-           "HUMAN_DB"  = return(AnnotationDbi:::popHUMANDB(...)),
-           "MALARIA_DB"  = return(AnnotationDbi:::popMALARIADB(...)),
-           "MOUSE_DB"  = return(AnnotationDbi:::popMOUSEDB(...)),
-           "RAT_DB"  = return(AnnotationDbi:::popRATDB(...)),
-           "FLY_DB"  = return(AnnotationDbi:::popFLYDB(...)),
-           "YEAST_DB"  = return(AnnotationDbi:::popYEASTDB(...)),
-           "ZEBRAFISH_DB"  = return(AnnotationDbi:::popZEBRAFISHDB(...)),
-           "CANINE_DB"  = return(AnnotationDbi:::popCANINEDB(...)),
-           "BOVINE_DB"  = return(AnnotationDbi:::popBOVINEDB(...)),
-           "WORM_DB"  = return(AnnotationDbi:::popWORMDB(...)),
-           "PIG_DB"  = return(AnnotationDbi:::popPIGDB(...)),
-           "CHICKEN_DB"  = return(AnnotationDbi:::popCHICKENDB(...)),
-           "ARABIDOPSIS_DB"  = return(AnnotationDbi:::popARABIDOPSISDB(...)),
-           "ECOLI_DB"  = return(AnnotationDbi:::popECOLIDB(...)),           
-           "CHIMP_DB"  = return(AnnotationDbi:::popCHIMPDB(...)),
-           "RHESUS_DB"  = return(AnnotationDbi:::popRHESUSDB(...)),
-           "RHESUSCHIP_DB" = return(AnnotationDbi:::popRHESUSCHIPDB(...)),
-           "ANOPHELES_DB"  = return(AnnotationDbi:::popANOPHELESDB(...)),
-           "XENOPUS_DB"  = return(AnnotationDbi:::popXENOPUSDB(...))
-          )
-}
-
-
-## Function to get all the make***CHIP_DB functions out of the namespace.
-makeDBPackage = function(schema, ...){
-    switch(schema,           
-           "HUMANCHIP_DB" = return(AnnotationDbi:::.makeHUMANCHIP_DB(...)),
-           "MOUSECHIP_DB"  = return(AnnotationDbi:::.makeMOUSECHIP_DB(...)),
-           "RATCHIP_DB"  = return(AnnotationDbi:::.makeRATCHIP_DB(...)),
-           "FLYCHIP_DB"  = return(AnnotationDbi:::.makeFLYCHIP_DB(...)),
-           "YEASTCHIP_DB"  = return(AnnotationDbi:::.makeYEASTCHIP_DB(...)),
-           "ZEBRAFISHCHIP_DB"  = return(AnnotationDbi:::.makeZEBRAFISHCHIP_DB(...)),
-           "ECOLICHIP_DB"  = return(AnnotationDbi:::.makeECOLICHIP_DB(...)),
-           "CANINECHIP_DB"  = return(AnnotationDbi:::.makeCANINECHIP_DB(...)),
-           "BOVINECHIP_DB"  = return(AnnotationDbi:::.makeBOVINECHIP_DB(...)),
-           "WORMCHIP_DB"  = return(AnnotationDbi:::.makeWORMCHIP_DB(...)),
-           "PIGCHIP_DB"  = return(AnnotationDbi:::.makePIGCHIP_DB(...)),
-           "CHICKENCHIP_DB"  = return(AnnotationDbi:::.makeCHICKENCHIP_DB(...)),
-           "XENOPUSCHIP_DB"  = return(AnnotationDbi:::.makeXENOPUSCHIP_DB(...)),
-           "RHESUSCHIP_DB" = return(AnnotationDbi:::.makeRHESUSCHIP_DB(...)),
-           "ARABIDOPSISCHIP_DB"  = return(AnnotationDbi:::.makeARABIDOPSISCHIP_DB(...))           
-          )
-}
-
 
 
 createAnnDbBimap <- function(seed, seed0)
@@ -195,29 +133,6 @@ createAnnDbBimaps <- function(seeds, seed0, envir=NULL)
     envir
 }
 
-
-##Makes a simpleBimap for tables that are added outside of standard AnnotationDbi Schemas.
-##This function requires that the bimap map from a single table in the DB.
-createSimpleBimap <- function(tablename, Lcolname, Rcolname,
-                              datacache,
-                              objName=as.character(NA),
-                              objTarget=as.character(NA))
-{
-    seed <- list(
-                 objName=objName,
-                 objTarget=objTarget,
-                 Class="AnnDbBimap",
-                 L2Rchain=list(
-                   list(
-                        tablename=tablename,
-                        Lcolname=Lcolname,
-                        Rcolname=Rcolname
-                        )
-                   ),
-                 datacache=datacache
-                 )
-    AnnotationDbi:::createAnnDbBimap(seed, list())
-}
 
 
 

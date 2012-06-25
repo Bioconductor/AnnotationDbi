@@ -109,6 +109,7 @@ This list will also tell you which model organisms are supported.
 
 <<<available schemas, results=hide>>=
 require(org.Hs.eg.db)
+require(AnnotationForge)
 available.dbschemas()
 @ 
 
