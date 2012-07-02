@@ -352,6 +352,7 @@ library("org.Hs.eg.db")
 con <- dbConnect(drv, dbname=system.file("extdata", "org.Hs.eg.sqlite",
                         package = "org.Hs.eg.db"))
 con
+dbDisconnect(con)
 @
 
 But in our case the connection is already here as part of the object:
@@ -364,8 +365,11 @@ So we can do something like below:
 
 <<ourConn2>>=
 hom.Hs.inp.db$conn
-## or better we can use a helper function to wrap this
+## or better we can use a helper function to wrap this:
 AnnotationDbi:::dbConn(hom.Hs.inp.db)
+## or we can just call the provided convenience function 
+## from when this package loads:
+hom.Hs.inp_dbconn()
 @
 
 
@@ -488,7 +492,6 @@ underlying database from R.  How should we go about this?  Well the
 already know how to learn this:
 
 <<dbListTables2>>=
-con <- AnnotationDbi:::dbConn(hom.Hs.inp.db)
 head(dbListTables(con))
 @ 
 
@@ -531,6 +534,7 @@ head(dbGetQuery(con, "SELECT * FROM Anopheles_gambiae"))
 ## Then only retrieve human records
 ## Query: SELECT * FROM Anopheles_gambiae WHERE species='HOMSA'
 head(dbGetQuery(con, "SELECT * FROM Anopheles_gambiae WHERE species='HOMSA'"))
+dbDisconnect(con)
 @
 \end{Solution}
 
@@ -551,7 +555,9 @@ extract identifiers.  How could we do that?
   unwanted <- c("map_counts","map_metadata","metadata")
   list <- list[!list %in% unwanted]
   ## Then just to format things in the usual way
-  toupper(list)
+  list <- toupper(list)
+  dbDisconnect(con)
+  list
 }
 
 ## Then make this into a method
@@ -587,6 +593,8 @@ keytypes(hom.Hs.inp.db)
   ## drop unwanted tables
   unwanted <- c("map_counts","map_metadata","metadata")
   list <- list[!list %in% unwanted]
+  dbDisconnect(con)
+  list
 }
 .cols <- function(x){
   list <- .getLCcolnames(x)
@@ -625,7 +633,9 @@ human rows from the result
   con <- AnnotationDbi:::dbConn(x)
   sql <- paste("SELECT inp_id FROM",lckeytype, "WHERE species!='HOMSA'")
   res <- dbGetQuery(con, sql)
-  as.vector(t(res))
+  res <- as.vector(t(res))
+  dbDisconnect(con)
+  res
 }
 
 setMethod("keys", "InparanoidDb", .keys(x, keytype))
