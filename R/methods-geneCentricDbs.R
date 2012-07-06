@@ -96,7 +96,7 @@
   .defTables <- list("ENTREZID" = c("genes","gene_id"),
                      "PFAM" = c("pfam","pfam_id"),
                      "IPI" = c("pfam","ipi_id"),
-                     "PROSITE" = c("prosite_id","ipi_id"),
+                     "PROSITE" = c("prosite","prosite_id"),
                      "ACCNUM" = c("accessions","accession"),
                      "ALIAS" = c("alias","alias_symbol"),
                      "ALIAS2EG" = c("alias","alias_symbol"),
@@ -403,6 +403,8 @@
     res <- res[1]
   }else if(value=="field"){
     res <- res[2]
+  }else if(value=="full.field"){
+    res <- paste(res[1],res[2],sep=".")
   }
   res
 }
@@ -461,11 +463,20 @@
     fullKeytype <- .getFullyQualifiedDBLocs(x, keytype)
     species <- species(x)
   }
+  
+  ## Get fields
+  if(exists("y", inherits=FALSE)){ ## IOW if it was a chip package at the top...
+    fields <- paste(.getDBLocs(y,cols,value="full.field"), collapse=",")
+  }else{
+    fields <- paste(.getDBLocs(x,cols,value="full.field"), collapse=",")
+  }
+
+  
   #message(paste(dblocs,collapse=","))
   ## then make the 1st part of the query.
   for(i in seq_len(length(dblocs))){
     if(i==1){
-      res <- paste("SELECT * FROM",dblocs[i])
+      res <- paste("SELECT ",fields," FROM",dblocs[i])
     }else{
       if(species=="Saccharomyces cerevisiae" &&
          (dblocs[i]=="gene2systematic" || dblocs[i-1]=="gene2systematic")){
