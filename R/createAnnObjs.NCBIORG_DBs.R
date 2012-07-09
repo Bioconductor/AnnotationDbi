@@ -414,7 +414,7 @@ getSpeciesFromSchema <- function(schema){
 
 
 ## helper to filter seeds above based on the schema
-filterSeeds <- function(allSeeds, schema, class="OrgDb"){
+.filterSeeds <- function(allSeeds, schema, class="OrgDb"){
   ## logic to decide what to leave and what to keep:
   ## 1st get the schema name
   species <- getSpeciesFromSchema(schema)
@@ -439,7 +439,7 @@ filterSeeds <- function(allSeeds, schema, class="OrgDb"){
 
 ## helper to add the revmaps (based on that same list and the maps that are sometimes reversed) and also to put things together.
 
-addRevMapSeeds <- function(seeds, schema){
+.addRevMapSeeds <- function(seeds, schema){
   
   ## We have a list of things we would like to add revmaps for, but we can
   ## only do that if they exist.
@@ -466,12 +466,16 @@ createAnnObjs.NCBI_DB <- function(schema,
                 objTarget=objTarget,
                 datacache=datacache
                 )
+  ## filter the seeds to match the schema
+  seeds <- .filterSeeds(allSeeds, schema, class)
+  ## now make the bimaps
   ann_objs <- createAnnDbBimaps(seeds, seed0)
+  ## Then add reversemaps
+  ann_objs <- .addRevMapSeeds(seeds, schema)
+                        
+                        
 
-
-
-  
-  
+                      
   ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
     ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
