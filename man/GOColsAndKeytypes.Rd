@@ -1,6 +1,6 @@
 \name{GOID}
 
-\alias{GOID}
+% \alias{GOID}
 \alias{TERM}
 \alias{ONTOLOGY}
 \alias{DEFINITION}
