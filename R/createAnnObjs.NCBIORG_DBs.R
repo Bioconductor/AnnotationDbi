@@ -359,28 +359,142 @@ NCBI_DB_AnnDbBimap_seeds <- list(
 )
 
 
-## Add names for easier subsetting.
-names(NCBI_DB_AnnDbBimap_seeds) <- sapply(NCBI_DB_AnnDbBimap_seeds,
-                                          function(x){x$objName})
-
-
-
-
-
 
 ## Then some helper functions to take a list of arguments and convert them into the ann_objs object that is returned by each function
 
 ## helper to make MOUSE_DB_AnnDbBimap_seeds from the big list and a list of mappings that are needed
 
-## helper to make revmaps (based on that same list and the maps that are sometimes reversed)
-
-## another helper to call both those helpers and any other stuff so that the guts of each createAnnObjs.XXX_DB function are as short as possible.
 
 
+## helper to translate schema to species name
+getSpeciesFromSchema <- function(schema){
+  species <- switch(EXPR = schema,
+                    "ANOPHELES_DB"="Anopheles gambiae",
+                    "ARABIDOPSISCHIP"="Arabidopsis thaliana",
+                    "ARABIDOPSIS_DB"="Arabidopsis thaliana",
+                    "BOVINECHIP_DB"="Bos taurus",
+                    "BOVINE_DB"="Bos taurus",
+                    "CANINECHIP_DB"="Canis familiaris",
+                    "CANINE_DB"="Canis familiaris",
+                    "CHICKENCHIP_DB"="Gallus gallus",
+                    "CHICKEN_DB"="Gallus gallus",
+                    "CHIMP_DB"="Pan troglodytes",
+                    "COELICOLOR_DB"="Streptomyces coelicolor",
+                    "ECOLICHIP_DB"="Escherichia coli",
+                    "ECOLI_DB"="Escherichia coli",
+                    "FLYCHIP_DB"="Drosophila melanogaster",
+                    "FLY_DB"="Drosophila melanogaster",
+                    "GO_DB"=NA,
+                    "HUMANCHIP_DB"="Homo sapiens",
+                    "HUMAN_DB"="Homo sapiens",
+                    "INPARANOID_DB"=NA,
+                    "KEGG_DB"=NA,
+                    "MALARIA_DB"="Plasmodium falciparum",
+                    "MOUSECHIP_DB"="Mus musculus",
+                    "MOUSE_DB"="Mus musculus",
+                    "ORGANISM_DB"=NA,
+                    "PFAM_DB"=NA,
+                    "PIGCHIP_DB"="Sus scrofa",
+                    "PIG_DB"="Sus scrofa",
+                    "RATCHIP_DB"="Rattus Norvegicus",
+                    "RAT_DB"="Rattus Norvegicus",
+                    "RHESUSCHIP_DB"="Macaca mulatta",
+                    "RHESUS_DB"="Macaca mulatta",
+                    "WORMCHIP_DB"="Caenorhabditis elegans",
+                    "WORM_DB"="Caenorhabditis elegans",
+                    "XENOPUSCHIP_DB"="Xenopus laevis",
+                    "XENOPUS_DB"="Xenopus laevis",
+                    "YEASTCHIP_DB"="Saccharomyces cerevisiae",
+                    "YEAST_DB"="Saccharomyces cerevisiae",
+                    "YEASTNCBI_DB"="Saccharomyces cerevisiae",
+                    "ZEBRAFISHCHIP_DB"="Danio rerio",
+                    "ZEBRAFISH_DB"="Danio rerio")
+  species
+}
 
-## Then define each function briefly like:
+
+## helper to filter seeds above based on the schema
+filterSeeds <- function(allSeeds, schema, class="OrgDb"){
+  ## logic to decide what to leave and what to keep:
+  ## 1st get the schema name
+  species <- getSpeciesFromSchema(schema)
+
+## I might want to be "ChipDb" later to reuse this code for NCBICHIP_DBs
+  
+  ## then call .definePossibleTables to get detailed schema info.
+  schemaDet <- .definePossibleTables(class, species)
+  classNames <- names(schemaDet)
+  names <-  sapply(allSeeds, function(x){x$objName})
+
+  ## if you are in both lists, then we want you as a seed
+  idx <- match(classNames,names)
+  idx <- idx[!is.na(idx)]
+  seeds <- allSeeds[idx]
+  names(seeds) <- NULL  ## clean out names now
+
+  ## return filtered seeds
+  seeds
+}
 
 
-## createAnnObjs.MOUSE_DB <- function(prefix, objTarget, dbconn, datacache){
-##   ## helper function goes here.
+## helper to add the revmaps (based on that same list and the maps that are sometimes reversed) and also to put things together.
+
+addRevMapSeeds <- function(seeds, schema){
+  
+  ## We have a list of things we would like to add revmaps for, but we can
+  ## only do that if they exist.
+
+
+
+  
+
+}
+
+
+
+## 1st three arguments for this are all hard coded below for each case
+createAnnObjs.NCBI_DB <- function(schema,
+                                  class,
+                                  allSeeds,
+                                  prefix,
+                                  objTarget,
+                                  dbconn,
+                                  datacache){
+  checkDBSCHEMA(dbconn, schema)
+  ## AnnDbBimap objects
+  seed0 <- list(
+                objTarget=objTarget,
+                datacache=datacache
+                )
+  ann_objs <- createAnnDbBimaps(seeds, seed0)
+
+
+
+  
+  
+  ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+    ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+
+    ## Some pre-caching
+    Lkeys(ann_objs$GO)
+    #mappedLkeys(ann_objs$GO)
+    #Rkeys(ann_objs$GO2EG)
+    #mappedRkeys(ann_objs$GO2EG)
+
+    prefixAnnObjNames(ann_objs, prefix)
+}
+
+
+
+## Then define each function briefly like this:
+
+## createAnnObjs.MOUSE_DB <- function(prefix, objTarget, dbconn, datacache, schema="MOUSE_DB",class="OrgDb", allSeeds=NCBI_DB_AnnDbBimap_seeds){
+##  createAnnObjs.NCBI_DB <- function(schema,
+##                                   class,
+##                                   allSeeds,
+##                                   prefix,
+##                                   objTarget,
+##                                   dbconn,
+##                                   datacache)
 ## }

@@ -92,6 +92,12 @@
 
 
 .defineTables <- function(x){
+  class <- class(x)
+  species <- species(x)
+  .definePossibleTables(class, species)
+}
+
+.definePossibleTables <- function(class, species){  
   ## 1st the generic/universal things
   .defTables <- list("ENTREZID" = c("genes","gene_id"),
                      "PFAM" = c("pfam","pfam_id"),
@@ -123,17 +129,18 @@
                      
                      )
   ## exceptions for ALL OrgDbs 
-  if(class(x)=="OrgDb"){
+  if(class=="OrgDb"){
     ## I should probably remove ucsckg from select...
     #.defTables <- c(.defTables, list("UCSCKG" = c("ucsc","ucsc_id")) )
+    .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS2PROBE"))]
   }
   ## exceptions for ALL ChipDbs
-  if(class(x)=="ChipDb"){
+  if(class=="ChipDb"){
     .defTables <- c(.defTables, list("PROBEID" = c("c.probes","probe_id")) )
   }
 
   ## species specific exceptions
-  if(species(x)=="Anopheles gambiae"){
+  if(species=="Anopheles gambiae"){
     ## drop unsupported mappings
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2EG",
@@ -146,7 +153,7 @@
                                                         "IPI",
                                                         "PROSITE") )]
   }
-  if(species(x)=="Arabidopsis thaliana"){
+  if(species=="Arabidopsis thaliana"){
     ## add these
     .defTables <- c(.defTables, list("TAIR" = c("genes","gene_id"),
                                      "ARACYC" = c("aracyc","pathway_name"),
@@ -171,23 +178,23 @@
     .defTables <- c(.defTables, list("ENTREZID" = c("entrez_genes","gene_id"),
                                      "CHR"=c("gene_info","chromosome") ))
   }
-  if(species(x)=="Bos taurus"){
+  if(species=="Bos taurus"){
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP") )]
   }
-  if(species(x)=="Caenorhabditis elegans"){
+  if(species=="Caenorhabditis elegans"){
     .defTables <- c(.defTables, list("WORMBASE" = c("wormbase","wormbase_id")))
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE") )]
   }
-  if(species(x)=="Canis familiaris"){
+  if(species=="Canis familiaris"){
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE") )]
   }
-  if(species(x)=="Drosophila melanogaster"){
+  if(species=="Drosophila melanogaster"){
     .defTables <- c(.defTables, list("FLYBASE" = c("flybase","flybase_id"),
                                   "FLYBASECG" = c("flybase_cg","flybase_cg_id"),
                                   "FLYBASEPROT" = c("flybase_prot","prot_id")))
@@ -195,11 +202,11 @@
                                                         "IPI",
                                                         "PROSITE") )]
   }
-  if(species(x)=="Danio rerio"){
+  if(species=="Danio rerio"){
     .defTables <- c(.defTables, list("ZFIN" = c("zfin","zfin_id")))
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP"))]
   }
-  if(species(x)=="Escherichia coli"){
+  if(species=="Escherichia coli"){
     .defTables <- .defTables[!(names(.defTables) %in% c("CHR",
                                                         "MAP",
                                                         "UNIGENE",
@@ -214,18 +221,18 @@
                                                         "ENSEMBLTRANS",
                                                         "UNIPROT"))]
   }
-  if(species(x)=="Gallus gallus"){
+  if(species=="Gallus gallus"){
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP"))]
   }
-  if(species(x)=="Homo sapiens"){
+  if(species=="Homo sapiens"){
     .defTables <- c(.defTables, list("OMIM" = c("omim","omim_id"),
                                      "UCSCKG" = c("ucsc","ucsc_id")) )
   }
-  if(species(x)=="Mus musculus"){
+  if(species=="Mus musculus"){
     .defTables <- c(.defTables, list("MGI" = c("mgi","mgi_id"),
                                      "UCSCKG" = c("ucsc","ucsc_id")) )
   }
-  if(species(x)=="Macaca mulatta"){
+  if(species=="Macaca mulatta"){
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2EG",
                                                         "ALIAS2PROBE",
@@ -235,7 +242,7 @@
                                                         "IPI",
                                                         "PROSITE"))]
   }
-  if(species(x)=="Plasmodium falciparum"){
+  if(species=="Plasmodium falciparum"){
     .defTables <- c(.defTables, list(
       "ORF" = c("genes","gene_id") ))
     .defTables <- .defTables[!(names(.defTables) %in% c("ENTREZID",
@@ -260,7 +267,7 @@
                                                         "UNIPROT") )]
     .defTables <- c(.defTables, list("ALIAS2ORF" = c("alias","alias_symbol") ))
   }
-  if(species(x)=="Pan troglodytes"){
+  if(species=="Pan troglodytes"){
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2PROBE",
                                                         "ALIAS2EG",
@@ -270,10 +277,10 @@
                                                         "IPI",
                                                         "PROSITE") )]
   }
-  if(species(x)=="Rattus Norvegicus"){
+  if(species=="Rattus Norvegicus"){
     .defTables <- .defTables ## no changes (for now)
   }  
-  if(species(x)=="Saccharomyces cerevisiae"){
+  if(species=="Saccharomyces cerevisiae"){
     .defTables <- c(.defTables, list(       
       "ORF" = c("gene2systematic","systematic_name"),
       "DESCRIPTION" = c("chromosome_features","feature_description"),
@@ -293,7 +300,7 @@
     .defTables <- c(.defTables, list("ALIAS" = c("gene2alias","alias"),
                                 "CHR" = c("chromosome_features","chromosome") ))
   }
-  if(species(x)=="Sus scrofa"){
+  if(species=="Sus scrofa"){
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
                                                         "CHRLOC",
                                                         "CHRLOCEND",
@@ -305,7 +312,7 @@
                                                         "ENSEMBLPROT",
                                                         "ENSEMBLTRANS") )]
   }
-  if(species(x)=="Xenopus laevis"){
+  if(species=="Xenopus laevis"){
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2PROBE",
                                                         "ALIAS2EG",
@@ -340,7 +347,7 @@
                     "Sus scrofa",
                     "Xenopus laevis")
   
-  if(!(species(x) %in% stockSpecies)){
+  if(!(species %in% stockSpecies)){
     ## What follows is a very optimistic list!
   .defTables <- list("ENTREZID" = c("genes","gene_id"),
                      "ACCNUM" = c("accessions","accession"),
@@ -364,7 +371,7 @@
   ## it's just too many responsibilities for this select to also handle the
   ## somewhat obscure GO database schema.  So many things will not really work
   ## untill I do that change (ancestors etc.)
-  if(class(x)=="GODb"){
+  if(class=="GODb"){
     .defTables <- list("GOID" = c("go_term","go_id"),
                           "TERM" = c("go_term","term"),
                           "ONTOLOGY" = c("go_term","ontology"),
