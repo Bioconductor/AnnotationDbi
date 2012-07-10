@@ -414,7 +414,7 @@ getSpeciesFromSchema <- function(schema){
 
 
 ## helper to filter seeds above based on the schema
-.filterSeeds <- function(allSeeds, schema, class="OrgDb"){
+.filterSeeds <- function(allSeeds, schema, class){
   ## logic to decide what to leave and what to keep:
   ## 1st get the schema name
   species <- getSpeciesFromSchema(schema)
@@ -436,18 +436,54 @@ getSpeciesFromSchema <- function(schema){
   seeds
 }
 
+.revmapper <-function(name, ann_objs, class){
+  if(class=="OrgDb"){
+    name2<- paste(name,"2EG",sep="")
+  }else if (class=="ChipDb"){
+    name2<- paste(name,"2PROBE",sep="")
+  }  
+  ann_objs[[name2]] <- revmap(ann_objs[[name]], objName=name2)
+}
 
-## helper to add the revmaps (based on that same list and the maps that are sometimes reversed) and also to put things together.
 
-.addRevMapSeeds <- function(seeds, schema){
+## helper to add the revmaps (based on that same list and the maps that are
+## sometimes reversed) and also to put things together.
+.addRevMapSeeds <- function(ann_objs, class){
   
   ## We have a list of things we would like to add revmaps for, but we can
   ## only do that if they exist.
+  if(class=="OrgDb"){
+    revMapables <- c("ACCNUM","ENZYME","MAP","OMIM","PATH","PMID","REFSEQ",
+                     "SYMBOL","UNIGENE","ENSEMBL","ENSEMBLPROT", "ENSEMBLTRANS",
+                     "MGI","FLYBASE","FLYBASECG","FLYBASEPROT","GO")
+  }else if (class=="ChipDb"){
+    revMapables <- c("ENZYME","PATH","PMID","ENSEMBL","MGI","GO")
+  }
+  ## now filter so that rMapNames is only the names that we actually have
+  mapNames <- ls(ann_objs)
+  idx <- match(revMapables, mapNames)
+  idx <- idx[!is.na(idx)]
+  rMapNames <- mapNames[idx]
 
-
-
+  ## then loop through the rMapNames to call revmap and assign values in.
+  lapply(rMapNames, .revmapper, ann_objs, class)
   
-
+  ## After we make our revmaps, we need to do some special work for GO (always)
+  ## BUT the following still has to be customized for either 2EG or 2PROBE...
+  if(class=="OrgDb"){
+    map <- ann_objs$GO2EG
+    map@rightTables <- Go3tablenames(all=TRUE)
+    map@objName <- "GO2ALLEGS"
+    ann_objs$GO2ALLEGS <- map
+  }else if (class=="ChipDb"){
+    map <- ann_objs$GO2PROBE
+    map@rightTables <- Go3tablenames(all=TRUE)
+    map@objName <- "GO2ALLPROBES"
+    ann_objs$GO2ALLPROBES <- map
+  }
+  
+  ## return the objects
+  ann_objs
 }
 
 
@@ -470,35 +506,37 @@ createAnnObjs.NCBI_DB <- function(schema,
   seeds <- .filterSeeds(allSeeds, schema, class)
   ## now make the bimaps
   ann_objs <- createAnnDbBimaps(seeds, seed0)
-  ## Then add reversemaps
-  ann_objs <- .addRevMapSeeds(seeds, schema)
-                        
-                        
 
+  ## Then add reversemaps
+  ann_objs <- .addRevMapSeeds(ann_objs, class)
                       
   ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
-    ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+  ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+  ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
-    ## Some pre-caching
-    Lkeys(ann_objs$GO)
-    #mappedLkeys(ann_objs$GO)
-    #Rkeys(ann_objs$GO2EG)
-    #mappedRkeys(ann_objs$GO2EG)
-
-    prefixAnnObjNames(ann_objs, prefix)
+  ## Some pre-caching
+  Lkeys(ann_objs$GO)
+  ##mappedLkeys(ann_objs$GO)
+  ##Rkeys(ann_objs$GO2EG)
+  ##mappedRkeys(ann_objs$GO2EG)
+ 
+  prefixAnnObjNames(ann_objs, prefix)
 }
 
 
 
 ## Then define each function briefly like this:
 
-## createAnnObjs.MOUSE_DB <- function(prefix, objTarget, dbconn, datacache, schema="MOUSE_DB",class="OrgDb", allSeeds=NCBI_DB_AnnDbBimap_seeds){
-##  createAnnObjs.NCBI_DB <- function(schema,
-##                                   class,
-##                                   allSeeds,
-##                                   prefix,
-##                                   objTarget,
-##                                   dbconn,
-##                                   datacache)
-## }
+createAnnObjs.HUMAN_DB <- function(prefix,
+                                   objTarget,
+                                   dbconn,
+                                   datacache,
+                                   schema="HUMAN_DB",
+                                   class="OrgDb",
+                                   allSeeds=NCBI_DB_AnnDbBimap_seeds){
+  createAnnObjs.NCBI_DB(schema,class,allSeeds,prefix,objTarget,
+                        dbconn,datacache)
+}
+
+
+

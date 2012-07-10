@@ -293,48 +293,48 @@ HUMAN_DB_AnnDbBimap_seeds <- list(
     )
 )
 
-createAnnObjs.HUMAN_DB <- function(prefix, objTarget, dbconn, datacache)
-{
-    checkDBSCHEMA(dbconn, "HUMAN_DB")
+## createAnnObjs.HUMAN_DB <- function(prefix, objTarget, dbconn, datacache)
+## {
+##     checkDBSCHEMA(dbconn, "HUMAN_DB")
 
-    ## AnnDbBimap objects
-    seed0 <- list(
-        objTarget=objTarget,
-        datacache=datacache
-    )
-    ann_objs <- createAnnDbBimaps(HUMAN_DB_AnnDbBimap_seeds, seed0)
+##     ## AnnDbBimap objects
+##     seed0 <- list(
+##         objTarget=objTarget,
+##         datacache=datacache
+##     )
+##     ann_objs <- createAnnDbBimaps(HUMAN_DB_AnnDbBimap_seeds, seed0)
 
-    ## Reverse maps
-    ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
-    ann_objs$ENZYME2EG <- revmap(ann_objs$ENZYME, objName="ENZYME2EG")
-    ann_objs$MAP2EG <- revmap(ann_objs$MAP, objName="MAP2EG")
-    ann_objs$OMIM2EG <- revmap(ann_objs$OMIM, objName="OMIM2EG")
-    ann_objs$PATH2EG <- revmap(ann_objs$PATH, objName="PATH2EG")
-    ann_objs$PMID2EG <- revmap(ann_objs$PMID, objName="PMID2EG")
-    ann_objs$REFSEQ2EG <- revmap(ann_objs$REFSEQ, objName="REFSEQ2EG")
-    ann_objs$SYMBOL2EG <- revmap(ann_objs$SYMBOL, objName="SYMBOL2EG")
-    ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
-    #ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
-    #ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
-    ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
-    ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
-    ann_objs$ENSEMBLTRANS2EG <- revmap(ann_objs$ENSEMBLTRANS, objName="ENSEMBLTRANS2EG")
-    ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
-    map <- ann_objs$GO2EG
-    map@rightTables <- Go3tablenames(all=TRUE)
-    map@objName <- "GO2ALLEGS"
-    ann_objs$GO2ALLEGS <- map
+##     ## Reverse maps
+##     ann_objs$ACCNUM2EG <- revmap(ann_objs$ACCNUM, objName="ACCNUM2EG")
+##     ann_objs$ENZYME2EG <- revmap(ann_objs$ENZYME, objName="ENZYME2EG")
+##     ann_objs$MAP2EG <- revmap(ann_objs$MAP, objName="MAP2EG")
+##     ann_objs$OMIM2EG <- revmap(ann_objs$OMIM, objName="OMIM2EG")
+##     ann_objs$PATH2EG <- revmap(ann_objs$PATH, objName="PATH2EG")
+##     ann_objs$PMID2EG <- revmap(ann_objs$PMID, objName="PMID2EG")
+##     ann_objs$REFSEQ2EG <- revmap(ann_objs$REFSEQ, objName="REFSEQ2EG")
+##     ann_objs$SYMBOL2EG <- revmap(ann_objs$SYMBOL, objName="SYMBOL2EG")
+##     ann_objs$UNIGENE2EG <- revmap(ann_objs$UNIGENE, objName="UNIGENE2EG")
+##     #ann_objs$PFAM2EG <- revmap(ann_objs$PFAM, objName="PFAM2EG")
+##     #ann_objs$PROSITE2EG <- revmap(ann_objs$PROSITE, objName="PROSITE2EG")
+##     ann_objs$ENSEMBL2EG <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2EG")
+##     ann_objs$ENSEMBLPROT2EG <- revmap(ann_objs$ENSEMBLPROT, objName="ENSEMBLPROT2EG")
+##     ann_objs$ENSEMBLTRANS2EG <- revmap(ann_objs$ENSEMBLTRANS, objName="ENSEMBLTRANS2EG")
+##     ann_objs$GO2EG <- revmap(ann_objs$GO, objName="GO2EG")
+##     map <- ann_objs$GO2EG
+##     map@rightTables <- Go3tablenames(all=TRUE)
+##     map@objName <- "GO2ALLEGS"
+##     ann_objs$GO2ALLEGS <- map
 
-    ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
-    ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+##     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
+##     ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+##     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
-    ## Some pre-caching
-    Lkeys(ann_objs$GO)
-    #mappedLkeys(ann_objs$GO)
-    #Rkeys(ann_objs$GO2EG)
-    #mappedRkeys(ann_objs$GO2EG)
+##     ## Some pre-caching
+##     Lkeys(ann_objs$GO)
+##     #mappedLkeys(ann_objs$GO)
+##     #Rkeys(ann_objs$GO2EG)
+##     #mappedRkeys(ann_objs$GO2EG)
 
-    prefixAnnObjNames(ann_objs, prefix)
-}
+##     prefixAnnObjNames(ann_objs, prefix)
+## }
 
