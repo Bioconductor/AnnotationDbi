@@ -7,14 +7,14 @@
 ## Start with a huge named list of all the possible mappings.
 
 
-NCBI_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id")
+NCBIORG_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id")
 
-NCBI_DB_AnnDbBimap_seeds <- list(
+NCBIORG_DB_AnnDbBimap_seeds <- list(
     list(
         objName="ACCNUM",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="accessions",
                 Lcolname="_id",
@@ -26,7 +26,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="ALIAS2EG",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="alias",
                 Lcolname="_id",
@@ -39,7 +39,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="CHR",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="chromosomes",
                 Lcolname="_id",
@@ -51,7 +51,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="ENZYME",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="ec",
                 Lcolname="_id",
@@ -63,7 +63,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="GENENAME",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
@@ -75,7 +75,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="MAP",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="cytogenetic_locations",
                 Lcolname="_id",
@@ -87,7 +87,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="OMIM",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="omim",
                 Lcolname="_id",
@@ -99,7 +99,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="PATH",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="kegg",
                 Lcolname="_id",
@@ -111,7 +111,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="PMID",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="pubmed",
                 Lcolname="_id",
@@ -123,7 +123,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="REFSEQ",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="refseq",
                 Lcolname="_id",
@@ -135,7 +135,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="SYMBOL",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="gene_info",
                 Lcolname="_id",
@@ -147,7 +147,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="UNIGENE",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="unigene",
                 Lcolname="_id",
@@ -159,7 +159,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="CHRLOC",
         Class="AnnDbMap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
                 Lcolname="_id",
@@ -173,7 +173,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="CHRLOCEND",
         Class="AnnDbMap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="chromosome_locations",
                 Lcolname="_id",
@@ -187,7 +187,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="PFAM",
         Class="IpiAnnDbMap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="pfam",
                 Lcolname="_id",
@@ -200,7 +200,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="PROSITE",
         Class="IpiAnnDbMap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="prosite",
                 Lcolname="_id",
@@ -213,7 +213,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="ENSEMBL",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="ensembl",
                 Lcolname="_id",
@@ -225,7 +225,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="ENSEMBLPROT",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="ensembl_prot",
                 Lcolname="_id",
@@ -237,7 +237,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="ENSEMBLTRANS",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="ensembl_trans",
                 Lcolname="_id",
@@ -249,7 +249,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="UNIPROT",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="uniprot",
                 Lcolname="_id",
@@ -261,7 +261,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="UCSCKG",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="ucsc",
                 Lcolname="_id",
@@ -273,7 +273,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="FLYBASE",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="flybase",
                 Lcolname="_id",
@@ -285,7 +285,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="FLYBASECG",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="flybase_cg",
                 Lcolname="_id",
@@ -297,7 +297,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="FLYBASEPROT",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="flybase_prot",
                 Lcolname="_id",
@@ -309,7 +309,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="MGI",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="mgi",
                 Lcolname="_id",
@@ -321,7 +321,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="WORMBASE",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="wormbase",
                 Lcolname="_id",
@@ -333,7 +333,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="ZFIN",
         Class="AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 tablename="zfin",
                 Lcolname="_id",
@@ -345,7 +345,7 @@ NCBI_DB_AnnDbBimap_seeds <- list(
         objName="GO",
         Class="Go3AnnDbBimap",
         L2Rchain=list(
-            NCBI_DB_L2Rlink1,
+            NCBIORG_DB_L2Rlink1,
             list(
                 #tablename="go_term", # no rightmost table for a Go3AnnDbBimap
                 Lcolname="_id",
@@ -489,13 +489,14 @@ getSpeciesFromSchema <- function(schema){
 
 
 ## 1st three arguments for this are all hard coded below for each case
-createAnnObjs.NCBI_DB <- function(schema,
-                                  class,
-                                  allSeeds,
-                                  prefix,
+createAnnObjs.NCBI_DB <- function(prefix,
                                   objTarget,
                                   dbconn,
-                                  datacache){
+                                  datacache,
+                                  schema,
+                                  class,
+                                  allSeeds,
+                                  dbname=NULL){ ##dbname not used for org pkgs
   checkDBSCHEMA(dbconn, schema)
   ## AnnDbBimap objects
   seed0 <- list(
@@ -506,12 +507,18 @@ createAnnObjs.NCBI_DB <- function(schema,
   seeds <- .filterSeeds(allSeeds, schema, class)
   ## now make the bimaps
   ann_objs <- createAnnDbBimaps(seeds, seed0)
-
+  
   ## Then add reversemaps
   ann_objs <- .addRevMapSeeds(ann_objs, class)
                       
   ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
-  ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+  if(class=="OrgDb"){
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+  }else if (class=="ChipDb"){
+    attachDBs(dbconn, ann_objs)
+    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname=dbname)
+    ann_objs$ORGPKG <- dbname
+  }
   ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
   ## Some pre-caching
@@ -533,9 +540,8 @@ createAnnObjs.HUMAN_DB <- function(prefix,
                                    datacache,
                                    schema="HUMAN_DB",
                                    class="OrgDb",
-                                   allSeeds=NCBI_DB_AnnDbBimap_seeds){
-  createAnnObjs.NCBI_DB(schema,class,allSeeds,prefix,objTarget,
-                        dbconn,datacache)
+                                   allSeeds=NCBIORG_DB_AnnDbBimap_seeds){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,allSeeds)
 }
 
 

@@ -308,46 +308,46 @@ HUMANCHIP_DB_AnnDbBimap_seeds <- list(
     )
 )
 
-createAnnObjs.HUMANCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
-{
-    checkDBSCHEMA(dbconn, "HUMANCHIP_DB")
+## createAnnObjs.HUMANCHIP_DB <- function(prefix, objTarget, dbconn, datacache)
+## {
+##     checkDBSCHEMA(dbconn, "HUMANCHIP_DB")
 
-    ## AnnDbBimap objects
-    seed0 <- list(
-        objTarget=objTarget,
-        datacache=datacache
-    )
-    ann_objs <- createAnnDbBimaps(HUMANCHIP_DB_AnnDbBimap_seeds, seed0)
+##     ## AnnDbBimap objects
+##     seed0 <- list(
+##         objTarget=objTarget,
+##         datacache=datacache
+##     )
+##     ann_objs <- createAnnDbBimaps(HUMANCHIP_DB_AnnDbBimap_seeds, seed0)
 
-    attachDBs(dbconn, ann_objs)
+##     attachDBs(dbconn, ann_objs)
     
     
-    ## Reverse maps
-    ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
-    ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
-    ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
-    ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
-    ann_objs$ENSEMBL2PROBE <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2PROBE")
-    map <- ann_objs$GO2PROBE
-    map@rightTables <- Go3tablenames(all=TRUE)
-    map@objName <- "GO2ALLPROBES"
-    ann_objs$GO2ALLPROBES <- map
+##     ## Reverse maps
+##     ann_objs$ENZYME2PROBE <- revmap(ann_objs$ENZYME, objName="ENZYME2PROBE")
+##     ann_objs$PATH2PROBE <- revmap(ann_objs$PATH, objName="PATH2PROBE")
+##     ann_objs$PMID2PROBE <- revmap(ann_objs$PMID, objName="PMID2PROBE")
+##     ann_objs$GO2PROBE <- revmap(ann_objs$GO, objName="GO2PROBE")
+##     ann_objs$ENSEMBL2PROBE <- revmap(ann_objs$ENSEMBL, objName="ENSEMBL2PROBE")
+##     map <- ann_objs$GO2PROBE
+##     map@rightTables <- Go3tablenames(all=TRUE)
+##     map@objName <- "GO2ALLPROBES"
+##     ann_objs$GO2ALLPROBES <- map
 
-    ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname="org.Hs.eg")
-    ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
-    ## 1 special string to let us know who the supporting org package is.
-    ann_objs$ORGPKG <- "org.Hs.eg"
+##     ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
+##     ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname="org.Hs.eg")
+##     ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
+##     ## 1 special string to let us know who the supporting org package is.
+##     ann_objs$ORGPKG <- "org.Hs.eg"
 
-    ## Some pre-caching
-    Lkeys(ann_objs$GO)
-    #mappedLkeys(ann_objs$GO)
-    #Rkeys(ann_objs$GO2PROBE)
-    #mappedRkeys(ann_objs$GO2PROBE)
-    #Rkeys(ann_objs$GO2ALLPROBES)
-    #mappedRkeys(ann_objs$GO2ALLPROBES)
+##     ## Some pre-caching
+##     Lkeys(ann_objs$GO)
+##     #mappedLkeys(ann_objs$GO)
+##     #Rkeys(ann_objs$GO2PROBE)
+##     #mappedRkeys(ann_objs$GO2PROBE)
+##     #Rkeys(ann_objs$GO2ALLPROBES)
+##     #mappedRkeys(ann_objs$GO2ALLPROBES)
 
-    prefixAnnObjNames(ann_objs, prefix)
-}
+##     prefixAnnObjNames(ann_objs, prefix)
+## }
 
 
