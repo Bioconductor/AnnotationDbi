@@ -2,7 +2,7 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.19.20
+Version: 1.19.21
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer <maintainer@bioconductor.org>
 Depends: R (>= 2.7.0), methods, utils, BiocGenerics (>= 0.1.13),
@@ -34,46 +34,17 @@ Collate: 00RTobjs.R
 	 createAnnObjs.NCBIORG_DBs.R
 	 createAnnObjs.NCBICHIP_DBs.R
          createAnnObjs.ORGANISM_DB.R
-         createAnnObjs.HUMANCHIP_DB.R
-         createAnnObjs.MOUSECHIP_DB.R
-         createAnnObjs.RATCHIP_DB.R
-         createAnnObjs.FLYCHIP_DB.R
          createAnnObjs.YEASTCHIP_DB.R
-         createAnnObjs.ZEBRAFISHCHIP_DB.R
-         createAnnObjs.CANINECHIP_DB.R
          createAnnObjs.COELICOLOR_DB.R
-         createAnnObjs.BOVINECHIP_DB.R
-         createAnnObjs.WORMCHIP_DB.R
-         createAnnObjs.PIGCHIP_DB.R
-         createAnnObjs.CHICKENCHIP_DB.R
-         createAnnObjs.ECOLICHIP_DB.R
          createAnnObjs.ARABIDOPSISCHIP_DB.R
-         createAnnObjs.XENOPUSCHIP_DB.R
-         createAnnObjs.HUMAN_DB.R
          createAnnObjs.MALARIA_DB.R
-         createAnnObjs.MOUSE_DB.R
-         createAnnObjs.RAT_DB.R
-         createAnnObjs.FLY_DB.R
          createAnnObjs.YEAST_DB.R
          createAnnObjs.YEASTNCBI_DB.R
-         createAnnObjs.ZEBRAFISH_DB.R
-         createAnnObjs.CANINE_DB.R
-         createAnnObjs.BOVINE_DB.R
-         createAnnObjs.WORM_DB.R
-         createAnnObjs.PIG_DB.R
-         createAnnObjs.CHICKEN_DB.R
-         createAnnObjs.ECOLI_DB.R
          createAnnObjs.ARABIDOPSIS_DB.R
-         createAnnObjs.CHIMP_DB.R
-         createAnnObjs.RHESUS_DB.R
-         createAnnObjs.ANOPHELES_DB.R
-         createAnnObjs.XENOPUS_DB.R
          createAnnObjs.GO_DB.R
          createAnnObjs.KEGG_DB.R
          createAnnObjs.INPARANOID_DB.R
          createAnnObjs.PFAM_DB.R
-         createAnnObjs.AFFYHUEX_DB.R
-         createAnnObjs.RHESUSCHIP_DB.R
          AnnDbPkg-templates-common.R
          AnnDbPkg-checker.R
 	 print.probetable.R

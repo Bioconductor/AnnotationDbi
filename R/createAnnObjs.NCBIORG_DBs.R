@@ -6,7 +6,8 @@
 
 ## Start with a huge named list of all the possible mappings.
 
-
+NCBIORG_DB_SeedGenerator <- function(orgPkg){
+  
 NCBIORG_DB_L2Rlink1 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id")
 
 NCBIORG_DB_AnnDbBimap_seeds <- list(
@@ -357,6 +358,9 @@ NCBIORG_DB_AnnDbBimap_seeds <- list(
         rightTables=AnnotationDbi:::Go3tablenames()
     )
 )
+## return this
+NCBIORG_DB_AnnDbBimap_seeds
+}
 
 
 
@@ -487,7 +491,6 @@ getSpeciesFromSchema <- function(schema){
 }
 
 
-
 ## 1st three arguments for this are all hard coded below for each case
 createAnnObjs.NCBI_DB <- function(prefix,
                                   objTarget,
@@ -495,7 +498,6 @@ createAnnObjs.NCBI_DB <- function(prefix,
                                   datacache,
                                   schema,
                                   class,
-                                  allSeeds,
                                   dbname=NULL){ ##dbname not used for org pkgs
   checkDBSCHEMA(dbconn, schema)
   ## AnnDbBimap objects
@@ -503,6 +505,12 @@ createAnnObjs.NCBI_DB <- function(prefix,
                 objTarget=objTarget,
                 datacache=datacache
                 )
+  ## Get allSeeds
+  if(class=="OrgDb"){
+    allSeeds <- NCBIORG_DB_SeedGenerator()
+  }else if (class=="ChipDb"){
+    allSeeds <- NCBICHIP_DB_SeedGenerator(dbname)
+  }  
   ## filter the seeds to match the schema
   seeds <- .filterSeeds(allSeeds, schema, class)
   ## now make the bimaps
@@ -513,19 +521,20 @@ createAnnObjs.NCBI_DB <- function(prefix,
                       
   ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
   if(class=="OrgDb"){
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+    if(!any(c("ECOLI_DB","XENOPUS_DB") %in%  schema)){ ## CHRLENGTHS exceptions.
+      ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
+    }
   }else if (class=="ChipDb"){
     attachDBs(dbconn, ann_objs)
-    ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname=dbname)
+    if(!any(c("ECOLICHIP_DB","XENOPUSCHIP_DB") %in% schema)){ ## more exceptions
+      ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname="")
+    }
     ann_objs$ORGPKG <- dbname
   }
   ann_objs$MAPCOUNTS <- createMAPCOUNTS(dbconn, prefix)
 
   ## Some pre-caching
   Lkeys(ann_objs$GO)
-  ##mappedLkeys(ann_objs$GO)
-  ##Rkeys(ann_objs$GO2EG)
-  ##mappedRkeys(ann_objs$GO2EG)
  
   prefixAnnObjNames(ann_objs, prefix)
 }
@@ -533,16 +542,152 @@ createAnnObjs.NCBI_DB <- function(prefix,
 
 
 ## Then define each function briefly like this:
+createAnnObjs.ANOPHELES_DB <- function(prefix,
+                                       objTarget,
+                                       dbconn,
+                                       datacache,
+                                       schema="ANOPHELES_DB",
+                                       class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+createAnnObjs.BOVINE_DB <- function(prefix,
+                                    objTarget,
+                                    dbconn,
+                                    datacache,
+                                    schema="BOVINE_DB",
+                                    class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+createAnnObjs.CANINE_DB <- function(prefix,
+                                    objTarget,
+                                    dbconn,
+                                    datacache,
+                                    schema="CANINE_DB",
+                                    class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+createAnnObjs.CHICKEN_DB <- function(prefix,
+                                     objTarget,
+                                     dbconn,
+                                     datacache,
+                                     schema="CHICKEN_DB",
+                                     class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+createAnnObjs.CHIMP_DB <- function(prefix,
+                                   objTarget,
+                                   dbconn,
+                                   datacache,
+                                   schema="CHIMP_DB",
+                                   class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.ECOLI_DB <- function(prefix,
+                                   objTarget,
+                                   dbconn,
+                                   datacache,
+                                   schema="ECOLI_DB",
+                                   class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.FLY_DB <- function(prefix,
+                                 objTarget,
+                                 dbconn,
+                                 datacache,
+                                 schema="FLY_DB",
+                                 class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
 
 createAnnObjs.HUMAN_DB <- function(prefix,
                                    objTarget,
                                    dbconn,
                                    datacache,
                                    schema="HUMAN_DB",
-                                   class="OrgDb",
-                                   allSeeds=NCBIORG_DB_AnnDbBimap_seeds){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,allSeeds)
+                                   class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
+
+
+createAnnObjs.MOUSE_DB <- function(prefix,
+                                   objTarget,
+                                   dbconn,
+                                   datacache,
+                                   schema="MOUSE_DB",
+                                   class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.PIG_DB <- function(prefix,
+                                 objTarget,
+                                 dbconn,
+                                 datacache,
+                                 schema="PIG_DB",
+                                 class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.RAT_DB <- function(prefix,
+                                 objTarget,
+                                 dbconn,
+                                 datacache,
+                                 schema="RAT_DB",
+                                 class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.RHESUS_DB <- function(prefix,
+                                    objTarget,
+                                    dbconn,
+                                    datacache,
+                                    schema="RHESUS_DB",
+                                    class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.WORM_DB <- function(prefix,
+                                  objTarget,
+                                  dbconn,
+                                  datacache,
+                                  schema="WORM_DB",
+                                  class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.XENOPUS_DB <- function(prefix,
+                                     objTarget,
+                                     dbconn,
+                                     datacache,
+                                     schema="XENOPUS_DB",
+                                     class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.ZEBRAFISH_DB <- function(prefix,
+                                       objTarget,
+                                       dbconn,
+                                       datacache,
+                                       schema="ZEBRAFISH_DB",
+                                       class="OrgDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
 
 
 

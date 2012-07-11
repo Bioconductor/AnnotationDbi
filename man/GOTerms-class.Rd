@@ -8,7 +8,7 @@
 
 \alias{initialize,GOTerms-method}
 
-\alias{GOID}
+% \alias{GOID}
 \alias{GOID,GOTerms-method}
 \alias{GOID,GOTermsAnnDbBimap-method}
 \alias{GOID,character-method}

@@ -2,7 +2,9 @@
 
 ## 1st the big list:
 
-orgPkg = "org.Hs.eg"
+NCBICHIP_DB_SeedGenerator <- function(orgPkg){
+
+#orgPkg = "org.Hs.eg"  ## Oh crap
 
 NCBICHIP_DB_L2Rlink1 <- list(tablename="probes", Lcolname="probe_id", Rcolname="gene_id", filter="{is_multiple}='0'")
 NCBICHIP_DB_L2Rlink2 <- list(tablename="genes", Lcolname="gene_id", Rcolname="_id", altDB=orgPkg)
@@ -281,6 +283,76 @@ NCBICHIP_DB_AnnDbBimap_seeds <- list(
         )
     ),
     list(
+        objName="FLYBASE",
+        Class="ProbeAnnDbBimap",
+        L2Rchain=list(
+            NCBICHIP_DB_L2Rlink1,
+            NCBICHIP_DB_L2Rlink2,
+            list(
+                tablename="flybase",
+                Lcolname="_id",
+                Rcolname="flybase_id",
+                altDB=orgPkg
+            )
+        )
+    ),
+    list(
+        objName="FLYBASECG",
+        Class="ProbeAnnDbBimap",
+        L2Rchain=list(
+            NCBICHIP_DB_L2Rlink1,
+            NCBICHIP_DB_L2Rlink2,
+            list(
+                tablename="flybase_cg",
+                Lcolname="_id",
+                Rcolname="flybase_cg_id",
+                altDB=orgPkg
+            )
+        )
+    ),
+    list(
+        objName="MGI",
+        Class="ProbeAnnDbBimap",
+        L2Rchain=list(
+            NCBICHIP_DB_L2Rlink1,
+            NCBICHIP_DB_L2Rlink2,
+            list(
+                tablename="mgi",
+                Lcolname="_id",
+                Rcolname="mgi_id",
+                altDB=orgPkg
+            )
+        )
+    ),
+    list(
+        objName="WORMBASE",
+        Class="ProbeAnnDbBimap",
+        L2Rchain=list(
+            NCBICHIP_DB_L2Rlink1,
+            NCBICHIP_DB_L2Rlink2,
+            list(
+                tablename="wormbase",
+                Lcolname="_id",
+                Rcolname="wormbase_id",
+                altDB=orgPkg
+            )
+        )
+    ),
+    list(
+        objName="ZFIN",
+        Class="ProbeAnnDbBimap",
+        L2Rchain=list(
+            NCBICHIP_DB_L2Rlink1,
+            NCBICHIP_DB_L2Rlink2,
+            list(
+                tablename="zfin",
+                Lcolname="_id",
+                Rcolname="zfin_id",
+                altDB=orgPkg
+            )
+        )
+    ),
+    list(
         objName="GO",
         Class="ProbeGo3AnnDbBimap",
         L2Rchain=list(
@@ -297,11 +369,73 @@ NCBICHIP_DB_AnnDbBimap_seeds <- list(
         rightTables=Go3tablenames()
     )
 )
-
+## return this
+NCBICHIP_DB_AnnDbBimap_seeds
+}
 
 
 
 ## Then we need to define our specific functions.
+
+createAnnObjs.BOVINECHIP_DB <- function(prefix,
+                                        objTarget,
+                                        dbconn,
+                                        datacache,
+                                        schema="BOVINECHIP_DB",
+                                        class="ChipDb",
+                                        dbname="org.Bt.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.CANINECHIP_DB <- function(prefix,
+                                        objTarget,
+                                        dbconn,
+                                        datacache,
+                                        schema="CANINECHIP_DB",
+                                        class="ChipDb",
+                                        dbname="org.Cf.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.CHICKENCHIP_DB <- function(prefix,
+                                         objTarget,
+                                         dbconn,
+                                         datacache,
+                                         schema="CHICKENCHIP_DB",
+                                         class="ChipDb",
+                                         dbname="org.Gg.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.ECOLICHIP_DB <- function(prefix,
+                                       objTarget,
+                                       dbconn,
+                                       datacache,
+                                       schema="ECOLICHIP_DB",
+                                       class="ChipDb",
+                                       dbname="org.EcK12.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.FLYCHIP_DB <- function(prefix,
+                                     objTarget,
+                                     dbconn,
+                                     datacache,
+                                     schema="FLYCHIP_DB",
+                                     class="ChipDb",
+                                     dbname="org.Dm.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
 
 createAnnObjs.HUMANCHIP_DB <- function(prefix,
                                        objTarget,
@@ -309,8 +443,92 @@ createAnnObjs.HUMANCHIP_DB <- function(prefix,
                                        datacache,
                                        schema="HUMANCHIP_DB",
                                        class="ChipDb",
-                                       allSeeds=NCBICHIP_DB_AnnDbBimap_seeds,
                                        dbname="org.Hs.eg"){
   createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        allSeeds,dbname=dbname)
+                        dbname=dbname)
 }
+
+
+createAnnObjs.MOUSECHIP_DB <- function(prefix,
+                                       objTarget,
+                                       dbconn,
+                                       datacache,
+                                       schema="MOUSECHIP_DB",
+                                       class="ChipDb",
+                                       dbname="org.Mm.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.PIGCHIP_DB <- function(prefix,
+                                     objTarget,
+                                     dbconn,
+                                     datacache,
+                                     schema="PIGCHIP_DB",
+                                     class="ChipDb",
+                                     dbname="org.Ss.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.RATCHIP_DB <- function(prefix,
+                                     objTarget,
+                                     dbconn,
+                                     datacache,
+                                     schema="RATCHIP_DB",
+                                     class="ChipDb",
+                                     dbname="org.Rn.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.RHESUSCHIP_DB <- function(prefix,
+                                        objTarget,
+                                        dbconn,
+                                        datacache,
+                                        schema="RHESUSCHIP_DB",
+                                        class="ChipDb",
+                                        dbname="org.Mmu.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.WORMCHIP_DB <- function(prefix,
+                                      objTarget,
+                                      dbconn,
+                                      datacache,
+                                      schema="WORMCHIP_DB",
+                                      class="ChipDb",
+                                      dbname="org.Ce.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.XENOPUSCHIP_DB <- function(prefix,
+                                         objTarget,
+                                         dbconn,
+                                         datacache,
+                                         schema="XENOPUSCHIP_DB",
+                                         class="ChipDb",
+                                         dbname="org.Xl.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+
+
+createAnnObjs.ZEBRAFISHCHIP_DB<- function(prefix,
+                                          objTarget,
+                                          dbconn,
+                                          datacache,
+                                          schema="ZEBRAFISHCHIP_DB",
+                                          class="ChipDb",
+                                          dbname="org.Dr.eg"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
+                        dbname=dbname)
+}
+

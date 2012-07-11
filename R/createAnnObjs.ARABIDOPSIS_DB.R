@@ -146,7 +146,7 @@ ARABIDOPSIS_DB_AnnDbBimap_seeds <- list(
         objName="REFSEQ",
         Class="AnnDbBimap",
         L2Rchain=list(
-            HUMAN_DB_L2Rlink1,
+            ARABIDOPSIS_DB_L2Rlink1,
             list(
                 tablename="refseq",
                 Lcolname="_id",
@@ -158,7 +158,7 @@ ARABIDOPSIS_DB_AnnDbBimap_seeds <- list(
         objName="ENTREZID",
         Class="AnnDbBimap",
         L2Rchain=list(
-            HUMAN_DB_L2Rlink1,
+            ARABIDOPSIS_DB_L2Rlink1,
             list(
                 tablename="entrez_genes",
                 Lcolname="_id",
