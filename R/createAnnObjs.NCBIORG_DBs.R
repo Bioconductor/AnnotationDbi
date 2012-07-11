@@ -416,6 +416,27 @@ getSpeciesFromSchema <- function(schema){
   species
 }
 
+## helper to translate schema to assoicated org package
+getOrgPkgForSchema <- function(schema){
+  species <- switch(EXPR = schema,
+                    "ARABIDOPSISCHIP"="org.At.tair",
+                    "BOVINECHIP_DB"="org.Bt.eg",
+                    "CANINECHIP_DB"="org.Cf.eg",
+                    "CHICKENCHIP_DB"="org.Gg.eg",
+                    "ECOLICHIP_DB"="org.EcK12.eg",
+                    "FLYCHIP_DB"="org.Dm.eg",
+                    "HUMANCHIP_DB"="org.Hs.eg",
+                    "MOUSECHIP_DB"="org.Mm.eg",
+                    "PIGCHIP_DB"="org.Ss.eg",
+                    "RATCHIP_DB"="org.Rn.eg",
+                    "RHESUSCHIP_DB"="org.Mmu.eg",
+                    "WORMCHIP_DB"="org.Ce.eg",
+                    "XENOPUSCHIP_DB"="org.Xl.eg",
+                    "YEASTCHIP_DB"="org.Sc.sgd",
+                    "ZEBRAFISHCHIP_DB"="org.Dr.eg")
+  species
+}
+
 
 ## helper to filter seeds above based on the schema
 .filterSeeds <- function(allSeeds, schema, class){
@@ -423,8 +444,6 @@ getSpeciesFromSchema <- function(schema){
   ## 1st get the schema name
   species <- getSpeciesFromSchema(schema)
 
-## I might want to be "ChipDb" later to reuse this code for NCBICHIP_DBs
-  
   ## then call .definePossibleTables to get detailed schema info.
   schemaDet <- .definePossibleTables(class, species)
   classNames <- names(schemaDet)
@@ -434,7 +453,7 @@ getSpeciesFromSchema <- function(schema){
   idx <- match(classNames,names)
   idx <- idx[!is.na(idx)]
   seeds <- allSeeds[idx]
-  names(seeds) <- NULL  ## clean out names now
+  names(seeds) <- NULL  ## clean out names
 
   ## return filtered seeds
   seeds
@@ -497,8 +516,7 @@ createAnnObjs.NCBI_DB <- function(prefix,
                                   dbconn,
                                   datacache,
                                   schema,
-                                  class,
-                                  dbname=NULL){ ##dbname not used for org pkgs
+                                  class){
   checkDBSCHEMA(dbconn, schema)
   ## AnnDbBimap objects
   seed0 <- list(
@@ -509,6 +527,7 @@ createAnnObjs.NCBI_DB <- function(prefix,
   if(class=="OrgDb"){
     allSeeds <- NCBIORG_DB_SeedGenerator()
   }else if (class=="ChipDb"){
+    dbname <- getOrgPkgForSchema(schema)
     allSeeds <- NCBICHIP_DB_SeedGenerator(dbname)
   }  
   ## filter the seeds to match the schema

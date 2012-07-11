@@ -382,10 +382,8 @@ createAnnObjs.BOVINECHIP_DB <- function(prefix,
                                         dbconn,
                                         datacache,
                                         schema="BOVINECHIP_DB",
-                                        class="ChipDb",
-                                        dbname="org.Bt.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                        class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -394,10 +392,8 @@ createAnnObjs.CANINECHIP_DB <- function(prefix,
                                         dbconn,
                                         datacache,
                                         schema="CANINECHIP_DB",
-                                        class="ChipDb",
-                                        dbname="org.Cf.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                        class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -406,10 +402,8 @@ createAnnObjs.CHICKENCHIP_DB <- function(prefix,
                                          dbconn,
                                          datacache,
                                          schema="CHICKENCHIP_DB",
-                                         class="ChipDb",
-                                         dbname="org.Gg.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                         class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -418,10 +412,8 @@ createAnnObjs.ECOLICHIP_DB <- function(prefix,
                                        dbconn,
                                        datacache,
                                        schema="ECOLICHIP_DB",
-                                       class="ChipDb",
-                                       dbname="org.EcK12.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                       class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -430,10 +422,8 @@ createAnnObjs.FLYCHIP_DB <- function(prefix,
                                      dbconn,
                                      datacache,
                                      schema="FLYCHIP_DB",
-                                     class="ChipDb",
-                                     dbname="org.Dm.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                     class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -442,10 +432,8 @@ createAnnObjs.HUMANCHIP_DB <- function(prefix,
                                        dbconn,
                                        datacache,
                                        schema="HUMANCHIP_DB",
-                                       class="ChipDb",
-                                       dbname="org.Hs.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                       class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -454,10 +442,8 @@ createAnnObjs.MOUSECHIP_DB <- function(prefix,
                                        dbconn,
                                        datacache,
                                        schema="MOUSECHIP_DB",
-                                       class="ChipDb",
-                                       dbname="org.Mm.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                       class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -466,10 +452,8 @@ createAnnObjs.PIGCHIP_DB <- function(prefix,
                                      dbconn,
                                      datacache,
                                      schema="PIGCHIP_DB",
-                                     class="ChipDb",
-                                     dbname="org.Ss.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                     class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -478,10 +462,8 @@ createAnnObjs.RATCHIP_DB <- function(prefix,
                                      dbconn,
                                      datacache,
                                      schema="RATCHIP_DB",
-                                     class="ChipDb",
-                                     dbname="org.Rn.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                     class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -490,10 +472,8 @@ createAnnObjs.RHESUSCHIP_DB <- function(prefix,
                                         dbconn,
                                         datacache,
                                         schema="RHESUSCHIP_DB",
-                                        class="ChipDb",
-                                        dbname="org.Mmu.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                        class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -502,10 +482,8 @@ createAnnObjs.WORMCHIP_DB <- function(prefix,
                                       dbconn,
                                       datacache,
                                       schema="WORMCHIP_DB",
-                                      class="ChipDb",
-                                      dbname="org.Ce.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                      class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -514,10 +492,8 @@ createAnnObjs.XENOPUSCHIP_DB <- function(prefix,
                                          dbconn,
                                          datacache,
                                          schema="XENOPUSCHIP_DB",
-                                         class="ChipDb",
-                                         dbname="org.Xl.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                         class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
 
@@ -526,9 +502,7 @@ createAnnObjs.ZEBRAFISHCHIP_DB<- function(prefix,
                                           dbconn,
                                           datacache,
                                           schema="ZEBRAFISHCHIP_DB",
-                                          class="ChipDb",
-                                          dbname="org.Dr.eg"){
-  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class,
-                        dbname=dbname)
+                                          class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
