@@ -374,7 +374,7 @@ NCBIORG_DB_AnnDbBimap_seeds
 getSpeciesFromSchema <- function(schema){
   species <- switch(EXPR = schema,
                     "ANOPHELES_DB"="Anopheles gambiae",
-                    "ARABIDOPSISCHIP"="Arabidopsis thaliana",
+                    "ARABIDOPSISCHIP_DB"="Arabidopsis thaliana",
                     "ARABIDOPSIS_DB"="Arabidopsis thaliana",
                     "BOVINECHIP_DB"="Bos taurus",
                     "BOVINE_DB"="Bos taurus",
@@ -419,7 +419,7 @@ getSpeciesFromSchema <- function(schema){
 ## helper to translate schema to assoicated org package
 getOrgPkgForSchema <- function(schema){
   species <- switch(EXPR = schema,
-                    "ARABIDOPSISCHIP"="org.At.tair",
+                    "ARABIDOPSISCHIP_DB"="org.At.tair",
                     "BOVINECHIP_DB"="org.Bt.eg",
                     "CANINECHIP_DB"="org.Cf.eg",
                     "CHICKENCHIP_DB"="org.Gg.eg",
