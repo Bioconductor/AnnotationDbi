@@ -480,7 +480,8 @@ getOrgPkgForSchema <- function(schema){
                      "SYMBOL","UNIGENE","ENSEMBL","ENSEMBLPROT", "ENSEMBLTRANS",
                      "MGI","FLYBASE","FLYBASECG","FLYBASEPROT","GO")
   }else if (class=="ChipDb"){
-    revMapables <- c("ENZYME","PATH","PMID","ENSEMBL","MGI","GO")
+    revMapables <- c("ENZYME","PATH","PMID","ENSEMBL","MGI","FLYBASE",
+                     "FLYBASECG","GO")
   }
   ## now filter so that rMapNames is only the names that we actually have
   mapNames <- ls(ann_objs)
