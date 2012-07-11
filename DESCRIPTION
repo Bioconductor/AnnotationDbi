@@ -9,8 +9,8 @@ Depends: R (>= 2.7.0), methods, utils, BiocGenerics (>= 0.1.13),
          Biobase (>= 1.17.0)
 Imports: methods, utils, DBI, RSQLite, BiocGenerics, Biobase, IRanges
 Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db,
-          hgu95av2cdf, org.Sc.sgd.db, org.At.tair.db, affy, KEGG.db, XML, 
-          RCurl, RUnit, TxDb.Hsapiens.UCSC.hg19.knownGene, hom.Hs.inp.db,
+          org.Sc.sgd.db, org.At.tair.db, KEGG.db, RUnit,
+          TxDb.Hsapiens.UCSC.hg19.knownGene, hom.Hs.inp.db,
           org.Hs.eg.db, seqnames.db, reactome.db, AnnotationForge
 Collate: 00RTobjs.R
          unlist2.R
