@@ -541,12 +541,12 @@ createAnnObjs.NCBI_DB <- function(prefix,
                       
   ## 2 special maps that are not AnnDbBimap objects (just named integer vectors)
   if(class=="OrgDb"){
-    if(!any(c("ECOLI_DB","XENOPUS_DB") %in%  schema)){ ## CHRLENGTHS exceptions.
+    if(!any(c("ECOLI_DB","XENOPUS_DB","PIG_DB") %in%  schema)){ ## CHRLENGTHS exceptions.
       ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn)
     }
   }else if (class=="ChipDb"){
     attachDBs(dbconn, ann_objs)
-    if(!any(c("ECOLICHIP_DB","XENOPUSCHIP_DB") %in% schema)){ ## more exceptions
+    if(!any(c("ECOLICHIP_DB","XENOPUSCHIP_DB","PIGCHIP_DB") %in% schema)){ ## more exceptions
       ann_objs$CHRLENGTHS <- createCHRLENGTHS(dbconn, dbname="")
     }
     ann_objs$ORGPKG <- dbname
