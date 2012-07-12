@@ -581,12 +581,8 @@
   blackList <- c(ALIAS="ALIAS2PROBE",
                  ALIAS="ALIAS2EG",
                  CHR="CHRLOCCHR")
-  idx <- match(blackList,cols)
-  idx <- idx[!is.na(idx)]
-  if(length(idx) >0){
-    cols[idx] <- names(blackList)
-  }
-  unique(cols)
+  idx <- !(cols %in% blackList)
+  unique(cols[idx])
 }
 
 
