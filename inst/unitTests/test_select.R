@@ -267,3 +267,16 @@ test_select13 <- function(){
 }
 
 
+test_select13 <- function(){
+  ## what happens when there are no results AT ALL? (should be all NAs)
+  keys <- c("1001_at","1006_at","1007_s_at")
+  res <- select(hgu95av2.db, keys, "PATH", keytype="PROBEID")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==2)
+  ## make sure all of res$PATH ARE NAs
+  ## If this part fails it is a warning that the test is no longer valid,
+  ## which would happen if some of these IDs were to be further annotated for
+  ## PATH (unlikely since PATH is basically dead for this repos)
+  checkTrue(length(res$PATH)== length(res$PATH[is.na(res$PATH)]))
+}
+

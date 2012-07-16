@@ -620,8 +620,10 @@
   res
 }
 
+
 ## drop rows that don't match
 .dropUnwantedRows <- function(tab, keys, jointype){
+  oriTab <- tab
   ## 1st of all jointype MUST be in the colnames of tab
   tab <- unique(tab)  ## make sure no rows are duplicated  
   rownames(tab) <- NULL ## reset the rownames (for matching below)
@@ -631,12 +633,19 @@
   ## This row-level uniqueness is required for match() below
   ## first find keys that will never match up and add rows for them
   noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
-  for(i in seq_len(length(noMatchKeys))){
-    row <- rep(NA, dim(tab)[2])
-    row[colnames(tab) %in% jointype] <- noMatchKeys[i]
-    tab <- rbind(tab,row)
+
+  ## Problem: when you populate COMPLETELY empty table, with a move like
+  ## below: then you will create a mess. So if the table was 100% NA, then we
+  ## just want to go with the original table..
+  if(dim(tab)[1]==0){
+    tab <- oriTab
+  }else{## otherwise loop through and selectively put rows of NAs into place
+    for(i in seq_len(length(noMatchKeys))){
+      row <- rep(NA, dim(tab)[2])
+      row[colnames(tab) %in% jointype] <- noMatchKeys[i]
+      tab <- rbind(tab,row)
+    }
   }
-  
   ## match up and filter out rows that don't match.
   ind = match(tab[[jointype]],keys)
   names(ind) = as.numeric(rownames(tab)) ## step REQUIRES good rownames
