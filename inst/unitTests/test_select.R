@@ -267,7 +267,7 @@ test_select13 <- function(){
 }
 
 
-test_select13 <- function(){
+test_select14 <- function(){
   ## what happens when there are no results AT ALL? (should be all NAs)
   keys <- c("1001_at","1006_at","1007_s_at")
   res <- select(hgu95av2.db, keys, "PATH", keytype="PROBEID")
