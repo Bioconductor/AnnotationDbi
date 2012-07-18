@@ -151,7 +151,8 @@ objects are collectively called \Rclass{AnntoationDb} objects, with
 more specific classes with names such as \Rclass{OrgDb},
 \Rclass{ChipDb} or \Rclass{TranscriptDb} objects.  The methods that
 can be applied to these objects are \Rmethod{cols}, \Rmethod{keys},
-\Rmethod{keytypes} and \Rmethod{select}.
+\Rmethod{keytypes} and \Rmethod{select}.  The following exercise
+should acquaint you with these methods.
 
 %% select exercise
 \begin{Exercise}
@@ -160,17 +161,19 @@ can be applied to these objects are \Rmethod{cols}, \Rmethod{keys},
   Use the \Rmethod{cols} method to discover which sorts of
   annotations can be extracted from it. Is this the same as the result
   from the \Rfunction{keytypes} method?  Use the \Rfunction{keytypes}
-  method to find out.
+  method to find out.  
   
-  Use the \Rfunction{keys} method to extract UNIPROT identifiers and
-  then pass those keys in to the \Rfunction{select} method in such a
-  way that you extract the gene symbol and KEGG pathway information
-  for each.
+  Finally, use the \Rfunction{keys} method to extract UNIPROT
+  identifiers and then pass those keys in to the \Rfunction{select}
+  method in such a way that you extract the gene symbol and KEGG pathway
+  information for each.  Use the help system as needed to learn which
+  values to pass in to cols in order to achieve this.
 \end{Exercise}
 \begin{Solution}
 <<select>>=
 library(org.Hs.eg.db)
 cols(org.Hs.eg.db)
+help("SYMBOL") ## for explanation of these cols and keytypes values
 keytypes(org.Hs.eg.db)
 uniKeys <- head(keys(org.Hs.eg.db, keytype="UNIPROT"))
 cols <- c("SYMBOL", "PATH")
@@ -179,9 +182,53 @@ select(org.Hs.eg.db, keys=uniKeys, cols=cols, keytype="UNIPROT")
 @
 \end{Solution}
 
+So how could you use select to annotate your results?  Please run the
+following code snippet (which will load a fake data result that I have
+provided for the purposes of illustration):
+
+<<select>>=
+load(system.file("extdata", "resultTable.Rda", package="AnnotationDbi"))
+resultTable
+@
 
 
-\subsection{TranscriptDb packages}
+\begin{Exercise}
+  The rownames of this table happen to provide entrez gene identifiers
+  for each row (for human).  Find the gene symbol and gene name for each
+  of the rows in resultTable and then use the merge method to attach
+  those annotations to it.
+\end{Exercise}
+\begin{Solution}
+<<select1>>=
+annots <- select(org.Hs.eg.db, keys=rownames(resultTable),
+                 cols=c("SYMBOL","GENENAME"), keytype="ENTREZID")
+resultTable <- merge(resultTable, annots, by.x=0, by.y="ENTREZID")
+resultTable
+@
+\end{Solution}
+
+
+\subsection{Using select with GO.db}
+
+When you load the GO.db package, a \Rclass{GODb} object is also
+loaded. This allows you to use the \Rmethod{cols}, \Rmethod{keys},
+\Rmethod{keytypes} and \Rmethod{select} methods on the contents of the
+GO ontology.  So if for example, you had a few GO IDs and wanted to know
+more about it, you could do it like this:
+
+<<select2>>=
+library(GO.db)
+GOIDs <- c("GO:0042254","GO:0044183")
+select(GO.db, keys=GOIDs, cols="DEFINITION", keytype="GOID")
+@
+
+
+
+%\subsection{Using select with HomDb packages}
+
+
+
+\subsection{Using select with TranscriptDb packages}
 
 A \Rclass{TranscriptDb} package (a 'TxDb' package) connects a set of genomic
 coordinates to various transcript oriented features.  The package can
@@ -205,7 +252,7 @@ which build of the genome it comes from.
   way that you extract the transcript ids and transcript starts for each.
 \end{Exercise}
 \begin{Solution}
-<<select>>=
+<<select3>>=
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 txdb
@@ -226,6 +273,8 @@ access via the more familiar \Rfunction{transcripts},
 not yet know about these other methods, more can be learned by seeing
 the vignette called: \emph{Making and Utilizing TranscriptDb Objects}
 in the \Rpackage{GenomicFeatures} package.
+
+
 
 
 
