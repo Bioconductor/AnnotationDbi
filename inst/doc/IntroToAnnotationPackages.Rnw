@@ -170,15 +170,19 @@ should acquaint you with these methods.
   values to pass in to cols in order to achieve this.
 \end{Exercise}
 \begin{Solution}
-<<select>>=
+<<selectOrg1>>=
 library(org.Hs.eg.db)
 cols(org.Hs.eg.db)
+@ 
+<<selectOrg2, eval=FALSE>>=
 help("SYMBOL") ## for explanation of these cols and keytypes values
+@
+<<selectOrg3>>=
+@ 
 keytypes(org.Hs.eg.db)
 uniKeys <- head(keys(org.Hs.eg.db, keytype="UNIPROT"))
 cols <- c("SYMBOL", "PATH")
 select(org.Hs.eg.db, keys=uniKeys, cols=cols, keytype="UNIPROT")
-
 @
 \end{Solution}
 
@@ -186,7 +190,7 @@ So how could you use select to annotate your results?  Please run the
 following code snippet (which will load a fake data result that I have
 provided for the purposes of illustration):
 
-<<select>>=
+<<selectData>>=
 load(system.file("extdata", "resultTable.Rda", package="AnnotationDbi"))
 resultTable
 @
@@ -199,7 +203,7 @@ resultTable
   those annotations to it.
 \end{Exercise}
 \begin{Solution}
-<<select1>>=
+<<selectOrgData>>=
 annots <- select(org.Hs.eg.db, keys=rownames(resultTable),
                  cols=c("SYMBOL","GENENAME"), keytype="ENTREZID")
 resultTable <- merge(resultTable, annots, by.x=0, by.y="ENTREZID")
@@ -216,7 +220,7 @@ loaded. This allows you to use the \Rmethod{cols}, \Rmethod{keys},
 GO ontology.  So if for example, you had a few GO IDs and wanted to know
 more about it, you could do it like this:
 
-<<select2>>=
+<<selectGO>>=
 library(GO.db)
 GOIDs <- c("GO:0042254","GO:0044183")
 select(GO.db, keys=GOIDs, cols="DEFINITION", keytype="GOID")
@@ -252,7 +256,7 @@ which build of the genome it comes from.
   way that you extract the transcript ids and transcript starts for each.
 \end{Exercise}
 \begin{Solution}
-<<select3>>=
+<<selectTxDb>>=
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 txdb
