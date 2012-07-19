@@ -270,17 +270,18 @@ select(org.Hs.eg.db, keys=uniKeys, cols=cols, keytype="UNIPROT")
 @
 \end{Solution}
 
-So how could you use select to annotate your results?  Please run the
-following code snippet (which will load a fake data result that I have
-provided for the purposes of illustration):
-
-<<selectData>>=
-load(system.file("extdata", "resultTable.Rda", package="AnnotationDbi"))
-resultTable
-@
-
+So how could you use select to annotate your results? This next
+exercise should hlep you to understand how that should generally work.
 
 \begin{Exercise}
+  Please run the following code snippet (which will load a fake data
+  result that I have provided for the purposes of illustration):
+  
+<<selectData>>=
+load(system.file("extdata", "resultTable.Rda", package="AnnotationDbi"))
+head(resultTable)
+@
+
   The rownames of this table happen to provide entrez gene identifiers
   for each row (for human).  Find the gene symbol and gene name for each
   of the rows in resultTable and then use the merge method to attach
@@ -291,7 +292,7 @@ resultTable
 annots <- select(org.Hs.eg.db, keys=rownames(resultTable),
                  cols=c("SYMBOL","GENENAME"), keytype="ENTREZID")
 resultTable <- merge(resultTable, annots, by.x=0, by.y="ENTREZID")
-resultTable
+head(resultTable)
 @
 \end{Solution}
 
