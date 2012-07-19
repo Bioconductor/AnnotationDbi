@@ -262,7 +262,6 @@ cols(org.Hs.eg.db)
 help("SYMBOL") ## for explanation of these cols and keytypes values
 @
 <<selectOrg3>>=
-@ 
 keytypes(org.Hs.eg.db)
 uniKeys <- head(keys(org.Hs.eg.db, keytype="UNIPROT"))
 cols <- c("SYMBOL", "PATH")
