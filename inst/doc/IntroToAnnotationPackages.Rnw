@@ -124,9 +124,103 @@ resources that the packages are based on have not themselves been
 updated.
 
 
+\subsection{AnnotationDb objects and the select method}
 
-\subsection{Organism level packages}
+As previously mentioned, a new set of methods have been added that
+allow a simpler way of extracting identifier based annotations.  All
+the annotation packages that support these new methods expose an
+object named exactly the same as the package itself.  These objects
+are collectively called \Rclass{AnntoationDb} objects for the class
+that they all inherit from.  The more specific classes (the ones that
+you will actually see in the wild) have names like \Rclass{OrgDb},
+\Rclass{ChipDb} or \Rclass{TranscriptDb} objects.  These names
+correspond to the kind of package (and underlying schema) being
+represented.  The methods that can be applied to all of these objects
+are \Rmethod{cols}, \Rmethod{keys}, \Rmethod{keytypes} and
+\Rmethod{select}.
 
+
+\subsection{ChipDb objects and the select method}
+
+An extremely common kind of Annotation package is the so called
+platform based or chip based package type.  This package is intended
+to make the manufacturer labels for a series of probes or probesets to
+a wide range of gene-based features.  A package of this kind will load
+an \Rclass{ChipDb} object.  Below is a set of examples to show how you
+might use the standard 4 methods to interact with an object of this
+type.
+
+First we need to load the package:
+
+<<loadChip>>=
+library(hgu95av2.db)
+@ 
+
+If we list the contents of this package, we can see that one of the
+many things loaded is an object named after the package "hgu95av2.db":
+
+<<listContents>>=
+ls("package:hgu95av2.db")
+@ 
+
+We can look at this object to learn more about it:
+
+<<show>>=
+hgu95av2.db
+@ 
+
+If we want to know what kinds of data are retriveable via
+\Rmethod{select}, then we should use the \Rmethod{cols} method like
+this:
+
+<<cols>>=
+cols(hgu95av2.db)
+@ 
+
+If we are further curious to know more about those values for cols, we
+can consult the help pages.  Asking about any of these values will
+pull up a manual page describing the different fields and what they
+mean.
+
+<<help, eval=FALSE>>=
+help("SYMBOL")
+@ 
+
+If we are curious about what kinds of fields we could potentiall use
+as keys to query the database, we can use the \Rmethod{keytypes}
+method.  In a perfect world, this method will return values very
+similar to what was returned by \Rmethod{cols}, but in reality, some
+kinds of values make poor keys and so this list is often shorter.
+
+<<keytypes>>=
+keytypes(hgu95av2.db)
+@ 
+
+If we want to extract some sample keys of a particular type, we can
+use the \Rmethod{keys} method.
+
+<<keys>>=
+head(keys(hgu95av2.db, keytype="SYMBOL"))
+@ 
+
+And finally, if we have some keys, we can use \Rmethod{select} to
+extract them.  By simply using appropriate argument values with select
+we can specify what keys we want to look up values for (keys), what we
+want returned back (cols) and the type of keys that we are passing in
+(keytype)
+
+<<selectChip>>=
+#1st get some example keys
+k <- head(keys(hgu95av2.db,keytype="PROBEID"))
+# then call select
+select(hgu95av2.db, keys=k, cols=c("SYMBOL","GENENAME"), keytype="PROBEID")
+@ 
+
+And as you can see, when you call the code above, select will try to
+return a data.frame with all the things you asked for matched up to
+each other.
+
+\subsection{OrgDb objects and the select method}
 An organism level package (an `org' package) uses a central gene
 identifier (e.g. Entrez Gene id) and contains mappings between this
 identifier and other kinds of identifiers (e.g. GenBank or Uniprot
@@ -139,20 +233,10 @@ abbreviation of the organism (e.g. \Rpackage{Sc} for
 (e.g. \Rpackage{sgd} for gene identifiers assigned by the
 Saccharomyces Genome Database, or \Rpackage{eg} for Entrez Gene ids).
 
-
-
-\subsection{AnnotationDb objects and the select method}
-
-As previously mentioned, a new set of methods have been added that
-allow a simpler way of extracting identifier based annotations.  All
-the annotation packages that support these new methods expose an
-object named exactly the same way as the package itself.  These
-objects are collectively called \Rclass{AnntoationDb} objects, with
-more specific classes with names such as \Rclass{OrgDb},
-\Rclass{ChipDb} or \Rclass{TranscriptDb} objects.  The methods that
-can be applied to these objects are \Rmethod{cols}, \Rmethod{keys},
-\Rmethod{keytypes} and \Rmethod{select}.  The following exercise
-should acquaint you with these methods.
+Just as the chip packages load a \Rclass{ChipDb} object, the org
+packages will load a \Rclass{OrgDb} object.  The following exercise
+should acquaint you with the use of these methods in the context of an
+organism package.
 
 %% select exercise
 \begin{Exercise}
@@ -227,6 +311,8 @@ select(GO.db, keys=GOIDs, cols="DEFINITION", keytype="GOID")
 @
 
 
+
+% This here is the point where I am planning to fork my talk to the GenomicFeatures vignette
 
 %\subsection{Using select with HomDb packages}
 
