@@ -135,7 +135,7 @@ test_select_otherKeytype <- function(){
   res <-  select(i, keys=k, cols=c, keytype="MUS_MUSCULUS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
-  checkIdentical(c("Mus_musculus","Aedes_aegypti", "Apis_mellifera"),
+  checkIdentical(c("MUS_MUSCULUS","AEDES_AEGYPTI", "APIS_MELLIFERA"),
                  colnames(res))
 }
 
@@ -145,7 +145,7 @@ test_select_baseSpeciesKeytype <- function(){
   res <-  select(i, keys=k, cols=c, keytype="HOMO_SAPIENS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
-  checkIdentical(c("Homo_sapiens","Apis_mellifera","Mus_musculus"),
+  checkIdentical(c("HOMO_SAPIENS","APIS_MELLIFERA","MUS_MUSCULUS"),
                  colnames(res))
 }
 
@@ -155,7 +155,7 @@ test_select_baseSpeciesKeytype <- function(){
   res <-  select(i, keys=k, cols=c, keytype="HOMO_SAPIENS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==2)
-  checkIdentical(c("Homo_sapiens","Apis_mellifera"),
+  checkIdentical(c("HOMO_SAPIENS","APIS_MELLIFERA"),
                  colnames(res))
 }
 
@@ -166,7 +166,7 @@ test_select_baseSpeciesCols <- function(){
   res <-  select(i, keys=k, cols=c, keytype="MUS_MUSCULUS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
-  checkIdentical(c("Mus_musculus","Apis_mellifera","Homo_sapiens"),
+  checkIdentical(c("MUS_MUSCULUS","APIS_MELLIFERA","HOMO_SAPIENS"),
                  colnames(res))
 }
 

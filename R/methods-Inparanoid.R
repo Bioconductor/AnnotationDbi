@@ -377,8 +377,8 @@ setMethod("keys", "InparanoidDb",
   res <- .resort(res, keys, jointype=colType, reqCols=reqCols)
 
   ## Then match to the colnames
-  colnames(res) <- names(fiveMap)[match(colnames(res),fiveMap)]
-  
+  colnames(res) <- toupper(names(fiveMap)[match(colnames(res),fiveMap)])
+ 
   ## return results
   res            
 }
