@@ -66,20 +66,17 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
     .valid.colnames(conn, tablename, colnames)
 }
 
-.valid.metadata.table <- function(conn, type)
+.valid.metadata.table <- function(conn, name, value)
 {
     colnames <- c("name", "value")
     msg <- .valid.table.colnames(conn, "metadata", colnames)
     if (!is.null(msg))
         return(msg)
-    db_type <- try(AnnotationDbi:::.getMetaValue(conn, DB_TYPE_NAME),
-                   silent = TRUE)
-    if(is(db_type, "try-error"))
-        return(db_type[1])
-    if (is.na(db_type) || db_type != type) {
-        msg <- paste("'", DB_TYPE_NAME, "' is not \"", type,
-                     "\"", sep="")
-        return(msg)
+    db_value <- try(.getMetaValue(conn, name), silent = TRUE)
+    if(is(db_value, "try-error"))
+        return(db_value[1])
+    if (is.na(db_value) || db_value != value) {
+        return(paste0("'", name, "' is not '", value, "'"))
     }
     NULL
 }
