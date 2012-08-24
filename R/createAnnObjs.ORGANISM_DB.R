@@ -99,9 +99,9 @@ getDBMaps <- function(dbconn){
   ## Get into the DB and list the tables
   rawtabs <- dbListTables(dbconn)
   ## drop unsupported (sqlite_stat1)  and specialized (go, and chrloc) tables
-  idx <- grep(paste("sqlite_stat1|map_counts|metadata|map_metadata|genes",
-                    "|^go_|prosite|pfam|chrlengths",
-                    "|chromosome_locations",sep=""),
+  idx <- grep(paste0("sqlite_stat1|map_counts|metadata|map_metadata|genes",
+                     "|^go_|prosite|pfam|chrlengths",
+                     "|chromosome_locations"),
               rawtabs, invert=TRUE)
   tabs <- rawtabs[idx]
   ## I require a reference frame

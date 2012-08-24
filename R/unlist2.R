@@ -16,13 +16,13 @@ make.name.tree <- function(x, recursive, what.names)
         if (is.null(x_names))
             x_names <- rep.int(parent_name, length(x))
         else if (what.names == "full")
-            x_names <- paste(parent_name, x_names, sep="")
+            x_names <- paste0(parent_name, x_names)
         else
             x_names[x_names == ""] <- parent_name
         if (!is.list(x) || (!recursive && depth >= 1L))
             return(x_names)
         if (what.names == "full")
-            x_names <- paste(x_names, ".", sep="")
+            x_names <- paste0(x_names, ".")
         lapply(seq_len(length(x)),
                function(i) .make.name.tree.rec(x[[i]], x_names[i], depth + 1L))
     }

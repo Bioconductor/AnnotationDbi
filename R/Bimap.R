@@ -225,7 +225,7 @@ setReplaceMethod("direction", "AnnDbBimap",
         if (direction == 0)
             stop("undirected AnnDbBimap objects are not supported")
         if (direction != x@direction) {
-            x@objName <- paste("revmap(", x@objName, ")", sep="")
+            x@objName <- paste0("revmap(", x@objName, ")")
             x@direction <- direction
         }
         x
@@ -998,10 +998,10 @@ setMethod("count.mappedkeys", "ANY", function(x) length(mappedkeys(x)))
         return("")
     if (len0 > 2)
         keys <- keys[1:2]
-    string <- paste(paste("\"", keys, "\"", sep=""), collapse=", ")
+    string <- paste0("\"", keys, "\"", collapse=", ")
     if (len0 > 2)
-        string <- paste(string, ", ...", sep="")
-    paste(string, " (total=", len0, "/mapped=", nmapped, ")", sep="")
+        string <- paste0(string, ", ...")
+    paste0(string, " (total=", len0, "/mapped=", nmapped, ")")
 }
 
 .Bimap.summary <- function(x)
@@ -1357,8 +1357,8 @@ setMethod("setInpBimapFilter", "InpAnnDbBimap",
       ori_filt_2 = x@L2Rchain[[2]]@filter      
       species_filt_1 = gsub("{seed_status}=.+AND","", ori_filt_1, perl=TRUE)
       species_filt_2 = gsub("{seed_status}=.+AND","", ori_filt_2, perl=TRUE)
-      new_filt_1 = as.character(paste("{seed_status}='",value,"' AND",species_filt_1,sep=""))
-      new_filt_2 = as.character(paste("{seed_status}='",value,"' AND",species_filt_2,sep=""))
+      new_filt_1 = as.character(paste0("{seed_status}='",value,"' AND",species_filt_1))
+      new_filt_2 = as.character(paste0("{seed_status}='",value,"' AND",species_filt_2))
       ans@L2Rchain[[1]]@filter = new_filt_1
       ans@L2Rchain[[2]]@filter = new_filt_2
       ans

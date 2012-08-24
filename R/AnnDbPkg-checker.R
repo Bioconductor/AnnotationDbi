@@ -68,7 +68,7 @@ checkMAPCOUNTS <- function(pkgname)
         stop(pkgname, " doesn't look like the name of an SQLite-based annotation package")
     prefix <- substr(pkgname, 1, nchar(pkgname) - 3)
     getMap <- function(mapname) get(mapname, envir=asNamespace(pkgname))
-    MAPCOUNTS <- getMap(paste(prefix, "MAPCOUNTS", sep=""))
+    MAPCOUNTS <- getMap(paste0(prefix, "MAPCOUNTS"))
     for (mapname in names(MAPCOUNTS)) {
         cat("Counting mapped keys for map ", mapname, ":\n", sep="")
         map <- getMap(mapname)
@@ -206,8 +206,8 @@ compareAnnDataIn2Pkgs <- function(pkgname1, pkgname2, prefix, quick=FALSE, verbo
     {
         get(mapname, envir=as.environment(paste("package", pkgname, sep=":")), inherits=FALSE)
     }
-    maps1 <- names(getMap(pkgname1, paste(prefix, "MAPCOUNTS", sep="")))
-    maps2 <- names(getMap(pkgname2, paste(prefix, "MAPCOUNTS", sep="")))
+    maps1 <- names(getMap(pkgname1, paste0(prefix, "MAPCOUNTS")))
+    maps2 <- names(getMap(pkgname2, paste0(prefix, "MAPCOUNTS")))
     notin2 <- setdiff(maps1, maps2)
     if (length(notin2) != 0) {
         cat("Maps in ", pkgname1, "::", prefix, "MAPCOUNTS",

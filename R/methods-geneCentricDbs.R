@@ -31,15 +31,15 @@
 ## package. hgu95av2ORGPKG will (for example) get you this.  DONE:
 .getOrgPkg <- function(x){
   pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
-  orgPkgName <- eval(parse(text=paste(pkgname, "ORGPKG", sep="")))
-  orgPkgName <- paste(orgPkgName,".db",sep="")
+  orgPkgName <- eval(parse(text=paste0(pkgname, "ORGPKG")))
+  orgPkgName <- paste0(orgPkgName,".db")
   eval(parse(text=orgPkgName))
 }
 
 ## This gets the exact path to the chip DB.
 .getChipDbFile <- function(x){
   pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
-  eval(call(paste(pkgname, "_dbfile", sep="")))
+  eval(call(paste0(pkgname, "_dbfile")))
 }
 
 ## Limitation: I can only have ONE table and ONE field for each list name.
@@ -438,7 +438,7 @@
 ## x is the org package object, y is the chip package object. 
 .attachDB <- function(x,y){
   chipDb <- .getChipDbFile(y)
-  chipSQL <- paste("ATTACH '",chipDb,"' AS c",sep="")
+  chipSQL <- paste0("ATTACH '",chipDb,"' AS c")
   #message(chipSQL)
   dbQuery(dbConn(x), chipSQL)
 }
@@ -503,7 +503,7 @@
   }
   res <- paste(res, collapse=" ")
   ## then use the keytype and keys to append the WHERE clause
-  strKeys <- paste("'",keys,"'",sep="",collapse=",")
+  strKeys <- paste0("'",keys,"'",collapse=",")
   where <- paste("WHERE ",fullKeytype,"in (",strKeys,")" )
   paste(res, where)
 }
@@ -851,7 +851,7 @@ setMethod("select", "GODb",
 ## Internally we want to reconstruct these guys so we can merge() on them
 ## c <- cols(GO.db)[7]
 ## prefix = "GO"
-## foo = paste(prefix,c,sep="")
+## foo = paste0(prefix,c)
 ## bar = eval(parse(text=foo))
 
 

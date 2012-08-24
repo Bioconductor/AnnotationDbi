@@ -29,15 +29,13 @@ debugSQL <- function()
 
 ### Some string constants
 .SINGLE_QUOTE <- '\''
-.TWO_SINGLE_QUOTE <- paste(.SINGLE_QUOTE, .SINGLE_QUOTE, sep="")
+.TWO_SINGLE_QUOTE <- paste0(.SINGLE_QUOTE, .SINGLE_QUOTE)
 .LBRACE_REGX <- '\\{'
 .RBRACE_REGX <- '\\}'
-.OUTOFCONTEXT_COLNAME_REGX <- paste(
+.OUTOFCONTEXT_COLNAME_REGX <- paste0(
     .LBRACE_REGX,
     "([^{}", .SINGLE_QUOTE, "]*)",
-    .RBRACE_REGX,
-    sep=""
-)
+    .RBRACE_REGX)
 
 ### Replace out-of-context SQL colnames by their "contextualized" versions.
 ### Example:
@@ -60,7 +58,7 @@ debugSQL <- function()
     if (length(names) == 0)
         return("")
     names <- gsub(.SINGLE_QUOTE, .TWO_SINGLE_QUOTE, names, fixed=TRUE)
-    paste(.SINGLE_QUOTE, names, .SINGLE_QUOTE, sep="", collapse=",")
+    paste0(.SINGLE_QUOTE, names, .SINGLE_QUOTE, collapse=",")
 }
 toSQLStringSet <- .toSQLStringSet       # an alias for export
 
@@ -69,7 +67,7 @@ toSQLStringSet <- .toSQLStringSet       # an alias for export
     if (length(names) == 1 && is.na(names))
         paste(colname, "IS NOT NULL")
     else
-        paste(colname, " IN (", .toSQLStringSet(names), ")", sep="")
+        paste0(colname, " IN (", .toSQLStringSet(names), ")")
 }
 
 
@@ -102,7 +100,7 @@ L2Rlink <- function(...) new("L2Rlink", ...)
 setMethod("toString", "L2Rlink",
     function(x)
     {
-        paste("{", x@Lcolname, "}", x@tablename, "{", x@Rcolname, "}", sep="")
+        paste0("{", x@Lcolname, "}", x@tablename, "{", x@Rcolname, "}")
     }
 )
 
@@ -152,7 +150,7 @@ L2Rchain.Lfilter <- function(L2Rchain)
     filter <- L2Rchain[[1]]@filter
     if (filter == "1")
         return(filter)
-    paste("(", .contextualizeColnames(filter), ")", sep="")
+    paste0("(", .contextualizeColnames(filter), ")")
 }
 
 L2Rchain.Rfilter <- function(L2Rchain)
@@ -160,7 +158,7 @@ L2Rchain.Rfilter <- function(L2Rchain)
     filter <- L2Rchain[[length(L2Rchain)]]@filter
     if (filter == "1")
         return(filter)
-    paste("(", .contextualizeColnames(filter), ")", sep="")
+    paste0("(", .contextualizeColnames(filter), ")")
 }
 
 L2Rchain.Lkeyname <- function(L2Rchain) L2Rchain[[1]]@Lcolname
@@ -276,8 +274,8 @@ L2Rchain.colnames <- function(L2Rchain)
     dbListLen = length(dbList)
         for(i in seq_len(dbListLen)){
             altDB = dbList[i]
-            altDBFile = system.file("extdata", paste(altDB,".sqlite",sep=""), package=paste(altDB,".db",sep=""))
-            SQL <- paste("ATTACH DATABASE '",altDBFile,"' AS ", .mangleDBName(altDB),";", sep="")
+            altDBFile = system.file("extdata", paste0(altDB,".sqlite"), package=paste0(altDB,".db"))
+            SQL <- paste0("ATTACH DATABASE '",altDBFile,"' AS ", .mangleDBName(altDB),";")
             dbQuery(dbconn, SQL)
         }
 }
@@ -302,7 +300,7 @@ attachDBs <- function(dbconn, ann_objs){
         ##This should define the tablename to be prefixed ONLY when it matters
         if(length(L2Rlink@altDB)>0){
             ##Then just append the name onto the table
-            tablename = paste(.mangleDBName(L2Rlink@altDB),".",tablename, sep="")
+            tablename = paste0(.mangleDBName(L2Rlink@altDB),".",tablename)
         }
 
         if (chainlen == 1) {
@@ -319,10 +317,10 @@ attachDBs <- function(dbconn, ann_objs){
                     context <- "_R"
                     what_Rkey <- paste(context, Rcolname, sep=".")
                 } else {
-                    context <- paste("_", i, sep="")
+                    context <- paste0("_", i)
                 }
-                on <- paste(prev_context, ".", prev_Rcolname, "=",
-                            context, ".", Lcolname, sep="")
+                on <- paste0(prev_context, ".", prev_Rcolname, "=",
+                             context, ".", Lcolname)
                 from <- paste(from, "INNER JOIN", tablename, "AS", context, "ON", on)
             }
             prev_context <- context
@@ -353,7 +351,7 @@ attachDBs <- function(dbconn, ann_objs){
     if (length(where) == 0)
         where <- "1"
     else
-        where <- paste(paste("(", where, ")", sep=""), collapse=" AND ")
+        where <- paste0("(", where, ")", collapse=" AND ")
     SQLchunks <- list(
         what_Lkey=what_Lkey,
         what_Rkey=what_Rkey,
@@ -407,7 +405,7 @@ dbQuery <- function(conn, SQL, j0=NA)
 
 dbGetTable <- function(conn, tablename, extra.SQL=NULL)
 {
-    SQL <- paste("SELECT * FROM ", tablename, sep="")
+    SQL <- paste0("SELECT * FROM ", tablename)
     if (!is.null(extra.SQL))
         SQL <- paste(SQL, extra.SQL)
     dbQuery(conn, SQL)
@@ -530,7 +528,7 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
             return(length(SQLresult$result))
         }
     }
-    what <- paste("COUNT(DISTINCT ", colname, ")", sep="")
+    what <- paste0("COUNT(DISTINCT ", colname, ")")
     SQL <- paste("SELECT", what, "FROM", tablename)
     if (filter != "1")
         SQL <- paste(SQL, "WHERE", filter)
@@ -615,7 +613,7 @@ dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
         distinct_col <- what_Lkey
     else
         distinct_col <- what_Rkey
-    SQLwhat <- paste("COUNT(DISTINCT ", distinct_col, ")", sep="")
+    SQLwhat <- paste0("COUNT(DISTINCT ", distinct_col, ")")
     SQL <- .makeSQL(SQLchunks, SQLwhat, Lkeys, Rkeys)
     dbQuery(conn, SQL, 1)
 }
@@ -641,8 +639,8 @@ dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
 ##   species_filt_1 <- gsub("{seed_status}=.+AND","", ori_filt_1, perl=TRUE)
 ##   species_filt_2 <- gsub("{seed_status}=.+AND","", ori_filt_2, perl=TRUE)
       
-##   new_filt_1 <- as.character(paste("{seed_status}='",value,"' AND",species_filt_1,sep=""))
-##   new_filt_2 <- as.character(paste("{seed_status}='",value,"' AND",species_filt_2,sep=""))
+##   new_filt_1 <- as.character(paste0("{seed_status}='",value,"' AND",species_filt_1))
+##   new_filt_2 <- as.character(paste0("{seed_status}='",value,"' AND",species_filt_2))
 ##   message(new_filt_1)
 ##   message(new_filt_2)
   

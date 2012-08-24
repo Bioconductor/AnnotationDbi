@@ -4,42 +4,42 @@
     switch(species,
            "HOMSA" = {srcSpcAb<-"Hs";
                       srcDBAb<-"eg";
-                      require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                      require(paste0("org.",srcSpcAb,".",srcDBAb,".db"),character.only=TRUE);
                       inpMap <- "org.Hs.egENSEMBLPROT";
 		      centralID <- "EG"},
            "MUSMU"  = {srcSpcAb<-"Mm";
                        srcDBAb<-"eg";
-                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       require(paste0("org.",srcSpcAb,".",srcDBAb,".db"),character.only=TRUE);
                        inpMap = "org.Mm.egENSEMBLPROT";  
 		       centralID <- "EG"},
            "DROME"  = {srcSpcAb<-"Dm";
                        srcDBAb<-"eg";
-                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       require(paste0("org.",srcSpcAb,".",srcDBAb,".db"),character.only=TRUE);
                        inpMap = "org.Dm.egFLYBASEPROT";
 		       centralID <- "EG"},
            "RATNO"  = {srcSpcAb<-"Rn";
                        srcDBAb<-"eg";
-                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       require(paste0("org.",srcSpcAb,".",srcDBAb,".db"),character.only=TRUE);
                        inpMap = "org.Rn.egENSEMBLPROT";
 		       centralID <- "EG"},
            "CAEEL"  = {srcSpcAb<-"Ce";
                        srcDBAb<-"eg";
-                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       require(paste0("org.",srcSpcAb,".",srcDBAb,".db"),character.only=TRUE);
                        inpMap = "org.Ce.egWORMBASE";
 		       centralID <- "EG"},
            "ARATH"  = {srcSpcAb<-"At"; ##Won't work till we ltrim off the decimals off the TAIR IDs in the inp pkgs
                        srcDBAb<-"eg";
-                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       require(paste0("org.",srcSpcAb,".",srcDBAb,".db"),character.only=TRUE);
                        ##inpMap = NA;  ##Should not be needed since this one should be like yeast
 		       centralID <- "TAIR"},
            "DANRE"  = {srcSpcAb<-"Dr";
                        srcDBAb<-"eg";
-                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       require(paste0("org.",srcSpcAb,".",srcDBAb,".db"),character.only=TRUE);
                        inpMap = "org.Dr.egZFIN";
 		       centralID <- "EG"},
            "SACCE"  = {srcSpcAb<-"Sc";
                        srcDBAb<-"sgd"; 
-                       require(paste("org.",srcSpcAb,".",srcDBAb,".db",sep=""),character.only=TRUE);
+                       require(paste0("org.",srcSpcAb,".",srcDBAb,".db"),character.only=TRUE);
                        inpMap = NA; ##Not needed for yeast (uses the same ID in inparanoid as the central ID in the org package)
 		       centralID <- "ORF"}  
            )
@@ -60,7 +60,7 @@
     if(length(destIDs)==length(srcIDs)){
         names(destIDs) = names(srcIDs)
     }else{
-        stop(paste("Cannot rename ", renameString, sep=""))
+        stop("Cannot rename ", renameString)
     }
     return(destIDs)
 }
@@ -92,9 +92,9 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     if(!is.na(setupVals[3])){protMap = get(setupVals[3])}
     centralID1 = setupVals[4]
     #require the hom package and map
-    require(paste("hom.",srcSpcAbrv,".inp.db",sep=""),character.only=TRUE)
-    homMap = get(paste("hom.",srcSpcAbrv,".inp",destSpecies,sep=""))
-    if(srcIDType!=centralID1){toSrcEGMap = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))}
+    require(paste0("hom.",srcSpcAbrv,".inp.db"),character.only=TRUE)
+    homMap = get(paste0("hom.",srcSpcAbrv,".inp",destSpecies))
+    if(srcIDType!=centralID1){toSrcEGMap = get(paste0("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType))}
     ##more info to map back out to an entrez gene ID at the end.
     mapBackVals = .getMappingData(destSpecies)
     destSpcAbrv = mapBackVals[1]
@@ -168,7 +168,7 @@ inpIDMapper = function(ids, srcSpecies, destSpecies, srcIDType="UNIPROT", destID
     ##Finally give the user the ID type that they asked for (ORF, EntrezID = (which is the default), UNIPROT etc.).
     if(destIDType != centralID2 && toupper(destDBAbrv)!=destIDType){
         ##We will need a special case here if we decide to unify the eg IDs into the SGD org DB...
-        resultMap = get(paste("org.",destSpcAbrv,".",destDBAbrv,destIDType,sep=""))    
+        resultMap = get(paste0("org.",destSpcAbrv,".",destDBAbrv,destIDType))    
         resultIDs = mget(as.character(EGIDs), resultMap, ifnotfound=NA)
     }else{resultIDs = EGIDs}
     
@@ -205,26 +205,26 @@ intraIDMapper = function(ids,
     ids = .cleanup(ids)
     
     if(srcIDType==centralID){##srcIDType is a central ID (EG, ORF etc.)
-        map = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,destIDType,sep="")) ##eg. org.Hs.eg.UNIPROT and we have an "EG"
+        map = get(paste0("org.",srcSpcAbrv,".",srcDBAbrv,destIDType)) ##eg. org.Hs.eg.UNIPROT and we have an "EG"
         ##Get the new names
         resultIDs <- unlist2(mget(as.character(ids), map, ifnotfound=NA))
     }
     else if(destIDType==centralID){##destIDType is a central ID (EG, ORF etc.)
-        map = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))  ##eg.  org.Hs.eg.UNIPROT and we have an "UNIPROT"
+        map = get(paste0("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType))  ##eg.  org.Hs.eg.UNIPROT and we have an "UNIPROT"
         map = revmap(map) ##So In this case it has to be revmapped
         ##Get the new names
         resultIDs <- unlist2(mget(as.character(ids), map, ifnotfound=NA))
     }
     else if(srcIDType!=centralID && destIDType!=centralID){
         ##Get the central IDs
-        map1 = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType,sep=""))  ##This one will be the map that goes TO the central ID
+        map1 = get(paste0("org.",srcSpcAbrv,".",srcDBAbrv,srcIDType))  ##This one will be the map that goes TO the central ID
         map1 = revmap(map1) ##Therefore this one has to be reversed
         resultIDs1 = unlist2(mget(as.character(ids), map1, ifnotfound=NA))
         ##Before the 2nd mget, we need to have ONLY ONE answer for each element.
         resultIDs1 = .handleMultipleMatches(resultIDs1, keepMultGeneMatches)
         resultIDs1 = .cleanup(resultIDs1) ##in case there are NAs
         ##Then get the dest IDs.
-        map2 = get(paste("org.",srcSpcAbrv,".",srcDBAbrv,destIDType,sep=""))
+        map2 = get(paste0("org.",srcSpcAbrv,".",srcDBAbrv,destIDType))
         resultIDs = unlist2(mget(as.character(resultIDs1), map2, ifnotfound=NA))
         resultIDs = .handleMultipleMatches(resultIDs, keepMultGeneMatches)        
         resultIDs = .reLabel(resultIDs1, resultIDs, "resultIDs") ##two mappings so we want to keep initial names

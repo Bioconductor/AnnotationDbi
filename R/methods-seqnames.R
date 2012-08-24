@@ -81,12 +81,12 @@ testSeqnames <- function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sa
 ## species = "Arabidopsis thaliana"
 ## testSeqnames(styles,seqnames, species)
 
-## seqnames = as.character(c(paste("chr",1:22,sep=""),paste("chr",c("M","Y","X"),sep=""),"chr6_apd_hap1"))
+## seqnames = as.character(c(paste0("chr", c(1:22,"M","Y","X")),"chr6_apd_hap1"))
 ## styles = c("UCSC","NCBI","ensembl")
 ## species = "Homo sapiens"
 ## testSeqnames(styles,seqnames, species)
 
-## seqnames2 = (paste("chr",1:22, sep=""))
+## seqnames2 = (paste0("chr",1:22))
 
 
 
@@ -96,7 +96,7 @@ testSeqnames <- function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sa
 listAllSupportedStylesBySpecies <- function(species){
   styles <- supportedSeqnameStyles()[[species]]
   res <- lapply(styles,extractSeqnameSet,species)
-  names(res) <- paste(rep(species, length(styles)),"__" ,styles, sep="")
+  names(res) <- paste0(rep(species, length(styles)),"__" ,styles)
   res
 }
 

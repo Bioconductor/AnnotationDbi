@@ -113,9 +113,9 @@ setMethod("Definition", "character",function(object) .GOid2go_termField(object,"
 ##.GOid2go_synonymField() retrieves ids of type field from go_synonym
 .GOid2go_synonymField <- function(ids, field){
     require("GO.db")
-    sql <- paste("SELECT gt.go_id, gs.",field,"
+    sql <- paste0("SELECT gt.go_id, gs.",field,"
                   FROM go_term AS gt, go_synonym AS gs
-                  WHERE gt._id=gs._id AND go_id IN ('",paste(ids, collapse="','"),"')", sep="")
+                  WHERE gt._id=gs._id AND go_id IN ('",paste(ids, collapse="','"),"')")
     res <- dbGetQuery(GO_dbconn(), sql)
     if(dim(res)[1]==0 && dim(res)[2]==0){
         stop("None of your IDs match IDs from GO.  Are you sure you have valid IDs?")
@@ -151,7 +151,7 @@ setMethod("show", "GOTerms",
                 if (length(x) == 0)
                     next
             }
-            s <- c(s, paste(slotname, ": ", x, sep=""))
+            s <- c(s, paste0(slotname, ": ", x))
         }
         cat(strwrap(s, exdent=4), sep="\n")
     }
@@ -165,7 +165,7 @@ setMethod("show", "GOTerms",
 
 .attachGO <- function(con){
   GOLoc = system.file("extdata", "GO.sqlite", package="GO.db")
-  attachSQL = paste("ATTACH '", GOLoc, "' AS go;", sep = "")
+  attachSQL = paste0("ATTACH '", GOLoc, "' AS go;")
   dbGetQuery(con, attachSQL)
 }
 
@@ -234,24 +234,24 @@ setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), fu
   ##Now I have to make a 'go_data' table from 'data' that to INSURE that all
   ##the GO IDs are also in GO.db...
   .attachGO(con)  
-  go_dataSQL = paste(  "CREATE TABLE go_data as
+  go_dataSQL = paste0(  "CREATE TABLE go_data as
     SELECT t.go_id AS go_id, g.evidence as evidence, g.gene_id AS gene_id
     FROM data AS g, go.go_term AS t
-    WHERE g.go_id=t.go_id AND t.ontology='",toupper(type),"'", sep="")
+    WHERE g.go_id=t.go_id AND t.ontology='",toupper(type),"'")
   dbGetQuery(con,go_dataSQL)
   dbGetQuery(con,"CREATE INDEX gdgo on go_data(go_id)")
 
   ##Now I have to make the literal table from GO
-  offspringSQL <- paste("CREATE TABLE go_offspring_literal as
+  offspringSQL <- paste0("CREATE TABLE go_offspring_literal as
       SELECT t1.go_id AS go_id, t2.go_id AS offspring_id
       FROM   go.go_",tolower(type),"_offspring as o, go.go_term as t1, go.go_term as t2 
-      WHERE  o._id = t1._id AND o._offspring_id = t2._id", sep="")
+      WHERE  o._id = t1._id AND o._offspring_id = t2._id")
   dbGetQuery(con, offspringSQL)
   dbGetQuery(con,"CREATE INDEX literalo on go_offspring_literal(offspring_id)")
   dbGetQuery(con,"CREATE INDEX literalgo on go_offspring_literal(go_id)")
 
   ##Now I need to make the final table:
-  finalSQL = paste(  "CREATE TABLE go_all_data as
+  finalSQL = paste0("CREATE TABLE go_all_data as
    SELECT t.go_id as go_id, g.evidence AS evidence,
            g.gene_id as gene_id
    FROM   go_data as g CROSS JOIN               
@@ -261,7 +261,7 @@ setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), fu
            t.ontology='",toupper(type),"'
   UNION
    SELECT go_id, evidence, gene_id
-   FROM   go_data",sep="")
+   FROM   go_data")
   dbGetQuery(con,finalSQL)
   ##And return
   res =  dbGetQuery(con, "SELECT * FROM go_all_data")
@@ -296,7 +296,7 @@ setMethod("getGOFrameData", "GOAllFrame", function(x){x@data})
 
 .attachKEGG <- function(con){
   KEGGLoc = system.file("extdata", "KEGG.sqlite", package="KEGG.db")
-  attachSQL = paste("ATTACH '", KEGGLoc, "' AS kegg;", sep = "")
+  attachSQL = paste0("ATTACH '", KEGGLoc, "' AS kegg;")
   dbGetQuery(con, attachSQL)
 }
 

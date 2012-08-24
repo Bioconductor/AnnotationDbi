@@ -397,7 +397,7 @@ setMethod("toLList", "AnnDbMap",
         y <- flatten(x, fromKeys.only=TRUE)
         if (length(x@rightColType) == 1
          && typeof(y@data[[2]]) != x@rightColType) {
-                converter <- get(paste("as.", x@rightColType, sep=""))
+                converter <- get(paste0("as.", x@rightColType))
                 y@data[[2]] <- converter(y@data[[2]])
         }
         toLList(y)

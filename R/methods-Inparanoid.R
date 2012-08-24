@@ -177,7 +177,7 @@ setMethod("keytypes", "InparanoidDb", function(x){.inpCols(x)})
   con <- dbConn(x)
   if(baseSpecies != lckeytype){
     sql <- paste("SELECT inp_id FROM", lckeytype,
-                 paste("WHERE species!='",baseFiveCode,"'",sep=""))
+                 paste0("WHERE species!='",baseFiveCode,"'"))
     res <- dbGetQuery(con, sql)
     res <- as.vector(t(res))
   }else{
@@ -187,7 +187,7 @@ setMethod("keytypes", "InparanoidDb", function(x){.inpCols(x)})
     tables <- names(fiveMap)[!(names(fiveMap) %in% baseSpecies)]  
     for(i in seq_len(length(tables))){
       sql <- paste("SELECT inp_id FROM", tables[i],
-                   paste("WHERE species=='",baseFiveCode,"'",sep=""))
+                   paste0("WHERE species=='",baseFiveCode,"'"))
       rs <- dbGetQuery(con, sql)
       rs <- as.vector(t(rs))
       res <- unique(c(res, rs)) ## should not be too bad
@@ -213,7 +213,7 @@ setMethod("keys", "InparanoidDb",
   strVec <- tolower(strVec)
   firstLett <- toupper(substr(strVec,1,1))
   rest <- substr(strVec,2,nchar(strVec))
-  paste(firstLett, rest, sep="")
+  paste0(firstLett, rest)
 }
 
 ## This is for making simple queries
@@ -229,12 +229,12 @@ setMethod("keys", "InparanoidDb",
 ## .extractWithSimpleInpQuery <- function(x, table, keys, keytype,
 ##                                        baseFiveCode, fiveMap){
 ##   fiveCode <- fiveMap[names(fiveMap) %in% table]
-##   subQueryBase <- paste("(SELECT * FROM ", table,
+##   subQueryBase <- paste0("(SELECT * FROM ", table,
 ##                         " WHERE species='",baseFiveCode,
-##                         "' AND seed_status='100%')", sep="")
-##   subQueryAlt <- paste("(SELECT * FROM ", table,
+##                         "' AND seed_status='100%')")
+##   subQueryAlt <- paste0("(SELECT * FROM ", table,
 ##                         " WHERE species='",fiveCode,
-##                        "' AND seed_status='100%')", sep="")
+##                        "' AND seed_status='100%')")
 ##   ## base or not? - based on the keytype (always one of two options)
 ##   inTableClause <- character()
 ##   fiveMap <- .makeFiveLetterMapping()
@@ -248,7 +248,7 @@ setMethod("keys", "InparanoidDb",
 ##                subQueryBase, "AS base,", subQueryAlt,
 ##                "AS alt WHERE base.clust_id=alt.clust_id",
 ##                "AND",inTableClause,"IN",               
-##                paste("('",paste(keys, collapse="','"),"')",sep=""))
+##                paste0("('",paste(keys, collapse="','"),"')"))
 ##   ## then extract
 ##   res <- dbQuery(dbConn(x), sql)
 ## }
@@ -265,19 +265,19 @@ setMethod("keys", "InparanoidDb",
   fiveCode <- fiveMap[names(fiveMap) %in% table]
 
   ## Base query for Alt portion
-  subQueryAlt <- paste("SELECT * FROM ", table,
+  subQueryAlt <- paste0("SELECT * FROM ", table,
                         " AS alt WHERE species='",fiveCode,
-                       "' AND seed_status='100%'", sep="")
+                        "' AND seed_status='100%'")
 
   ## Base query for base portion
-  subQueryBase <- paste("SELECT * FROM ", table,
-                        " AS base WHERE species='",baseFiveCode,
-                        "' AND seed_status='100%'", sep="")
+  subQueryBase <- paste0("SELECT * FROM ", table,
+                         " AS base WHERE species='",baseFiveCode,
+                         "' AND seed_status='100%'")
   
   
   ## Clause to append to whichever of these matches the keytype
   inClause <- paste( "AND inp_id IN",               
-               paste("('",paste(keys, collapse="','"),"')",sep=""))
+               paste0("('",paste(keys, collapse="','"),"')"))
   ## base or not?  WHO gets the inClause?
   fiveMap <- .makeFiveLetterMapping()
   if(keytype==names(fiveMap)[fiveMap %in% baseFiveCode]){

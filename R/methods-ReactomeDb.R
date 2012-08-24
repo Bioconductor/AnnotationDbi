@@ -143,8 +143,8 @@ setMethod("keys", "ReactomeDb",
 ##   joins <- character()
 ##   if(!missing(table1) && !missing(table2)){
 ##     ## Two tables that need to be joined.
-##     joins <- paste(c(paste(table1,".DB_ID",sep=""),
-##                    paste(table2,".DB_ID",sep="")),
+##     joins <- paste(c(paste0(table1,".DB_ID"),
+##                      paste0(table2,".DB_ID")),
 ##                    collapse="=") 
 ##   }else{
 ##     ## Then there is only one table involved (no join needed)
@@ -226,7 +226,7 @@ setMethod("keys", "ReactomeDb",
 .extractWithSimpleQuery <- function(x, table, colType, keys){
   ## generate a simple query for each table
   sql <- paste("SELECT * FROM", table, "WHERE", colType,"IN",
-               paste("(",paste(keys, collapse=","),")",sep="") )
+               paste0("(",paste(keys, collapse=","),")") )
   ## then extract it
   dbQuery(dbConn(x), sql)
 }

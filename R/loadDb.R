@@ -30,12 +30,12 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
     msg <- .valid.table.colnames(conn, "metadata", colnames)
     if (!is.null(msg))
         stop(msg)
-    sql <-  paste("SELECT * FROM metadata",
-                 " WHERE name = '", name, "'", sep="")
+    sql <-  paste0("SELECT * FROM metadata",
+                   " WHERE name = '", name, "'")
     data <- dbEasyQuery(conn, sql)
     if (nrow(data) != 1L) {
-        msg <- paste("The metadata table in the DB has 0 or more ",
-                     "than 1 '", name, "' entries", sep="")
+        msg <- paste0("The metadata table in the DB has 0 or more ",
+                      "than 1 '", name, "' entries")
         stop(msg)
     }
     data$value
@@ -43,14 +43,14 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
 
 .valid.colnames <- function(conn, tablename, colnames)
 {
-    sql0 <- paste("SELECT * FROM ", tablename, " LIMIT 0", sep="")
+    sql0 <- paste0("SELECT * FROM ", tablename, " LIMIT 0")
     data0 <- dbEasyQuery(conn, sql0)
     colnames0 <- colnames(data0)
     if (!all(colnames %in% colnames0)) {
-        msg <- paste("the ", tablename, " table in the DB doesn't have ",
-                     "all the expected columns (",
-                     paste("\"", colnames, "\"", sep="", collapse=", "),
-                     ")", sep="")
+        msg <- paste0("the ", tablename, " table in the DB doesn't have ",
+                      "all the expected columns (",
+                      paste0("\"", colnames, "\"", collapse=", "),
+                      ")")
         return(msg)
     }
     NULL
@@ -62,7 +62,7 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
     if (is(tmp, "try-error"))
         return("invalid DB file")
     if (!tmp)
-        return(paste("the DB has no ", tablename, " table", sep=""))
+        return(paste0("the DB has no ", tablename, " table"))
     .valid.colnames(conn, tablename, colnames)
 }
 

@@ -461,9 +461,9 @@ getOrgPkgForSchema <- function(schema){
 
 .revmapper <-function(name, ann_objs, class){
   if(class=="OrgDb"){
-    name2<- paste(name,"2EG",sep="")
+    name2<- paste0(name,"2EG")
   }else if (class=="ChipDb"){
-    name2<- paste(name,"2PROBE",sep="")
+    name2<- paste0(name,"2PROBE")
   }  
   ann_objs[[name2]] <- revmap(ann_objs[[name]], objName=name2)
 }

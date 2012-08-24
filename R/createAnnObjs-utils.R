@@ -21,7 +21,7 @@ Go3tablenames <- function(all=FALSE)
 {
     tablenames <- c("go_bp", "go_cc", "go_mf")
     if (all)
-        tablenames <- paste(tablenames, "_all", sep="")
+        tablenames <- paste0(tablenames, "_all")
     names(tablenames) <- c("BP", "CC", "MF")
     tablenames
 }
@@ -30,7 +30,7 @@ makeGo3L2Rchain <- function(L2Rchain, tablename, ontology)
 {
     chainlen <- length(L2Rchain)
     L2Rchain[[chainlen]]@tablename <- tablename
-    L2Rchain[[chainlen]]@Rattribnames["Ontology"] <- paste("'", ontology, "'", sep="")
+    L2Rchain[[chainlen]]@Rattribnames["Ontology"] <- paste0("'", ontology, "'")
     L2Rchain
 }
 
@@ -143,7 +143,7 @@ createCHRLENGTHS <- function(dbconn, dbname="")
     if(dbname==""){ ##The usual case
         data <- dbGetTable(dbconn, "chrlengths")
     }else{ ##For when people are doing a "CROSS" joined package, we want data from the "org" DB
-        data <- dbGetTable(dbconn, paste(.mangleDBName(dbname),".chrlengths",sep=""))        
+        data <- dbGetTable(dbconn, paste0(.mangleDBName(dbname),".chrlengths"))        
     }
     CHRLENGTHS <- data[["length"]]
     names(CHRLENGTHS) <- data[["chromosome"]]        
@@ -160,7 +160,7 @@ createMAPCOUNTS <- function(dbconn, prefix)
 {
     data <- dbGetTable(dbconn, "map_counts", "WHERE map_name != 'TOTAL' ORDER BY map_name")
     MAPCOUNTS <- data[["count"]]
-    names(MAPCOUNTS) <- paste(prefix, data[["map_name"]], sep="")
+    names(MAPCOUNTS) <- paste0(prefix, data[["map_name"]])
     MAPCOUNTS
 }
 
@@ -173,7 +173,7 @@ prefixAnnObjNames <- function(envir, prefix)
 {
     keys <- ls(envir, all.names=TRUE)
     for (key in keys) {
-        new_key <- paste(prefix, key, sep="")
+        new_key <- paste0(prefix, key)
         envir[[new_key]] <- envir[[key]]
     }
     remove(list=keys, envir=envir) # remove old keys
@@ -196,13 +196,13 @@ makeSeedList <- function(species, fields)
                        tablename=names(fields)[i],
                        Lcolname="inp_id",
                        Rcolname="clust_id",
-                       filter=as.character(paste("{seed_status}='100%' AND ", "{species}=","'",species,"'",sep=""))
+                       filter=as.character(paste0("{seed_status}='100%' AND ", "{species}=","'",species,"'"))
                        ),
                   list(
                        tablename=names(fields)[i],
                        Lcolname="clust_id",
                        Rcolname="inp_id",
-                       filter=as.character(paste("{seed_status}='100%' AND ","{species}=","'",fields[i],"'",sep=""))
+                       filter=as.character(paste0("{seed_status}='100%' AND ","{species}=","'",fields[i],"'"))
                        )
                   )
            )
@@ -318,10 +318,8 @@ annotMessage <- function(msgType, pkgType){
                 )
 
   if(msg != ""){
-    msg <- paste("\n",paste(strwrap(msg, exdent=2),collapse="\n"),
-                 "\n",sep="")
-  }else{
-    msg <- ""
+    msg <- paste0("\n", paste(strwrap(msg, exdent=2), collapse="\n"),
+                  "\n")
   }
 }
 

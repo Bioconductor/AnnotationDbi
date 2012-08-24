@@ -31,17 +31,18 @@
 ###
 
 showQCData <- function(prefix, datacache){
-     cat(paste("Quality control information for ", prefix, ":\n\n\n", sep=""))
+     cat(paste0("Quality control information for ", prefix, ":\n\n\n"))
      map_counts = createMAPCOUNTS(dbconn(datacache), prefix) 
-     cat(paste("This package has the following mappings:\n\n", sep=""))
+     cat("This package has the following mappings:\n\n")
      for(i in seq_len(length(map_counts))){
          mapname <- names(map_counts)[i]
-         cat(mapname, " has ", map_counts[i], " mapped keys (of ", length(get(mapname)), " keys)\n", sep="")
-     }
+         cat(mapname, "has", map_counts[i], "mapped keys (of",
+             length(get(mapname)), "keys)\n")
+  }
      
-     cat(paste("\n\nAdditional Information about this package:\n\n", sep=""))
-     cat(paste("DB schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n", sep=""))
-     cat(paste("DB schema version: ",dbmeta(datacache, 'DBSCHEMAVERSION'), "\n", sep=""))
+     cat("\n\nAdditional Information about this package:\n\n")
+     cat(paste0("DB schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n"))
+     cat(paste0("DB schema version: ",dbmeta(datacache, 'DBSCHEMAVERSION'), "\n"))
      ## Things to check for (may or may not be in some packages)
      meta = list(
        "ORGANISM" = "Organism: ",
@@ -92,7 +93,7 @@ setMethod("dbmeta", "DBIConnection",
         if (!is.character(name) || length(name) != 1 || is.na(name))
             stop("'name' must be a non-NA character string")
         name <- toSQLStringSet(name)
-        SQL <- paste("SELECT value FROM metadata WHERE name=", name, sep="")
+        SQL <- paste0("SELECT value FROM metadata WHERE name=", name)
         value <- dbQuery(x, SQL, 1)
         if (length(value) == 0)
             stop("meta ", name, " not found")
@@ -116,8 +117,8 @@ setMethod("dbschema", "DBIConnection",
         schema <- dbmeta(x, "DBSCHEMA")
         version <- dbmeta(x, "DBSCHEMAVERSION")
         file <- system.file("DBschemas",
-                            paste("schemas_", version, sep=""),
-                            paste(schema, ".sql", sep=""),
+                            paste0("schemas_", version),
+                            paste0(schema, ".sql"),
                             package="AnnotationDbi")
         lines <- readLines(file)
         if(schema == "INPARANOID_DB"){
