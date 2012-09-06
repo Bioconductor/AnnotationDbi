@@ -622,29 +622,31 @@
 
 
 ## drop rows that don't match
-.dropUnwantedRows <- function(tab, keys, jointype){
-  oriTab <- tab
-  ## 1st of all jointype MUST be in the colnames of tab
-  tab <- unique(tab)  ## make sure no rows are duplicated  
-  rownames(tab) <- NULL ## reset the rownames (for matching below)
-  ## Now I have to remove rows that are "all NAs" (with exception made for
-  ## keytype)
-  tab <- .dropNARows(tab, jointype)
-  ## This row-level uniqueness is required for match() below
-  ## first find keys that will never match up and add rows for them
-  noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
+.dropUnwantedRows <- function(tab, keys, jointype, x){
+  if (class(x) != "TranscriptDb") {
+      oriTab <- tab
+      ## 1st of all jointype MUST be in the colnames of tab
+      tab <- unique(tab)  ## make sure no rows are duplicated 
+      rownames(tab) <- NULL ## reset the rownames (for matching below)
+      ## Now I have to remove rows that are "all NAs" (with exception made for
+      ## keytype)
+      tab <- .dropNARows(tab, jointype)
+      ## This row-level uniqueness is required for match() below
+      ## first find keys that will never match up and add rows for them
+      noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
 
-  ## Problem: when you populate COMPLETELY empty table, with a move like
-  ## below: then you will create a mess. So if the table was 100% NA, then we
-  ## just want to go with the original table..
-  if(dim(tab)[1]==0){
-    tab <- oriTab
-  }else{## otherwise loop through and selectively put rows of NAs into place
-    for(i in seq_len(length(noMatchKeys))){
-      row <- rep(NA, dim(tab)[2])
-      row[colnames(tab) %in% jointype] <- noMatchKeys[i]
-      tab <- rbind(tab,row)
-    }
+      ## Problem: when you populate COMPLETELY empty table, with a move like
+      ## below: then you will create a mess. So if the table was 100% NA, then we
+      ## just want to go with the original table..
+      if(dim(tab)[1]==0){
+          tab <- oriTab
+      }else{## otherwise loop through and selectively put rows of NAs into place
+        for(i in seq_len(length(noMatchKeys))){
+          row <- rep(NA, dim(tab)[2])
+          row[colnames(tab) %in% jointype] <- noMatchKeys[i]
+          tab <- rbind(tab,row)
+        }
+      }
   }
   ## match up and filter out rows that don't match.
   ind = match(tab[[jointype]],keys)
@@ -694,9 +696,9 @@
 
 ## .resort is the main function for cleaning up a table so that results look
 ## formatted the way we want them to.
-.resort <- function(tab, keys, jointype, reqCols){
+.resort <- function(tab, keys, jointype, reqCols, x){
   if(jointype %in% colnames(tab)){
-    tab <- .dropUnwantedRows(tab, keys, jointype)
+    tab <- .dropUnwantedRows(tab, keys, jointype, x)
     ## rearrange to make sure cols are in correct order
     tab <- .resortColumns(tab, jointype, reqCols)
   }
@@ -796,7 +798,7 @@
   
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
-    res <- .resort(res, keys, jointype, oriTabCols)
+    res <- .resort(res, keys, jointype, oriTabCols, x)
   }
 
   colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]

@@ -284,13 +284,14 @@ setMethod("keys", "ReactomeDb",
   ## ALL of the keys,
   ## the colname that matches the keys (jointype or colType) and
   ## the reqCols (which means the column names expected to be in the results
-  ## at this point)
+  ## at this point,
+  ## primary object (i.e., TxDb, OrgDb etc.))
   
   reqCols <- .getTables(types, retVal="colname")
   ## now drop any unrequested cols
   res <- res[,reqCols,drop=FALSE]
   ## And then resort/tidy etc.
-  res <- .resort(res, keys, jointype=colType, reqCols=reqCols)
+  res <- .resort(res, keys, jointype=colType, reqCols=reqCols, x)
 
   ## Capture relationship between uc and lc names
   names(reqCols) <- types

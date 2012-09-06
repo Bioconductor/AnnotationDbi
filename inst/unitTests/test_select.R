@@ -42,7 +42,7 @@ test_resort <- function(){
   ## jumble res to simulate trouble
   resRO = res[order(sort(res$gene_id,decreasing=TRUE)),]
   reqCols <- c("gene_id","chromosome","symbol","pfam_id")
-  Rres <- AnnotationDbi:::.resort(resRO, keys, jointype, reqCols)
+  Rres <- AnnotationDbi:::.resort(resRO, keys, jointype, reqCols, x)
   checkIdentical(Rres$gene_id,Rres$gene_id)
   checkTrue(class(Rres) =="data.frame")
 
@@ -51,7 +51,7 @@ test_resort <- function(){
   cols <- c("CHR","SYMBOL")
   res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)
   reqCols <- c("gene_id","chromosome","symbol")
-  res2 <- AnnotationDbi:::.resort(res, keys, jointype, reqCols)
+  res2 <- AnnotationDbi:::.resort(res, keys, jointype, reqCols, x)
   checkIdentical(as.numeric(as.character(res2$gene_id)),keys)
   checkTrue(class(res) =="data.frame")
 }
