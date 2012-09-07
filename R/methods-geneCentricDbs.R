@@ -231,6 +231,7 @@
   if(species=="Mus musculus"){
     .defTables <- c(.defTables, list("MGI" = c("mgi","mgi_id"),
                                      "UCSCKG" = c("ucsc","ucsc_id")) )
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP") )]
   }
   if(species=="Macaca mulatta"){
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
@@ -278,7 +279,8 @@
                                                         "PROSITE") )]
   }
   if(species=="Rattus Norvegicus"){
-    .defTables <- .defTables ## no changes (for now)
+    #.defTables <- .defTables ## no changes (for now)
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP") )]
   }  
   if(species=="Saccharomyces cerevisiae"){
     .defTables <- c(.defTables, list(       
