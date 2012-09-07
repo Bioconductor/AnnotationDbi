@@ -229,8 +229,8 @@
                                      "UCSCKG" = c("ucsc","ucsc_id")) )
   }
   if(species=="Mus musculus"){
-    .defTables <- c(.defTables, list("MGI" = c("mgi","mgi_id"),
-                                     "UCSCKG" = c("ucsc","ucsc_id")) )
+    .defTables <- c(.defTables, list("MGI" = c("mgi","mgi_id")) )#,
+                                    # "UCSCKG" = c("ucsc","ucsc_id")) )
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP") )]
   }
   if(species=="Macaca mulatta"){
