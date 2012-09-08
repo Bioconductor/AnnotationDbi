@@ -406,7 +406,9 @@
   res <- .defineTables(x)
   if(col %in% names(res)){
     res <- res[[col]]
-  }else{stop(paste("col value",col,"is not defined"))}    
+  } else {
+      stop("'col' value '", col, "' is not defined")
+  }
   ## Then test and return appropriate records.
   if(value=="table"){
     res <- res[1]
@@ -605,56 +607,25 @@
 ## .resort drops unwanted rows, rearanges cols and puts things into order that
 ## the keys were initially
 
-## this one just drops rows where every single element is NA (other than the
-## jointype column - which there ought to be keys for anyways) This is
-## acceptable because any missing keys will be added back in by subsequent
-## steps in .dropUnwantedRows
-.dropNARows <- function(tab, jointype){
-  if(dim(tab)[2] > 1){
-    sub <- tab[,!(colnames(tab) %in% jointype),drop=FALSE]
-    NAs <- is.na(sub)
-    numNAs <- apply(NAs, 1, sum)
-    idx <- !(numNAs == dim(sub)[2])
-    res <- tab[idx,]
-  }else{
-    res <- tab
-  }
-  res
-}
-
-
 ## drop rows that don't match
 .dropUnwantedRows <- function(tab, keys, jointype, x){
   if (class(x) != "TranscriptDb") {
-      oriTab <- tab
-      ## 1st of all jointype MUST be in the colnames of tab
-      tab <- unique(tab)  ## make sure no rows are duplicated 
-      rownames(tab) <- NULL ## reset the rownames (for matching below)
-      ## Now I have to remove rows that are "all NAs" (with exception made for
-      ## keytype)
-      tab <- .dropNARows(tab, jointype)
-      ## This row-level uniqueness is required for match() below
-      ## first find keys that will never match up and add rows for them
-      noMatchKeys <- keys[!(keys %in% tab[[jointype]])]
-
-      ## Problem: when you populate COMPLETELY empty table, with a move like
-      ## below: then you will create a mess. So if the table was 100% NA, then we
-      ## just want to go with the original table..
-      if(dim(tab)[1]==0){
-          tab <- oriTab
-      }else{## otherwise loop through and selectively put rows of NAs into place
-        for(i in seq_len(length(noMatchKeys))){
-          row <- rep(NA, dim(tab)[2])
-          row[colnames(tab) %in% jointype] <- noMatchKeys[i]
-          tab <- rbind(tab,row)
-        }
+      ## drop duplicated or 'all NA' (other than jointype) rows
+      ntest <- ncol(tab) - sum(colnames(tab) == jointype)
+      idx <- duplicated(tab) | (rowSums(is.na(tab)) == ntest)
+      tab <- tab[!idx,, drop=FALSE]
+      ## add back rows for keys that were completely removed
+      noMatchKeys <- keys[!keys %in% tab[[jointype]]]
+      if (n <- length(noMatchKeys)) {
+          ridx <- nrow(tab) + seq.int(n)
+          cidx <- colnames(tab) %in% jointype
+          tab[ridx, cidx] <- noMatchKeys
       }
   }
-  ## match up and filter out rows that don't match.
-  ind = match(tab[[jointype]],keys)
-  names(ind) = as.numeric(rownames(tab)) ## step REQUIRES good rownames
-  tab <- tab[as.numeric(names(sort(ind))),,drop=FALSE]
-  tab
+  ## place rows in order of first appearance of key
+  rownames(tab) <- NULL
+  idx <- order(match(tab[[jointype]], keys))
+  tab[idx,, drop=FALSE]
 }
 
 ## resort the Column Names
@@ -671,42 +642,41 @@
 
 
 ## Create extra rows
-.generateExtraRows <- function(tab, keys, jointype){
-  ## 4 possibilities
-  ## if there are not dups, then we skip this function.
-  ## if(any(duplicated(keys)) ## then we have to expand the keys
-  ## if(any(duplicated(tab[[jointype]]))) ## then we have to expand the table...
-  ## AND if they are BOTH redundant how do I decide which row to expand?
-  ## I think that I have to throw a warning and NOT do this step in that case?
-  keyTest <- any(duplicated(keys))
-  rowTest <-  any(duplicated(tab[[jointype]]))         
-  if(!keyTest && !rowTest){ ## already the same - nothing to do
-    tab<-tab
-  }else if(keyTest && !rowTest){ ## Need to account for row dups
-    ind = match(keys, tab[[jointype]])
-    tab <- tab[ind,,drop=FALSE]
-    rownames(tab) <- NULL
-  }else if(!keyTest && !rowTest){ ## Need to account for data dups
-    warning("The data you have requested can only be expressed by duplicating some of the keys you requested.  Some of your keys may appear multiple times in the output")
-    tab<-tab
-  }else if(keyTest && rowTest){ ## Hands in air. - User will get data "as is"
-    warning("The data you have requested can only be expressed by duplicating some of the keys you requested.  Furthermore, it also appears that you have given us some of your keys multiple times.  Normally we would duplicate those rows for you, but this time we can't because of the existing redundancy in the data you have requested.")
-    tab<-tab
-  }
-  tab
+.generateExtraRows <- function(tab, keys, jointype) {
+    ## 4 possibilities
+    ## if there are not dups, then we skip this function.
+    ## if(any(duplicated(keys)) ## expand the keys
+    ## if(any(duplicated(tab[[jointype]]))) ## expand the table...
+    ## AND if they are BOTH redundant how do I decide which row to expand?
+    ## I think that I have to throw a warning and NOT do this step in that case?
+    keyTest <- any(duplicated(keys))
+    rowTest <-  any(duplicated(tab[[jointype]]))         
+    if (keyTest && !rowTest) { ## Need to account for row dups
+        ind = match(keys, tab[[jointype]])
+        tab <- tab[ind,,drop=FALSE]
+        rownames(tab) <- NULL
+    } else if (!keyTest && rowTest) {
+        txt <- "'select' resulted in 1:many mapping between keys and
+                return rows"
+        warning(paste(strwrap(txt), collapse="\n"))
+    } else if (keyTest && rowTest) { ## User will get data "as is"
+        txt <- "'select' and duplicate query keys resulted in 1:many
+                mapping between keys and return rows"
+        warning(paste(strwrap(txt), collapse="\n"))
+    }
+    tab
 }
 
 ## .resort is the main function for cleaning up a table so that results look
 ## formatted the way we want them to.
-.resort <- function(tab, keys, jointype, reqCols, x){
-  if(jointype %in% colnames(tab)){
-    tab <- .dropUnwantedRows(tab, keys, jointype, x)
-    ## rearrange to make sure cols are in correct order
-    tab <- .resortColumns(tab, jointype, reqCols)
-  }
-  ## Duplicate any rows as appropriate (based on those keys)
-  tab <- .generateExtraRows(tab, keys, jointype)
-  tab
+.resort <- function(tab, keys, jointype, reqCols, x) {
+    if (jointype %in% colnames(tab)) {
+        tab <- .dropUnwantedRows(tab, keys, jointype, x)
+        ## rearrange to make sure cols are in correct order
+        tab <- .resortColumns(tab, jointype, reqCols)
+    }
+    ## Duplicate any rows as appropriate (based on those keys)
+    .generateExtraRows(tab, keys, jointype)
 }
 
 
@@ -736,7 +706,7 @@
 }
 
 ## the core of the select method for GO org and chip packages.
-.select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
+.select <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
   ## if asked for what they have, just return that.
   if(all(cols %in% keytype)  && length(cols)==1){
     res <- data.frame(keys=keys)

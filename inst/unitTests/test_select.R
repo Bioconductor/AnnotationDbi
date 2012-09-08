@@ -23,7 +23,7 @@ s <- org.Sc.sgd.db
 cols <- c("CHR","PFAM","GO")
 keys <- c(1,10)
 jointype <- "gene_id"
-
+quiet <- suppressWarnings # quieten warnings from 1:many mappings in select()
 
 ## resort and friends are really important as they are generic enough to
 ## be reused elsewhere.
@@ -55,8 +55,6 @@ test_resort <- function(){
   checkIdentical(as.numeric(as.character(res2$gene_id)),keys)
   checkTrue(class(res) =="data.frame")
 }
-
-
 
 test_keytypes <- function(){
   checkTrue("ENTREZID" %in% keytypes(x))
@@ -94,16 +92,15 @@ test_keys <- function(){
 test_select1 <- function(){
   keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
   cols <- c("SYMBOL","ENTREZID","PROBEID")
-  res <- select(hgu95av2.db, keys, cols, keytype="ALIAS")
-  checkTrue(dim(res)[1]>0)
-  checkTrue(dim(res)[2]==4)
+  res <- quiet(select(hgu95av2.db, keys, cols, keytype="ALIAS"))
+  checkIdentical(c(4L, 4L), dim(res))
   checkIdentical(c("ALIAS","SYMBOL","ENTREZID","PROBEID"), colnames(res))
 }
 
 test_select2 <- function(){
   keys <- head(keys(org.Hs.eg.db),n=2)
   cols <- c("PFAM","ENTREZID", "GO")
-  res <- select(org.Hs.eg.db, keys, cols, keytype="ENTREZID")
+  res <- quiet(select(org.Hs.eg.db, keys, cols, keytype="ENTREZID"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==5)
   checkIdentical(c("ENTREZID","PFAM","GO","EVIDENCE","ONTOLOGY"),
@@ -113,7 +110,7 @@ test_select2 <- function(){
 test_select3 <- function(){
   keys <- head(keys(org.Hs.eg.db,keytype="OMIM"),n=4)
   cols <- c("SYMBOL", "UNIPROT", "PATH")
-  res <- select(hgu95av2.db, keys, cols, keytype="OMIM")
+  res <- quiet(select(hgu95av2.db, keys, cols, keytype="OMIM"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("OMIM","SYMBOL","UNIPROT","PATH"), colnames(res))
@@ -122,7 +119,7 @@ test_select3 <- function(){
 test_select4 <- function(){
   keys <- head(keys(org.Hs.eg.db),n=2)
   cols <- c("ACCNUM","REFSEQ")
-  res <- select(org.Hs.eg.db, keys, cols)
+  res <- quiet(select(org.Hs.eg.db, keys, cols))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","ACCNUM","REFSEQ"), colnames(res))
@@ -164,7 +161,7 @@ test_select9 <- function(){
   ## What about when we need to throw away extra cols?
   uniKeys <- head(keys(org.Hs.eg.db, keytype="UNIPROT"))
   cols <- c("SYMBOL", "PATH")
-  res <- select(org.Hs.eg.db, keys=uniKeys, cols=cols, keytype="UNIPROT")
+  res <- quiet(select(org.Hs.eg.db, keys=uniKeys, cols=cols, keytype="UNIPROT"))
   checkTrue(class(res) =="data.frame")
   checkTrue(dim(res)[2] ==3)  
   checkIdentical(c("UNIPROT","SYMBOL","PATH"), colnames(res))
@@ -175,19 +172,19 @@ test_select10 <- function(){
   ## keytypes?
   cols <- c("SYMBOL","CHR")
   keys <- head(keys(t,"TAIR"))
-  res <- select(t, keys, cols, keytype="TAIR")
+  res <- quiet(select(t, keys, cols, keytype="TAIR"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("TAIR","SYMBOL","CHR"), colnames(res))
 
   keys <- head(keys(t,"ENTREZID"))
-  res <- select(t, keys, cols, keytype="ENTREZID")
+  res <- quiet(select(t, keys, cols, keytype="ENTREZID"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","SYMBOL","CHR"), colnames(res))
 
   keys=head(keys(t,"REFSEQ"))
-  res <- select(t, keys, cols , keytype="REFSEQ")
+  res <- quiet(select(t, keys, cols , keytype="REFSEQ"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("REFSEQ","SYMBOL","CHR"), colnames(res))
@@ -197,14 +194,14 @@ test_select11 <- function(){
   ## how about different keytypes for yeast?
   keys <- head(keys(s, "REFSEQ"))
   cols <- c("CHR","PFAM")
-  res <- select(s, keys, cols, keytype="REFSEQ")
+  res <- quiet(select(s, keys, cols, keytype="REFSEQ"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("REFSEQ","CHR","PFAM"), colnames(res))
   
   keys <- head(keys(s, "ENTREZID"))
   cols <- c("CHR","PATH")
-  res <- select(s, keys, cols, keytype="ENTREZID")
+  res <- quiet(select(s, keys, cols, keytype="ENTREZID"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","CHR","PATH"), colnames(res))
@@ -228,28 +225,28 @@ test_select12 <- function(){
   ## what happens when we use GO as an ID?
   keys <- "1"
   cols <- c("GO","ENTREZID")
-  res <- select(x, keys, cols, keytype="ENTREZID")
+  res <- quiet(select(x, keys, cols, keytype="ENTREZID"))
   checkTrue(dim(res)[1]>0)   
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("ENTREZID","GO","EVIDENCE","ONTOLOGY"), colnames(res))
 
   keys <- "GO:0000018"
   cols <- c("GO","ENTREZID")
-  res <- select(x, keys, cols, keytype="GO")
+  res <- quiet(select(x, keys, cols, keytype="GO"))
   checkTrue(dim(res)[1]>0)   
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID"), colnames(res))
 
   keys <- "GO:0000023"
   cols <- c("GO","ENTREZID")
-  res <- select(t, keys, cols, keytype="GO")
+  res <- quiet(select(t, keys, cols, keytype="GO"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID"), colnames(res)) 
 
   keys <- "GO:0000023"
   cols <- c("ENTREZID","TAIR","GO")
-  res <- select(t, keys, cols, keytype="GO")
+  res <- quiet(select(t, keys, cols, keytype="GO"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==5)
   checkIdentical(c("GO","EVIDENCE","ONTOLOGY","ENTREZID","TAIR"), 
@@ -259,13 +256,12 @@ test_select12 <- function(){
 test_select13 <- function(){
   ## what happens with dropping unwanted rows?
   sym <- "ITGA7"
-  res <- select(x, sym, "PFAM", keytype="ALIAS")
+  res <- quiet(select(x, sym, "PFAM", keytype="ALIAS"))
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==2)
   ## make sure no NAs are in res$PFAM
   checkTrue(length(res$PFAM)== length(res$PFAM[!is.na(res$PFAM)]))
 }
-
 
 test_select14 <- function(){
   ## what happens when there are no results AT ALL? (should be all NAs)
