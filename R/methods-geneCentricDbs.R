@@ -608,24 +608,25 @@
 ## the keys were initially
 
 ## drop rows that don't match
-.dropUnwantedRows <- function(tab, keys, jointype, x){
-  if (class(x) != "TranscriptDb") {
-      ## drop duplicated or 'all NA' (other than jointype) rows
-      ntest <- ncol(tab) - sum(colnames(tab) == jointype)
-      idx <- duplicated(tab) | (rowSums(is.na(tab)) == ntest)
-      tab <- tab[!idx,, drop=FALSE]
-      ## add back rows for keys that were completely removed
-      noMatchKeys <- keys[!keys %in% tab[[jointype]]]
-      if (n <- length(noMatchKeys)) {
-          ridx <- nrow(tab) + seq.int(n)
-          cidx <- colnames(tab) %in% jointype
-          tab[ridx, cidx] <- noMatchKeys
-      }
-  }
-  ## place rows in order of first appearance of key
-  rownames(tab) <- NULL
-  idx <- order(match(tab[[jointype]], keys))
-  tab[idx,, drop=FALSE]
+.dropUnwantedRows <- function(tab, keys, jointype, x) {
+    if (!is(x, "TranscriptDb")) {
+        ## drop duplicated or 'all NA' (other than jointype) rows
+        ntest <- ncol(tab) - sum(colnames(tab) == jointype)
+        idx <- duplicated(tab) | (rowSums(is.na(tab)) == ntest)
+        tab <- tab[!idx,, drop=FALSE]
+        ## add back rows for keys that were completely removed
+        noMatchKeys <- keys[!keys %in% tab[[jointype]]]
+        if (n <- length(noMatchKeys)) {
+            ridx <- nrow(tab) + seq.int(n)
+            cidx <- colnames(tab) %in% jointype
+            tab[ridx, cidx] <- noMatchKeys
+        }
+    }
+    ## place rows in order of first appearance of key
+    idx <- order(match(tab[[jointype]], keys))
+    tab <- tab[idx,, drop=FALSE]
+    rownames(tab) <- NULL
+    tab
 }
 
 ## resort the Column Names

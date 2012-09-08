@@ -35,25 +35,58 @@ test_generateExtraRows <- function(){
   checkTrue(length(tkeys) == dim(res)[1])
 }
 
-test_resort <- function(){
-  cols <- c("CHR","SYMBOL", "PFAM")
-  keys <- c(1,10)
-  res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)
-  ## jumble res to simulate trouble
-  resRO = res[order(sort(res$gene_id,decreasing=TRUE)),]
-  reqCols <- c("gene_id","chromosome","symbol","pfam_id")
-  Rres <- AnnotationDbi:::.resort(resRO, keys, jointype, reqCols, x)
-  checkIdentical(Rres$gene_id,Rres$gene_id)
-  checkTrue(class(Rres) =="data.frame")
+test_dropUnwantedRows <- function() {
+    fun <- AnnotationDbi:::.dropUnwantedRows
 
-  ## now what if we have MORE keys?
-  keys <- c(1, keys, keys)
-  cols <- c("CHR","SYMBOL")
-  res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)
-  reqCols <- c("gene_id","chromosome","symbol")
-  res2 <- AnnotationDbi:::.resort(res, keys, jointype, reqCols, x)
-  checkIdentical(as.numeric(as.character(res2$gene_id)),keys)
-  checkTrue(class(res) =="data.frame")
+    ## no duplicates, no changes
+    keys <- letters[1:5]
+    tab <- data.frame(x=keys, y=LETTERS[1:5], z=LETTERS[5:1],
+                      row.names=NULL)
+    checkIdentical(tab, fun(tab, keys, "x", character()))
+
+    ## duplicate jointype element, duplicate dropped
+    tab1 <- tab[c(1:5, 3L),]
+    rownames(tab1) <- NULL
+    checkIdentical(tab, fun(tab1, keys, "x", character()))
+
+    ## unique all NA (other than jointype column) _retained_
+    tab1 <- tab
+    tab1[3, 2:3] <- NA
+    rownames(tab1) <- NULL
+    checkIdentical(tab1, fun(tab1, keys, "x", character()))
+
+    ## duplicate all NA, made unique
+    tab1 <- tab
+    tab1[3, 2:3] <- NA
+    tab2 <- tab1[c(1:5, 3),]
+    checkIdentical(tab1,  fun(tab2, keys, "x", character()))
+
+    ## duplicate key, dropped
+    keys1 <- keys[c(1:5, 3)]
+    checkIdentical(tab, fun(tab, keys1, "x", character()))
+}
+
+test_resort <- function() {
+    fun <- AnnotationDbi:::.resort
+
+    cols <- c("CHR","SYMBOL", "PFAM")
+    keys <- c(1,10)
+    res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)
+    ## jumble res to simulate trouble
+    resRO = res[order(sort(res$gene_id,decreasing=TRUE)),]
+    reqCols <- c("gene_id","chromosome","symbol","pfam_id")
+    Rres <- fun(resRO, keys, jointype, reqCols, x)
+    checkIdentical(Rres$gene_id,Rres$gene_id)
+    checkTrue(class(Rres) =="data.frame")
+
+    ## now what if we have MORE keys?
+    keys <- c(1, keys, keys)
+    cols <- c("CHR","SYMBOL")
+    res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)
+    reqCols <- c("gene_id","chromosome","symbol")
+    res2 <- fun(res, keys, jointype, reqCols, x)
+    checkIdentical(as.numeric(as.character(res2$gene_id)),keys)
+    checkTrue(class(res) =="data.frame")
 }
 
 test_keytypes <- function(){
