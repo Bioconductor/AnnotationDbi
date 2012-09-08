@@ -69,6 +69,21 @@ test_dropUnwantedRows <- function() {
 test_resort <- function() {
     fun <- AnnotationDbi:::.resort
 
+    ## repeat keys returned
+    keys <- letters[1:5]
+    tab <- data.frame(x=keys, y=LETTERS[1:5], z=LETTERS[5:1],
+                      row.names=NULL, stringsAsFactors=FALSE)
+    keys1 <- keys[c(1:5, 1)]
+    tab1 <- tab[c(1:5, 1),]
+    rownames(tab1) <- NULL
+    checkIdentical(tab1, fun(tab, keys1, "x", names(tab), character()))
+
+    ## keys with missing values returned
+    tab1 <- tab
+    tab1[3, 2:3] <- NA
+    keys1 <- tab1[["x"]]
+    checkIdentical(tab1, fun(tab1, keys, "x", names(tab), character()))
+
     cols <- c("CHR","SYMBOL", "PFAM")
     keys <- c(1,10)
     res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)

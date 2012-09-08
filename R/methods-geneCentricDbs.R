@@ -630,17 +630,13 @@
 }
 
 ## resort the Column Names
-.resortColumns <- function(tab, jointype, reqCols){
-  tab <- .filterSuffixes(tab) ## Removes duplicate suffixes
-  if(all(colnames(tab) %in% reqCols)){  ## this might be too stringent...
-    cnames <- c(jointype, reqCols[!(reqCols %in% jointype)])
-    indc <- match(cnames, colnames(tab))
-    tab <- tab[,indc,drop=FALSE]
-    colnames(tab) <- cnames
-  }else{stop("Some of the reqCols are not in the table (colnames(tab)).")}
-  tab
+.resortColumns <- function(tab, jointype, reqCols) {
+    tab <- .filterSuffixes(tab) ## Removes duplicate suffixes
+    if (!all(colnames(tab) %in% reqCols))
+        stop("[internal] some of 'reqCols' are not in 'tab'")
+    cnames <- c(jointype, reqCols[!reqCols %in% jointype])
+    tab[, cnames, drop=FALSE]
 }
-
 
 ## Create extra rows
 .generateExtraRows <- function(tab, keys, jointype) {
