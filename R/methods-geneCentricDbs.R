@@ -614,7 +614,7 @@
     idx <- duplicated(tab) | (rowSums(is.na(tab)) == ntest)
     tab <- tab[!idx,, drop=FALSE]
     ## add back rows for keys that were completely removed
-    noMatchKeys <- keys[!keys %in% tab[[jointype]]]
+    noMatchKeys <- unique(keys[!keys %in% tab[[jointype]]])
     if (n <- length(noMatchKeys)) {
         ridx <- nrow(tab) + seq.int(n)
         cidx <- colnames(tab) %in% jointype

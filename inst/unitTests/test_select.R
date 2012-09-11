@@ -84,6 +84,13 @@ test_resort <- function() {
     keys1 <- tab1[["x"]]
     checkIdentical(tab1, fun(tab1, keys, "x", names(tab)))
 
+    ## multiple keys with missing values returned
+    tab1 <- tab[c(3,4,3,4),]
+    tab1[c(1,3), 2:3] <- NA
+    keys1 <- keys[c(3,4,3,4)] 
+    rownames(tab1) <- NULL
+    checkIdentical(tab1, fun(tab1[1:2,], keys1, "x", names(tab)))
+
     cols <- c("CHR","SYMBOL", "PFAM")
     keys <- c(1,10)
     res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)
