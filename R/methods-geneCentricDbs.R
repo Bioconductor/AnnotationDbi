@@ -608,19 +608,17 @@
 ## the keys were initially
 
 ## drop rows that don't match
-.dropUnwantedRows <- function(tab, keys, jointype, x) {
-    if (!is(x, "TranscriptDb")) {
-        ## drop duplicated or 'all NA' (other than jointype) rows
-        ntest <- ncol(tab) - sum(colnames(tab) == jointype)
-        idx <- duplicated(tab) | (rowSums(is.na(tab)) == ntest)
-        tab <- tab[!idx,, drop=FALSE]
-        ## add back rows for keys that were completely removed
-        noMatchKeys <- keys[!keys %in% tab[[jointype]]]
-        if (n <- length(noMatchKeys)) {
-            ridx <- nrow(tab) + seq.int(n)
-            cidx <- colnames(tab) %in% jointype
-            tab[ridx, cidx] <- noMatchKeys
-        }
+.dropUnwantedRows <- function(tab, keys, jointype) {
+    ## drop duplicated or 'all NA' (other than jointype) rows
+    ntest <- ncol(tab) - sum(colnames(tab) == jointype)
+    idx <- duplicated(tab) | (rowSums(is.na(tab)) == ntest)
+    tab <- tab[!idx,, drop=FALSE]
+    ## add back rows for keys that were completely removed
+    noMatchKeys <- keys[!keys %in% tab[[jointype]]]
+    if (n <- length(noMatchKeys)) {
+        ridx <- nrow(tab) + seq.int(n)
+        cidx <- colnames(tab) %in% jointype
+        tab[ridx, cidx] <- noMatchKeys
     }
     ## place rows in order of first appearance of key
     idx <- order(match(tab[[jointype]], keys))
@@ -666,9 +664,9 @@
 
 ## .resort is the main function for cleaning up a table so that results look
 ## formatted the way we want them to.
-.resort <- function(tab, keys, jointype, reqCols, x) {
+.resort <- function(tab, keys, jointype, reqCols) {
     if (jointype %in% colnames(tab)) {
-        tab <- .dropUnwantedRows(tab, keys, jointype, x)
+        tab <- .dropUnwantedRows(tab, keys, jointype)
         ## rearrange to make sure cols are in correct order
         tab <- .resortColumns(tab, jointype, reqCols)
     }
@@ -766,7 +764,7 @@
   
   ## .resort will resort the rows relative to the jointype etc.
   if(dim(res)[1]>0){
-    res <- .resort(res, keys, jointype, oriTabCols, x)
+    res <- .resort(res, keys, jointype, oriTabCols)
   }
 
   colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]

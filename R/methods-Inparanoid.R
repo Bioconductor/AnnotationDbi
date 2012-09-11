@@ -374,7 +374,7 @@ setMethod("keys", "InparanoidDb",
   ## now drop any unrequested cols
   res <- res[,reqCols,drop=FALSE]
   ## And then resort/tidy etc.
-  res <- .resort(res, keys, jointype=colType, reqCols=reqCols, x)
+  res <- .resort(res, keys, jointype=colType, reqCols=reqCols)
 
   ## Then match to the colnames
   colnames(res) <- toupper(names(fiveMap)[match(colnames(res),fiveMap)])
