@@ -726,11 +726,10 @@
   oriCols <- unique(c(keytype, cols))
 
   ## keys should NOT be NAs, but if they are, warn and then filter them.
-  if(length(keys) != length(keys[!is.na(keys)])){
-    warning(paste("You cannot really use NA values as keys.",
-                  "All such keys will be dropped for you and the",
-                  "results will be correspondingly smaller."))}
-  keys <- keys[!is.na(keys)]
+  if (any(is.na(keys))) {
+      warning("'NA' keys have been removed")
+      keys <- keys[!is.na(keys)]
+  }
 
   ## Generate query and extract the data
   res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
