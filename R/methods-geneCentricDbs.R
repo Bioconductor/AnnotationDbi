@@ -55,6 +55,10 @@
     after <- match("GO", cols)
     cols <- append(cols, c("EVIDENCE","ONTOLOGY"),after) 
   }
+  if("GOALL" %in% cols){ 
+    after <- match("GOALL", cols)
+    cols <- append(cols, c("EVIDENCEALL","ONTOLOGYALL"),after) 
+  }
   if("ORF" %in% cols){ 
     after <- match("ORF", cols)
     cols <- append(cols, c("SGD"),after) 
@@ -125,8 +129,10 @@
                      "UNIPROT" = c("uniprot","uniprot_id"),
                      "GO" = c("go","go_id"),
                      "EVIDENCE" = c("go","evidence"),
-                     "ONTOLOGY" = c("go","ontology")
-                     
+                     "ONTOLOGY" = c("go","ontology"),
+                     "GOALL" = c("go_all","go_id"),
+                     "EVIDENCEALL" = c("go_all","evidence"),
+                     "ONTOLOGYALL" = c("go_all","ontology")                     
                      )
   ## exceptions for ALL OrgDbs 
   if(class=="OrgDb"){

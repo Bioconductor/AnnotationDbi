@@ -15,13 +15,16 @@
 \alias{ENTREZID}
 \alias{ENZYME}
 \alias{EVIDENCE}
+\alias{EVIDENCEALL}
 \alias{GENENAME}
 \alias{GO}
+\alias{GOALL}
 \alias{INTERPRO}
 \alias{IPI}
 \alias{MAP}
 \alias{OMIM}
 \alias{ONTOLOGY}
+\alias{ONTOLOGYALL}
 \alias{ORF}
 \alias{PATH}
 \alias{PFAM}
@@ -66,13 +69,16 @@
     \item{ENTREZID:}{Entrez gene Identifiers}
     \item{ENZYME:}{Enzyme Commission numbers}
     \item{EVIDENCE:}{Evidence codes for GO associations with a gene of interest}
+    \item{EVIDENCEALL:}{Evidence codes for GO (includes less specific terms)}
     \item{GENENAME:}{The full gene name}
     \item{GO:}{GO Identifiers associated with a gene of interest}
+    \item{GOALL:}{GO Identifiers (includes less specific terms)}
     \item{INTERPRO:}{InterPro identifiers}
     \item{IPI:}{IPI accession numbers}
     \item{MAP:}{cytoband locations}
     \item{OMIM:}{Online Mendelian Inheritance in Man identifiers}
     \item{ONTOLOGY:}{For GO Identifiers, which Gene Ontology (BP, CC, or MF)}
+    \item{ONTOLOGYALL:}{Which Gene Ontology (BP, CC, or MF), (includes less specific terms)}
     \item{ORF:}{Yeast ORF Identifiers}
     \item{PATH:}{KEGG Pathway Identifiers}
     \item{PFAM:}{PFAM Identifiers}
