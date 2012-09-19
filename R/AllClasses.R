@@ -237,6 +237,11 @@ setClass("KEGGFrame", contains="AnnotFrame",
 
 
 
+
+
+
+
+
 ##############################################################################
 ## Annotations will be the base virtual class for all the annotation packages
 ## in the project.
@@ -259,3 +264,85 @@ setClass("KEGGFrame", contains="AnnotFrame",
 
 .ReactomeDb <-
     setRefClass("ReactomeDb", contains="AnnotationDb")
+
+
+
+
+##############################################################################
+## We also need a class that will be "like" a Bimap (in that it can be passed
+## to all the Bimap classes, but that in reality will just be an AnnotationDb
+## object along with a single value for the cols argument.  The purpose of
+## this is primarily to allow getAnnMap() from annotate to be able to return a
+## value when no Bimaps are defined, (but when there is a select method
+## defined) and to have things basically still work for the retro code.
+
+setClass("AnnotationDbMap",
+    representation(
+        AnnotDb="AnnotationDb",
+        cols="character"
+    )
+)
+
+## ## Methods that are mission critical (for the release)
+
+## ## from R/AnnDbBimap-envirAPI.R
+##     "ls",
+##     "mget",
+##     "eapply",
+##     "get",
+##     "exists",
+##     "[[",
+##     "$",
+##     "contents",
+##     "sample",
+
+## ## from R/BimapFormatting.R
+##     "as.list",
+##     "as.character",
+
+
+## ## from R/Bimap.R (the Bimap interface)
+##     "subset",
+##     "[",
+##     "toTable","as.data.frame",
+##     "revmap",
+##     "head", "tail",
+
+
+## ## Methods that I should get done soon as possible (but less urgent)
+
+## ## from R/Bimap.R (the Bimap interface)
+##     "direction", "direction<-",
+##     "colnames", "colmetanames",
+##     "Lkeyname", "Rkeyname", "keyname",
+##     "tagname",
+##     "Rattribnames", "Rattribnames<-",
+##     "Lkeys", "Rkeys", "keys",
+##     "Lkeys<-", "Rkeys<-", "keys<-",
+##     "Llength", "Rlength", "length",
+##     "isNA",
+##     "mappedLkeys", "mappedRkeys", "mappedkeys",
+##     "count.mappedLkeys", "count.mappedRkeys", "count.mappedkeys",
+##     "show",
+##     "summary",
+##     "nrow",
+##     "nhit",
+##     "ncol", "dim",
+##     "getBimapFilters","setInpBimapFilter",
+
+## ## from R/AnnDbObj-lowAPI.R
+##     "dbconn",
+##     "dbfile",
+##     "dbmeta",
+##     "dbschema",
+##     "dbInfo",
+
+
+## ## Methods that I fear may not ever make sense (or which may be unfeasible)
+
+## ## from R/Bimap.R (the Bimap interface)
+##     "toggleProbes",
+##     "hasMultiProbes","hasSingleProbes",
+
+##     "links",
+##     "count.links",
