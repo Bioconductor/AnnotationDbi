@@ -9,8 +9,10 @@
 \alias{as.list,AgiAnnDbMap-method}
 \alias{as.list,GoAnnDbBimap-method}
 \alias{as.list,GOTermsAnnDbBimap-method}
+\alias{as.list,AnnotationDbMap-method}
 
 \alias{as.character,AnnDbBimap-method}
+\alias{as.character,AnnotationDbMap-method}
 
 
 \title{Formatting a Bimap as a list or character vector}

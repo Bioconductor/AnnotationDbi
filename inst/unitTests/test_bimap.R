@@ -28,8 +28,9 @@ test_mget <- function(){
 
   res2 <- mget(k, map2)
 
-  ## reverse test ## this part still needs some work...
-  ## res3 <- mget(k, revmap(map2))
+  ## reverse test 
+  kr <- c("CC","MF")
+  res3 <- mget(k, revmap(map2))
 }
 
 

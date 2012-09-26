@@ -4,6 +4,7 @@
 
 \alias{ls}
 \alias{ls,Bimap-method}
+\alias{ls,AnnotationDbMap-method}
 
 \alias{exists}
 \alias{exists,ANY,ANY,Bimap-method}
@@ -20,6 +21,7 @@
 \alias{mget}
 \alias{mget,AnnDbBimap-method}
 \alias{mget,ANY,AnnDbBimap-method}
+\alias{mget,ANY,AnnotationDbMap-method}
 
 \alias{eapply}
 \alias{eapply,Bimap-method}
