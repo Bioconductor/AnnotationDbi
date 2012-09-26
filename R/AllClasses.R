@@ -279,16 +279,20 @@ setClass("KEGGFrame", contains="AnnotFrame",
 setClass("AnnotationDbMap",
     representation(
         AnnotDb="AnnotationDb",
-        cols="character"
+        cols="character",
+        direction="integer"
+    ),
+    prototype(
+        direction=1L
     )
 )
 
 ## ## Methods that are mission critical (for the release)
 
 ## ## from R/AnnDbBimap-envirAPI.R
-##     "ls",
-##     "mget",
-##     "eapply",
+##     "ls",                        ## DONE
+##     "mget",                      ## DONE
+##     "eapply",                    ## 
 ##     "get",
 ##     "exists",
 ##     "[[",
@@ -297,22 +301,22 @@ setClass("AnnotationDbMap",
 ##     "sample",
 
 ## ## from R/BimapFormatting.R
-##     "as.list",
-##     "as.character",
+##     "as.list",                    ## DONE
+##     "as.character",               ## DONE
 
 
 ## ## from R/Bimap.R (the Bimap interface)
+##     "direction", "direction<-",   ## in progress
+##     "revmap",                     ## in progress
+##     "head", "tail",
 ##     "subset",
 ##     "[",
 ##     "toTable","as.data.frame",
-##     "revmap",
-##     "head", "tail",
 
 
 ## ## Methods that I should get done soon as possible (but less urgent)
 
 ## ## from R/Bimap.R (the Bimap interface)
-##     "direction", "direction<-",
 ##     "colnames", "colmetanames",
 ##     "Lkeyname", "Rkeyname", "keyname",
 ##     "tagname",

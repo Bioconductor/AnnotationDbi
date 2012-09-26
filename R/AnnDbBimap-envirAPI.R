@@ -20,20 +20,35 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "ls" new generic.
 ###
-
-setMethod("ls", signature(name="Bimap"),
-    function(name, pos, envir, all.names, pattern)
-    {
-        if (!missing(pos))
-            warning("ignoring 'pos' argument")
-        if (!missing(envir))
-            warning("ignoring 'envir' argument")
-        if (!missing(all.names))
-            warning("ignoring 'all.names' argument")
+.ls <- function(name, pos, envir, all.names, pattern){
         keys <- keys(name)
         if (!missing(pattern))
             keys <- keys[grep(pattern, keys)]
         keys
+}
+
+setMethod("ls", signature(name="Bimap"),
+    function(name, pos, envir, all.names, pattern){
+        if (!missing(pos))
+          warning("ignoring 'pos' argument")
+        if (!missing(envir))
+          warning("ignoring 'envir' argument")
+        if (!missing(all.names))
+          warning("ignoring 'all.names' argument")
+        .ls(name, pos, envir, all.names, pattern)
+    }
+)
+
+setMethod("ls", signature(name="AnnotationDbMap"),
+    function(name, pos, envir, all.names, pattern){
+        if (!missing(pos))
+          warning("ignoring 'pos' argument")
+        if (!missing(envir))
+          warning("ignoring 'envir' argument")
+        if (!missing(all.names))
+          warning("ignoring 'all.names' argument")
+        name <- name@AnnotDb
+        .ls(name, pos, envir, all.names, pattern)
     }
 )
 
@@ -66,6 +81,44 @@ setMethod("mget", signature(x="ANY", envir="AnnDbBimap"),
         as.list(envir)
     }
 )
+
+
+setMethod("mget", signature(x="ANY", envir="AnnotationDbMap"),
+    function(x, envir, mode, ifnotfound, inherits)
+    {       
+        if (!missing(ifnotfound) & (!is.vector(ifnotfound)
+                                    || length(ifnotfound) != 1
+                                    || !is.na(ifnotfound))){
+            stop("only NA is currently supported for 'ifnotfound'")
+        }else{
+            ## otherwise they put nothing (OR NA) which I think both match
+            ## what we want.
+            AnnotDb <- envir@AnnotDb
+            cols <- envir@cols
+            ## always use default keytype here
+            if(envir@direction==1){
+                keys <- keys(AnnotDb)
+                keys <- keys[keys %in% x]
+                suppressWarnings(res <- select(AnnotDb, keys, cols))
+                ans <- split(res[,2], as.factor(res[,1]))
+            }else{
+                allCentKeys <- keys(AnnotDb)
+                keys <- keys(AnnotDb, keytype=cols)
+                keys <- keys[keys %in% x]
+                ## here I have to either add the central ID to cols
+                ## OR I have to get all the values and subset them...
+                ## 2nd approach is safer/universal,
+                ## (which is more important for B/C)
+                suppressWarnings(res <- select(AnnotDb, allCentKeys, cols))
+                res <- res[res[,2] %in% keys,]
+                ans <- split(res[,1], as.factor(res[,2]))
+            }
+            ans
+        }
+    }
+)
+
+
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

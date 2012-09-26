@@ -347,6 +347,24 @@ setMethod("as.list", "GOTermsAnnDbBimap",
     }
 )
 
+## As.list method for generated AnnotationDbMaps
+setMethod("as.list", "AnnotationDbMap",
+    function(x, ...)
+    {
+         AnnotDb <- x@AnnotDb
+         cols <- x@cols
+         keys <- keys(AnnotDb)
+         suppressWarnings(res <- select(AnnotDb, keys, cols))
+         if(x@direction==1){
+             split(res[,2], as.factor(res[,1]))
+         }else{
+             split(res[,1], as.factor(res[,2]))             
+         }
+    }
+)
+
+
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "toLList", "toRList" and "toList" methods.
@@ -466,3 +484,23 @@ setMethod("as.character", "AnnDbBimap",
     }
 )
 
+## As.character method for generated AnnotationDbMaps
+setMethod("as.character", "AnnotationDbMap",
+    function(x)
+    {
+         AnnotDb <- x@AnnotDb
+         cols <- x@cols
+         keys <- keys(AnnotDb)
+         suppressWarnings(res <- select(AnnotDb, keys, cols))
+         if(x@direction==1){
+             ans <- as.character(res[,2])
+             names(ans) <- as.character(res[,1])
+         }else{
+             ans <- as.character(res[,1])
+             names(ans) <- as.character(res[,2])
+         }
+         if (any(duplicated(names(ans))))
+            warning("returned vector has duplicated names")
+         ans
+    }
+)

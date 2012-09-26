@@ -210,6 +210,10 @@ setMethod("direction", "FlatBimap",
 setMethod("direction", "AnnDbBimap",
     function(x) x@direction)
 
+setMethod("direction", "AnnotationDbMap",
+    function(x) x@direction)
+
+
 setReplaceMethod("direction", "FlatBimap",
     function(x, value)
     {
@@ -226,6 +230,20 @@ setReplaceMethod("direction", "AnnDbBimap",
             stop("undirected AnnDbBimap objects are not supported")
         if (direction != x@direction) {
             x@objName <- paste0("revmap(", x@objName, ")")
+            x@direction <- direction
+        }
+        x
+    }
+)
+
+setReplaceMethod("direction", "AnnotationDbMap",
+    function(x, value)
+    {
+        direction <- .normalize.direction(value)
+        if (direction == 0)
+            stop("undirected AnnDbBimap objects are not supported")
+        if (direction != x@direction) {
+            #x@objName <- paste0("revmap(", x@objName, ")")
             x@direction <- direction
         }
         x
@@ -282,6 +300,11 @@ setMethod("revmap", "environment",
 
 setMethod("revmap", "list",
     function(x) reverseSplit(x)
+)
+
+
+setMethod("revmap", "AnnotationDbMap",
+    function(x) { direction(x) <- - direction(x); x }
 )
 
 
