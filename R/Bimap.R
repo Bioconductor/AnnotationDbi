@@ -1121,7 +1121,19 @@ setMethod("toTable", "AnnDbBimap",
     }
 )
 
+setMethod("toTable", "AnnotationDbMap",
+    function(x)
+    {
+        AnnotDb <- x@AnnotDb
+        cols <- x@cols
+        keys <- keys(AnnotDb)
+        suppressWarnings(select(AnnotDb, keys, cols))
+    }
+)
+
 setMethod("as.data.frame", "Bimap", toTable)
+
+setMethod("as.data.frame", "AnnotationDbMap", toTable)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

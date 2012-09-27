@@ -132,6 +132,12 @@ setMethod("eapply", signature(env="Bimap"),
     }
 )
 
+setMethod("eapply", signature(env="AnnotationDbMap"),
+    function(env, FUN, ..., all.names =  FALSE, USE.NAMES = TRUE)
+    {
+        lapply(as.list(env), FUN, ...)
+    }
+)
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### "get" methods.
@@ -153,6 +159,20 @@ setMethod("get", signature(x="ANY", pos="ANY", envir="AnnDbBimap"),
 )
 
 setMethod("get", signature(x="ANY", pos="AnnDbBimap", envir="missing"),
+    function(x, pos, envir, mode, inherits)
+    {
+        .get(x, pos)
+    }
+)
+
+setMethod("get", signature(x="ANY", pos="ANY", envir="AnnotationDbMap"),
+    function(x, pos, envir, mode, inherits)
+    {
+        .get(x, envir)
+    }
+)
+
+setMethod("get", signature(x="ANY", pos="AnnotationDbMap", envir="missing"),
     function(x, pos, envir, mode, inherits)
     {
         .get(x, pos)
@@ -196,42 +216,79 @@ setMethod("exists", signature(x="ANY", where="Bimap", envir="missing"),
 )
 
 
+.exists_AnnotationDbMap <- function(x, map)
+{
+    if (!is.character(x) || length(x) == 0 || x[1] %in% c(NA, ""))
+        stop("invalid first argument")
+    x[1] %in% keys(map@AnnotDb)
+}
+
+setMethod("exists", signature(x="ANY", where="ANY", envir="AnnotationDbMap"),
+    function(x, where, envir, frame, mode, inherits)
+    {
+        .exists_AnnotationDbMap(x, envir)
+    }
+)
+
+setMethod("exists", signature(x="ANY", where="AnnotationDbMap",
+                              envir="missing"),
+    function(x, where, envir, frame, mode, inherits)
+    {
+        .exists_AnnotationDbMap(x, where)
+    }
+)
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "[[" and "$" generics.
 ###
 
+.doubleBracketSub <- function(x, i, j, ...)
+{
+      subscripts <- list(...)
+      if (!missing(i)) subscripts$i <- i
+      if (!missing(j)) subscripts$j <- j
+      # At this point, 'subscripts' should be guaranteed
+      # to be of length <= 1
+      if (length(subscripts) == 0) stop("no index specified")
+      i <- subscripts[[1]]
+      if (length(i) < 1)
+          stop("attempt to select less than one element")
+      if (length(i) > 1)
+          stop("attempt to select more than one element")
+      if (!is.character(i) || is.na(i))
+          stop("wrong argument for subsetting an object of class ",
+               sQuote(class(x)))
+      val <- mget(i, envir=x, ifnotfound=NA)[[1]]
+      if (!isS4(val) && is.na(val) && !(i %in% keys(x)))
+          val <- NULL
+      val
+}
+
 setMethod("[[", "AnnDbBimap",
-    function(x, i, j, ...)
-    {
+    function(x, i, j, ...){
         # 'x' is guaranteed to be a "AnnDbBimap" object (if it's not, then the
         # method dispatch algo will not call this method in the first place),
         # so nargs() is guaranteed to be >= 1
-        if (nargs() >= 3)
-            stop("too many subscripts")
-        subscripts <- list(...)
-        if (!missing(i))
-            subscripts$i <- i
-        if (!missing(j))
-            subscripts$j <- j
-        # At this point, 'subscripts' should be guaranteed
-        # to be of length <= 1
-        if (length(subscripts) == 0)
-            stop("no index specified")
-        i <- subscripts[[1]]
-        if (length(i) < 1)
-            stop("attempt to select less than one element")
-        if (length(i) > 1)
-            stop("attempt to select more than one element")
-        if (!is.character(i) || is.na(i))
-            stop("wrong argument for subsetting an object of class ", sQuote(class(x)))
-        val <- mget(i, envir=x, ifnotfound=NA)[[1]]
-        if (!isS4(val) && is.na(val) && !(i %in% keys(x)))
-            val <- NULL
-        val
+        if (nargs() >= 3) stop("too many subscripts")
+        .doubleBracketSub(x, i, j, ...)
     }
 )
 
+setMethod("[[", "AnnotationDbMap",
+    function(x, i, j, ...){
+        # 'x' is guaranteed to be a "AnnDbBimap" object (if it's not, then the
+        # method dispatch algo will not call this method in the first place),
+        # so nargs() is guaranteed to be >= 1
+        if (nargs() >= 3) stop("too many subscripts")
+        .doubleBracketSub(x, i, j, ...)
+    }
+)
+
+
 setMethod("$", "AnnDbBimap", function(x, name) x[[name]])
+
+setMethod("$", "AnnotationDbMap", function(x, name) x[[name]])
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

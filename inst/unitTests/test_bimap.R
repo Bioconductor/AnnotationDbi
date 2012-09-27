@@ -19,7 +19,11 @@ test_ls <- function(){
 }
 
 ## test revmap (add a test now that it seems to work...
+test_revmap <- function(){
+  rmap <- revmap(map)
 
+  rmap2 <- revmap(map2)
+}
 
 ## test mget
 test_mget <- function(){
@@ -30,7 +34,7 @@ test_mget <- function(){
 
   ## reverse test 
   kr <- c("CC","MF")
-  res3 <- mget(k, revmap(map2))
+  res3 <- mget(kr, revmap(map2))
 }
 
 
@@ -57,3 +61,62 @@ test_as.character <- function(){
   res3 <- as.character(revmap(map2))
 }
 
+
+## test eapply
+test_eapply <- function(){
+res <- eapply(map, length)
+
+res2 <- eapply(map2, length)
+}
+
+
+## test get
+test_get <- function(){
+  k <- "1"
+  res <- get(k, map)
+
+  res2 <- get(k, map2)
+
+  ## reverse test 
+  kr <- "CC"
+  res3 <- get(kr, revmap(map2))
+}
+
+## test exists
+test_exists <- function(){
+  checkTrue(exists("2", map) == TRUE)     
+  checkTrue(exists("titi", map) == FALSE)
+  
+  checkTrue(exists("3", map2) == TRUE)  
+  checkTrue(exists("titi", map2) == FALSE)  
+}
+
+
+## test "[["
+test_dblBrackets <- function(){
+res <- map[["1"]]
+
+res2 <- map2[["1"]]
+}
+
+## test "$"
+test_Dollar <- function(){
+res <- map$"1"
+
+res2 <- map2$"1"
+}
+
+
+## test toTable as.data.frame
+test_toTable <- function(){
+res <- toTable(map)
+resdf <- as.data.frame(map)
+
+## So one potential issue I have is that I get the "wrong" sort of headings?
+## this is largely a cosmetic issue though...
+res2 <- toTable(map2)
+resdf2 <- as.data.frame(map2)
+
+}
+
+       

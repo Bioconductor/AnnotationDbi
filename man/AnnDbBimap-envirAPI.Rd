@@ -9,14 +9,21 @@
 \alias{exists}
 \alias{exists,ANY,ANY,Bimap-method}
 \alias{exists,ANY,Bimap,missing-method}
+\alias{exists,ANY,ANY,AnnotationDbMap-method}
+\alias{exists,ANY,AnnotationDbMap,missing-method}
+
 
 \alias{get}
 \alias{get,ANY,ANY,AnnDbBimap-method}
 \alias{get,ANY,AnnDbBimap,missing-method}
+\alias{get,ANY,ANY,AnnotationDbMap-method}
+\alias{get,ANY,AnnotationDbMap,missing-method}
 
 \alias{[[,AnnDbBimap-method}
+\alias{[[,AnnotationDbMap-method}
 
 \alias{$,AnnDbBimap-method}
+\alias{$,AnnotationDbMap-method}
 
 \alias{mget}
 \alias{mget,AnnDbBimap-method}
@@ -25,6 +32,7 @@
 
 \alias{eapply}
 \alias{eapply,Bimap-method}
+\alias{eapply,AnnotationDbMap-method}
 
 \alias{contents,Bimap-method}
 

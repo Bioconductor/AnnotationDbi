@@ -292,11 +292,11 @@ setClass("AnnotationDbMap",
 ## ## from R/AnnDbBimap-envirAPI.R
 ##     "ls",                        ## DONE
 ##     "mget",                      ## DONE
-##     "eapply",                    ## 
-##     "get",
-##     "exists",
-##     "[[",
-##     "$",
+##     "eapply",                    ## DONE 
+##     "get",                       ## DONE
+##     "exists",                    ## DONE
+##     "[[",                        ## DONE
+##     "$",                         ## DONE
 ##     "contents",
 ##     "sample",
 
@@ -306,12 +306,12 @@ setClass("AnnotationDbMap",
 
 
 ## ## from R/Bimap.R (the Bimap interface)
-##     "direction", "direction<-",   ## in progress
-##     "revmap",                     ## in progress
+##     "direction", "direction<-",   ## DONE
+##     "revmap",                     ## DONE
 ##     "head", "tail",
 ##     "subset",
 ##     "[",
-##     "toTable","as.data.frame",
+##     "toTable","as.data.frame",    ## DONE
 
 
 ## ## Methods that I should get done soon as possible (but less urgent)
@@ -332,7 +332,6 @@ setClass("AnnotationDbMap",
 ##     "nrow",
 ##     "nhit",
 ##     "ncol", "dim",
-##     "getBimapFilters","setInpBimapFilter",
 
 ## ## from R/AnnDbObj-lowAPI.R
 ##     "dbconn",
@@ -347,6 +346,7 @@ setClass("AnnotationDbMap",
 ## ## from R/Bimap.R (the Bimap interface)
 ##     "toggleProbes",
 ##     "hasMultiProbes","hasSingleProbes",
+##     "getBimapFilters","setInpBimapFilter",
 
 ##     "links",
 ##     "count.links",
