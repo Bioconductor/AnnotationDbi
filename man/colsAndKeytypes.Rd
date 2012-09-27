@@ -23,7 +23,7 @@
 \alias{IPI}
 \alias{MAP}
 \alias{OMIM}
-\alias{ONTOLOGY}
+% \alias{ONTOLOGY}
 \alias{ONTOLOGYALL}
 \alias{ORF}
 \alias{PATH}
