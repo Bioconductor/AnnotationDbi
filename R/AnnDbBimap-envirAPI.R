@@ -306,6 +306,15 @@ setMethod("contents", "Bimap",
     }
 )
 
+setMethod("contents", "AnnotationDbMap",
+    function(object, all.names)
+    {
+        if (!missing(all.names))
+            warning("ignoring 'all.names' argument")
+        as.list(object)
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "sample" new generic.
@@ -328,3 +337,7 @@ setMethod("sample", "environment",
         .sample(x, size, replace, prob)
 )
 
+setMethod("sample", "AnnotationDbMap",
+    function(x, size, replace=FALSE, prob=NULL)
+        .sample(x, size, replace, prob)
+)

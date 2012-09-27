@@ -35,10 +35,12 @@
 \alias{eapply,AnnotationDbMap-method}
 
 \alias{contents,Bimap-method}
+\alias{contents,AnnotationDbMap-method}
 
 \alias{sample}
 \alias{sample,Bimap-method}
 \alias{sample,environment-method}
+\alias{sample,AnnotationDbMap-method}
 
 
 \title{Environment-like API for AnnDbBimap objects}

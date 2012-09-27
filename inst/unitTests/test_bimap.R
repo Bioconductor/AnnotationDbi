@@ -119,4 +119,30 @@ resdf2 <- as.data.frame(map2)
 
 }
 
-       
+
+test_contents <- function(){
+res <- contents(map)
+
+res2 <- contents(map2)
+}
+
+
+test_sample <- function(){
+res <- sample(map,size=2)
+
+res2 <- sample(map2,size=2)
+}
+
+
+## test_head <- function(){
+## res <- head(map, n=2)
+
+## res2 <- head(map2, n=2)
+## }
+
+## test_tail <- function(){
+## res <- tail(map, n=2)
+
+## res2 <- tail(map2, n=2)
+## }
+

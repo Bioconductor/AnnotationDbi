@@ -22,9 +22,11 @@
 
 \alias{head}
 \alias{head,FlatBimap-method}
+% \alias{tail,AnnotationDbMap-method}
 
 \alias{tail}
 \alias{tail,FlatBimap-method}
+% \alias{tail,AnnotationDbMap-method}
 
 \alias{links}
 \alias{links,FlatBimap-method}

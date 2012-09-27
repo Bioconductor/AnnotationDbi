@@ -112,7 +112,7 @@ setClass("L2Rlink",
 ### map and are retrieved with the "keys" or "ls" methods. The type, format
 ### and location in the DB of the right values depend on the particular
 ### subclass of the AnnDbBimap object.
-###
+### 
 
 setClass("AnnDbBimap",
     contains=c("Bimap", "AnnDbObj"),
@@ -289,6 +289,11 @@ setClass("AnnotationDbMap",
 
 ## ## Methods that are mission critical (for the release)
 
+## ## Herve says I can get a lot of these for free if I just implement flatten
+## ## and have my object inherit from bimap.  I will try after checking in.
+
+
+
 ## ## from R/AnnDbBimap-envirAPI.R
 ##     "ls",                        ## DONE
 ##     "mget",                      ## DONE
@@ -297,8 +302,8 @@ setClass("AnnotationDbMap",
 ##     "exists",                    ## DONE
 ##     "[[",                        ## DONE
 ##     "$",                         ## DONE
-##     "contents",
-##     "sample",
+##     "contents",                  ## DONE
+##     "sample",                    ## DONE
 
 ## ## from R/BimapFormatting.R
 ##     "as.list",                    ## DONE
@@ -308,9 +313,9 @@ setClass("AnnotationDbMap",
 ## ## from R/Bimap.R (the Bimap interface)
 ##     "direction", "direction<-",   ## DONE
 ##     "revmap",                     ## DONE
-##     "head", "tail",
-##     "subset",
-##     "[",
+##     "head", "tail",               ## Not sure what to return?
+##     "subset",                     ## 
+##     "[",                          ## 
 ##     "toTable","as.data.frame",    ## DONE
 
 

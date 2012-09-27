@@ -1165,6 +1165,37 @@ setMethod("tail", "FlatBimap",
 )
 
 
+## setMethod("head", "AnnotationDbMap",
+##     function(x, ...)
+##     {
+##         AnnotDb <- x@AnnotDb
+##         cols <- x@cols
+##         keys <- keys(AnnotDb)
+##         suppressWarnings(res <- select(AnnotDb, keys, cols))   
+##         c <- colnames(res)
+##         y <- head(res, ...)
+##         if (!identical(colnames(y), c))
+##             colnames(y) <- c
+##         y
+##     }
+## )
+
+## setMethod("tail", "AnnotationDbMap",
+##     function(x, ...)
+##     {
+##         AnnotDb <- x@AnnotDb
+##         cols <- x@cols
+##         keys <- keys(AnnotDb)
+##         suppressWarnings(res <- select(AnnotDb, keys, cols))   
+##         c <- colnames(res)
+##         y <- tail(res, ...)
+##         if (!identical(colnames(y), c))
+##             colnames(y) <- c
+##         y
+##     }
+## )
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "nrow" methods.
 ###
