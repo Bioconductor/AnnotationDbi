@@ -1,6 +1,6 @@
-\name{AnnDbBimap-envirAPI}
+\name{Bimap-envirAPI}
 
-\alias{AnnDbBimap-envirAPI}
+\alias{Bimap-envirAPI}
 
 \alias{ls}
 \alias{ls,Bimap-method}
@@ -14,20 +14,20 @@
 
 
 \alias{get}
-\alias{get,ANY,ANY,AnnDbBimap-method}
-\alias{get,ANY,AnnDbBimap,missing-method}
+\alias{get,ANY,ANY,Bimap-method}
+\alias{get,ANY,Bimap,missing-method}
 \alias{get,ANY,ANY,AnnotationDbMap-method}
 \alias{get,ANY,AnnotationDbMap,missing-method}
 
-\alias{[[,AnnDbBimap-method}
+\alias{[[,Bimap-method}
 \alias{[[,AnnotationDbMap-method}
 
-\alias{$,AnnDbBimap-method}
+\alias{$,Bimap-method}
 \alias{$,AnnotationDbMap-method}
 
 \alias{mget}
-\alias{mget,AnnDbBimap-method}
-\alias{mget,ANY,AnnDbBimap-method}
+\alias{mget,Bimap-method}
+\alias{mget,ANY,Bimap-method}
 \alias{mget,ANY,AnnotationDbMap-method}
 
 \alias{eapply}
@@ -43,10 +43,10 @@
 \alias{sample,AnnotationDbMap-method}
 
 
-\title{Environment-like API for AnnDbBimap objects}
+\title{Environment-like API for Bimap objects}
 
 \description{
-  These methods allow the user to manipulate any \link{AnnDbBimap} object as
+  These methods allow the user to manipulate any \link{Bimap} object as
   if it was an environment. This environment-like API is provided for
   backward compatibility with the traditional environment-based maps.
 }
@@ -69,7 +69,7 @@
 
 \arguments{
   \item{name}{
-    An \link{AnnDbBimap} object for \code{ls}.
+    A \link{Bimap} object for \code{ls}.
     A key as a literal character string or a name (possibly backtick quoted)
     for \code{x$name}.
   }
@@ -77,7 +77,7 @@
     Ignored.
   }
   \item{envir}{
-    Ignored for \code{ls}. An \link{AnnDbBimap} object for \code{mget},
+    Ignored for \code{ls}. A \link{Bimap} object for \code{mget},
     \code{get} and \code{exists}.
   }
   \item{all.names}{
@@ -91,8 +91,8 @@
   }
   \item{x}{
     The key(s) to search for for \code{exists}, \code{get} and \code{mget}.
-    An \link{AnnDbBimap} object for \code{[[} and \code{x$name}.
-    An \link{AnnDbBimap} object or an environment for \code{sample}.
+    A \link{Bimap} object for \code{[[} and \code{x$name}.
+    A \link{Bimap} object or an environment for \code{sample}.
   }
   \item{where}{
     Ignored.
@@ -114,7 +114,7 @@
     supported.
   }
   \item{env}{
-    An \link{AnnDbBimap} object.
+    A \link{Bimap} object.
   }
   \item{FUN}{
     The function to be applied (see original \code{\link[base:eapply]{eapply}}

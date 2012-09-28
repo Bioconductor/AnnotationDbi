@@ -108,7 +108,7 @@
   \link{Bimap-keys},
   \link{Bimap-direction},
   \link{BimapFormatting},
-  \link{AnnDbBimap-envirAPI},
+  \link{Bimap-envirAPI},
   \code{\link{nhit}}
 }
 

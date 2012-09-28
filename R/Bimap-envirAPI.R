@@ -64,7 +64,7 @@ setMethod("ls", signature(name="AnnotationDbMap"),
 ###      to 'mget(ls(envir), envir)': the 2 lists have the same elements but
 ###      not necesarily in the same order!
 
-setMethod("mget", signature(x="ANY", envir="AnnDbBimap"),
+setMethod("mget", signature(x="ANY", envir="Bimap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
         if (missing(ifnotfound))
@@ -75,9 +75,6 @@ setMethod("mget", signature(x="ANY", envir="AnnDbBimap"),
             envir@ifnotfound <- as.list(ifnotfound)
         }
         keys(envir) <- x
-        cat("") ## This call to cat() allows the Rsamtools vignette to compile
-                ## on certain Windows machines (e.g. moscato1). This is obviously
-                ## not a permanent solution to that problem.
         as.list(envir)
     }
 )
@@ -151,14 +148,14 @@ setMethod("eapply", signature(env="AnnotationDbMap"),
 
 .get <- function(what, map) mget(what[1], map)[[1]]
 
-setMethod("get", signature(x="ANY", pos="ANY", envir="AnnDbBimap"),
+setMethod("get", signature(x="ANY", pos="ANY", envir="Bimap"),
     function(x, pos, envir, mode, inherits)
     {
         .get(x, envir)
     }
 )
 
-setMethod("get", signature(x="ANY", pos="AnnDbBimap", envir="missing"),
+setMethod("get", signature(x="ANY", pos="Bimap", envir="missing"),
     function(x, pos, envir, mode, inherits)
     {
         .get(x, pos)
@@ -265,9 +262,9 @@ setMethod("exists", signature(x="ANY", where="AnnotationDbMap",
       val
 }
 
-setMethod("[[", "AnnDbBimap",
+setMethod("[[", "Bimap",
     function(x, i, j, ...){
-        # 'x' is guaranteed to be a "AnnDbBimap" object (if it's not, then the
+        # 'x' is guaranteed to be a "Bimap" object (if it's not, then the
         # method dispatch algo will not call this method in the first place),
         # so nargs() is guaranteed to be >= 1
         if (nargs() >= 3) stop("too many subscripts")
@@ -277,16 +274,16 @@ setMethod("[[", "AnnDbBimap",
 
 setMethod("[[", "AnnotationDbMap",
     function(x, i, j, ...){
-        # 'x' is guaranteed to be a "AnnDbBimap" object (if it's not, then the
-        # method dispatch algo will not call this method in the first place),
-        # so nargs() is guaranteed to be >= 1
+        # 'x' is guaranteed to be a "AnnotationDbMap" object (if it's not,
+        # then the method dispatch algo will not call this method in the first
+        # place), so nargs() is guaranteed to be >= 1
         if (nargs() >= 3) stop("too many subscripts")
         .doubleBracketSub(x, i, j, ...)
     }
 )
 
 
-setMethod("$", "AnnDbBimap", function(x, name) x[[name]])
+setMethod("$", "Bimap", function(x, name) x[[name]])
 
 setMethod("$", "AnnotationDbMap", function(x, name) x[[name]])
 
@@ -341,3 +338,4 @@ setMethod("sample", "AnnotationDbMap",
     function(x, size, replace=FALSE, prob=NULL)
         .sample(x, size, replace, prob)
 )
+

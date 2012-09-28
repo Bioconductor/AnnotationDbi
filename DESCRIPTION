@@ -22,7 +22,7 @@ Collate: 00RTobjs.R
          Bimap.R
          GOTerms.R
          BimapFormatting.R
-         AnnDbBimap-envirAPI.R
+         Bimap-envirAPI.R
          flatten.R
          methods-AnnotationDb.R
 	 methods-seqnames.R

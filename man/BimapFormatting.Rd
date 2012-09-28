@@ -3,8 +3,8 @@
 \alias{BimapFormatting}
 
 \alias{as.list}
+\alias{as.list,FlatBimap-method}
 \alias{as.list,Bimap-method}
-\alias{as.list,AnnDbBimap-method}
 \alias{as.list,IpiAnnDbMap-method}
 \alias{as.list,AgiAnnDbMap-method}
 \alias{as.list,GoAnnDbBimap-method}
@@ -45,7 +45,7 @@
 
 \seealso{
   \link{Bimap},
-  \link{AnnDbBimap-envirAPI}
+  \link{Bimap-envirAPI}
 }
 
 \examples{

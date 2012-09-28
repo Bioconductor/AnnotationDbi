@@ -79,7 +79,7 @@
   Note also that the double bracket operator \code{[[} for \link{Bimap}
   objects is guaranteed to work only with a valid key and will raise
   an error if the key is invalid.
-  (See \code{?`\link{AnnDbBimap-envirAPI}`} for more information
+  (See \code{?`\link{Bimap-envirAPI}`} for more information
   about this operator.)
 
   \code{length(x)} is equivalent to (but more efficient than)
@@ -129,7 +129,7 @@
 
 \seealso{
   \link{Bimap},
-  \link{AnnDbBimap-envirAPI},
+  \link{Bimap-envirAPI},
   \link{Bimap-toTable},
   \link{BimapFormatting},
   \link{AnnotationDb},

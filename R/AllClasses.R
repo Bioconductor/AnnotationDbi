@@ -4,7 +4,15 @@
 
 ### This is just an interface i.e. a virtual class with no slot (a kind of
 ### Java "interface").
-setClass("Bimap", representation("VIRTUAL"))
+setClass("Bimap",
+    representation(
+        "VIRTUAL",
+        ifnotfound="list"
+    ),
+    prototype(
+        ifnotfound=list()           # empty list => raise an error on first key not found
+    )
+)
 
 setClass("FlatBimap",
     contains="Bimap",
@@ -13,14 +21,12 @@ setClass("FlatBimap",
         direction="integer",
         data="data.frame",
         Lkeys="character",
-        Rkeys="character",
-        ifnotfound="list"
+        Rkeys="character"
     ),
     prototype(
         direction=1L,               # left-to-right by default
         Lkeys=as.character(NA),
-        Rkeys=as.character(NA),
-        ifnotfound=list()           # empty list => raise an error on first key not found
+        Rkeys=as.character(NA)
     )
 )
 
@@ -121,14 +127,12 @@ setClass("AnnDbBimap",
         direction="integer",        # 1L for left-to-right, -1L for right-to-left
                                     # and 0L for undirected
         Lkeys="character",
-        Rkeys="character",
-        ifnotfound="list"
+        Rkeys="character"
     ),
     prototype(
         direction=1L,               # left-to-right by default
         Lkeys=as.character(NA),
-        Rkeys=as.character(NA),
-        ifnotfound=list()           # empty list => raise an error on first key not found
+        Rkeys=as.character(NA)
     )
 )
 
@@ -295,7 +299,7 @@ setClass("AnnotationDbMap",
 
 
 
-## ## from R/AnnDbBimap-envirAPI.R
+## ## from R/Bimap-envirAPI.R
 ##     "ls",                        ## DONE
 ##     "mget",                      ## DONE
 ##     "eapply",                    ## DONE 

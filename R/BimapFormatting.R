@@ -241,7 +241,7 @@
 ### The "as.list" methods.
 ###
 
-setMethod("as.list", "Bimap",
+setMethod("as.list", "FlatBimap",
     function(x, ...)
     {
         Rattribnames(x) <- NULL
@@ -252,7 +252,7 @@ setMethod("as.list", "Bimap",
     }
 )
 
-setMethod("as.list", "AnnDbBimap",
+setMethod("as.list", "Bimap",
     function(x, ...)
     {
         Rattribnames(x) <- NULL

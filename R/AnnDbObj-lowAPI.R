@@ -20,8 +20,8 @@
 ###     flatten,
 ###     show
 ###
-### The environment-like API for AnnDbBimap objects (ls, mget, etc...) is defined
-### in the AnnDbBimap-envirAPI.R file.
+### The environment-like API for Bimap objects (ls, mget, etc...) is defined
+### in the Bimap-envirAPI.R file.
 ###
 ### -------------------------------------------------------------------------
 

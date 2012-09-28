@@ -102,7 +102,7 @@ exportMethods(
     #"toLList", "toRList", "toList",
     "as.character",
 
-    ## from R/AnnDbBimap-envirAPI.R
+    ## from R/Bimap-envirAPI.R
     "ls",
     "mget",
     "eapply",

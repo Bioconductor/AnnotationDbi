@@ -232,7 +232,7 @@
   \link{Bimap},
   \link{Bimap-keys},
   \link{BimapFormatting},
-  \link{AnnDbBimap-envirAPI},
+  \link{Bimap-envirAPI},
   \code{\link{nhit}}
 }
 

@@ -1114,7 +1114,7 @@ setMethod("toTable", "FlatBimap",
     }
 )
 
-setMethod("toTable", "AnnDbBimap",
+setMethod("toTable", "Bimap",
     function(x)
     {
         toTable(flatten(x, fromKeys.only=TRUE))
@@ -1200,6 +1200,8 @@ setMethod("tail", "FlatBimap",
 ### The "nrow" methods.
 ###
 
+setMethod("nrow", "Bimap", function(x) nrow(toTable(x)))
+
 setMethod("nrow", "FlatBimap",
     function(x)
         nrow(x@data)
@@ -1246,7 +1248,7 @@ setMethod("links", "FlatBimap",
     }
 )
 
-setMethod("links", "AnnDbBimap",
+setMethod("links", "Bimap",
     function(x)
     {
         Rattribnames(x) <- NULL

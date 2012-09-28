@@ -4,12 +4,13 @@
 
 \alias{toTable}
 \alias{toTable,FlatBimap-method}
-\alias{toTable,AnnDbBimap-method}
+\alias{toTable,Bimap-method}
 \alias{as.data.frame,Bimap-method}
 \alias{toTable,AnnotationDbMap-method}
 \alias{as.data.frame,AnnotationDbMap-method}
 
 \alias{nrow}
+\alias{nrow,Bimap-method}
 \alias{nrow,FlatBimap-method}
 \alias{nrow,AnnDbTable-method}
 \alias{nrow,AnnDbBimap-method}
@@ -29,6 +30,7 @@
 % \alias{tail,AnnotationDbMap-method}
 
 \alias{links}
+\alias{links,Bimap-method}
 \alias{links,FlatBimap-method}
 \alias{links,AnnDbBimap-method}
 \alias{links,Go3AnnDbBimap-method}
@@ -206,7 +208,7 @@
 \seealso{
   \link{Bimap},
   \link{BimapFormatting},
-  \link{AnnDbBimap-envirAPI}
+  \link{Bimap-envirAPI}
 }
 
 \examples{

@@ -244,7 +244,7 @@
   \link{Bimap-keys},
   \link{Bimap-toTable},
   \link{BimapFormatting},
-  \link{AnnDbBimap-envirAPI}
+  \link{Bimap-envirAPI}
 }
 
 \examples{
