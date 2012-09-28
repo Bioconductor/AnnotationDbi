@@ -137,7 +137,7 @@ res2 <- sample(map2,size=2)
 ## test_head <- function(){
 ## res <- head(map, n=2)
 
-## res2 <- head(map2, n=2)
+## res2 <- head(map2, n=2)  ## implement Lkeys and Rkeys
 ## }
 
 ## test_tail <- function(){

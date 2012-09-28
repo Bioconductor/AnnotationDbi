@@ -277,6 +277,7 @@ setClass("KEGGFrame", contains="AnnotFrame",
 ## defined) and to have things basically still work for the retro code.
 
 setClass("AnnotationDbMap",
+    contains="Bimap",
     representation(
         AnnotDb="AnnotationDb",
         cols="character",
