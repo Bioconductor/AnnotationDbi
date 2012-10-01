@@ -19,19 +19,10 @@ NEW FEATURES
     for all ChipDb, OrgDb, and TranscriptDb packages.  GO.db also has
     a select interface.
 
-    o New biocViews tags have been added to the code that generats all
-    the new Annotation packages.  These allow users to search
-    annotation packages by the type of annotation package that they
-    are.  So for example you can now quickly list only the
-    TranscriptDb packages by using the web site.
-
     o Code has been added to enhance backwards compatibility between
     select and bimaps.  The aim here is that old code that uses bimaps
     should still work with packages that have the same kind of data
     exposed using only a select() interface.
-
-    o Code has been added to enhance the experience when dealing with
-    resources where the sequence names are inconsistent.
 
 
 SIGNIFICANT USER-VISIBLE CHANGES
