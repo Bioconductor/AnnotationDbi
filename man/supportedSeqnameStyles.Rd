@@ -1,5 +1,7 @@
 \name{supportedSeqnameStyles}
 
+\alias{supportedSeqnameMappings}
+\alias{findSequenceRenamingMaps}
 \alias{supportedSeqnameStyles}
 \alias{extractSeqnameSet}
 \alias{isSupportedSeqnamesStyle}
@@ -16,17 +18,31 @@
 }
 
 \usage{
-  supportedSeqnameStyles()
-  isSupportedSeqnamesStyle(style, species)
-  extractSeqnameSet(style, species)
-  listAllSupportedSeqnameStyles()
-  listAllSupportedStylesBySpecies(species)
-  supportedSeqnames()
-  testSeqnames(styles, seqnames, species)
+supportedSeqnameMappings()
+findSequenceRenamingMaps(seqnames, style, best.only=TRUE, drop=TRUE)
+supportedSeqnameStyles()
+isSupportedSeqnamesStyle(style, species)
+extractSeqnameSet(style, species)
+listAllSupportedSeqnameStyles()
+listAllSupportedStylesBySpecies(species)
+supportedSeqnames()
+testSeqnames(styles, seqnames, species)
 }
 
 
 \details{
+    \code{supportedSeqnameMappings}:
+    Returns the list of all supported seqname mappings, one per supported
+    organism. Each mapping is represented as a data frame with 1 column
+    per seqname style and 1 row per chromosome name (not all chromosomes
+    of a given organism necessarily belong to the mapping).
+
+    \code{findSequenceRenamingMaps}:
+    Returns a matrix with 1 column per supplied sequence name and 1 row
+    per sequence renaming map compatible with the specified style.
+    If \code{best.only} is \code{TRUE} (the default), only the "best"
+    renaming maps (i.e. the rows with less NAs) are returned.
+
     \code{supportedSeqnameStyles}:
     Different organizations have different naming conventions for how they
     name the biologically defined sequence elements (usually chromosomes)
@@ -62,13 +78,17 @@
 }
 
 \arguments{
-  \item{species}{The genus and species of the organism in question
-  separated by a single space. Don't forget to capitalize the genus.}
-  \item{style}{a character vector with a single element to specify the style.}
-  \item{styles}{same as style, but expecting a character vector which
-  could have multiple elements.}
+  \item{best.only}{if \code{TRUE} (the default), then only the "best"
+  sequence renaming maps (i.e. the rows with less NAs) are returned.}
+  \item{drop}{if \code{TRUE} (the default), then a vector is returned
+  instead of a matrix when the matrix has only 1 row.}
   \item{seqnames}{the seqnames.  These are given as a character vector
   and are the labels attached to the chromosomes in a genome.}
+  \item{style}{a character vector with a single element to specify the style.}
+  \item{species}{The genus and species of the organism in question
+  separated by a single space. Don't forget to capitalize the genus.}
+  \item{styles}{same as style, but expecting a character vector which
+  could have multiple elements.}
 }
 
 \value{
@@ -80,6 +100,10 @@
 \author{Marc Carlson}
 
 \examples{
+  supportedSeqnameMappings()
+  findSequenceRenamingMaps(c("chrII", "chrIII", "chrM"), "NCBI")
+  findSequenceRenamingMaps(c("chrII", "chrIII", "chrM"), "Ensembl")
+
   library("TxDb.Hsapiens.UCSC.hg19.knownGene")
   txdb = TxDb.Hsapiens.UCSC.hg19.knownGene
   species = species(txdb)

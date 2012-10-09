@@ -12,6 +12,60 @@
   con
 }
 
+supportedSeqnameMappings <- function(){
+  con <- .seqnamesSetup()
+  tables <- dbListTables(con)
+  names(tables) <- tables
+  lapply(tables, function(table) dbReadTable(con, table))
+}
+
+findSequenceRenamingMaps <- function(seqnames, style,
+                                     best.only=TRUE, drop=TRUE){
+  if (!is.character(seqnames))
+    stop("'seqnames' must be a character vector")
+  if (!isSingleString(style))
+    stop("the supplied seqname style must be a single string")
+  if (!isTRUEorFALSE(best.only))
+    stop("'best.only' must be TRUE or FALSE")
+  if (!isTRUEorFALSE(drop))
+    stop("'drop' must be TRUE or FALSE")
+  supported_styles <- supportedSeqnameStyles()
+  ## Get the target species (.e. species supporting the supplied style).
+  tmp <- unlist(supported_styles, use.names=FALSE)
+  compatible_species <- rep.int(names(supported_styles),
+                                elementLengths(supported_styles))
+  compatible_species <- compatible_species[tolower(tmp) == tolower(style)]
+  if (length(compatible_species) == 0L)
+    stop("supplied seqname style \"", style, "\" is not supported")
+  ## Walk all the seqname mappings to find the sequence renaming maps
+  ## compatible with the specified style.
+  seqname_mappings <- supportedSeqnameMappings()
+  ans <- lapply(compatible_species,
+    function(species) {
+      mapping <- seqname_mappings[[species]]
+      names(mapping) <- tolower(names(mapping))
+      to_seqnames <- mapping[[tolower(style)]]
+      lapply(mapping,
+        function(from_seqnames)
+          to_seqnames[match(seqnames, from_seqnames)])
+    })
+  ans_ncol <- length(seqnames)
+  ans <- matrix(unlist(ans, use.names=FALSE), ncol=ans_ncol, byrow=TRUE)
+  colnames(ans) <- seqnames
+  score <- rowSums(!is.na(ans))
+  idx <- score != 0L
+  if (best.only)
+    idx <- idx & (score == max(score))  # keep only "best" rows
+  ans <- ans[idx, , drop=FALSE]
+  ## Remove duplicated rows.
+  ans <- as.matrix(unique(as.data.frame(ans, stringsAsFactors=FALSE)))
+  if (nrow(ans) == 1L && drop)
+    ans <- drop(ans)
+  else
+    rownames(ans) <- NULL
+  ans
+}
+
 ## A discovery method for users to learn the supported seqname styles
 supportedSeqnameStyles <- function(){
   con <- .seqnamesSetup()

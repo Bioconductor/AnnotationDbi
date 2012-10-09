@@ -4,7 +4,7 @@ import(Biobase)
 import(DBI)
 import(RSQLite)
 import(BiocGenerics)
-importFrom(IRanges, metadata)
+importFrom(IRanges, metadata, isTRUEorFALSE, isSingleString, elementLengths)
 
 exportClasses(
     ## from R/AllClasses.R
@@ -169,6 +169,8 @@ export(
     metadata,
 
     ## seqnames.db
+    supportedSeqnameMappings,
+    findSequenceRenamingMaps,
     supportedSeqnameStyles,
     extractSeqnameSet,
     testSeqnames,
