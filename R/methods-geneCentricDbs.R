@@ -304,9 +304,18 @@
                                                         "ALIAS",
                                                         "ALIAS2EG",
                                                         "ALIAS2PROBE",
+                                                        "CHRLOC",
+                                                        "CHRLOCEND",
+                                                        "CHRLOCCHR",
+                                                        "GENENAME",
+                                                        "IPI",
                                                         "CHR") )]
     .defTables <- c(.defTables, list("ALIAS" = c("gene2alias","alias"),
-                                "CHR" = c("chromosome_features","chromosome") ))
+                           "CHRLOC" = c("chromosome_features","start"),
+                           "CHRLOCEND" = c("chromosome_features","stop"),
+                           "CHRLOCCHR" = c("chromosome_features","chromosome"),
+                           "GENENAME" = c("sgd","gene_name"),
+                           "CHR" = c("chromosome_features","chromosome") ))
   }
   if(species=="Sus scrofa"){
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
@@ -696,13 +705,20 @@
   cols[!(cols %in% dups)]
 }
 
+
 ## helper for ambiguous/duplicated columns
 .adjustForDupColNames <- function(res, expectedCols){
   fieldNames <- colnames(res)
   ## get duplicated vals
   dups <- fieldNames[duplicated(fieldNames)]
   ## for each value of dups, we want to call .replaceValues
-  cols <- unlist(lapply(dups, .replaceValues, fieldNames, expectedCols))
+  for(i in seq_len(length(dups))){
+    if(i==1){
+      cols <- .replaceValues(dups[i], fieldNames, expectedCols)
+    }else{
+      cols <- .replaceValues(dups[i], cols, expectedCols)
+    }
+  }
   cols
 }
 
@@ -763,7 +779,7 @@
   ## Then if any suffixes were actually removed, it means there were duplicated
   ## cols.  Duplicated cols means I have to do some label swapping.
   if( length(oriTabCols) < length(colnames(res))){
-    oriTabCols <- .adjustForDupColNames(res, expectedCols)
+    oriTabCols <- .adjustForDupColNames(res, expectedCols) ## BADNESS!
     colnames(res) <- .adjustForDupColNames(res, expectedCols)
   }
   

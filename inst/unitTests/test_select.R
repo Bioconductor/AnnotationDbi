@@ -274,6 +274,22 @@ test_select11 <- function(){
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ORF","SGD","CHR"), colnames(res))
+
+  ## Martins bug discoveries
+  keys <- keys(s, keytype="GENENAME")
+  checkTrue(length(keys) > 0)
+  checkTrue(is.character(keys))
+  keys <- keys(s, keytype="CHRLOC")
+  checkTrue(length(keys) > 0)
+  checkTrue(is.numeric(keys))
+
+  res <- select(s, "YAL003W", "GENENAME")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ORF","SGD","GENENAME"), colnames(res))
+
+  ## This works but is slow (therefore it's tested elsewhere)
+  ## res <- select(s, keys="YAL003W", cols(s))
 }
 
 test_select12 <- function(){
@@ -331,3 +347,20 @@ test_select14 <- function(){
   checkTrue(length(res$PATH)== length(res$PATH[is.na(res$PATH)]))
 }
 
+test_select15 <- function(){
+  ## Another bug that seems to happen in post-processing...
+  ## the code that resolves duplicated values is going a bit insane...
+  ## (IOW .replaceValues())
+  res <- select(x, keys="1", cols(x))
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==30)
+  checkIdentical(c('ENTREZID','PFAM','IPI','PROSITE','ACCNUM','ALIAS','CHR',
+                   'CHRLOC','CHRLOCCHR','CHRLOCEND','ENZYME','MAP','PATH',
+                   'PMID','REFSEQ','SYMBOL','UNIGENE','ENSEMBL','ENSEMBLPROT',
+                   'ENSEMBLTRANS','GENENAME','UNIPROT','GO','EVIDENCE',
+                   'ONTOLOGY','GOALL',NA,'ONTOLOGYALL','OMIM','UCSCKG'),
+                 colnames(res))
+}
+
+## TODO: figure out why in this weird corner case there is an extra col for
+## GOALL called 'NA'...
