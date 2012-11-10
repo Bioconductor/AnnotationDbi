@@ -53,11 +53,6 @@
 \alias{class:ProbeIpiAnnDbMap}
 \alias{ProbeIpiAnnDbMap-class}
 
-\alias{AnnotationDbMap}
-\alias{class:AnnotationDbMap}
-\alias{AnnotationDbMap-class}
-
-
 
 % Standard generic methods
 

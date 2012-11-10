@@ -4,43 +4,32 @@
 
 \alias{ls}
 \alias{ls,Bimap-method}
-\alias{ls,AnnotationDbMap-method}
 
 \alias{exists}
 \alias{exists,ANY,ANY,Bimap-method}
 \alias{exists,ANY,Bimap,missing-method}
-\alias{exists,ANY,ANY,AnnotationDbMap-method}
-\alias{exists,ANY,AnnotationDbMap,missing-method}
 
 
 \alias{get}
 \alias{get,ANY,ANY,Bimap-method}
 \alias{get,ANY,Bimap,missing-method}
-\alias{get,ANY,ANY,AnnotationDbMap-method}
-\alias{get,ANY,AnnotationDbMap,missing-method}
 
 \alias{[[,Bimap-method}
-\alias{[[,AnnotationDbMap-method}
 
 \alias{$,Bimap-method}
-\alias{$,AnnotationDbMap-method}
 
 \alias{mget}
 \alias{mget,Bimap-method}
 \alias{mget,ANY,Bimap-method}
-\alias{mget,ANY,AnnotationDbMap-method}
 
 \alias{eapply}
 \alias{eapply,Bimap-method}
-\alias{eapply,AnnotationDbMap-method}
 
 \alias{contents,Bimap-method}
-\alias{contents,AnnotationDbMap-method}
 
 \alias{sample}
 \alias{sample,Bimap-method}
 \alias{sample,environment-method}
-\alias{sample,AnnotationDbMap-method}
 
 
 \title{Environment-like API for Bimap objects}

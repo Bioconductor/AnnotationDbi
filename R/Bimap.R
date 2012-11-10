@@ -210,8 +210,8 @@ setMethod("direction", "FlatBimap",
 setMethod("direction", "AnnDbBimap",
     function(x) x@direction)
 
-setMethod("direction", "AnnotationDbMap",
-    function(x) x@direction)
+## setMethod("direction", "AnnotationDbMap",
+##     function(x) x@direction)
 
 
 setReplaceMethod("direction", "FlatBimap",
@@ -236,19 +236,19 @@ setReplaceMethod("direction", "AnnDbBimap",
     }
 )
 
-setReplaceMethod("direction", "AnnotationDbMap",
-    function(x, value)
-    {
-        direction <- .normalize.direction(value)
-        if (direction == 0)
-            stop("undirected AnnDbBimap objects are not supported")
-        if (direction != x@direction) {
-            #x@objName <- paste0("revmap(", x@objName, ")")
-            x@direction <- direction
-        }
-        x
-    }
-)
+## setReplaceMethod("direction", "AnnotationDbMap",
+##     function(x, value)
+##     {
+##         direction <- .normalize.direction(value)
+##         if (direction == 0)
+##             stop("undirected AnnDbBimap objects are not supported")
+##         if (direction != x@direction) {
+##             #x@objName <- paste0("revmap(", x@objName, ")")
+##             x@direction <- direction
+##         }
+##         x
+##     }
+## )
 
 setReplaceMethod("direction", "AnnDbMap",
     function(x, value)
@@ -303,9 +303,9 @@ setMethod("revmap", "list",
 )
 
 
-setMethod("revmap", "AnnotationDbMap",
-    function(x) { direction(x) <- - direction(x); x }
-)
+## setMethod("revmap", "AnnotationDbMap",
+##     function(x) { direction(x) <- - direction(x); x }
+## )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1121,19 +1121,19 @@ setMethod("toTable", "Bimap",
     }
 )
 
-setMethod("toTable", "AnnotationDbMap",
-    function(x)
-    {
-        AnnotDb <- x@AnnotDb
-        cols <- x@cols
-        keys <- keys(AnnotDb)
-        suppressWarnings(select(AnnotDb, keys, cols))
-    }
-)
+## setMethod("toTable", "AnnotationDbMap",
+##     function(x)
+##     {
+##         AnnotDb <- x@AnnotDb
+##         cols <- x@cols
+##         keys <- keys(AnnotDb)
+##         suppressWarnings(select(AnnotDb, keys, cols))
+##     }
+## )
 
 setMethod("as.data.frame", "Bimap", toTable)
 
-setMethod("as.data.frame", "AnnotationDbMap", toTable)
+## setMethod("as.data.frame", "AnnotationDbMap", toTable)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1432,3 +1432,37 @@ setMethod("setInpBimapFilter", "InpAnnDbBimap",
       ans
     })
 
+
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Method for making a FlatBimap by using the select method.
+###
+
+## This method takes x, which is an AnnotationDb object, and also a SINGLE
+## cols value.  It is not exported, and is used only for testing the backwards
+## compatibility provided by getAnnMap() in the annotate package.
+
+
+## I need to check with Herve if my assumptions here are correct that I
+## Don't want any NAs in @data OR in @Rkeys and @Lkeys???
+## Maybe I don't want NAs in only one or the other?
+## And maybe the answer is in how mappedLkeys and mappedRkeys work?
+
+
+makeFlatBimapUsingSelect <- function(x, col){
+  suppressWarnings(tab <- select(x, keys=keys(x),
+                                 cols=col))
+  ## tab cannot contain ANY NA values??? - seems like a dicey idea...
+  ## what about keys that are unmapped but still valid?
+  idx = apply(tab, MARGIN=1, function(x){!any(is.na(x))})
+  tab <- tab[idx,]
+  ## keys have to be unique as well
+  lkys <- unique(tab[,1])
+  rkys <- unique(tab[,2])
+  new("FlatBimap", colmetanames=c("Lkeyname", "Rkeyname"),
+      direction=1, data=tab, Lkeys=lkys, Rkeys=rkys)
+
+}
+
+## Herve says that I in fact want to have no NAs (and be unique) in the Rkey and Lkeys, and that I ALSO do not want ANY NAs in either column of @data.  So I have modified this function accordingly

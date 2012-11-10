@@ -5,20 +5,17 @@
 \alias{direction}
 \alias{direction,FlatBimap-method}
 \alias{direction,AnnDbBimap-method}
-\alias{direction,AnnotationDbMap-method}
 
 \alias{direction<-}
 \alias{direction<-,FlatBimap-method}
 \alias{direction<-,AnnDbBimap-method}
 \alias{direction<-,AnnDbMap-method}
-\alias{direction<-,AnnotationDbMap-method}
 
 \alias{revmap}
 \alias{revmap,Bimap-method}
 \alias{revmap,AnnDbBimap-method}
 \alias{revmap,environment-method}
 \alias{revmap,list-method}
-\alias{revmap,AnnotationDbMap-method}
 
 \alias{Lkeys}
 \alias{Lkeys,FlatBimap-method}

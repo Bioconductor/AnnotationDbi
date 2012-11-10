@@ -280,17 +280,17 @@ setClass("KEGGFrame", contains="AnnotFrame",
 ## value when no Bimaps are defined, (but when there is a select method
 ## defined) and to have things basically still work for the retro code.
 
-setClass("AnnotationDbMap",
-    contains="Bimap",
-    representation(
-        AnnotDb="AnnotationDb",
-        cols="character",
-        direction="integer"
-    ),
-    prototype(
-        direction=1L
-    )
-)
+## setClass("AnnotationDbMap",
+##     contains="Bimap",
+##     representation(
+##         AnnotDb="AnnotationDb",
+##         cols="character",
+##         direction="integer"
+##     ),
+##     prototype(
+##         direction=1L
+##     )
+## )
 
 ## ## Methods that are mission critical (for the release)
 

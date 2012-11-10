@@ -29,8 +29,8 @@ exportClasses(
     ## Virtual mother-class for all Annoations
     "AnnotationDb",
 
-    ## Class for faux-bimaps (select based bimaps)
-    "AnnotationDbMap",
+##     ## Class for faux-bimaps (select based bimaps)
+##     "AnnotationDbMap",
               
     ## from R/GOTerms.R
     "GOTerms",

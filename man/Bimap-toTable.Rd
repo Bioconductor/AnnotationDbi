@@ -6,8 +6,6 @@
 \alias{toTable,FlatBimap-method}
 \alias{toTable,Bimap-method}
 \alias{as.data.frame,Bimap-method}
-\alias{toTable,AnnotationDbMap-method}
-\alias{as.data.frame,AnnotationDbMap-method}
 
 \alias{nrow}
 \alias{nrow,Bimap-method}
@@ -23,11 +21,9 @@
 
 \alias{head}
 \alias{head,FlatBimap-method}
-% \alias{tail,AnnotationDbMap-method}
 
 \alias{tail}
 \alias{tail,FlatBimap-method}
-% \alias{tail,AnnotationDbMap-method}
 
 \alias{links}
 \alias{links,Bimap-method}

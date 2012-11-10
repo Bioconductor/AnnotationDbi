@@ -283,23 +283,23 @@ setMethod("flatten", "Go3AnnDbBimap",
 )
 
 
-setMethod("flatten", "AnnotationDbMap",
-    function(x, fromKeys.only=FALSE)
-    {
-        AnnotDb <- x@AnnotDb
-        cols <- x@cols
-        keys <- keys(AnnotDb)
-        suppressWarnings(data0 <- select(AnnotDb, keys, cols))
+## setMethod("flatten", "AnnotationDbMap",
+##     function(x, fromKeys.only=FALSE)
+##     {
+##         AnnotDb <- x@AnnotDb
+##         cols <- x@cols
+##         keys <- keys(AnnotDb)
+##         suppressWarnings(data0 <- select(AnnotDb, keys, cols))
          
-        Lkeys <- Rkeys <- as.character(NA)
-        if (!fromKeys.only || direction(x) ==  1)
-            Lkeys <- Lkeys(x)
-        if (!fromKeys.only || direction(x) == -1)
-            Rkeys <- Rkeys(x)
-        new("FlatBimap", colmetanames=colmetanames(x), direction=direction(x),
-                         data=data0, Lkeys=Lkeys, Rkeys=Rkeys)
-    }
-)
+##         Lkeys <- Rkeys <- as.character(NA)
+##         if (!fromKeys.only || direction(x) ==  1)
+##             Lkeys <- Lkeys(x)
+##         if (!fromKeys.only || direction(x) == -1)
+##             Rkeys <- Rkeys(x)
+##         new("FlatBimap", colmetanames=colmetanames(x), direction=direction(x),
+##                          data=data0, Lkeys=Lkeys, Rkeys=Rkeys)
+##     }
+## )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
