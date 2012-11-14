@@ -105,12 +105,12 @@ test_as.character <- function(){
   checkEquals(names(res)[1], "1")
   checkEquals(res[[1]][1], "A1BG")
 
-  res2 <- as.character(map2)       ## BUG - no method for this...
+  res2 <- as.character(map2)       
   checkEquals(names(res2)[1], "1")
   checkEquals(res2[[1]][1], "BP")
   
   ## reverse test
-  res3 <- as.character(revmap(map2)) ## BUG - no method for this
+  res3 <- as.character(revmap(map2)) 
   checkEquals(names(res3)[1], "BP")
   checkEquals(res3[[1]][1], "1")
 }
@@ -160,17 +160,25 @@ test_dblBrackets <- function(){
   res2 <- map2[["1"]]
 
   
-## test_head <- function(){
-## res <- head(map, n=2)
+test_head <- function(){
+res <- head(map, n=3)
+checkTrue( class(res) == "AnnDbBimap" )
 
-## res2 <- head(map2, n=2)  ## implement Lkeys and Rkeys
-## }
+res2 <- head(map2, n=3)  ## implement Lkeys and Rkeys
+checkTrue( class(res2) == "data.frame" )
+checkTrue( dim(res2)[1] == 3 )
+checkTrue( dim(res2)[2] == 2 )
+}
 
-## test_tail <- function(){
-## res <- tail(map, n=2)
+test_tail <- function(){
+res <- tail(map, n=3)
+checkTrue( class(res) == "AnnDbBimap" )
 
-## res2 <- tail(map2, n=2)
-## }
+res2 <- tail(map2, n=3)
+checkTrue( class(res2) == "data.frame" )
+checkTrue( dim(res2)[1] == 3 )
+checkTrue( dim(res2)[2] == 2 )
+}
 
 
 
@@ -234,10 +242,3 @@ test_sample <- function(){
 
 
 
-## TODO:
-
-## There is a bug in as.character()  I think that I might need a method here?
-## most of the rest seems to work so I just need to write a few more unit tests.
-## delete older code
-## put code from annotate that make the flatbimap from select into a helper
-## (in AnnotationDbi) that just does that job.

@@ -210,8 +210,6 @@ setMethod("direction", "FlatBimap",
 setMethod("direction", "AnnDbBimap",
     function(x) x@direction)
 
-## setMethod("direction", "AnnotationDbMap",
-##     function(x) x@direction)
 
 
 setReplaceMethod("direction", "FlatBimap",
@@ -236,19 +234,6 @@ setReplaceMethod("direction", "AnnDbBimap",
     }
 )
 
-## setReplaceMethod("direction", "AnnotationDbMap",
-##     function(x, value)
-##     {
-##         direction <- .normalize.direction(value)
-##         if (direction == 0)
-##             stop("undirected AnnDbBimap objects are not supported")
-##         if (direction != x@direction) {
-##             #x@objName <- paste0("revmap(", x@objName, ")")
-##             x@direction <- direction
-##         }
-##         x
-##     }
-## )
 
 setReplaceMethod("direction", "AnnDbMap",
     function(x, value)
@@ -303,9 +288,6 @@ setMethod("revmap", "list",
 )
 
 
-## setMethod("revmap", "AnnotationDbMap",
-##     function(x) { direction(x) <- - direction(x); x }
-## )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1121,19 +1103,9 @@ setMethod("toTable", "Bimap",
     }
 )
 
-## setMethod("toTable", "AnnotationDbMap",
-##     function(x)
-##     {
-##         AnnotDb <- x@AnnotDb
-##         cols <- x@cols
-##         keys <- keys(AnnotDb)
-##         suppressWarnings(select(AnnotDb, keys, cols))
-##     }
-## )
 
 setMethod("as.data.frame", "Bimap", toTable)
 
-## setMethod("as.data.frame", "AnnotationDbMap", toTable)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1165,35 +1137,7 @@ setMethod("tail", "FlatBimap",
 )
 
 
-## setMethod("head", "AnnotationDbMap",
-##     function(x, ...)
-##     {
-##         AnnotDb <- x@AnnotDb
-##         cols <- x@cols
-##         keys <- keys(AnnotDb)
-##         suppressWarnings(res <- select(AnnotDb, keys, cols))   
-##         c <- colnames(res)
-##         y <- head(res, ...)
-##         if (!identical(colnames(y), c))
-##             colnames(y) <- c
-##         y
-##     }
-## )
 
-## setMethod("tail", "AnnotationDbMap",
-##     function(x, ...)
-##     {
-##         AnnotDb <- x@AnnotDb
-##         cols <- x@cols
-##         keys <- keys(AnnotDb)
-##         suppressWarnings(res <- select(AnnotDb, keys, cols))   
-##         c <- colnames(res)
-##         y <- tail(res, ...)
-##         if (!identical(colnames(y), c))
-##             colnames(y) <- c
-##         y
-##     }
-## )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
