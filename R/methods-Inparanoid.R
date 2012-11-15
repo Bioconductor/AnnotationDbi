@@ -343,11 +343,9 @@ setMethod("keys", "InparanoidDb",
 ## function for making select happen
 .selectInp <- function(x, keys, cols, keytype){
   ## check that the keys are of the correct keytype.
-  ktKeys = keys(x, keytype=keytype)
-  if(!(any(ktKeys %in% keys))){
-    stop("keys must be of the same keytype as the actual keytype")
-  }
+  .testIfKeysAreOfProposedKeytype(x, keys, keytype)
   ## filter out keys that are not legit (just from the DB query)
+  ktKeys = keys(x, keytype=keytype)
   qkeys <- keys[keys %in% ktKeys]
   
   ## now I need to go through each table, and for each I want to extract the

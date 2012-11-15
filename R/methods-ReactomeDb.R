@@ -226,7 +226,7 @@ setMethod("keys", "ReactomeDb",
 .extractWithSimpleQuery <- function(x, table, colType, keys){
   ## generate a simple query for each table
   sql <- paste("SELECT * FROM", table, "WHERE", colType,"IN",
-               paste0("(",paste(keys, collapse=","),")") )
+               paste0('("',paste(keys, collapse='","'),'")') )
   ## then extract it
   dbQuery(dbConn(x), sql)
 }
@@ -257,11 +257,9 @@ setMethod("keys", "ReactomeDb",
 ## function for making select happen
 .selectReact <- function(x, keys, cols, keytype){
   ## check that the keys are of the correct keytype.
-  ktKeys = keys(x, keytype=keytype)
-  if(!(any(ktKeys %in% keys))){
-    stop("keys must be of the same keytype as the actual keytype")
-  }
+  .testIfKeysAreOfProposedKeytype(x, keys, keytype)
   ## filter out keys that are not legit (just from the DB query)
+  ktKeys = keys(x, keytype=keytype)
   qkeys <- keys[keys %in% ktKeys]
   
   ## collate possible types (type must ALWAYS be in front)

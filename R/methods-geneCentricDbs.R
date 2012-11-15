@@ -722,6 +722,13 @@
   cols
 }
 
+.testIfKeysAreOfProposedKeytype <- function(x, keys, keytype){
+  ktKeys = keys(x, keytype=keytype)
+  if(!(any(ktKeys %in% keys))){
+    stop("None of the keys entered are valid keys for the keytype specified.")
+  }
+}
+
 ## the core of the select method for GO org and chip packages.
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
   ## if asked for what they have, just return that.
@@ -733,10 +740,7 @@
   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
   if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
   ## check that the keytype matches the keys
-  ktKeys = keys(x, keytype=keytype)
-  if(!(any(ktKeys %in% keys))){
-    stop("keys must be of the same keytype as the actual keytype")
-  }
+  .testIfKeysAreOfProposedKeytype(x, keys, keytype)
 
   ## call .simplifyCols to ensure we use same colnames as cols()
   cols <- .simplifyCols(x, cols)

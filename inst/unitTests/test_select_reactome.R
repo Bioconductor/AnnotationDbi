@@ -107,8 +107,18 @@ test_select_OTHERKEYTYPE <- function(){
   res <-  select(r, keys=k, cols=c, keytype="REACTOMEID")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
-  checkIdentical(c("REACTOMEID","ENTREZID","PATHNAME","GO"), colnames(res))
+  checkIdentical(c("REACTOMEID","ENTREZID","PATHNAME","GO"), colnames(res))  
 }
+
+test_select_PATHNAME <- function(){
+  k <- head(keys(r, "PATHNAME"))
+  suppressWarnings(res <- select(r, k, "ENTREZID", "PATHNAME"))
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==2)
+  checkIdentical(c("PATHNAME","ENTREZID"), colnames(res)) 
+}
+
+
 
 
 ## for convenience...
