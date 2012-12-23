@@ -5,6 +5,11 @@
 \alias{AnnotationDb}
 \alias{class:AnnotationDb}
 \alias{AnnotationDb-class}
+\alias{ChipDb-class}
+\alias{GODb-class}
+\alias{InparanoidDb-class}
+\alias{OrgDb-class}
+\alias{ReactomeDb-class}
 
 % Accessor-like methods
 \alias{loadDb}
@@ -65,10 +70,11 @@
   easy extraction of data from the annotation packages.
 
   \code{select}, \code{cols} and \code{keys} are used together to
-  extract data from an \code{AnnotationDb} object (or any object
-  derived from the parent class).  Examples of classes derived from
-  the \code{AnnotationDb} object include (but are not limited to):
-  \code{ChipDb}, \code{OrgDb} and \code{GODb}.
+  extract data from an \code{AnnotationDb} object (or any object derived
+  from the parent class).  Examples of classes derived from the
+  \code{AnnotationDb} object include (but are not limited to):
+  \code{ChipDb}, \code{OrgDb} \code{GODb}, \code{InparanoidDb} and
+  \code{ReactomeDb}.
 
   \code{cols} shows which kinds of data can be returned for the
   \code{AnnotationDb} object.

@@ -138,7 +138,7 @@ setClass("AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Inparanpoid Bimap
+### Inparanoid Bimap
 ###
 ### This class is just needed so we can encapsulate some methods that are
 ### required for this more specialized set of packages.

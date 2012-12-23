@@ -28,6 +28,11 @@ exportClasses(
 
     ## Virtual mother-class for all Annoations
     "AnnotationDb",
+    "OrgDb",
+    "ChipDb",
+    "InparanoidDb",
+    "GODb",
+    "ReactomeDb",
 
 ##     ## Class for faux-bimaps (select based bimaps)
 ##     "AnnotationDbMap",
