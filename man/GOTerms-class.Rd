@@ -93,6 +93,10 @@
 
 \references{\url{http://www.geneontology.org/}}
 
+\seealso{
+  \code{\link{makeGOGraph}} shows how to make GO mappings into graphNEL objects.
+}
+
 \note{GOTerms objects are used to represent primary GO nodes in the
    SQLite-based annotation data package GO.db}
 

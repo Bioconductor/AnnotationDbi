@@ -101,7 +101,6 @@ exportMethods(
     "KEGGFrame",
     "getKEGGFrameData",
 
-
     ## from R/BimapFormatting.R
     "as.list",
     #"toLList", "toRList", "toList",
@@ -141,6 +140,7 @@ export(
 
     ## from R/GOTerms.R
     GOTerms,
+    makeGOGraph,
 
     ## from R/AnnDbPkg-templates-common.R
     dbFileConnect,

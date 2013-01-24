@@ -58,12 +58,6 @@ GOTerms <- function(GOId, term, ontology, synonym = "", secondary = "",
 ### generics (accessor methods).
 ###
 
-setGeneric("GOID", function(object) standardGeneric("GOID")) 
-setGeneric("Term", function(object) standardGeneric("Term"))
-setGeneric("Ontology", function(object) standardGeneric("Ontology"))
-setGeneric("Definition", function(object) standardGeneric("Definition"))
-setGeneric("Synonym", function(object) standardGeneric("Synonym"))
-setGeneric("Secondary", function(object) standardGeneric("Secondary"))
 
 setMethod("GOID", "GOTerms", function(object) object@GOID)
 
@@ -331,3 +325,25 @@ setMethod("KEGGFrame", signature=signature(x="data.frame", organism="missing"), 
 ## Method to access the data in a KEGGFrame object
 setMethod("getKEGGFrameData", "KEGGFrame", function(x){x@data})
 
+
+
+#######################################################################
+## Now add a convenience method to just represent the GO as a graph.
+## This method should take arg for which ontology the user wants, and
+## return a graph.
+## users who want less can just use subgraph.
+## weight of graph edges will always be 1 for each edge
+
+makeGOGraph <- function(ont = c("bp","mf","cc")){
+    match.arg(ont)
+    require(graph)
+    require(GO.db)
+    df <- switch(ont,
+                 "bp"= toTable(GOBPPARENTS),
+                 "mf"= toTable(GOMFPARENTS),
+                 "cc"= toTable(GOCCPARENTS)
+                 )
+    ftM2graphNEL(as.matrix(df[, 1:2]), W=rep(1,dim(df)[1])) 
+}
+
+## f = makeGOGraph("bp")

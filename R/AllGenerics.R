@@ -44,6 +44,14 @@ setGeneric("getGOFrameData", function(x) standardGeneric("getGOFrameData"))
 setGeneric("KEGGFrame", function(x, organism) standardGeneric("KEGGFrame"))
 setGeneric("getKEGGFrameData", function(x) standardGeneric("getKEGGFrameData"))
 
+setGeneric("GOID", function(object) standardGeneric("GOID")) 
+setGeneric("Term", function(object) standardGeneric("Term"))
+setGeneric("Ontology", function(object) standardGeneric("Ontology"))
+setGeneric("Definition", function(object) standardGeneric("Definition"))
+setGeneric("Synonym", function(object) standardGeneric("Synonym"))
+setGeneric("Secondary", function(object) standardGeneric("Secondary"))
+
+
 ### Others (do whatever you want with them ;-)
 setGeneric("dbconn", function(x) standardGeneric("dbconn"))
 setGeneric("dbfile", function(x) standardGeneric("dbfile"))
@@ -77,7 +85,6 @@ setGeneric("keytypes", signature="x",
 
 setGeneric("select", signature="x",
            function(x, keys, cols, keytype, ...) standardGeneric("select"))
-
 
 
 
