@@ -284,7 +284,7 @@
                                                         "IPI",
                                                         "PROSITE") )]
   }
-  if(species=="Rattus Norvegicus"){
+  if(species=="Rattus norvegicus"){
     #.defTables <- .defTables ## no changes (for now)
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP") )]
   }  
@@ -359,7 +359,7 @@
                     "Macaca mulatta",
                     "Plasmodium falciparum",
                     "Pan troglodytes",
-                    "Rattus Norvegicus",
+                    "Rattus norvegicus",
                     "Saccharomyces cerevisiae",
                     "Sus scrofa",
                     "Xenopus laevis")
