@@ -148,7 +148,7 @@ test_select1 <- function(){
   keys <- head(keys(hgu95av2.db, "ALIAS"),n=2)
   cols <- c("SYMBOL","ENTREZID","PROBEID")
   res <- quiet(select(hgu95av2.db, keys, cols, keytype="ALIAS"))
-  checkIdentical(c(4L, 4L), dim(res))
+  checkIdentical(c(3L, 4L), dim(res))
   checkIdentical(c("ALIAS","SYMBOL","ENTREZID","PROBEID"), colnames(res))
 }
 
@@ -362,5 +362,15 @@ test_select15 <- function(){
                  colnames(res))
 }
 
+
+test_select16 <- function(){
+    ## What happens if we ask for probes back...
+    ## (and pass in something else as a key)
+    sk = c( 'MAPK3','TIE1' )
+    res <- select(hgu95av2.db, keys=sk, cols = c("PROBEID"), keytype="SYMBOL")
+    checkTrue(dim(res)[1]>0)
+    checkTrue(dim(res)[2]==2)
+    checkIdentical(c('SYMBOL','PROBEID'), colnames(res))
+}
 ## TODO: figure out why in this weird corner case there is an extra col for
 ## GOALL called 'NA'...

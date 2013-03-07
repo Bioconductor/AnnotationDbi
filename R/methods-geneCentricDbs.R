@@ -66,7 +66,10 @@
   if("COMMON" %in% cols){ 
     after <- match("COMMON", cols)
     cols <- append(cols, c("SGD"),after) 
-  } 
+  } ## special case: if PROBEIDS are requested, they MUST be in front!
+  if("PROBEID" %in% cols){ 
+    cols <- append("PROBEID", setdiff(cols, "PROBEID"))
+  }
   unique(cols)
 }
 
