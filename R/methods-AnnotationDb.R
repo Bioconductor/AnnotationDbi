@@ -44,10 +44,14 @@ setMethod("metadata", "AnnotationDb",
 setMethod("species", "AnnotationDb",
     function(x){
       res <- as.character(dbEasyQuery(dbConn(x),
-        "SELECT value FROM metadata WHERE name='Genus and Species'"))
+        "SELECT value FROM metadata WHERE name='ORGANISM'"))
       if(res == "character(0)"){ ## then try again.
         res <- as.character(dbEasyQuery(dbConn(x),
-         "SELECT value FROM metadata WHERE name='ORGANISM'"))
+         "SELECT value FROM metadata WHERE name='Organism'"))
+      }
+      if(res == "character(0)"){ ## then try again.
+        res <- as.character(dbEasyQuery(dbConn(x),
+         "SELECT value FROM metadata WHERE name='Genus and Species'"))
       }
       res
     }
