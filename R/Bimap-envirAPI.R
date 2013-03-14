@@ -56,21 +56,23 @@ setMethod("ls", signature(name="Bimap"),
 setMethod("mget", signature(x="ANY", envir="Bimap"),
     function(x, envir, mode, ifnotfound, inherits)
     {
-        if (missing(ifnotfound))
-            envir@ifnotfound <- list()
-        else {
+        if (missing(ifnotfound)) {
+            ifnotfound <- list()
+        } else {
             if (!is.vector(ifnotfound) || length(ifnotfound) != 1 || !is.na(ifnotfound))
                 stop("only NA is currently supported for 'ifnotfound'")
-            envir@ifnotfound <- as.list(ifnotfound)
+            ifnotfound <- as.list(ifnotfound)
         }
+        keys0 <- keys(envir)
+        envir@ifnotfound <- ifnotfound
         keys(envir) <- x
-        as.list(envir)
+        ans <- as.list(envir)
+        if (length(ifnotfound) == 0)
+            return(ans)
+        ans[!(names(ans) %in% keys0)] <- ifnotfound
+        ans
     }
 )
-
-
-
-
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
