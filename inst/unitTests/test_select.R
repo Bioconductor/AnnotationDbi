@@ -348,6 +348,7 @@ test_select14 <- function(){
 }
 
 test_select15 <- function(){
+DEACTIVATED("This test is currently too resource intensive.  Efforts are underway to make its impact less horrible.")           
   ## Another bug that seems to happen in post-processing...
   ## the code that resolves duplicated values is going a bit insane...
   ## (IOW .replaceValues())
