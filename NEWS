@@ -1,5 +1,38 @@
  	**************************************************
 	*						 *
+	*	        1.22.x SERIES NEWS		 *
+	*						 *
+	**************************************************
+
+
+		CHANGES IN AnnotationDbi VERSION 1.22.x
+
+NEW FEATURES
+
+    o There is now a convenience function for extracting data from
+    the GO.db package as a graph object. The function is called: 
+    makeGOGraph.
+
+    o Adds supportedSeqnameMappings() and findSequenceRenamingMaps()
+    utilities.
+
+    o Improved vignette for new users
+
+
+BUG FIXES AND CODE MAINTENANCE
+
+    o Fixes a bug in select for users accessing reactome.db
+
+    o Fixes a bug in select for users requesting via a PROBEID
+
+    o Fixes a bug in select for users using rat chip packages
+
+    o Fixes a bug in mget, for Bimap objects (when ifnotfound=NA)
+
+
+
+ 	**************************************************
+	*						 *
 	*	        1.20.x SERIES NEWS		 *
 	*						 *
 	**************************************************
@@ -234,5 +267,6 @@ NEW FEATURES
     	PFAM.db package.
 
     o	AnnotationDbi is now compliant with the 1.0 schema definition.
+
 
 
