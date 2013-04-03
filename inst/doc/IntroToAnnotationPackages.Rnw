@@ -90,7 +90,7 @@ include:
   \item Platform level: e.g. \Rpackage{hgu133plus2.db},
         \Rpackage{hgu133plus2.probes}, \Rpackage{hgu133plus2.cdf}.
   \item Homology level: e.g. \Rpackage{hom.Dm.inp.db}.
-  \item System-biology level: \Rpackage{GO.db} or \Rpackage{KEGG.db}.
+  \item System-biology level: \Rpackage{GO.db}
 \end{itemize}
 Genome centric \Rpackage{GenomicFeatures} packages include
 \begin{itemize}
