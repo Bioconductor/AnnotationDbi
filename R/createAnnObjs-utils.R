@@ -252,7 +252,7 @@ choosePackage <- function(pkgType){
                  ## "hs25kresogen.db" = "deprecatedSimonDeBernard",
                  ## "mm24kresogen.db" = "deprecatedSimonDeBernard",
                  "org.Sco.eg.db" = "deprecated",
-                 "KEGG.db" = "stale",
+                 "KEGG.db" = "keggstale",
                  "NO_MESSAGE_TYPE"
                 )
 }
@@ -291,12 +291,13 @@ annotMessage <- function(msgType, pkgType){
 		  "illumina_XXX_ARRAYADDRESS mapping to convert between", 
 		  "BeadIDs and Illumina IDs. \n\n  *_XXX_ here refers to the",
   		  "species and version for this platform"),
-                "stale" = paste("\n",pkgType,"contains mappings based on older",                  "data because the original resource was removed from the",
+                "keggstale" = paste("\n",pkgType,"contains mappings based on older",
+                  "data because the original resource was removed from the",
                   "the public domain before the most recent update was",
                   "produced. This package should now be considered deprecated",
                   "and future versions of Bioconductor may not have it",
-                  "available.  One possible alternative to consider is to look",
-                  "at the reactome.db package"),
+                  "available.  Users who want more current data are encouraged",
+                  "to look at the KEGGREST or reactome.db packages"),
                 "exon_probeset" = paste("\n",pkgType,"is based on exon",
                   "probesets. For a more gene-centric view, use the",
                   "transcriptcluster version of this package."),
