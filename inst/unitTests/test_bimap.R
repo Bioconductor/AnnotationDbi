@@ -14,11 +14,11 @@ test_ls <- function(){
   res <- ls(map)
   checkTrue(is.character(res))
   checkTrue(length(res) > 0)
-  checkEquals(c("1","2","3"), head(res,n=3))
+  checkEquals(c("1","10","100"), head(res,n=3))
   res2 <- ls(map2)
   checkTrue(is.character(res2))
   checkTrue(length(res2) > 0)
-  checkEquals(c("1","2","3"), head(res,n=3))
+  checkEquals(c("1","10","100"), head(res,n=3))
 }
 
 ## test Lkeys and Rkeys
