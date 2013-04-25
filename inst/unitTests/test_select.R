@@ -347,21 +347,20 @@ test_select14 <- function(){
   checkTrue(length(res$PATH)== length(res$PATH[is.na(res$PATH)]))
 }
 
-## test_select15 <- function(){
-## DEACTIVATED("This test is currently too resource intensive.  Efforts are underway to make its impact less horrible.")           
-##   ## Another bug that seems to happen in post-processing...
-##   ## the code that resolves duplicated values is going a bit insane...
-##   ## (IOW .replaceValues())
-##   res <- select(x, keys="1", cols(x))
-##   checkTrue(dim(res)[1]>0)
-##   checkTrue(dim(res)[2]==30)
-##   checkIdentical(c('ENTREZID','PFAM','IPI','PROSITE','ACCNUM','ALIAS','CHR',
-##                    'CHRLOC','CHRLOCCHR','CHRLOCEND','ENZYME','MAP','PATH',
-##                    'PMID','REFSEQ','SYMBOL','UNIGENE','ENSEMBL','ENSEMBLPROT',
-##                    'ENSEMBLTRANS','GENENAME','UNIPROT','GO','EVIDENCE',
-##                    'ONTOLOGY','GOALL',NA,'ONTOLOGYALL','OMIM','UCSCKG'),
-##                  colnames(res))
-## }
+test_select15 <- function(){
+  ## Another bug that seems to happen in post-processing...
+  ## the code that resolves duplicated values is going a bit insane...
+  ## (IOW .replaceValues())
+  res <- select(x, keys="100008586", cols(x)) 
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==30)
+  checkIdentical(c('ENTREZID','PFAM','IPI','PROSITE','ACCNUM','ALIAS','CHR',
+                   'CHRLOC','CHRLOCCHR','CHRLOCEND','ENZYME','MAP','PATH',
+                   'PMID','REFSEQ','SYMBOL','UNIGENE','ENSEMBL','ENSEMBLPROT',
+                   'ENSEMBLTRANS','GENENAME','UNIPROT','GO','EVIDENCE',
+                   'ONTOLOGY','GOALL',NA,'ONTOLOGYALL','OMIM','UCSCKG'),
+                 colnames(res))
+}
 
 
 test_select16 <- function(){

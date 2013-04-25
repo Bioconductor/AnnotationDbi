@@ -732,6 +732,19 @@
   }
 }
 
+## helper looks at cols and trys to warn users about many:1 relationships
+.warnAboutManyToOneRelationships <- function(cols){
+    file=system.file("extdata","manyToOneBlackList.Rda",package="AnnotationDbi")
+    blackList <- get(load(file))
+    problemCols <- cols[cols %in% blackList]
+    ## give message if there are more than 4 (for now)
+    if(length(problemCols) > 4){
+        msg = paste("You have selected the following columns that can have a many to one relationship with the primary key: ", paste(problemCols,collapse=", "),". Because you have selected more than a few such columns there is a risk that this selection may balloon up into a very large result as the number of rows returned multiplies accordingly. To experience smaller/more manageable results and faster retrieval times, you might want to consider selecting these columns separately.")
+        message(paste0("\n", paste(strwrap(msg, exdent=2), collapse="\n"),"\n"))
+    }    
+}
+
+
 ## the core of the select method for GO org and chip packages.
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
   ## if asked for what they have, just return that.
@@ -757,6 +770,9 @@
       warning("'NA' keys have been removed")
       keys <- keys[!is.na(keys)]
   }
+
+  ## Check if the user is selecting too many cols with many:1 relationships
+  .warnAboutManyToOneRelationships(cols)
 
   ## Generate query and extract the data
   res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
