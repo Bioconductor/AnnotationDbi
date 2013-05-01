@@ -507,10 +507,11 @@
     if(i==1){
       res <- paste("SELECT ",fields," FROM",dblocs[i])
     }else{
-      if(species=="Saccharomyces cerevisiae" &&
-         (dblocs[i]=="gene2systematic" || dblocs[i-1]=="gene2systematic")){
-          join <- "systematic_name"
-      }else if(dblocs[i]=="c.probes" || dblocs[i-1]=="c.probes"){
+##       if(species=="Saccharomyces cerevisiae" &&
+##          (dblocs[i]=="gene2systematic" || dblocs[i-1]=="gene2systematic")){
+##           join <- "systematic_name"
+##       }else
+      if(dblocs[i]=="c.probes" || dblocs[i-1]=="c.probes"){
          ## IOW if joining to OR from c.probes we want "gene_id"
         if(species=="Saccharomyces cerevisiae"){
           join <- "systematic_name"

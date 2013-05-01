@@ -26,51 +26,6 @@
 
 
 
-## ## sample query:
-
-## SELECT  genes.gene_id,pfam.pfam_id,pfam.ipi_id,prosite.prosite_id,accessions.accession,alias.alias_symbol,chromosomes.chromosome,chromosome_locations.start_location,chromosome_locations.seqname,chromosome_locations.end_location,ec.ec_number,cytogenetic_locations.cytogenetic_location,kegg.path_id,pubmed.pubmed_id,refseq.accession,gene_info.symbol,unigene.unigene_id,ensembl.ensembl_id,ensembl_prot.prot_id,ensembl_trans.trans_id,gene_info.gene_name,uniprot.uniprot_id,go.go_id,go.evidence,go.ontology,go_all.go_id,go_all.evidence,go_all.ontology,omim.omim_id,ucsc.ucsc_id  FROM genes LEFT JOIN  pfam USING ( _id ) LEFT JOIN  prosite USING ( _id ) LEFT JOIN  accessions USING ( _id ) LEFT JOIN  alias USING ( _id ) LEFT JOIN  chromosomes USING ( _id ) LEFT JOIN  chromosome_locations USING ( _id ) LEFT JOIN  ec USING ( _id ) LEFT JOIN  cytogenetic_locations USING ( _id ) LEFT JOIN  kegg USING ( _id ) LEFT JOIN  pubmed USING ( _id ) LEFT JOIN  refseq USING ( _id ) LEFT JOIN  gene_info USING ( _id ) LEFT JOIN  unigene USING ( _id ) LEFT JOIN  ensembl USING ( _id ) LEFT JOIN  ensembl_prot USING ( _id ) LEFT JOIN  ensembl_trans USING ( _id ) LEFT JOIN  uniprot USING ( _id ) LEFT JOIN  go USING ( _id ) LEFT JOIN  go_all USING ( _id ) LEFT JOIN  omim USING ( _id ) LEFT JOIN  ucsc USING ( _id ) WHERE  genes.gene_id in ( '100008586' );
-
-
-## ## shorter query to just get counts up:
-
-## SELECT  count(*)  FROM genes LEFT JOIN  pfam USING ( _id ) LEFT JOIN  prosite USING ( _id ) LEFT JOIN  accessions USING ( _id ) LEFT JOIN  alias USING ( _id ) LEFT JOIN  chromosomes USING ( _id ) LEFT JOIN  chromosome_locations USING ( _id ) LEFT JOIN  ec USING ( _id ) LEFT JOIN  cytogenetic_locations USING ( _id ) LEFT JOIN  kegg USING ( _id ) LEFT JOIN  pubmed USING ( _id ) LEFT JOIN  refseq USING ( _id ) LEFT JOIN  gene_info USING ( _id ) LEFT JOIN  unigene USING ( _id ) LEFT JOIN  ensembl USING ( _id ) LEFT JOIN  ensembl_prot USING ( _id ) LEFT JOIN  ensembl_trans USING ( _id ) LEFT JOIN  uniprot USING ( _id ) LEFT JOIN  go USING ( _id ) LEFT JOIN  go_all USING ( _id ) LEFT JOIN  omim USING ( _id ) LEFT JOIN  ucsc USING ( _id ) WHERE  genes.gene_id in ( '100008586' );
-
-
-## ## put these into temp files.
-## time sqlite3 -bail org.Hs.eg.sqlite < temp_queryLong.sql
-
-## real	5m56.135s
-## user	5m10.627s
-## sys	0m28.350s
-
-## time sqlite3 -bail org.Hs.eg.sqlite < temp_queryShort.sql
-
-## real	6m6.410s
-## user	5m13.880s
-## sys	0m33.182s
-
-
-
-
-## ## To test from R:
-## library(org.Hs.eg.db)
-## con = org.Hs.eg_dbconn()
-## system.time(sqliteQuickSQL(con, "SELECT  count(*)  FROM genes LEFT JOIN  pfam USING ( _id ) LEFT JOIN  prosite USING ( _id ) LEFT JOIN  accessions USING ( _id ) LEFT JOIN  alias USING ( _id ) LEFT JOIN  chromosomes USING ( _id ) LEFT JOIN  chromosome_locations USING ( _id ) LEFT JOIN  ec USING ( _id ) LEFT JOIN  cytogenetic_locations USING ( _id ) LEFT JOIN  kegg USING ( _id ) LEFT JOIN  pubmed USING ( _id ) LEFT JOIN  refseq USING ( _id ) LEFT JOIN  gene_info USING ( _id ) LEFT JOIN  unigene USING ( _id ) LEFT JOIN  ensembl USING ( _id ) LEFT JOIN  ensembl_prot USING ( _id ) LEFT JOIN  ensembl_trans USING ( _id ) LEFT JOIN  uniprot USING ( _id ) LEFT JOIN  go USING ( _id ) LEFT JOIN  go_all USING ( _id ) LEFT JOIN  omim USING ( _id ) LEFT JOIN  ucsc USING ( _id ) WHERE  genes.gene_id in ( '100008586' )"))
-
-
-## ##    user  system elapsed 
-## ##  18.373   2.084  32.379 
-
-
-## system.time(sqliteQuickSQL(con, "SELECT  genes.gene_id,pfam.pfam_id,pfam.ipi_id,prosite.prosite_id,accessions.accession,alias.alias_symbol,chromosomes.chromosome,chromosome_locations.start_location,chromosome_locations.seqname,chromosome_locations.end_location,ec.ec_number,cytogenetic_locations.cytogenetic_location,kegg.path_id,pubmed.pubmed_id,refseq.accession,gene_info.symbol,unigene.unigene_id,ensembl.ensembl_id,ensembl_prot.prot_id,ensembl_trans.trans_id,gene_info.gene_name,uniprot.uniprot_id,go.go_id,go.evidence,go.ontology,go_all.go_id,go_all.evidence,go_all.ontology,omim.omim_id,ucsc.ucsc_id  FROM genes LEFT JOIN  pfam USING ( _id ) LEFT JOIN  prosite USING ( _id ) LEFT JOIN  accessions USING ( _id ) LEFT JOIN  alias USING ( _id ) LEFT JOIN  chromosomes USING ( _id ) LEFT JOIN  chromosome_locations USING ( _id ) LEFT JOIN  ec USING ( _id ) LEFT JOIN  cytogenetic_locations USING ( _id ) LEFT JOIN  kegg USING ( _id ) LEFT JOIN  pubmed USING ( _id ) LEFT JOIN  refseq USING ( _id ) LEFT JOIN  gene_info USING ( _id ) LEFT JOIN  unigene USING ( _id ) LEFT JOIN  ensembl USING ( _id ) LEFT JOIN  ensembl_prot USING ( _id ) LEFT JOIN  ensembl_trans USING ( _id ) LEFT JOIN  uniprot USING ( _id ) LEFT JOIN  go USING ( _id ) LEFT JOIN  go_all USING ( _id ) LEFT JOIN  omim USING ( _id ) LEFT JOIN  ucsc USING ( _id ) WHERE  genes.gene_id in ( '100008586' )"))
-
-## ##    user  system elapsed 
-## ##  27.878   2.268  50.224 
-
-
-## so all this just proved to be an indictment of doing things on old
-## gladstone.  We will have to upgrade it I guess...
-
 
 ##############################################################################
 ##  ACK Combinatorics!
@@ -171,3 +126,85 @@ blackList <- blackList[unique(names(blackList))]
 blackList <- names(blackList[blackList])
 ## and save it...
 save(blackList, file="manyToOneBlackList.Rda")
+
+
+
+
+
+
+## TROUBLESHOOTING THE strange yeast issue:
+### problem with yeast is just this one:
+## x <- org.Sc.sgd.db
+## k <- keys(x,"ENTREZID")
+
+## debug(AnnotationDbi:::.select)
+## debug(AnnotationDbi:::.extractData)
+## res <- select(x, cols="ORF", keys=k, keytype="ENTREZID")
+
+## gives us this:
+## SELECT  genes.gene_id,gene2systematic.systematic_name,sgd.sgd_id  FROM genes LEFT JOIN  gene2systematic USING ( systematic_name ) LEFT JOIN  sgd USING ( systematic_name );
+## plus a huge where clause like  WHERE  genes.gene_id in ( '9164990','9
+
+## and this here 
+## res <- select(x, cols="COMMON", keys=k, keytype="ENTREZID")
+## give us this:
+## SELECT  genes.gene_id,gene2systematic.gene_name,sgd.sgd_id  FROM genes LEFT JOIN  gene2systematic USING ( systematic_name ) LEFT JOIN  sgd USING ( systematic_name );
+
+## which has the same problem (a bad join)
+
+
+## OK, so I have a couple options:
+## 1) add _id to gene2systematic and then simplify code
+
+## BUT problem with adding _id is just that some of the rows will not
+## have one?  So: does that matter?  would those rows EVER be joined
+## in any meaningful way?  It turns out that only in the context of
+## keys() is that information worth anything.  IOW you can't link it
+## to anything, because the sgd table doesn't have rows where there
+## isn't an _id.  Is that true?  - NO! Look at this (for example):
+
+## select * from gene2systematic LEFT JOIN sgd USING (systematic_name) WHERE systematic_name IN ('AIP5','AGS1');
+
+## output shows that AIP5 has a _id and an sgd_id, so these exist for
+## many of the systematic_name values even if they are not represented
+## by a gene_name...
+
+## AND actually: ALL of the systematic_name vals are in both sgd and
+## gene2systematic.  What are different are the gene_name vals.  There
+## are 10960 distinct gene names in gene2systematic but only 5872 of
+## those are associated in sgd with an _id or a sgd id etc.
+
+## So really it's just the gene_name field that can be a problem.  But
+## that data is only useful in the sense of "keys", since it can only
+## connect if it is associated with one of the 8699 systematic_name
+## fields (or one of the _id values)
+
+
+
+## lets test this:
+## add the _id col:  It should be an integer and it should be NULL by default
+## ALTER TABLE gene2systematic ADD COLUMN _id INTEGER NULL;
+## then add the index on this col (it can't be a primary key for this table).
+
+## CREATE INDEX g2s_id ON gene2systematic (_id);
+## then an insert:
+
+## And actually I am going to really want an insert that looks more like this:
+## INSERT INTO gene2systematic SELECT sgd._id, g2s.gene_name, g2s.systematic_name  FROM gene2systematic as g2s LEFT JOIN sgd USING (systematic_name) ;
+
+
+
+
+
+
+## OR (ruled this out already)
+
+## and for the sake of completeness, lets work out #2 1st...
+## 2) figure out why sgd has fewer gene_name values than
+## gene2systematic (and possibly fix that / adjust code to just use
+## sgd table instead of gene2systematic)
+## It's because table sgd has a not null constraint on sgd.  So rows
+## that have a gene_name and no sgd_id are excluded.  So I can't do
+## this approach (or shouldn't)
+
+

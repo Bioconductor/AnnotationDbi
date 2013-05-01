@@ -290,6 +290,13 @@ test_select11 <- function(){
 
   ## This works but is slow (therefore it's tested elsewhere)
   ## res <- select(s, keys="YAL003W", cols(s))
+
+  ## Another test to make sure we can join up to ORF properly
+  keys <- keys(s,"ENTREZID")
+  res <- select(s, cols="ORF", keys=keys, keytype="ENTREZID")
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==3)
+  checkIdentical(c("ENTREZID","ORF","SGD"), colnames(res))
 }
 
 test_select12 <- function(){
