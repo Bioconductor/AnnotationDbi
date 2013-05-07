@@ -940,7 +940,7 @@ setMethod("cols", "GODb",
 }
 
 
-.makeKeytypeChoice <- function(x, keytype){
+.keys <- function(x, keytype){
   ## have to swap keytype
   ## keytype <- .swapSymbolExceptions(x, keytype)
   keytype <- .simplifyCols(x, keytype)
@@ -973,36 +973,155 @@ setMethod("cols", "GODb",
                     "SELECT DISTINCT probe_id FROM probes", 1L),
                   .queryForKeys(x, keytype))
   }
+  if(class(x) == "GODb"){
+    res <- switch(EXPR = keytype,
+                  "GOID" =  dbQuery(dbConn(x),
+                    "SELECT DISTINCT go_id FROM go_term", 1L),
+                  .queryForKeys(x, keytype))
+  }
   res[!is.na(res)]
 }
+
+####################################################################
+## So the new idea is that each place where I want to "enhance" keys,
+## I should just be able to use a helper to wrap up the actual keys
+## method...
+
+
+## So 1st we need helpers for other "keys" situations
+## keys0 is for when we have a pattern we want to match in the keys
+.keys0 <-
+    function(x, keytype, ..., pattern, fuzzy=FALSE)
+    ## assume 'pattern' present
+{
+    FUN <- if (fuzzy) agrep else grep
+    FUN(pattern, .keys(x, keytype), value=TRUE, ...)
+}
+## keys1 is for when we have a column but no pattern
+## so we want to filter by column
+.keys1 <-
+    function(x, keytype, ..., column)
+    ## column acts as filter
+{
+    k <- suppressWarnings(select(x, .keys(x, keytype), column))
+    k[[keytype]][ !is.na(k[[column]]) ]
+}
+## keys2 is for when we have a column, and a pattern to match on that
+## column, and we want all the keys of a particular keytype that match
+## that column.
+.keys2 <-
+    function(x, keytype, ..., pattern, column, fuzzy=FALSE)
+    ## assume 'pattern', 'column' present
+{
+    FUN <- if (fuzzy) agrep else grep
+    k <- suppressWarnings(select(x, .keys(x, keytype), column))
+    k[[keytype]][ FUN(pattern, k[[column]], ...) ]
+}
+
+
+## And we need a master helper to tie it all together
+smartKeys <-
+    function(x, keytype, ..., pattern, column, fuzzy=FALSE, FUN)
+{
+    ## check args, then...
+
+    ## FUN is the base keys method
+    .keys <- FUN
+
+    if (missing(pattern) && missing(column))
+        k <- .keys(x, keytype)
+    else if (missing(column))
+        k <- .keys0(x, keytype, ..., pattern=pattern, fuzzy=fuzzy)
+    else if (missing(pattern))
+        k <- .keys1(x, keytype, ..., column=column)
+    else
+        k <- .keys2(x, keytype, ..., pattern=pattern, column=column,
+                    fuzzy=fuzzy)
+    
+    unique(k)
+}
+
 
 
 ## TODO: swap initial SQL query for an Lkeys() call for OrgDb and ChipDb??
 setMethod("keys", "OrgDb",
-    function(x, keytype){
+    function(x, keytype, ...){
       if(missing(keytype)){
         keytype <- .chooseCentralOrgPkgSymbol(x)
       }
-      .makeKeytypeChoice(x, keytype)
-    }
+##       .keys(x, keytype)
+smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE, FUN=AnnotationDbi:::.keys)
+  }
 )
 
 setMethod("keys", "ChipDb",
-    function(x, keytype){
+    function(x, keytype, ...){
       if(missing(keytype)) keytype <- "PROBEID"
-      .makeKeytypeChoice(x, keytype)
-    }
+##       .keys(x, keytype)
+smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE, FUN=AnnotationDbi:::.keys)
+  }
 )
 
 setMethod("keys", "GODb",
-    function(x, keytype){
+    function(x, keytype, ...){
       if(missing(keytype)) keytype <- "GOID"
-      dbQuery(dbConn(x), "SELECT go_id FROM go_term", 1L)
-    }
+##       dbQuery(dbConn(x), "SELECT go_id FROM go_term", 1L)
+smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE, FUN=AnnotationDbi:::.keys)
+  }
 )
 
 
+## new uses for keys:
+## now TERM is a real key?
+## head(keys(GO.db, keytype="TERM"))
 
+
+## <BOOM> This stuff is not currently working
+## get TERM keys that match a particular pattern
+## head(keys(GO.db, keytype="TERM", pattern="mitochondrion"))
+
+## get GOIDs where a TERM exists.
+## head(keys(GO.db, keytype="GOID", column="TERM"))
+
+## get keys of type GOID that go with a pattern match in TERM
+## head(keys(GO.db, keytype="TERM", pattern="mitochondrion", column="GOID"))
+
+## do the above but use fuzzy matching
+## head(keys(GO.db, keytype="TERM", pattern="mitochondrion", column="GOID", fuzzy=TRUE))
+
+
+## Can just get keys (straight up)
+## head(keys(org.Hs.eg.db, keytype="SYMBOL"))
+
+## keys1 situation works fine (and smartKeys is called twice.)
+## Can filter by column (only return keys where there is a value for "PATH"
+## length(keys(org.Hs.eg.db, keytype="ENTREZID", column="PATH"))
+## is shorter than:
+## length(keys(org.Hs.eg.db, keytype="ENTREZID"))
+
+
+## debug(AnnotationDbi:::smartKeys)
+
+## <BOOM>
+## Can just get keys that match a pattern
+## keys(org.Hs.eg.db, keytype="SYMBOL", pattern="BRCA")
+## And yet THIS works:
+## AnnotationDbi:::.keys0(org.Hs.eg.db, keytype="SYMBOL", pattern="BRCA")
+## AnnotationDbi:::smartKeys(org.Hs.eg.db, keytype="SYMBOL", pattern="BRCA", FUN=AnnotationDbi:::.keys)
+
+
+## <BOOM>
+## Can get a key that matches a pattern on some other column
+## head(keys(org.Hs.eg.db,keytype="ENTREZID",pattern="MSX",column="SYMBOL"))
+## And this case actually works:
+## AnnotationDbi:::.keys2(org.Hs.eg.db, keytype="ENTREZID", pattern="MSX", column="SYMBOL")
+## And this format also works:
+## AnnotationDbi:::smartKeys(org.Hs.eg.db, keytype="ENTREZID", pattern="MSX", column="SYMBOL", FUN=AnnotationDbi:::.keys)
+
+
+
+## can try more down to the metal:
+## AnnotationDbi:::smartKeys(GO.db, keytype="TERM", ..., pattern, column, fuzzy=FALSE, FUN=.keys)
 
 
 
@@ -1067,7 +1186,7 @@ setMethod("keytypes", "GODb",
 
 
 ## debug(AnnotationDbi:::.queryForKeys)
-## debug(AnnotationDbi:::.makeKeytypeChoice)
+## debug(AnnotationDbi:::.keys)
 
 ## example of keys that uses keytype
 ## keys = keys(org.Hs.eg.db, keytype="ALIAS2EG")[1:4]

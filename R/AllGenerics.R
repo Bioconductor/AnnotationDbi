@@ -13,7 +13,7 @@ setGeneric("Rattribnames<-", signature="x", function(x, value) standardGeneric("
 setGeneric("Lkeys", function(x) standardGeneric("Lkeys"))
 setGeneric("Rkeys", function(x) standardGeneric("Rkeys"))
 setGeneric("keys", signature="x",
-           function(x, keytype) standardGeneric("keys"))
+           function(x, keytype, ...) standardGeneric("keys"))
 setGeneric("Lkeys<-", signature="x", function(x, value) standardGeneric("Lkeys<-"))
 setGeneric("Rkeys<-", signature="x", function(x, value) standardGeneric("Rkeys<-"))
 setGeneric("keys<-", signature="x", function(x, value) standardGeneric("keys<-"))
