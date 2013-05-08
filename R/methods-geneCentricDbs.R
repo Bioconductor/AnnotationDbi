@@ -988,35 +988,6 @@ setMethod("cols", "GODb",
 ## method...
 
 
-## So 1st we need helpers for other "keys" situations
-## keys0 is for when we have a pattern we want to match in the keys
-.keys0 <-
-    function(x, keytype, ..., pattern, fuzzy=FALSE)
-    ## assume 'pattern' present
-{
-    FUN <- if (fuzzy) agrep else grep
-    FUN(pattern, .keys(x, keytype), value=TRUE, ...)
-}
-## keys1 is for when we have a column but no pattern
-## so we want to filter by column
-.keys1 <-
-    function(x, keytype, ..., column)
-    ## column acts as filter
-{
-    k <- suppressWarnings(select(x, .keys(x, keytype), column))
-    k[[keytype]][ !is.na(k[[column]]) ]
-}
-## keys2 is for when we have a column, and a pattern to match on that
-## column, and we want all the keys of a particular keytype that match
-## that column.
-.keys2 <-
-    function(x, keytype, ..., pattern, column, fuzzy=FALSE)
-    ## assume 'pattern', 'column' present
-{
-    FUN <- if (fuzzy) agrep else grep
-    k <- suppressWarnings(select(x, .keys(x, keytype), column))
-    k[[keytype]][ FUN(pattern, k[[column]], ...) ]
-}
 
 
 ## And we need a master helper to tie it all together
@@ -1027,7 +998,38 @@ smartKeys <-
 
     ## FUN is the base keys method
     .keys <- FUN
+    
+    ## So 1st we need helpers for other "keys" situations
+    ## keys0 is for when we have a pattern we want to match in the keys
+    .keys0 <-
+        function(x, keytype, ..., pattern, fuzzy=FALSE)
+            ## assume 'pattern' present
+        {
+            FUN <- if (fuzzy) agrep else grep
+            FUN(pattern, .keys(x, keytype), value=TRUE, ...)
+        }
+    ## keys1 is for when we have a column but no pattern
+    ## so we want to filter by column
+    .keys1 <-
+        function(x, keytype, ..., column)
+            ## column acts as filter
+        {
+            k <- suppressWarnings(select(x, .keys(x, keytype), column))
+            k[[keytype]][ !is.na(k[[column]]) ]
+        }
+    ## keys2 is for when we have a column, and a pattern to match on that
+    ## column, and we want all the keys of a particular keytype that match
+    ## that column.
+    .keys2 <-
+        function(x, keytype, ..., pattern, column, fuzzy=FALSE)
+            ## assume 'pattern', 'column' present
+        {
+            FUN <- if (fuzzy) agrep else grep
+            k <- suppressWarnings(select(x, .keys(x, keytype), column))
+            k[[keytype]][ FUN(pattern, k[[column]], ...) ]
+        }
 
+    ## Now decide which function to call...
     if (missing(pattern) && missing(column))
         k <- .keys(x, keytype)
     else if (missing(column))
@@ -1106,17 +1108,10 @@ setMethod("keys", "GODb",
 
 ## Can just get keys that match a pattern
 ## keys(org.Hs.eg.db, keytype="SYMBOL", pattern="BRCA")
-## And yet THIS works:
-## AnnotationDbi:::.keys0(org.Hs.eg.db, keytype="SYMBOL", pattern="BRCA")
-## AnnotationDbi:::smartKeys(org.Hs.eg.db, keytype="SYMBOL", pattern="BRCA", FUN=AnnotationDbi:::.keys)
 
 
 ## Can get a key that matches a pattern on some other column
 ## head(keys(org.Hs.eg.db,keytype="ENTREZID",pattern="MSX",column="SYMBOL"))
-## And this case actually works:
-## AnnotationDbi:::.keys2(org.Hs.eg.db, keytype="ENTREZID", pattern="MSX", column="SYMBOL")
-## And this format also works:
-## AnnotationDbi:::smartKeys(org.Hs.eg.db, keytype="ENTREZID", pattern="MSX", column="SYMBOL", FUN=AnnotationDbi:::.keys)
 
 
 
