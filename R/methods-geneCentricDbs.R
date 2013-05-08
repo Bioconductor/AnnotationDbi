@@ -1043,52 +1043,53 @@ smartKeys <-
 
 
 
-## TODO: swap initial SQL query for an Lkeys() call for OrgDb and ChipDb??
+## TODO: don't fail to document all the new arguments (pattern, column and fuzzy)
 setMethod("keys", "OrgDb",
     function(x, keytype, ...){
       if(missing(keytype)){
         keytype <- .chooseCentralOrgPkgSymbol(x)
       }
-##       .keys(x, keytype)
-smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE, FUN=AnnotationDbi:::.keys)
+      smartKeys(x=x, keytype=keytype, ..., FUN=AnnotationDbi:::.keys)
   }
 )
 
 setMethod("keys", "ChipDb",
     function(x, keytype, ...){
       if(missing(keytype)) keytype <- "PROBEID"
-##       .keys(x, keytype)
-smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE, FUN=AnnotationDbi:::.keys)
+      smartKeys(x=x, keytype=keytype, ..., FUN=AnnotationDbi:::.keys)
   }
 )
 
 setMethod("keys", "GODb",
     function(x, keytype, ...){
       if(missing(keytype)) keytype <- "GOID"
-##       dbQuery(dbConn(x), "SELECT go_id FROM go_term", 1L)
-smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE, FUN=AnnotationDbi:::.keys)
+      smartKeys(x=x, keytype=keytype, ..., FUN=AnnotationDbi:::.keys)
   }
 )
 
 
 ## new uses for keys:
-## now TERM is a real key?
+## now TERM is a real key? (TODO: someone tell the keytypes)
 ## head(keys(GO.db, keytype="TERM"))
 
 
-## <BOOM> This stuff is not currently working
+
 ## get TERM keys that match a particular pattern
 ## head(keys(GO.db, keytype="TERM", pattern="mitochondrion"))
 
 ## get GOIDs where a TERM exists.
 ## head(keys(GO.db, keytype="GOID", column="TERM"))
 
+
+
 ## get keys of type GOID that go with a pattern match in TERM
-## head(keys(GO.db, keytype="TERM", pattern="mitochondrion", column="GOID"))
+## head(keys(GO.db, keytype="GOID", pattern="mitochondrion", column="TERM"))
+## select(GO.db, keys =head(keys(GO.db, keytype="GOID", pattern="mitochondrion", column="TERM")), cols=c("GOID","TERM"))
+
 
 ## do the above but use fuzzy matching
-## head(keys(GO.db, keytype="TERM", pattern="mitochondrion", column="GOID", fuzzy=TRUE))
-
+## head(keys(GO.db, keytype="GOID", pattern="mitochondrion", column="TERM", fuzzy=TRUE))
+## select(GO.db, keys = head(keys(GO.db, keytype="GOID", pattern="mitochondrion", column="TERM", fuzzy=TRUE)), cols=c("GOID","TERM"))
 
 ## Can just get keys (straight up)
 ## head(keys(org.Hs.eg.db, keytype="SYMBOL"))
@@ -1102,7 +1103,7 @@ smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE
 
 ## debug(AnnotationDbi:::smartKeys)
 
-## <BOOM>
+
 ## Can just get keys that match a pattern
 ## keys(org.Hs.eg.db, keytype="SYMBOL", pattern="BRCA")
 ## And yet THIS works:
@@ -1110,7 +1111,6 @@ smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE
 ## AnnotationDbi:::smartKeys(org.Hs.eg.db, keytype="SYMBOL", pattern="BRCA", FUN=AnnotationDbi:::.keys)
 
 
-## <BOOM>
 ## Can get a key that matches a pattern on some other column
 ## head(keys(org.Hs.eg.db,keytype="ENTREZID",pattern="MSX",column="SYMBOL"))
 ## And this case actually works:
@@ -1120,8 +1120,6 @@ smartKeys(x=x, keytype=keytype, ..., pattern=pattern, column=column, fuzzy=FALSE
 
 
 
-## can try more down to the metal:
-## AnnotationDbi:::smartKeys(GO.db, keytype="TERM", ..., pattern, column, fuzzy=FALSE, FUN=.keys)
 
 
 
