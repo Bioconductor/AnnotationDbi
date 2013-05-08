@@ -1001,31 +1001,25 @@ smartKeys <-
     
     ## So 1st we need helpers for other "keys" situations
     ## keys0 is for when we have a pattern we want to match in the keys
-    .keys0 <-
-        function(x, keytype, ..., pattern, fuzzy=FALSE)
-            ## assume 'pattern' present
-        {
+    .keys0 <- function(x, keytype, ..., pattern, fuzzy=FALSE)
+        {   ## assumes 'pattern' present
             FUN <- if (fuzzy) agrep else grep
             FUN(pattern, .keys(x, keytype), value=TRUE, ...)
         }
     ## keys1 is for when we have a column but no pattern
     ## so we want to filter by column
-    .keys1 <-
-        function(x, keytype, ..., column)
-            ## column acts as filter
-        {
-            k <- suppressWarnings(select(x, .keys(x, keytype), column))
+    .keys1 <- function(x, keytype, ..., column)
+        {   ## column acts as filter
+            k <- suppressWarnings(select(x, .keys(x, keytype), column, keytype))
             k[[keytype]][ !is.na(k[[column]]) ]
         }
     ## keys2 is for when we have a column, and a pattern to match on that
     ## column, and we want all the keys of a particular keytype that match
     ## that column.
-    .keys2 <-
-        function(x, keytype, ..., pattern, column, fuzzy=FALSE)
-            ## assume 'pattern', 'column' present
-        {
+    .keys2 <- function(x, keytype, ..., pattern, column, fuzzy=FALSE)
+        {   ## assumes 'pattern', 'column' present
             FUN <- if (fuzzy) agrep else grep
-            k <- suppressWarnings(select(x, .keys(x, keytype), column))
+            k <- suppressWarnings(select(x, .keys(x, keytype), column, keytype))
             k[[keytype]][ FUN(pattern, k[[column]], ...) ]
         }
 
@@ -1092,6 +1086,8 @@ setMethod("keys", "GODb",
 ## do the above but use fuzzy matching
 ## head(keys(GO.db, keytype="GOID", pattern="mitochondrion", column="TERM", fuzzy=TRUE))
 ## select(GO.db, keys = head(keys(GO.db, keytype="GOID", pattern="mitochondrion", column="TERM", fuzzy=TRUE)), cols=c("GOID","TERM"))
+
+
 
 ## Can just get keys (straight up)
 ## head(keys(org.Hs.eg.db, keytype="SYMBOL"))
