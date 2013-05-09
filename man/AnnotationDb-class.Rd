@@ -111,7 +111,7 @@
 \usage{
   cols(x)
   keytypes(x)
-  keys(x, keytype, ..., pattern, column, fuzzy)
+  keys(x, keytype, ...)
   select(x, keys, cols, keytype, ...)
   saveDb(x, file)
   loadDb(file, dbType, dbPackage, ...)
@@ -135,14 +135,17 @@
   full name you want for your sqlite database and also where to put it.}
   \item{dbType}{dbType - not required}
   \item{dbPackage}{dbPackage - not required}
-  \item{...}{other arguments}
-  \item{pattern}{the pattern to match (used by keys)}
-  \item{column}{the column to search on. This is used by keys and is for when
-  the thing you want to pattern match is different from the keytype, or
-  when you want to simply want to get keys that have a value for the
-  thing specified by the column argument.}
-  \item{fuzzy}{TRUE or FALSE value.  Use fuzzy matching? (this is used
-  with pattern by the keys method)}
+  \item{...}{other arguments.  These include:
+    \describe{
+      \item{pattern:}{the pattern to match (used by keys)}
+      \item{column:}{the column to search on. This is used by keys and is
+	for when the thing you want to pattern match is different from
+	the keytype, or when you want to simply want to get keys that
+	have a value for the thing specified by the column argument.}
+      \item{fuzzy:}{TRUE or FALSE value.  Use fuzzy matching? (this is
+	used with pattern by the keys method)}
+    }
+  }
 }
 
 \value{
