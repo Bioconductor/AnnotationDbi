@@ -38,7 +38,7 @@
 }
 
 \usage{
-  keys(x, keytype)
+  keys(x, keytype, ...)
   #length(x)
   isNA(x)
   mappedkeys(x)

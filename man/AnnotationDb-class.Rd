@@ -135,6 +135,13 @@
   \item{dbType}{dbType - not required}
   \item{dbPackage}{dbPackage - not required}
   \item{...}{other arguments}
+  \item{pattern}{the pattern to match (used by keys)}
+  \item{column}{the column to search on. This is used by keys and is for when
+  the thing you want to pattern match is different from the keytype, or
+  when you want to simply want to get keys that have a value for the
+  thing specified by the column argument.}
+  \item{fuzzy}{TRUE or FALSE value.  Use fuzzy matching? (this is used
+  with pattern by the keys method)}
 }
 
 \value{
