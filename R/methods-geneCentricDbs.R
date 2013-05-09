@@ -1145,7 +1145,7 @@ setMethod("keytypes", "ChipDb",
 )
 
 setMethod("keytypes", "GODb",
-    function(x) return("GOID") ## only one type makes sense
+    function(x) return(c("GOID","TERM","ONTOLOGY","DEFINITION")) ## only one type makes sense
 )
 
 
