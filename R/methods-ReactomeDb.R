@@ -82,9 +82,10 @@ setMethod("cols", "ReactomeDb",
 }
 
 setMethod("keys", "ReactomeDb",
-    function(x, keytype){
+    function(x, keytype, ...){
       if(missing(keytype)) keytype <- "ENTREZID"
-      .keysReact(x, keytype)
+      #.keysReact(x, keytype)
+      smartKeys(x=x, keytype=keytype, ..., FUN=.keysReact)
     }
 )
 
@@ -316,6 +317,17 @@ setMethod("select", "ReactomeDb",
           .selectReact(x, keys, cols, keytype)
         }
 )
+
+## usage:
+## head(keys(reactome.db))
+## head(keys(reactome.db, keytype="PATHNAME"))
+## head(keys(reactome.db, keytype="PATHNAME", pattern="Homo.sapiens"))
+## k = head(keys(reactome.db, keytype="ENTREZID", pattern="Homo.sapiens", column="PATHNAME"))
+### Works, but this shows how sometimes we can only enrich by doing this... and this can be tricky!
+## select(reactome.db, k, cols=c("ENTREZID","PATHNAME"), keytype="ENTREZID")
+### The following works (but is probably too slow for a unit test)
+## length(keys(reactome.db, keytype="ENTREZID", column="GO"))
+## length(keys(reactome.db, keytype="ENTREZID"))
 
 
 

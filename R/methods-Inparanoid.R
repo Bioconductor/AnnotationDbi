@@ -197,13 +197,19 @@ setMethod("keytypes", "InparanoidDb", function(x){.inpCols(x)})
 }
 
 setMethod("keys", "InparanoidDb",
-    function(x, keytype){
+    function(x, keytype, ...){
       if(missing(keytype)){stop("Please supply a keytype argument.")}
-      .keysInp(x, keytype)
+      #.keysInp(x, keytype)
+      smartKeys(x=x, keytype=keytype, ..., FUN=.keysInp)
     }
 )
-
-
+## usage:
+## head(keys(hom.Hs.inp.db, keytype="HOMO_SAPIENS"))
+## head(keys(hom.Hs.inp.db, keytype="HOMO_SAPIENS", pattern="4$"))
+## k = head(keys(hom.Hs.inp.db, keytype="HOMO_SAPIENS", pattern="4$", column="RATTUS_NORVEGICUS"))
+## select(hom.Hs.inp.db, keys=k, cols=c("HOMO_SAPIENS","RATTUS_NORVEGICUS"), keytype="HOMO_SAPIENS")
+## length(keys(hom.Hs.inp.db, keytype="HOMO_SAPIENS", column="APIS_MELLIFERA"))
+## length(keys(hom.Hs.inp.db, keytype="HOMO_SAPIENS"))
 
 ##############################################################################
 ## Select is more complicated, but I should be able to implement it similar to

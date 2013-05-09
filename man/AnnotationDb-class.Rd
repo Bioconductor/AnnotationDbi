@@ -43,6 +43,7 @@
 
 % \alias{keys} %Not aliased here because it is already aliased in Bimap-keys.Rd
 % \alias{keys,AnnotationDb-method}
+\alias{keys}
 \alias{keys,OrgDb-method}
 \alias{keys,ChipDb-method}
 \alias{keys,GODb-method}
@@ -110,8 +111,8 @@
 \usage{
   cols(x)
   keytypes(x)
+  keys(x, keytype, ..., pattern, column, fuzzy)
   select(x, keys, cols, keytype, ...)
-
   saveDb(x, file)
   loadDb(file, dbType, dbPackage, ...)
 }

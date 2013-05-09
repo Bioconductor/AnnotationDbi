@@ -2,7 +2,6 @@
 
 \alias{Bimap-keys}
 
-\alias{keys}
 \alias{keys,Bimap-method}
 
 \alias{length,Bimap-method}
@@ -38,7 +37,6 @@
 }
 
 \usage{
-  keys(x, keytype, ...)
   #length(x)
   isNA(x)
   mappedkeys(x)
@@ -59,11 +57,6 @@
   }
   \item{i}{
     A character vector containing the keys of the map elements to extract.
-  }
-  \item{keytype}{the keytype to indicate which kind of keys are
-    desired from \code{keys} when used on a \code{AnnotationDb} object.
-    This argument is only supported for the \code{keys} method when used
-    on an \code{AnnotationDb} object or any object derived from one.
   }
 }
 
