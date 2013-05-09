@@ -142,6 +142,24 @@ test_keys <- function(){
   checkTrue(any(grepl("A", orfSckeys)))
 }
 
+test_keys_advancedArgs <- function(){
+    k1 <- head(keys(x, keytype="SYMBOL"))
+    checkTrue("A1BG" %in% k1)
+    
+    k2 <- keys(x, keytype="SYMBOL", pattern="BRCA")
+    checkTrue("BRCA1" %in% k2)
+    checkTrue(!("A1BG" %in% k2))
+    checkTrue(length(k2) < length(k1))
+
+    l1 <- length(keys(x, keytype="ENTREZID", column="PATH"))
+    l2 <- length(keys(x, keytype="ENTREZID"))
+    checkTrue(l1 < l2)
+    
+    k3 <- keys(x,keytype="ENTREZID",pattern="^MSX",column="SYMBOL")
+    res <- select(x, k3, c("ENTREZID","SYMBOL"), "ENTREZID")
+    checkTrue(any(grep("^MSX",res$SYMBOL)))
+}
+
 #########################################################################
 ## These ones are to test out some real use cases...
 test_select1 <- function(){
