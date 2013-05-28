@@ -65,7 +65,7 @@ setMethod("keytypes", "ReactomeDb",
     function(x) c("ENTREZID","GO","PATHNAME","PATHID","REACTOMEID")
 )
 
-setMethod("cols", "ReactomeDb",
+setMethod("columns", "ReactomeDb",
     function(x) c("ENTREZID","GO","PATHNAME","PATHID","REACTOMEID")
 )
 

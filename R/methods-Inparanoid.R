@@ -150,7 +150,7 @@
 }
 
 
-setMethod("cols", "InparanoidDb", function(x){.inpCols(x)})
+setMethod("columns", "InparanoidDb", function(x){.inpCols(x)})
 
 ## currently, I think the base type CAN be a valid keytype.
 setMethod("keytypes", "InparanoidDb", function(x){.inpCols(x)})

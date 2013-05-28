@@ -127,7 +127,7 @@
   \link{BimapFormatting},
   \link{AnnotationDb},
   \link{select},
-  \link{cols}
+  \link{columns}
 }
 
 \examples{

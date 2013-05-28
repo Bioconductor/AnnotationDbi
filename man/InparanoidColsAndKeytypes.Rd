@@ -101,20 +101,20 @@
 \alias{YARROWIA_LIPOLYTICA}
 
 
-\title{Descriptions of available values for \code{cols} and
+\title{Descriptions of available values for \code{columns} and
   \code{keytypes} for inparanpoid packages.}
 
 
 \description{
-  When the user calls \code{cols} or \code{keytypes} for an inparanoid
-  package, the \code{cols} and \code{keytypes} methods will give the
+  When the user calls \code{columns} or \code{keytypes} for an inparanoid
+  package, the \code{columns} and \code{keytypes} methods will give the
   full genus and species names of all the organisms that are available.
 }
 
 
 \details{
   
-  All the possible values for \code{cols} and \code{keytypes} are listed
+  All the possible values for \code{columns} and \code{keytypes} are listed
   below.
   
   \describe{
@@ -237,8 +237,8 @@
 
 \examples{
   library(hom.Hs.inp.db)
-  ## List the possible values for cols
-  cols(hom.Hs.inp.db)
+  ## List the possible values for columns
+  columns(hom.Hs.inp.db)
   ## List the possible values for keytypes
   keytypes(hom.Hs.inp.db)
   ## get some values back

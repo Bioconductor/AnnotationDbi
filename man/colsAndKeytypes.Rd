@@ -39,17 +39,17 @@
 \alias{UNIGENE}
 \alias{UNIPROT}
 
-\title{Descriptions of available values for \code{cols} and \code{keytypes}.}
+\title{Descriptions of available values for \code{columns} and \code{keytypes}.}
 
 
 \description{
   This manual page enumerates the kinds of data represented by the
-  values returned when the user calls \code{cols} or \code{keytypes}
+  values returned when the user calls \code{columns} or \code{keytypes}
 }
 
 
 \details{  
-  All the possible values for \code{cols} and \code{keytypes} are listed
+  All the possible values for \code{columns} and \code{keytypes} are listed
   below.  Users will have to actually use these methods to learn which
   of the following possible values actually apply in their case.
   
@@ -117,8 +117,8 @@
 
 \examples{
   library(hgu95av2.db)
-  ## List the possible values for cols
-  cols(hgu95av2.db)
+  ## List the possible values for columns
+  columns(hgu95av2.db)
   ## List the possible values for keytypes
   keytypes(hgu95av2.db)
   ## get some values back

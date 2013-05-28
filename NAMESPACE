@@ -124,7 +124,7 @@ exportMethods(
     "saveDb",
     "loadDb",
     "species",
-    "cols",
+    "columns",
     "keytypes",
     "select"
 )
@@ -183,5 +183,6 @@ export(
     listAllSupportedStylesBySpecies,
     listAllSupportedSeqnameStyles,
     supportedSeqnames,
-    species
+    species,
+    cols ## just for deprecating cols everywhere - remove after 2.13 release
 )

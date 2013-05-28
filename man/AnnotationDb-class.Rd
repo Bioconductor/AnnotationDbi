@@ -27,12 +27,13 @@
 
 % select and select related methods
 \alias{cols}
-\alias{cols,AnnotationDb-method}
-\alias{cols,OrgDb-method}
-\alias{cols,ChipDb-method}
-\alias{cols,GODb-method}
-\alias{cols,InparanoidDb-method}
-\alias{cols,ReactomeDb-method}
+\alias{columns}
+\alias{columns,AnnotationDb-method}
+\alias{columns,OrgDb-method}
+\alias{columns,ChipDb-method}
+\alias{columns,GODb-method}
+\alias{columns,InparanoidDb-method}
+\alias{columns,ReactomeDb-method}
 
 \alias{keytypes}
 \alias{keytypes,OrgDb-method}
@@ -70,14 +71,14 @@
   widely available set of \code{select} methods and thus allow the
   easy extraction of data from the annotation packages.
 
-  \code{select}, \code{cols} and \code{keys} are used together to
+  \code{select}, \code{columns} and \code{keys} are used together to
   extract data from an \code{AnnotationDb} object (or any object derived
   from the parent class).  Examples of classes derived from the
   \code{AnnotationDb} object include (but are not limited to):
   \code{ChipDb}, \code{OrgDb} \code{GODb}, \code{InparanoidDb} and
   \code{ReactomeDb}.
 
-  \code{cols} shows which kinds of data can be returned for the
+  \code{columns} shows which kinds of data can be returned for the
   \code{AnnotationDb} object.
   
   \code{keytypes} allows the user to discover which keytypes can be
@@ -109,7 +110,7 @@
 }
 
 \usage{
-  cols(x)
+  columns(x)
   keytypes(x)
   keys(x, keytype, ...)
   select(x, keys, cols, keytype, ...)
@@ -123,9 +124,9 @@
     \code{ChipDb} object.}
   \item{keys}{the keys to select records for from the database.  All possible 
     keys are returned by using the \code{keys} method.}
-  \item{cols}{the cols or kinds of things that can be retrieved from the 
-    database.  As with \code{keys}, all possible cols are returned by using the
-    \code{cols} method.}
+  \item{cols}{the columns or kinds of things that can be retrieved
+    from the database.  As with \code{keys}, all possible columns are
+    returned by using the \code{columns} method.}
   \item{keytype}{the keytype that matches the keys used.  For the
     \code{select} methods, this is used to indicate the kind of ID being used
     with the keys argument. For the \code{keys} method this is used to
@@ -149,7 +150,7 @@
 }
 
 \value{
-  \code{keys},\code{cols} and \code{keytypes} each return a character
+  \code{keys},\code{columns} and \code{keytypes} each return a character
     vector or possible values.  \code{select} returns a data.frame.
 }
 
@@ -166,8 +167,8 @@
 
 \examples{
 require(hgu95av2.db)
-## display the cols
-cols(hgu95av2.db)
+## display the columns
+columns(hgu95av2.db)
 ## get the 1st 6 possible keys
 keys <- head( keys(hgu95av2.db) )
 keys

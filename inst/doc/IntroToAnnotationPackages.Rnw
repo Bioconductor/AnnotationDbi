@@ -108,7 +108,7 @@ package:
 
 The most popular annotation packages have been modified so that they
 can make use of a new set of methods to more easily access their
-contents.  These four methods are named: \Rmethod{cols},
+contents.  These four methods are named: \Rmethod{columns},
 \Rmethod{keytypes}, \Rmethod{keys} and \Rmethod{select}.  And they are
 described in this vignette.  They can currently be used with all chip,
 organism, and \Rclass{TranscriptDb} packages along with the popular
@@ -138,7 +138,7 @@ you will actually see in the wild) have names like \Rclass{OrgDb},
 \Rclass{ChipDb} or \Rclass{TranscriptDb} objects.  These names
 correspond to the kind of package (and underlying schema) being
 represented.  The methods that can be applied to all of these objects
-are \Rmethod{cols}, \Rmethod{keys}, \Rmethod{keytypes} and
+are \Rmethod{columns}, \Rmethod{keys}, \Rmethod{keytypes} and
 \Rmethod{select}.
 
 
@@ -172,14 +172,14 @@ hgu95av2.db
 @ 
 
 If we want to know what kinds of data are retriveable via
-\Rmethod{select}, then we should use the \Rmethod{cols} method like
+\Rmethod{select}, then we should use the \Rmethod{columns} method like
 this:
 
-<<cols>>=
-cols(hgu95av2.db)
+<<columns>>=
+columns(hgu95av2.db)
 @ 
 
-If we are further curious to know more about those values for cols, we
+If we are further curious to know more about those values for columns, we
 can consult the help pages.  Asking about any of these values will
 pull up a manual page describing the different fields and what they
 mean.
@@ -191,7 +191,7 @@ help("SYMBOL")
 If we are curious about what kinds of fields we could potentiall use
 as keys to query the database, we can use the \Rmethod{keytypes}
 method.  In a perfect world, this method will return values very
-similar to what was returned by \Rmethod{cols}, but in reality, some
+similar to what was returned by \Rmethod{columns}, but in reality, some
 kinds of values make poor keys and so this list is often shorter.
 
 <<keytypes>>=
@@ -244,7 +244,7 @@ organism package.
 \begin{Exercise}
   Display the \Rclass{OrgDb} object for the \Biocpkg{org.Hs.eg.db} package.
   
-  Use the \Rmethod{cols} method to discover which sorts of
+  Use the \Rmethod{columns} method to discover which sorts of
   annotations can be extracted from it. Is this the same as the result
   from the \Rfunction{keytypes} method?  Use the \Rfunction{keytypes}
   method to find out.  
@@ -253,15 +253,15 @@ organism package.
   identifiers and then pass those keys in to the \Rfunction{select}
   method in such a way that you extract the gene symbol and KEGG pathway
   information for each.  Use the help system as needed to learn which
-  values to pass in to cols in order to achieve this.
+  values to pass in to columns in order to achieve this.
 \end{Exercise}
 \begin{Solution}
 <<selectOrg1>>=
 library(org.Hs.eg.db)
-cols(org.Hs.eg.db)
+columns(org.Hs.eg.db)
 @ 
 <<selectOrg2, eval=FALSE>>=
-help("SYMBOL") ## for explanation of these cols and keytypes values
+help("SYMBOL") ## for explanation of these columns and keytypes values
 @
 <<selectOrg3>>=
 keytypes(org.Hs.eg.db)
@@ -301,7 +301,7 @@ head(resultTable)
 \subsection{Using select with GO.db}
 
 When you load the GO.db package, a \Rclass{GODb} object is also
-loaded. This allows you to use the \Rmethod{cols}, \Rmethod{keys},
+loaded. This allows you to use the \Rmethod{columns}, \Rmethod{keys},
 \Rmethod{keytypes} and \Rmethod{select} methods on the contents of the
 GO ontology.  So if for example, you had a few GO IDs and wanted to know
 more about it, you could do it like this:
@@ -336,7 +336,7 @@ which build of the genome it comes from.
   Display the \Rclass{TranscriptDb} object for the 
   \Biocpkg{TxDb.Hsapiens.UCSC.hg19.knownGene} package.
   
-  As before, use the \Rmethod{cols} and \Rmethod{keytypes} methods to
+  As before, use the \Rmethod{columns} and \Rmethod{keytypes} methods to
   discover which sorts of annotations can be extracted from it.
   
   Use the \Rmethod{keys} method to extract just a few gene identifiers and
@@ -348,7 +348,7 @@ which build of the genome it comes from.
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 txdb
-cols(txdb)
+columns(txdb)
 keytypes(txdb)
 keys <- head(keys(txdb, keytype="GENEID"))
 cols <- c("TXID", "TXSTART")

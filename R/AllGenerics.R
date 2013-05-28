@@ -77,8 +77,8 @@ setGeneric("packageName", function(x) standardGeneric("packageName"))
 
 setGeneric("species", function(x) standardGeneric("species"))
 
-setGeneric("cols", signature="x",
-           function(x) standardGeneric("cols"))
+setGeneric("columns", signature="x",
+           function(x) standardGeneric("columns"))
 
 setGeneric("keytypes", signature="x",
            function(x) standardGeneric("keytypes"))

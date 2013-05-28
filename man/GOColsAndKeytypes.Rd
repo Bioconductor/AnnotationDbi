@@ -5,18 +5,18 @@
 \alias{ONTOLOGY}
 \alias{DEFINITION}
 
-\title{Descriptions of available values for \code{cols} and
+\title{Descriptions of available values for \code{columns} and
   \code{keytypes} for GO.db.}
 
 
 \description{
   This manual page enumerates the kinds of data represented by the
-  values returned when the user calls \code{cols} or \code{keytypes}
+  values returned when the user calls \code{columns} or \code{keytypes}
 }
 
 
 \details{  
-  All the possible values for \code{cols} and \code{keytypes} are listed
+  All the possible values for \code{columns} and \code{keytypes} are listed
   below.  
   
   \describe{
@@ -38,8 +38,8 @@
 
 \examples{
   library(GO.db)
-  ## List the possible values for cols
-  cols(GO.db)
+  ## List the possible values for columns
+  columns(GO.db)
   ## List the possible values for keytypes
   keytypes(GO.db)
   ## get some values back

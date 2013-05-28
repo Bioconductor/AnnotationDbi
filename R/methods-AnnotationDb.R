@@ -80,13 +80,23 @@ setMethod("saveDb", "AnnotationDb",
     }
 )
 
-setMethod("cols", "AnnotationDb",
+setMethod("columns", "AnnotationDb",
     function(x) 
     {
         tables <- dbListTables(x$conn)
         sapply(tables, dbListFields, conn=x$conn)
     }
 )
+
+## Remove this cols function after 2.13 has released
+cols <- function(x){
+    ## deprecation method
+    msg <- "'cols' has been deprecated and replaced by 'columns' for versions of Bioc that are higher than 2.13.  Please use 'columns' anywhere that you previously used 'cols'"
+    warning(paste(strwrap(msg, exdent=2), collapse="\n"))
+    
+    ## then call columns
+    columns(x)
+}
 
 ## library(AnnotationDbi)
 ## library(RSQLite)

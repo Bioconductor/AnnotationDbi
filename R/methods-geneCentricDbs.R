@@ -756,11 +756,11 @@
     return(res)
   }
   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
-  if(is.null(cols)) cols <- cols(x) ## if no cols provided: use them all
+  if(is.null(cols)) cols <- columns(x) ## if no cols provided: use them all
   ## check that the keytype matches the keys
   .testIfKeysAreOfProposedKeytype(x, keys, keytype)
 
-  ## call .simplifyCols to ensure we use same colnames as cols()
+  ## call .simplifyCols to ensure we use same colnames as columns()
   cols <- .simplifyCols(x, cols)
   ## keytype <- .swapSymbolExceptions(x, keytype)
   keytype <- .simplifyCols(x, keytype)
@@ -864,7 +864,7 @@ setMethod("select", "GODb",
 
 #############################
 ## Internally we want to reconstruct these guys so we can merge() on them
-## c <- cols(GO.db)[7]
+## c <- columns(GO.db)[7]
 ## prefix = "GO"
 ## foo = paste0(prefix,c)
 ## bar = eval(parse(text=foo))
@@ -892,18 +892,18 @@ setMethod("select", "GODb",
 }
 
 
-setMethod("cols", "OrgDb",
+setMethod("columns", "OrgDb",
     function(x){
       baseType <- .chooseCentralOrgPkgSymbol(x)
       .cols(x, baseType)
     }
 )
 
-setMethod("cols", "ChipDb",
+setMethod("columns", "ChipDb",
     function(x) .cols(x, baseType="PROBEID")
 )
 
-setMethod("cols", "GODb",
+setMethod("columns", "GODb",
     function(x) .cols(x) ## does not have a missing baseType
 )
 
@@ -1204,7 +1204,7 @@ setMethod("keytypes", "GODb",
 #############################
 ## keytype example
 
-## library(hgu95av2.db); cols(hgu95av2.db); cols(org.Hs.eg.db); head(keys(org.Hs.eg.db, "ALIAS")); keys(org.Hs.eg.db, keytype="PROBEID")## should be an error
+## library(hgu95av2.db); columns(hgu95av2.db); columns(org.Hs.eg.db); head(keys(org.Hs.eg.db, "ALIAS")); keys(org.Hs.eg.db, keytype="PROBEID")## should be an error
 
 ## library(org.Hs.eg.db); keys2 = head(keys(org.Hs.eg.db, "ALIAS"));cols = c("SYMBOL", "GO");res <- select(org.Hs.eg.db, keys2, cols, keytype="ALIAS"); head(res); dim(res)
 
@@ -1274,7 +1274,7 @@ setMethod("keytypes", "GODb",
 ## foo = select(org.Hs.eg.db, keys=head(keys(org.Hs.eg.db),n=2),cols=c("ACCNUM")); head(foo)
 
 ## But this does NOT work (fixed):
-## foo = select(org.Hs.eg.db, keys=head(keys(org.Hs.eg.db),n=2),cols=head(cols(org.Hs.eg.db))); head(foo); head(cols(org.Hs.eg.db))
+## foo = select(org.Hs.eg.db, keys=head(keys(org.Hs.eg.db),n=2),cols=head(columns(org.Hs.eg.db))); head(foo); head(columns(org.Hs.eg.db))
 
 ## debug(AnnotationDbi:::.nameExceptions)
 ## debug(AnnotationDbi:::.addNAsInPlace)
