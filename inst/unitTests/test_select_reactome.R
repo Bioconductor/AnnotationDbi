@@ -4,7 +4,7 @@ r <- reactome.db
 
 
 test_cols <- function(){
-  res <- cols(r)
+  res <- columns(r)
   checkTrue(length(res) >4)
   checkTrue("ENTREZID" %in% res)
   checkTrue("GO" %in% res)

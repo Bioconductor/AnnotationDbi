@@ -5,7 +5,7 @@ i <- hom.Hs.inp.db
 ## this tests on ones that I think will always be here (will not have their
 ## own pkg)
 test_cols <- function(){
-  res <- cols(i)
+  res <- columns(i)
   checkTrue(length(res)==100)
   checkTrue("APIS_MELLIFERA" %in% res)
   checkTrue("ANOPHELES_GAMBIAE" %in% res)

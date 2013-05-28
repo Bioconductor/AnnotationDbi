@@ -307,7 +307,7 @@ test_select11 <- function(){
   checkIdentical(c("ORF","SGD","GENENAME"), colnames(res))
 
   ## This works but is slow (therefore it's tested elsewhere)
-  ## res <- select(s, keys="YAL003W", cols(s))
+  ## res <- select(s, keys="YAL003W", columns(s))
 
   ## Another test to make sure we can join up to ORF properly
   keys <- keys(s,"ENTREZID")
@@ -376,7 +376,7 @@ test_select15 <- function(){
   ## Another bug that seems to happen in post-processing...
   ## the code that resolves duplicated values is going a bit insane...
   ## (IOW .replaceValues())
-  res <- select(x, keys="100008586", cols(x)) 
+  res <- select(x, keys="100008586", columns(x)) 
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==30)
   checkIdentical(c('ENTREZID','PFAM','IPI','PROSITE','ACCNUM','ALIAS','CHR',
