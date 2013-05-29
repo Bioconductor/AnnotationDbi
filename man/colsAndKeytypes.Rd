@@ -124,7 +124,7 @@
   ## get some values back
   keys <- head(keys(hgu95av2.db))
   keys
-  select(hgu95av2.db, keys=keys, cols=c("SYMBOL","PFAM"),
+  select(hgu95av2.db, keys=keys, columns=c("SYMBOL","PFAM"),
   keytype="PROBEID")
 
   ## More infomation about the dates and original sources for these data:

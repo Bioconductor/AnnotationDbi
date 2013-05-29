@@ -832,30 +832,37 @@
 
 
 
+
 setMethod("select", "OrgDb",
-    function(x, keys, cols, keytype) {
-          if (missing(keytype)){
-            keytype <- .chooseCentralOrgPkgSymbol(x)
+          function(x, keys, columns, keytype, ...) {
+              if (missing(keytype)){
+                  keytype <- .chooseCentralOrgPkgSymbol(x)
+              }
+              jointype <- .chooseJointType(x)
+
+              .selectWarnJT(x, keys, columns, keytype, jointype=jointype, ...)
+              ## put back following line after 2.13 releases
+ ##              .select(x, keys, columns, keytype, jointype=jointype)
           }
-          jointype <- .chooseJointType(x)
-          .select(x, keys, cols, keytype, jointype=jointype)
-        }
 )
 
 setMethod("select", "ChipDb",
-    function(x, keys, cols, keytype){
+    function(x, keys, columns, keytype, ...){
           if (missing(keytype)) keytype <- "PROBEID"
-          .select(x, keys, cols, keytype, jointype="probe_id")
+          .selectWarnJT(x, keys, columns, keytype, jointype="probe_id", ...)
+          ## put back following line after 2.13 releases
+##           .select(x, keys, columns, keytype, jointype="probe_id")
         }
 )
 
 setMethod("select", "GODb",
-    function(x, keys, cols, keytype){
+    function(x, keys, columns, keytype, ...){
           if (missing(keytype)) keytype <- "GOID"
-          .select(x, keys, cols, keytype, jointype="go_id")
+          .selectWarnJT(x, keys, columns, keytype, jointype="go_id", ...)
+          ## put back following line after 2.13 releases
+##           .select(x, keys, columns, keytype, jointype="go_id")
         }
 )
-
 
 
 

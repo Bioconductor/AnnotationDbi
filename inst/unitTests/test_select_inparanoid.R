@@ -132,7 +132,7 @@ test_collateInpQueryResults <- function(){
 test_select_otherKeytype <- function(){
   k <- head(keys(i, "MUS_MUSCULUS"))
   c <- c("APIS_MELLIFERA","AEDES_AEGYPTI")
-  res <-  select(i, keys=k, cols=c, keytype="MUS_MUSCULUS")
+  res <-  select(i, keys=k, columns=c, keytype="MUS_MUSCULUS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("MUS_MUSCULUS","AEDES_AEGYPTI", "APIS_MELLIFERA"),
@@ -142,7 +142,7 @@ test_select_otherKeytype <- function(){
 test_select_baseSpeciesKeytype <- function(){
   k <- head(head(keys(i, keytype="HOMO_SAPIENS")))
   c <- c("APIS_MELLIFERA","MUS_MUSCULUS")
-  res <-  select(i, keys=k, cols=c, keytype="HOMO_SAPIENS")
+  res <-  select(i, keys=k, columns=c, keytype="HOMO_SAPIENS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("HOMO_SAPIENS","APIS_MELLIFERA","MUS_MUSCULUS"),
@@ -152,7 +152,7 @@ test_select_baseSpeciesKeytype <- function(){
 test_select_baseSpeciesKeytype <- function(){
   k <- head(head(keys(i, keytype="HOMO_SAPIENS")))
   c <- c("APIS_MELLIFERA","HOMO_SAPIENS")
-  res <-  select(i, keys=k, cols=c, keytype="HOMO_SAPIENS")
+  res <-  select(i, keys=k, columns=c, keytype="HOMO_SAPIENS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==2)
   checkIdentical(c("HOMO_SAPIENS","APIS_MELLIFERA"),
@@ -163,7 +163,7 @@ test_select_baseSpeciesKeytype <- function(){
 test_select_baseSpeciesCols <- function(){
   k <- head(keys(i, "MUS_MUSCULUS"))
   c <- c("APIS_MELLIFERA","HOMO_SAPIENS")
-  res <-  select(i, keys=k, cols=c, keytype="MUS_MUSCULUS")
+  res <-  select(i, keys=k, columns=c, keytype="MUS_MUSCULUS")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("MUS_MUSCULUS","APIS_MELLIFERA","HOMO_SAPIENS"),

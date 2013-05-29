@@ -84,7 +84,8 @@ setGeneric("keytypes", signature="x",
            function(x) standardGeneric("keytypes"))
 
 setGeneric("select", signature="x",
-           function(x, keys, cols, keytype, ...) standardGeneric("select"))
+           function(x, keys, columns, keytype, ...) standardGeneric("select"))
+
 
 
 

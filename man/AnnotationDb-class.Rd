@@ -93,7 +93,7 @@
   it will return the keys from that keytype.
   
   \code{select} will retrieve the data as a data.frame based on
-  parameters for selected \code{keys} and \code{cols} and \code{keytype}
+  parameters for selected \code{keys} and \code{columns} and \code{keytype}
   arguments.
 
   \code{saveDb} will take an AnnotationDb object and save the database
@@ -113,7 +113,7 @@
   columns(x)
   keytypes(x)
   keys(x, keytype, ...)
-  select(x, keys, cols, keytype, ...)
+  select(x, keys, columns, keytype, ...)
   saveDb(x, file)
   loadDb(file, dbType, dbPackage, ...)
 }
@@ -124,7 +124,7 @@
     \code{ChipDb} object.}
   \item{keys}{the keys to select records for from the database.  All possible 
     keys are returned by using the \code{keys} method.}
-  \item{cols}{the columns or kinds of things that can be retrieved
+  \item{columns}{the columns or kinds of things that can be retrieved
     from the database.  As with \code{keys}, all possible columns are
     returned by using the \code{columns} method.}
   \item{keytype}{the keytype that matches the keys used.  For the
@@ -173,7 +173,7 @@ columns(hgu95av2.db)
 keys <- head( keys(hgu95av2.db) )
 keys
 ## lookup gene symbol and unigene ID for the 1st 6 keys
-select(hgu95av2.db, keys=keys, cols = c("SYMBOL","UNIGENE"))
+select(hgu95av2.db, keys=keys, columns = c("SYMBOL","UNIGENE"))
 
 ## get keys based on unigene
 keyunis <- head( keys(hgu95av2.db, keytype="UNIGENE") )
@@ -182,7 +182,7 @@ keyunis
 keytypes(hgu95av2.db)
 ## lookup gene symbol and unigene ID based on unigene IDs by setting
 ## the keytype to "UNIGENE" and passing in unigene keys:
-select(hgu95av2.db, keys=keyunis, cols = c("SYMBOL","UNIGENE"),
+select(hgu95av2.db, keys=keyunis, columns = c("SYMBOL","UNIGENE"),
        keytype="UNIGENE")
 
 }

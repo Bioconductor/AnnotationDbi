@@ -390,9 +390,10 @@ setMethod("keys", "InparanoidDb",
 
 ## select method
 setMethod("select", "InparanoidDb",
-    function(x, keys, cols, keytype){
+    function(x, keys, columns, keytype, ...){
           if (missing(keytype)) keytype <- "ENTREZID"
-          .selectInp(x, keys, cols, keytype)
+          .selectWarnInp(x, keys, columns, keytype, ...)
+##           .selectInp(x, keys, columns, keytype)
         }
 )
 

@@ -45,7 +45,7 @@
   ## get some values back
   keys <- head(keys(GO.db))
   keys
-  select(GO.db, keys=keys, cols=c("TERM","ONTOLOGY"),
+  select(GO.db, keys=keys, columns=c("TERM","ONTOLOGY"),
   keytype="GOID")
 
   ## More infomation about the dates and original sources for these data:

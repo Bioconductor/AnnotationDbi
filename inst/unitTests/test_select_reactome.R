@@ -73,7 +73,7 @@ test_collateQueryResults <- function(){
 test_select_TYPICAL <- function(){
   k <- head(keys(r, keytype="ENTREZID"))
   c <- c("ENTREZID","PATHNAME","GO","REACTOMEID")
-  res <-  select(r, keys=k, cols=c, keytype="ENTREZID")
+  res <-  select(r, keys=k, columns=c, keytype="ENTREZID")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("ENTREZID","PATHNAME","GO","REACTOMEID"), colnames(res))
@@ -82,7 +82,7 @@ test_select_TYPICAL <- function(){
 test_select_MISSING_EG <- function(){
   k <- head(keys(r, keytype="ENTREZID"))
   c <- c("PATHNAME","GO")
-  res <-  select(r, keys=k, cols=c, keytype="ENTREZID")
+  res <-  select(r, keys=k, columns=c, keytype="ENTREZID")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","PATHNAME","GO"), colnames(res))
@@ -92,7 +92,7 @@ test_select_MISSING_EG <- function(){
 test_select_ONE_COL <- function(){
   k <- head(keys(r, keytype="ENTREZID"))
   c <- c("ENTREZID")
-  res <-  select(r, keys=k, cols=c, keytype="ENTREZID")
+  res <-  select(r, keys=k, columns=c, keytype="ENTREZID")  ## Boom no warning
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==1)
   checkIdentical(c("ENTREZID"), colnames(res))
@@ -104,7 +104,7 @@ test_select_OTHERKEYTYPE <- function(){
   k <- head(keys(r, keytype="REACTOMEID"))
   k <- c(k[1:4], "109688")
   c <- c("ENTREZID","PATHNAME","GO")
-  res <-  select(r, keys=k, cols=c, keytype="REACTOMEID")
+  res <-  select(r, keys=k, columns=c, keytype="REACTOMEID")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==4)
   checkIdentical(c("REACTOMEID","ENTREZID","PATHNAME","GO"), colnames(res))  

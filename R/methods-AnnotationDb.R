@@ -88,7 +88,7 @@ setMethod("columns", "AnnotationDb",
     }
 )
 
-## Remove this cols function after 2.13 has released
+## Remove this special cols function after 2.13 has released
 cols <- function(x){
     ## deprecation method
     msg <- "'cols' has been deprecated and replaced by 'columns' for versions of Bioc that are higher than 2.13.  Please use 'columns' anywhere that you previously used 'cols'"
@@ -97,6 +97,61 @@ cols <- function(x){
     ## then call columns
     columns(x)
 }
+
+
+## Remove this special warning function after 2.13 has released
+.colsArgumentWarning <- function(){
+    ## deprecation method
+    msg <- "The 'cols' argument has been deprecated and replaced by 'columns' for versions of Bioc that are higher than 2.13.  Please use the 'columns' argument anywhere that you previously used 'cols'"
+    warning(paste(strwrap(msg, exdent=2), collapse="\n"))
+}
+
+##  Remove this select warning function after 2.13 has released
+.selectWarnJT <- function(x, keys, columns, keytype, ...){
+    
+    ## remove condition after 2.13
+    extraArgs <- list(...)
+    if("cols" %in% names(extraArgs)){
+        ## warn the user about the old argument
+        .colsArgumentWarning()
+        ## then call it using cols in place of columns
+        .select(x, keys, extraArgs[["cols"]], keytype, jointype=jointype)
+        
+    }else{
+        .select(x, keys, columns, keytype, jointype=jointype)
+    }
+}
+
+##  Remove this select warning function after 2.13 has released
+.selectWarnInp <- function(x, keys, columns, keytype, ...){
+    
+    ## remove condition after 2.13
+    extraArgs <- list(...)
+    if("cols" %in% names(extraArgs)){
+        ## warn the user about the old argument
+        .colsArgumentWarning()
+        ## then call it using cols in place of columns
+        .selectInp(x, keys, extraArgs[["cols"]], keytype)  
+    }else{
+        .selectInp(x, keys, columns, keytype)
+    }
+}
+    
+##  Remove this select warning function after 2.13 has released
+.selectWarnReact <- function(x, keys, columns, keytype, ...){
+    
+    ## remove condition after 2.13
+    extraArgs <- list(...)
+    if("cols" %in% names(extraArgs)){
+        ## warn the user about the old argument
+        .colsArgumentWarning()
+        ## then call it using cols in place of columns
+        .selectReact(x, keys, extraArgs[["cols"]], keytype)  
+    }else{
+        .selectReact(x, keys, columns, keytype)
+    }
+}
+
 
 ## library(AnnotationDbi)
 ## library(RSQLite)

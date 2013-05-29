@@ -244,7 +244,7 @@
   ## get some values back
   keys <- head(keys(hom.Hs.inp.db, keytype="HOMO_SAPIENS"))
   keys
-  select(hom.Hs.inp.db, keys=keys, cols=c("BOS_TAURUS","EQUUS_CABALLUS"),
+  select(hom.Hs.inp.db, keys=keys, columns=c("BOS_TAURUS","EQUUS_CABALLUS"),
   keytype="HOMO_SAPIENS")
 
   ## More infomation about the dates and original sources for these data:

@@ -3,7 +3,7 @@ require(RUnit)
 ## map is just to represent a classic Bimap
 map  <- org.Hs.egSYMBOL
 ## map2 represents an AnnotationDbMap mapping made by some other process for BC
-## map2 <- new("AnnotationDbMap", AnnotDb=org.Hs.eg.db, cols="ONTOLOGY")
+## map2 <- new("AnnotationDbMap", AnnotDb=org.Hs.eg.db, columns="ONTOLOGY")
 map2 <- AnnotationDbi:::makeFlatBimapUsingSelect(org.Hs.eg.db, col="ONTOLOGY")
 
 ##map3 <- AnnotationDbi:::flatten(map)

@@ -234,7 +234,7 @@ test_select9 <- function(){
   ## What about when we need to throw away extra cols?
   uniKeys <- head(keys(org.Hs.eg.db, keytype="UNIPROT"))
   cols <- c("SYMBOL", "PATH")
-  res <- quiet(select(org.Hs.eg.db, keys=uniKeys, cols=cols, keytype="UNIPROT"))
+  res <- quiet(select(org.Hs.eg.db, keys=uniKeys, columns=cols, keytype="UNIPROT"))
   checkTrue(class(res) =="data.frame")
   checkTrue(dim(res)[2] ==3)  
   checkIdentical(c("UNIPROT","SYMBOL","PATH"), colnames(res))
@@ -311,7 +311,7 @@ test_select11 <- function(){
 
   ## Another test to make sure we can join up to ORF properly
   keys <- keys(s,"ENTREZID")
-  res <- select(s, cols="ORF", keys=keys, keytype="ENTREZID")
+  res <- select(s, columns="ORF", keys=keys, keytype="ENTREZID")
   checkTrue(dim(res)[1]>0)
   checkTrue(dim(res)[2]==3)
   checkIdentical(c("ENTREZID","ORF","SGD"), colnames(res))
@@ -392,7 +392,7 @@ test_select16 <- function(){
     ## What happens if we ask for probes back...
     ## (and pass in something else as a key)
     sk = c( 'MAPK3','TIE1' )
-    res <- select(hgu95av2.db, keys=sk, cols = c("PROBEID"), keytype="SYMBOL")
+    res <- select(hgu95av2.db, keys=sk, columns = c("PROBEID"), keytype="SYMBOL")
     checkTrue(dim(res)[1]>0)
     checkTrue(dim(res)[2]==2)
     checkIdentical(c('SYMBOL','PROBEID'), colnames(res))

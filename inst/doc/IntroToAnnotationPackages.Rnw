@@ -208,14 +208,14 @@ head(keys(hgu95av2.db, keytype="SYMBOL"))
 And finally, if we have some keys, we can use \Rmethod{select} to
 extract them.  By simply using appropriate argument values with select
 we can specify what keys we want to look up values for (keys), what we
-want returned back (cols) and the type of keys that we are passing in
+want returned back (columns) and the type of keys that we are passing in
 (keytype)
 
 <<selectChip>>=
 #1st get some example keys
 k <- head(keys(hgu95av2.db,keytype="PROBEID"))
 # then call select
-select(hgu95av2.db, keys=k, cols=c("SYMBOL","GENENAME"), keytype="PROBEID")
+select(hgu95av2.db, keys=k, columns=c("SYMBOL","GENENAME"), keytype="PROBEID")
 @ 
 
 And as you can see, when you call the code above, select will try to
@@ -267,7 +267,7 @@ help("SYMBOL") ## for explanation of these columns and keytypes values
 keytypes(org.Hs.eg.db)
 uniKeys <- head(keys(org.Hs.eg.db, keytype="UNIPROT"))
 cols <- c("SYMBOL", "PATH")
-select(org.Hs.eg.db, keys=uniKeys, cols=cols, keytype="UNIPROT")
+select(org.Hs.eg.db, keys=uniKeys, columns=cols, keytype="UNIPROT")
 @
 \end{Solution}
 
@@ -291,7 +291,7 @@ head(resultTable)
 \begin{Solution}
 <<selectOrgData>>=
 annots <- select(org.Hs.eg.db, keys=rownames(resultTable),
-                 cols=c("SYMBOL","GENENAME"), keytype="ENTREZID")
+                 columns=c("SYMBOL","GENENAME"), keytype="ENTREZID")
 resultTable <- merge(resultTable, annots, by.x=0, by.y="ENTREZID")
 head(resultTable)
 @
@@ -309,7 +309,7 @@ more about it, you could do it like this:
 <<selectGO>>=
 library(GO.db)
 GOIDs <- c("GO:0042254","GO:0044183")
-select(GO.db, keys=GOIDs, cols="DEFINITION", keytype="GOID")
+select(GO.db, keys=GOIDs, columns="DEFINITION", keytype="GOID")
 @
 
 
@@ -352,7 +352,7 @@ columns(txdb)
 keytypes(txdb)
 keys <- head(keys(txdb, keytype="GENEID"))
 cols <- c("TXID", "TXSTART")
-select(txdb, keys=keys, cols=cols, keytype="GENEID")
+select(txdb, keys=keys, columns=cols, keytype="GENEID")
 
 @
 \end{Solution}
