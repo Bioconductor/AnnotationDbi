@@ -526,7 +526,7 @@
   }
   res <- paste(res, collapse=" ")
   ## then use the keytype and keys to append the WHERE clause
-  strKeys <- paste0("'",keys,"'",collapse=",")
+  strKeys <- paste0('"',keys,'"',collapse=",")
   where <- paste("WHERE ",fullKeytype,"in (",strKeys,")" )
   paste(res, where)
 }
