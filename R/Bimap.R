@@ -1396,7 +1396,7 @@ setMethod("setInpBimapFilter", "InpAnnDbBimap",
 
 makeFlatBimapUsingSelect <- function(x, col){
   suppressWarnings(tab <- select(x, keys=keys(x),
-                                 cols=col))
+                                 columns=col))
   ## tab cannot contain ANY NA values??? - seems like a dicey idea...
   ## what about keys that are unmapped but still valid?
   idx = apply(tab, MARGIN=1, function(x){!any(is.na(x))})

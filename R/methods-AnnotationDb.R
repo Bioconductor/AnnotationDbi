@@ -115,8 +115,12 @@ cols <- function(x){
         ## warn the user about the old argument
         .colsArgumentWarning()
         ## then call it using cols in place of columns
-        .select(x, keys, extraArgs[["cols"]], keytype, jointype=jointype)
-        
+        ## in this case columns will hold the value meant for keytype?
+        if(missing(keytype)){
+            .select(x, keys, extraArgs[["cols"]], keytype = columns, ...)
+        }else{
+            .select(x, keys, extraArgs[["cols"]], keytype = keytype, ...)
+        }
     }else{
         .select(x, keys, columns, keytype, jointype=jointype)
     }
@@ -131,7 +135,11 @@ cols <- function(x){
         ## warn the user about the old argument
         .colsArgumentWarning()
         ## then call it using cols in place of columns
-        .selectInp(x, keys, extraArgs[["cols"]], keytype)  
+        if(missing(keytype)){
+            .selectInp(x, keys, extraArgs[["cols"]], keytype = columns, ...)
+        }else{
+            .selectInp(x, keys, extraArgs[["cols"]], keytype = keytype, ...)
+        }
     }else{
         .selectInp(x, keys, columns, keytype)
     }
@@ -145,8 +153,12 @@ cols <- function(x){
     if("cols" %in% names(extraArgs)){
         ## warn the user about the old argument
         .colsArgumentWarning()
-        ## then call it using cols in place of columns
-        .selectReact(x, keys, extraArgs[["cols"]], keytype)  
+        ## then call it using cols in place of columns  
+        if(missing(keytype)){
+            .selectReact(x, keys, extraArgs[["cols"]], keytype = columns, ...)
+        }else{
+            .selectReact(x, keys, extraArgs[["cols"]], keytype = keytype, ...)
+        }
     }else{
         .selectReact(x, keys, columns, keytype)
     }
