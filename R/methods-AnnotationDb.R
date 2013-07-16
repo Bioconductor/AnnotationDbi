@@ -117,12 +117,29 @@ cols <- function(x){
         ## then call it using cols in place of columns
         ## in this case columns will hold the value meant for keytype?
         if(missing(keytype)){
-            .select(x, keys, extraArgs[["cols"]], keytype = columns, ...)
+            if(missing(columns)){
+                .select(x, keys, extraArgs[["cols"]], keytype=extraArgs[["kt"]],
+                        jointype=extraArgs[["jointype"]] )
+            }else{
+                .select(x, keys, extraArgs[["cols"]], keytype = columns,
+                        jointype=extraArgs[["jointype"]] )
+            }
         }else{
-            .select(x, keys, extraArgs[["cols"]], keytype = keytype, ...)
+            if(missing(keytype)){
+                .select(x, keys, extraArgs[["cols"]], keytype=extraArgs[["kt"]],
+                        jointype=extraArgs[["jointype"]] )
+            }else{
+                .select(x, keys, extraArgs[["cols"]], keytype = keytype,
+                        jointype=extraArgs[["jointype"]] )
+            }
         }
     }else{
-        .select(x, keys, columns, keytype, jointype=jointype)
+        if(missing(keytype)){
+            .select(x, keys, columns, keytype=extraArgs[["kt"]],
+                    jointype=jointype)
+        }else{
+            .select(x, keys, columns, keytype, jointype=jointype)            
+        }
     }
 }
 
@@ -136,12 +153,28 @@ cols <- function(x){
         .colsArgumentWarning()
         ## then call it using cols in place of columns
         if(missing(keytype)){
-            .selectInp(x, keys, extraArgs[["cols"]], keytype = columns, ...)
+            if(missing(columns)){
+                .selectInp(x, keys, extraArgs[["cols"]],
+                           keytype=extraArgs[["kt"]], ... )
+            }else{
+                .selectInp(x, keys, extraArgs[["cols"]], keytype = columns,
+                           ... )
+            }              
         }else{
-            .selectInp(x, keys, extraArgs[["cols"]], keytype = keytype, ...)
+            if(missing(keytype)){
+                .selectInp(x, keys, extraArgs[["cols"]],
+                           keytype=extraArgs[["kt"]], ... )
+            }else{
+                .selectInp(x, keys, extraArgs[["cols"]], keytype = keytype,
+                           ... )             
+            }
         }
     }else{
-        .selectInp(x, keys, columns, keytype)
+        if(missing(keytype)){
+            .selectInp(x, keys, columns, keytype=extraArgs[["kt"]])
+        }else{
+            .selectInp(x, keys, columns, keytype)
+        }
     }
 }
     
@@ -155,12 +188,28 @@ cols <- function(x){
         .colsArgumentWarning()
         ## then call it using cols in place of columns  
         if(missing(keytype)){
-            .selectReact(x, keys, extraArgs[["cols"]], keytype = columns, ...)
+            if(missing(columns)){
+                .selectReact(x, keys, extraArgs[["cols"]],
+                             keytype=extraArgs[["kt"]], ... )
+            }else{
+                .selectReact(x, keys, extraArgs[["cols"]], keytype = columns,
+                             ... )
+            }
         }else{
-            .selectReact(x, keys, extraArgs[["cols"]], keytype = keytype, ...)
+            if(missing(keytype)){
+                .selectReact(x, keys, extraArgs[["cols"]],
+                             keytype=extraArgs[["kt"]], ... )
+            }else{
+                .selectReact(x, keys, extraArgs[["cols"]], keytype=keytype,
+                             ... )
+            }
         }
     }else{
-        .selectReact(x, keys, columns, keytype)
+        if(missing(keytype)){
+            .selectReact(x, keys, columns, keytype=extraArgs[["kt"]])
+        }else{
+            .selectReact(x, keys, columns, keytype)
+        }
     }
 }
 

@@ -821,7 +821,7 @@
 }
 
 ## Helper for setting the jointype to an appropriate default
-.chooseJointType  <- function(x){
+.chooseJoinType  <- function(x){
   if(.getCentralID(x) == "ORF"){
     jointype <- "systematic_name"
   }else{
@@ -831,16 +831,30 @@
 }
 
 
+#######################################################################
+## So an issue was that keytype was not defined carefully enough and
+## was getting substituted when cols arg was used in conjunction with
+## no keytype specified...  So when there is not keytype, the user
+## must tell us which one it is OR we have to somehow "know"
+
+## TO FIX: I need to guess the keytype and pass it along as some other
+## name into ...
+## Hack: I will pass it in as kt
+## And halfway through this hack, it seems that if there is an
+## argument passed in AFTER your other ones that the problem I was
+## having magically clears up???  WTH?
 
 
 setMethod("select", "OrgDb",
           function(x, keys, columns, keytype, ...) {
-              if (missing(keytype)){
-                  keytype <- .chooseCentralOrgPkgSymbol(x)
-              }
-              jointype <- .chooseJointType(x)
+##               if (missing(keytype)){
+##                   keytype <- .chooseCentralOrgPkgSymbol(x)
+##               }
+              kt <- .chooseCentralOrgPkgSymbol(x)
+              jointype <- .chooseJoinType(x)
 
-              .selectWarnJT(x, keys, columns, keytype, jointype=jointype, ...)
+              .selectWarnJT(x, keys, columns, keytype, jointype=jointype,
+                            kt=kt, ...)
               ## put back following line after 2.13 releases
  ##              .select(x, keys, columns, keytype, jointype=jointype)
           }
@@ -848,11 +862,13 @@ setMethod("select", "OrgDb",
 
 setMethod("select", "ChipDb",
     function(x, keys, columns, keytype, ...){
-          if (missing(keytype)) keytype <- "PROBEID"
-          .selectWarnJT(x, keys, columns, keytype, jointype="probe_id", ...)
-          ## put back following line after 2.13 releases
-##           .select(x, keys, columns, keytype, jointype="probe_id")
-        }
+##         if (missing(keytype)) keytype <- "PROBEID"
+        kt <- "PROBEID"
+        .selectWarnJT(x, keys, columns, keytype, jointype="probe_id",
+                      kt=kt, ...)
+        ## put back following line after 2.13 releases
+        ##           .select(x, keys, columns, keytype, jointype="probe_id")
+    }
 )
 
 setMethod("select", "GODb",

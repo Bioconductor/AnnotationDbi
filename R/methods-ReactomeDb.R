@@ -313,8 +313,9 @@ setMethod("keys", "ReactomeDb",
 ## select method
 setMethod("select", "ReactomeDb",
     function(x, keys, columns, keytype, ...){
-          if (missing(keytype)) keytype <- "ENTREZID"
-          .selectWarnReact(x, keys, columns, keytype, ...)
+##           if (missing(keytype)) keytype <- "ENTREZID"
+          kt <- "ENTREZID"
+          .selectWarnReact(x, keys, columns, keytype, kt=kt, ...)
 ##           .selectReact(x, keys, columns, keytype)
         }
 )
