@@ -746,6 +746,10 @@
     }    
 }
 
+.testForValidKeytype <- function(x, keytype){
+  pkts <- keytypes(x)
+  if(!(keytype %in% pkts)){ stop("Please choose a valid keytype") }
+}
 
 ## the core of the select method for GO org and chip packages.
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
@@ -759,7 +763,9 @@
   if(is.null(cols)) cols <- columns(x) ## if no cols provided: use them all
   ## check that the keytype matches the keys
   .testIfKeysAreOfProposedKeytype(x, keys, keytype)
-
+  ## And that the keytype is valid
+  .testForValidKeytype(x, keytype)
+  
   ## call .simplifyCols to ensure we use same colnames as columns()
   cols <- .simplifyCols(x, cols)
   ## keytype <- .swapSymbolExceptions(x, keytype)
@@ -967,6 +973,9 @@ setMethod("columns", "GODb",
   ## have to swap keytype
   ## keytype <- .swapSymbolExceptions(x, keytype)
   keytype <- .simplifyCols(x, keytype)
+
+  .testForValidKeytype(x, keytype)
+  
   ## Some org packages may have entrez genes in weird places...
   centralID <- .getCentralID(x)
   EGgeneTable <- character()

@@ -210,7 +210,11 @@ test_select5 <- function(){
 test_select6 <- function(){
   keys <- head(keys(hgu95av2.db))
   cols <- c("SYMBOL","ENTREZID", "GO")
+  ## tests for bad keys:
   checkException(select(hgu95av2.db, keys, cols, keytype="ENTREZID"))
+  ## also catch bogus keytype arguments
+  checkException(select(hgu95av2.db, keys, cols, keytype="FOO"))
+  checkException(keys(hgu95av2.db, keytype="FOO"))
 }
 
 test_select7 <- function(){  
