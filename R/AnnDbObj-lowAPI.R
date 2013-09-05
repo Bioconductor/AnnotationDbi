@@ -30,15 +30,24 @@
 ### The "showQCData" function.
 ###
 
+## I need this function to see what mappings exist and only report if
+## they DO exist.  But I DO want to use the mappings in addition to
+## the map_counts table (because otherwise I have not verified that
+## they exist and only looked that the map_counts expect them to
+## exist).
+
 showQCData <- function(prefix, datacache){
      cat(paste0("Quality control information for ", prefix, ":\n\n\n"))
      map_counts = createMAPCOUNTS(dbconn(datacache), prefix) 
      cat("This package has the following mappings:\n\n")
      for(i in seq_len(length(map_counts))){
          mapname <- names(map_counts)[i]
-         cat(mapname, "has", map_counts[i], "mapped keys (of",
-             length(get(mapname)), "keys)\n")
-  }
+         map <- mget(mapname,inherits=TRUE,ifnotfound=NA)
+         if(!is.na(map)[[1]]){
+             cat(mapname, "has", map_counts[i], "mapped keys (of",
+                 length(map[[1]]), "keys)\n")
+         }
+     }
      
      cat("\n\nAdditional Information about this package:\n\n")
      cat(paste0("DB schema: ",dbmeta(datacache, 'DBSCHEMA'), "\n"))
