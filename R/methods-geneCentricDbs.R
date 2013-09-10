@@ -849,6 +849,12 @@
         sql <- c(sql, paste("LEFT JOIN ",tabs[i],"USING (_id)"))
     }
     sql <- paste(sql, collapse=" ")
+    ## add the where clause
+    strKeys <- paste0('"',keys,'"',collapse=",")
+    fullKeytype <- tabs[names(tabs)==keytype]
+    fullKeytype <- paste(fullKeytype, names(fullKeytype), sep=".") 
+    where <- paste("WHERE ",fullKeytype,"in (",strKeys,")" )
+    sql <- paste(sql, where)
     ## then call that
     res <- dbQuery(dbConn(x), sql)
     
@@ -856,6 +862,8 @@
     ## came in.  This will have to be done via math rather than using
     ## a blacklist (since we don't know which cols will create a
     ## problem up-front).
+
+## BUG: this is not filtering based on the keys.  Get them into the query!
     
     ## cleanup and re-organize
     .resort(res, keys, jointype=keytype, fields)
