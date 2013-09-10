@@ -840,12 +840,17 @@
     ## Then get the tables to go with each one.
     tabs <- sapply(fields, .deriveTableNameFromField, x=x)
     ## make fully qualified fields
-    f.fields <- paste(tabs, fields, sep=".")    
-    
-    ## tabs are the table names and I need to do like this
-    sql <- paste("SELECT ",paste(f.fields, collapse=",")," FROM",tabs[1])
-    for(i in 2:length(tabs)){
-        sql <- c(sql, paste("LEFT JOIN ",tabs[i],"USING (_id)"))
+    f.fields <- paste(tabs, fields, sep=".")
+    ## Make non-redundant list of tables to visit
+    nrTabs <- unique(tabs)
+    ## Now join to each table
+    for(i in seq_along(nrTabs)){
+        if(i==1){
+            sql <- paste("SELECT ",paste(f.fields, collapse=","),
+                         " FROM",tabs[1])
+        }else{
+            sql <- c(sql, paste("LEFT JOIN ",nrTabs[i],"USING (_id)"))
+        }
     }
     sql <- paste(sql, collapse=" ")
     ## add the where clause
