@@ -228,6 +228,7 @@ test_select7 <- function(){
 
 test_select8 <- function(){
   cols <- c("ENTREZID")
+  keys <- head(keys(org.Hs.eg.db),n=3)
   res <- select(org.Hs.eg.db, keys, cols)
   checkTrue(class(res) =="data.frame")
   checkTrue(dim(res)[2] ==1)  

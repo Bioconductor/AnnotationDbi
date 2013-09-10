@@ -834,7 +834,6 @@
 ## to pull out multiple fields at once. (like GO)
 
 .noSchemaSelect <- function(x, keys=NULL, cols=NULL, keytype){
-
     
     ## 1st pool all the fields we need to extract
     fields <- unique(c(cols, keytype))
@@ -856,22 +855,23 @@
     where <- paste("WHERE ",fullKeytype,"in (",strKeys,")" )
     sql <- paste(sql, where)
     ## then call that
-    res <- dbQuery(dbConn(x), sql)
-    
-    ## TODO: add code to warn if there are more rows than keys that
-    ## came in.  This will have to be done via math rather than using
-    ## a blacklist (since we don't know which cols will create a
-    ## problem up-front).
-
-## BUG: this is not filtering based on the keys.  Get them into the query!
-    
+    res <- dbQuery(dbConn(x), sql)    
     ## cleanup and re-organize
     .resort(res, keys, jointype=keytype, fields)
 }
 
+.isSingleString <- function(x){
+    is.atomic(x) && length(x) == 1L && is.character(x)
+}
 
 ## general select function
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
+    if (!.isSingleString(keytype)) 
+        stop("'keytype' must be a single string")
+    if (!is.character(cols))
+        stop("'columns' must be a character vector")
+    if (!is.character(keys))
+        stop("'keys' must be a character vector")   
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
     if(schema=="NOSCHEMA_DB"){
         .noSchemaSelect(x, keys, cols, keytype)
@@ -1119,6 +1119,8 @@ setMethod("columns", "GODb",
 
 ## general keys function
 .keys <- function(x, keytype){
+    if (!.isSingleString(keytype)) 
+        stop("'keytype' must be a a single string")
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
     if(schema=="NOSCHEMA_DB"){
         .noSchemaKeys(x, keytype)
