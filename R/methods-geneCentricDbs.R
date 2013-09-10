@@ -10,7 +10,8 @@
   keytype <- switch(EXPR = centralID,
                     "EG" = "ENTREZID",
                     "TAIR" = "TAIR",
-                    "ORF" = "ORF")
+                    "ORF" = "ORF",
+                    "GID" = "GID")
   keytype
 }
 
@@ -752,7 +753,7 @@
 }
 
 ## the core of the select method for GO org and chip packages.
-.select <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
+.legacySelect <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
   ## if asked for what they have, just return that.
   if(all(cols %in% keytype)  && length(cols)==1){
     res <- data.frame(keys=keys)
@@ -825,6 +826,54 @@
   rownames(res) <- NULL
   res
 }
+
+
+## This just needs to generate a simple query and then return the
+## results with no _id's
+## A simple strategy will work EXCEPT for the weird case where I need
+## to pull out multiple fields at once. (like GO)
+
+.noSchemaSelect <- function(x, keys=NULL, cols=NULL, keytype){
+
+    
+    ## 1st pool all the fields we need to extract
+    fields <- unique(c(cols, keytype))
+    ## Then get the tables to go with each one.
+    tabs <- sapply(fields, .deriveTableNameFromField, x=x)
+    ## make fully qualified fields
+    f.fields <- paste(tabs, fields, sep=".")    
+    
+    ## tabs are the table names and I need to do like this
+    sql <- paste("SELECT ",paste(f.fields, collapse=",")," FROM",tabs[1])
+    for(i in 2:length(tabs)){
+        sql <- c(sql, paste("LEFT JOIN ",tabs[i],"USING (_id)"))
+    }
+    sql <- paste(sql, collapse=" ")
+    ## then call that
+    res <- dbQuery(dbConn(x), sql)
+    
+    ## TODO: add code to warn if there are more rows than keys that
+    ## came in.  This will have to be done via math rather than using
+    ## a blacklist (since we don't know which cols will create a
+    ## problem up-front).
+    
+    ## cleanup and re-organize
+    .resort(res, keys, jointype=keytype, fields)
+}
+
+
+## general select function
+.select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
+    schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
+    if(schema=="NOSCHEMA_DB"){
+        .noSchemaSelect(x, keys, cols, keytype)
+    }else{
+        .legacySelect(x, keys, cols, keytype, jointype)
+    }
+}
+
+
+
 
 ## Helper for setting the jointype to an appropriate default
 .chooseJoinType  <- function(x){
@@ -905,7 +954,7 @@ setMethod("select", "GODb",
 ## just the table names, or it might be a list of mappings
 
 
-.cols <- function(x, baseType){
+.legacyCols <- function(x, baseType){
   ## cols <- .makeColAbbrs(x)
   cols <- names(.defineTables(x))
   if(!missing(baseType)){
@@ -918,6 +967,31 @@ setMethod("select", "GODb",
   ## .cols does not care about your names
   names(cols) <- NULL
   unique(cols)
+}
+
+## These helpers will go into the DB and extract col values for newer
+## NOSCHEMA_DB's
+
+.getDataTables <- function(con){
+  tables <- dbListTables(con)
+  tables[!tables %in% c("metadata","map_metadata","map_counts")]
+}
+
+.noSchemaCols <- function(x, baseType){
+  con <- dbConn(x)
+  tables <- .getDataTables(con)
+  cols <- unique(unlist(sapply(tables, FUN=dbListFields, con=con)))
+  cols[!cols %in% "_id"]
+}
+
+## general .cols function
+.cols <- function(x, baseType){
+    schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
+    if(schema=="NOSCHEMA_DB"){
+        .noSchemaCols(x, baseType)
+    }else{
+        .legacyCols(x, baseType)
+    }
 }
 
 
@@ -969,7 +1043,7 @@ setMethod("columns", "GODb",
 }
 
 
-.keys <- function(x, keytype){
+.legacyKeys <- function(x, keytype){
   ## have to swap keytype
   ## keytype <- .swapSymbolExceptions(x, keytype)
   keytype <- .simplifyCols(x, keytype)
@@ -1014,12 +1088,42 @@ setMethod("columns", "GODb",
   res[!is.na(res)]
 }
 
+
+## special functions for newer NOSCHEMA_DB's
+.deriveTableNameFromField <- function(field, x){
+    con <- dbConn(x)
+    tables <- .getDataTables(con)
+    colTabs <- sapply(tables, FUN=dbListFields, con=con)
+    m <- unlist2(sapply(colTabs, match, field))  ## cannot ever be repeated
+    tab <- names(m)[!is.na(m)]
+    if(length(tab)!=1){stop("Two fields in the source DB have the same name.")}
+    tab
+}
+
+.noSchemaKeys <- function(x, keytype){
+    tab <- .deriveTableNameFromField(field=keytype, x)
+    ## So now we know table name (tab) and field (keytype)
+    sql <- paste("SELECT",keytype,"FROM",tab)
+    res <- dbQuery(dbConn(x), sql, 1L)
+    res[!is.na(res)]
+}
+
+
+## general keys function
+.keys <- function(x, keytype){
+    schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
+    if(schema=="NOSCHEMA_DB"){
+        .noSchemaKeys(x, keytype)
+    }else{
+        .legacyKeys(x, keytype)
+    }
+}
+
+
 ####################################################################
 ## So the new idea is that each place where I want to "enhance" keys,
 ## I should just be able to use a helper to wrap up the actual keys
 ## method...
-
-
 
 
 ## And we need a master helper to tie it all together
