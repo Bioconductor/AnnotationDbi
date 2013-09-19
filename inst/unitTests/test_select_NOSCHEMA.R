@@ -18,10 +18,10 @@ finchCols <- c("CHROMOSOME","SYMBOL","GENENAME","GID","GO","EVIDENCE",
 
 ## lower level tests (more useful)
 test_keysLow <- function(){
-    keytype <- "CHROMOSOME"
-    res <- unique(AnnotationDbi:::.noSchemaKeys(x, keytype))
+    res <- unique(AnnotationDbi:::.noSchemaKeys(x, "CHROMOSOME"))
     checkTrue(all(sort(res) == sort(finchCsomes)))
 }
+
 
 test_selectLow <- function(){
     keys <- "100008579"
@@ -30,7 +30,23 @@ test_selectLow <- function(){
     res <- AnnotationDbi:::.noSchemaSelect(x, keys, cols, keytype)
     checkTrue(all(res==c("100008579","EGR1")))
     checkTrue(all(colnames(res)==c("GID","SYMBOL")))
+
+    keys <- "brain-derived neurotrophic factor"
+    cols <- c("SYMBOL","GID")
+    keytype <- "GENENAME"
+    res <- AnnotationDbi:::.noSchemaSelect(x, keys, cols, keytype)
+    checkTrue(all(res==c("brain-derived neurotrophic factor","BDNF","751584")))
+    checkTrue(all(colnames(res)==c("GENENAME","SYMBOL","GID")))
+
+    keys <- "brain-derived neurotrophic factor"
+    cols <- c("GO","GID")
+    keytype <- "GENENAME"
+    res <- head(AnnotationDbi:::.noSchemaSelect(x, keys, cols, keytype),n=1)
+    checkTrue(all(res==c("brain-derived neurotrophic factor","GO:0001657",
+                    "751584")))
+    checkTrue(all(colnames(res)==c("GENENAME","GO","GID")))    
 }
+
 
 ## high level tests (does this dispatch right etc.?)
 test_columns <- function(){
