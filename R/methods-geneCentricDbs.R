@@ -869,6 +869,8 @@
     is.atomic(x) && length(x) == 1L && is.character(x)
 }
 
+## TODO for chip support: 1) the following needs to decide based on the schema of x (if its an orgDb) OR of the associated orgDb (if it's a chipDb) 2) attach clause needs to be added to .noSchemaSelect for when it's a chipDb that has a noSchema based orgDb.  Old school chipDbs (even if made the new way), should already work as expected using .legacySelect().
+
 ## general select function
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
     if (!.isSingleString(keytype)) 
