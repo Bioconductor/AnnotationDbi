@@ -1,5 +1,35 @@
  	**************************************************
 	*						 *
+	*	        1.24.x SERIES NEWS		 *
+	*						 *
+	**************************************************
+
+
+		CHANGES IN AnnotationDbi VERSION 1.22.x
+
+NEW FEATURES and API changes
+
+    o keys method now has new arguments to allow for more
+    sophisticated filtering.
+
+    o cols method is now the columns method to make for a more
+    constistent interface.
+
+    o cols argument is now the columns argument (for select) to also
+    make the interface consistent across all use cases
+
+BUG FIXES AND CODE MAINTENANCE
+
+    o better argument checking for select and related methods
+
+    o keys that end with ' will no longer cause grief except to
+    hapless life scientists who will still have to wonder who in their
+    right mind thinks it's a good idea for a gene symbol to be the
+    same except end with a 'prime'.
+
+
+ 	**************************************************
+	*						 *
 	*	        1.22.x SERIES NEWS		 *
 	*						 *
 	**************************************************
