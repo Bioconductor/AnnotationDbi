@@ -12,7 +12,7 @@ Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db,
           org.Sc.sgd.db, org.At.tair.db, KEGG.db, RUnit,
           TxDb.Hsapiens.UCSC.hg19.knownGene, hom.Hs.inp.db,
           org.Hs.eg.db, seqnames.db, reactome.db, AnnotationForge, 
-	  graph, org.TguttataTestingSubset.eg.db
+	  graph, org.TguttataTestingSubset.eg.db, BiocStyle, knitr
 Collate: 00RTobjs.R
          unlist2.R
          AllGenerics.R
@@ -54,3 +54,4 @@ Collate: 00RTobjs.R
          test_AnnotationDbi_package.R
 License: Artistic-2.0
 biocViews: Annotation, Infrastructure
+VignetteBuilder: knitr

@@ -1,44 +1,14 @@
 %\VignetteIndexEntry{AnnotationDbi: Introduction To Bioconductor Annotation Packages}
 %\VignetteDepends{org.Hs.eg.db,TxDb.Hsapiens.UCSC.hg19.knownGene,hom.Hs.inp.db}
+%\VignetteKeywords{annotation, database}
+%\VignettePackage{AnnotationDbi}
+%\VignetteEngine{knitr::knitr}
 
 \documentclass[11pt]{article}
 
-
-\usepackage{Sweave}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{graphics}
-\usepackage{latexsym, amsmath, amssymb}
-\usepackage{authblk}
-\usepackage[colorlinks=true, linkcolor=Blue, urlcolor=Blue,
-  citecolor=Blue]{hyperref}
-
-%% Simple macros
-
-\newcommand{\code}[1]{{\texttt{#1}}}
-\newcommand{\file}[1]{{\texttt{#1}}}
-
-\newcommand{\software}[1]{\textsl{#1}}
-\newcommand\R{\textsl{R}}
-\newcommand\Bioconductor{\textsl{Bioconductor}}
-\newcommand\Rpackage[1]{{\textsl{#1}\index{#1 (package)}}}
-\newcommand\Biocpkg[1]{%
-  {\href{http://bioconductor.org/packages/devel/bioc/html/#1.html}%
-    {\textsl{#1}}}%
-  \index{#1 (package)}}
-\newcommand\Rpkg[1]{%
-  {\href{http://cran.fhcrc.org/web/devel/#1/index.html}%
-    {\textsl{#1}}}%
-  \index{#1 (package)}}
-\newcommand\Biocdatapkg[1]{%
-  {\href{http://bioconductor.org/packages/devel/data/experiment/html/#1.html}%
-    {\textsl{#1}}}%
-  \index{#1 (package)}}
-\newcommand\Robject[1]{{\small\texttt{#1}}}
-\newcommand\Rclass[1]{{\textit{#1}\index{#1 (class)}}}
-\newcommand\Rfunction[1]{{{\small\texttt{#1}}\index{#1 (function)}}}
-\newcommand\Rmethod[1]{{\texttt{#1}}}
-\newcommand\Rfunarg[1]{{\small\texttt{#1}}}
-\newcommand\Rcode[1]{{\small\texttt{#1}}}
+<<style, eval=TRUE, echo=FALSE, results='asis'>>=
+BiocStyle::latex()
+@
 
 %% Question, Exercise, Solution
 \usepackage{theorem}
@@ -55,12 +25,17 @@
 }{\bigskip}
 
 
-
-
 \title{AnnotationDbi: Introduction To Bioconductor Annotation Packages}
 \author{Marc Carlson}
 
-\SweaveOpts{keep.source=TRUE}
+%% \SweaveOpts{keep.source=TRUE}
+
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(tidy=FALSE)
+@
+
+
 \begin{document}
 
 \maketitle
@@ -108,8 +83,8 @@ package:
 
 The most popular annotation packages have been modified so that they
 can make use of a new set of methods to more easily access their
-contents.  These four methods are named: \Rmethod{columns},
-\Rmethod{keytypes}, \Rmethod{keys} and \Rmethod{select}.  And they are
+contents.  These four methods are named: \Rfunction{columns},
+\Rfunction{keytypes}, \Rfunction{keys} and \Rfunction{select}.  And they are
 described in this vignette.  They can currently be used with all chip,
 organism, and \Rclass{TranscriptDb} packages along with the popular
 GO.db package.
@@ -138,8 +113,8 @@ you will actually see in the wild) have names like \Rclass{OrgDb},
 \Rclass{ChipDb} or \Rclass{TranscriptDb} objects.  These names
 correspond to the kind of package (and underlying schema) being
 represented.  The methods that can be applied to all of these objects
-are \Rmethod{columns}, \Rmethod{keys}, \Rmethod{keytypes} and
-\Rmethod{select}.
+are \Rfunction{columns}, \Rfunction{keys}, \Rfunction{keytypes} and
+\Rfunction{select}.
 
 
 \subsection{ChipDb objects and the select method}
@@ -172,7 +147,7 @@ hgu95av2.db
 @ 
 
 If we want to know what kinds of data are retriveable via
-\Rmethod{select}, then we should use the \Rmethod{columns} method like
+\Rfunction{select}, then we should use the \Rfunction{columns} method like
 this:
 
 <<columns>>=
@@ -189,9 +164,9 @@ help("SYMBOL")
 @ 
 
 If we are curious about what kinds of fields we could potentiall use
-as keys to query the database, we can use the \Rmethod{keytypes}
+as keys to query the database, we can use the \Rfunction{keytypes}
 method.  In a perfect world, this method will return values very
-similar to what was returned by \Rmethod{columns}, but in reality, some
+similar to what was returned by \Rfunction{columns}, but in reality, some
 kinds of values make poor keys and so this list is often shorter.
 
 <<keytypes>>=
@@ -199,13 +174,13 @@ keytypes(hgu95av2.db)
 @ 
 
 If we want to extract some sample keys of a particular type, we can
-use the \Rmethod{keys} method.
+use the \Rfunction{keys} method.
 
 <<keys>>=
 head(keys(hgu95av2.db, keytype="SYMBOL"))
 @ 
 
-And finally, if we have some keys, we can use \Rmethod{select} to
+And finally, if we have some keys, we can use \Rfunction{select} to
 extract them.  By simply using appropriate argument values with select
 we can specify what keys we want to look up values for (keys), what we
 want returned back (columns) and the type of keys that we are passing in
@@ -244,7 +219,7 @@ organism package.
 \begin{Exercise}
   Display the \Rclass{OrgDb} object for the \Biocpkg{org.Hs.eg.db} package.
   
-  Use the \Rmethod{columns} method to discover which sorts of
+  Use the \Rfunction{columns} method to discover which sorts of
   annotations can be extracted from it. Is this the same as the result
   from the \Rfunction{keytypes} method?  Use the \Rfunction{keytypes}
   method to find out.  
@@ -301,8 +276,8 @@ head(resultTable)
 \subsection{Using select with GO.db}
 
 When you load the GO.db package, a \Rclass{GODb} object is also
-loaded. This allows you to use the \Rmethod{columns}, \Rmethod{keys},
-\Rmethod{keytypes} and \Rmethod{select} methods on the contents of the
+loaded. This allows you to use the \Rfunction{columns}, \Rfunction{keys},
+\Rfunction{keytypes} and \Rfunction{select} methods on the contents of the
 GO ontology.  So if for example, you had a few GO IDs and wanted to know
 more about it, you could do it like this:
 
@@ -336,11 +311,11 @@ which build of the genome it comes from.
   Display the \Rclass{TranscriptDb} object for the 
   \Biocpkg{TxDb.Hsapiens.UCSC.hg19.knownGene} package.
   
-  As before, use the \Rmethod{columns} and \Rmethod{keytypes} methods to
+  As before, use the \Rfunction{columns} and \Rfunction{keytypes} methods to
   discover which sorts of annotations can be extracted from it.
   
-  Use the \Rmethod{keys} method to extract just a few gene identifiers and
-  then pass those keys in to the \Rmethod{select} method in such a
+  Use the \Rfunction{keys} method to extract just a few gene identifiers and
+  then pass those keys in to the \Rfunction{select} method in such a
   way that you extract the transcript ids and transcript starts for each.
 \end{Exercise}
 \begin{Solution}
@@ -358,7 +333,7 @@ select(txdb, keys=keys, columns=cols, keytype="GENEID")
 \end{Solution}
 
 As is widely known, in addition to providing access via the
-\Rmethod{select} method, \Rclass{TranscriptDb} objects also provide
+\Rfunction{select} method, \Rclass{TranscriptDb} objects also provide
 access via the more familiar \Rfunction{transcripts},
 \Rfunction{exons}, \Rfunction{cds}, \Rfunction{transcriptsBy},
 \Rfunction{exonsBy} and \Rfunction{cdsBy} methods.  For those who do

@@ -2,16 +2,18 @@
 %\VignetteDepends{hgu95av2.db}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
+%\VignetteEngine{knitr::knitr}
+
 \documentclass[11pt]{article}
 
-\usepackage{theorem}
+<<style, eval=TRUE, echo=FALSE, results='asis'>>=
+BiocStyle::latex()
+@
 
-\newcommand{\Rfunction}[1]{{\texttt{#1}}}
-\newcommand{\Robject}[1]{{\texttt{#1}}}
-\newcommand{\Rpackage}[1]{{\textit{#1}}}
-\newcommand{\Rclass}[1]{{\textit{#1}}}
+
 
 %% Excercises and Questions
+\usepackage{theorem}
 \theoremstyle{break} \newtheorem{Ex}{Exercise}
 \theoremstyle{break} \newtheorem{Q}{Question}
 %% And solution or answer
@@ -20,7 +22,13 @@
 \title{How to use bimaps from the ".db" annotation packages}
 \author{Marc Carlson, Herve Pages, Seth Falcon, Nianhua Li}
 
-\SweaveOpts{keep.source=TRUE}
+%% \SweaveOpts{keep.source=TRUE}
+
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(tidy=FALSE)
+@
+
 
 \begin{document}
 
@@ -107,7 +115,7 @@ For a complete listing of the different schemas used by various
 packages, users can use the \Rfunction{available.dbschemas} function.
 This list will also tell you which model organisms are supported.
 
-<<<available schemas, results=hide>>=
+<<<available schemas, results='hide'>>=
 require(org.Hs.eg.db)
 require(AnnotationForge)
 available.dbschemas()
@@ -133,11 +141,11 @@ In addition, new methods like \Rfunction{[}, \Rfunction{toTable},
 \Rfunction{subset} and others provide some additional flexibility in
 accessing the annotation data.
 
-<<setup0, results=hide, echo=FALSE>>=
+<<setup0, results='hide', echo=FALSE>>=
 options(continue=" ", prompt="R> ", width=72L)
 @ 
 
-<<setup, results=hide>>=
+<<setup, results='hide'>>=
 library("hgu95av2.db")
 @ 
 
@@ -154,7 +162,7 @@ the \Rpackage{hgu95av2.db} software package.  Use search() to see that
 an organism package was also loaded and then use the approriate
 "\_dbschema" methods to the schema for the \Rpackage{hgu95av2.db} and
 \Rpackage{org.Hs.eg.db} packages.
-<<Question #1, echo=FALSE, results=hide>>=
+<<Question #1, echo=FALSE, results='hide'>>=
 library("hgu95av2.db")
 search()
 hgu95av2_dbschema()
@@ -207,7 +215,7 @@ package.  Some common types of information include gene symbols
 (ENSEMBL) and chromosome start and stop locations (CHRLOC and
 CHRLOCEND).  Each mapping will have a manual page that you can read to
 describe the data in the mapping and where it came from.
-<<helpDemo, eval= FALSE, results=hide>>=
+<<helpDemo, eval= FALSE, results='hide'>>=
 ?hgu95av2CHRLOC
 @ 
 
@@ -215,7 +223,7 @@ describe the data in the mapping and where it came from.
 For the probes in 'probes' above, use the annotation mappings to find
 the chromosome start locations.
 
-<<Question #2, echo=FALSE, results=hide>>=
+<<Question #2, echo=FALSE, results='hide'>>=
 mget(probes, hgu95av2CHRLOC, ifnotfound=NA)[1:2]
 @
 \end{Ex}
@@ -298,7 +306,7 @@ details about these IDs. \Rfunction{Term},\Rfunction{GOID},
 \Rfunction{Secondary} are all useful ways of getting additional
 information about a particular GO ID.  For example:
 
-<<revmap2>>=
+<<revmap2b>>=
 Term("GO:0000018")
 Definition("GO:0000018")
 @ 
@@ -310,7 +318,7 @@ would correspond to those.  Then find the GO terms that are associated
 with those entrez gene IDs.
 
 \Rpackage{org.Hs.eg.db} packages.
-<<Question #3, echo=FALSE, results=hide>>=
+<<Question #3, echo=FALSE, results='hide'>>=
 rs = ls(revmap(org.Hs.egREFSEQ))[4:6]
 EGs = mget(rs, revmap(org.Hs.egREFSEQ), ifnotfound=NA)
 ##Then get the GO terms.
@@ -431,7 +439,7 @@ How many probesets do not have a GO mapping for the \Rpackage{hgu95av2.db}
 package?  How many have no mapping?  Find a probeset that has a GO mapping. Now look at the GO
 mappings for this probeset in table form.
 
-<<Question #4, echo=FALSE, results=hide>>=
+<<Question #4, echo=FALSE, results='hide'>>=
 
 count.mappedLkeys(hgu95av2GO)
 Llength(hgu95av2GO) - count.mappedLkeys(hgu95av2GO)
@@ -629,7 +637,7 @@ how to access these databases from R.  With each package, you will
 also get a method that will print the schema for its database, you can
 view this to see what sorts of tables are present etc.
 
-<<orgSchema, results=hide>>=
+<<orgSchema, results='hide'>>=
 org.Hs.eg_dbschema() 
 @ 
 
@@ -637,13 +645,13 @@ To access the data in a database, you will need to connect to it.
 Fortunately, each package will automatically give you a connection
 object to that database when it loads.
 
-<<connObj, results=hide>>=
+<<connObj, results='hide'>>=
 org.Hs.eg_dbconn()
 @ 
 
 You can use this connection object like this:
 
-<<connObj, results=hide>>=
+<<connObj2, results='hide'>>=
 query <- "SELECT gene_id FROM genes LIMIT 10;"
 result = dbGetQuery(org.Hs.eg_dbconn(), query)
 result
@@ -655,7 +663,7 @@ result
 \begin{Ex}
 Retrieve the entrez gene ID and chromosome by using a database query.  Show how you could do the same thing by using \Rfunction{toTable}
 
-<<Question #5, echo=FALSE, results=hide>>=
+<<Question #5, echo=FALSE, results='hide'>>=
 sql <- "SELECT gene_id, chromosome FROM genes AS g, chromosomes AS c WHERE g._id=c._id;"
 dbGetQuery(org.Hs.eg_dbconn(),sql)[1:10,]
 
@@ -718,7 +726,7 @@ All of the above code could have been reduced to a single SQL query
 with the SQLite-based packages. But to put together this query, you
 would need to look 1st at the schema to know what tables are present:
 
-<<schema, results=hide>>=
+<<schema, results='hide'>>=
 hgu95av2_dbschema() 
 @ 
 
@@ -728,13 +736,13 @@ case, this is a chip package, so you will also need to see the schema
 for the organism package that it depends on.  To learn what package it
 depends on, look at the ORGPKG value:
 
-<<schema2, results=hide>>=
+<<schema2, results='hide'>>=
 hgu95av2ORGPKG 
 @ 
 
 Then you can see that schema by looking at its schema method:
 
-<<schema3, results=hide>>=
+<<schema3, results='hide'>>=
 org.Hs.eg_dbschema() 
 @ 
 
@@ -755,7 +763,7 @@ information.  Note that the name of the database is always the same as
 the name of the package, with the suffix '.sqlite'.:
 
 
-<<hgu95av2_org_join, keep.source=TRUE>>=
+<<hgu95av2_org_join, tidy=FALSE>>=
 orgDBLoc = system.file("extdata", "org.Hs.eg.sqlite", package="org.Hs.eg.db")
 attachSQL = paste("ATTACH '", orgDBLoc, "' AS orgDB;", sep = "")
 dbGetQuery(hgu95av2_dbconn(), attachSQL)
@@ -781,7 +789,7 @@ dbGetQuery(hgu95av2_dbconn(), "DETACH orgDB"         )
 
 \begin{Ex}
 Retrieve the entrez gene ID, chromosome location information and cytoband infomration by using a single database query.
-<<Question #6, echo=FALSE, results=hide>>=
+<<Question #6, echo=FALSE, results='hide'>>=
 sql <- "SELECT gene_id, start_location, end_location, cytogenetic_location FROM genes AS g, chromosome_locations AS c, cytogenetic_locations AS cy WHERE g._id=c._id AND g._id=cy._id"
 dbGetQuery(org.Hs.eg_dbconn(),sql)[1:10,]
 @
@@ -790,7 +798,7 @@ dbGetQuery(org.Hs.eg_dbconn(),sql)[1:10,]
 
 \begin{Ex}
 Expand on the example in the text above to combine data from the \Rpackage{hgu95av2.db} and \Rpackage{org.Hs.eg.db} with the \Rpackage{GO.db} package so as to include the GO ID, and term definition in the output.
-<<Question #7, echo=FALSE, results=hide>>=
+<<Question #7, echo=FALSE, results='hide'>>=
 orgDBLoc = system.file("extdata", "org.Hs.eg.sqlite", package="org.Hs.eg.db")
 attachSQL = paste("ATTACH '", orgDBLoc, "' AS orgDB;", sep = "")
 dbGetQuery(hgu95av2_dbconn(), attachSQL)
