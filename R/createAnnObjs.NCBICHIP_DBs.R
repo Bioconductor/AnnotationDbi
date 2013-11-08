@@ -506,3 +506,43 @@ createAnnObjs.ZEBRAFISHCHIP_DB<- function(prefix,
   createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
 }
 
+## Added for better B/C support:
+createAnnObjs.ANOPHELESCHIP_DB<- function(prefix,
+                                          objTarget,
+                                          dbconn,
+                                          datacache,
+                                          schema="ANOPHELESCHIP_DB",
+                                          class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.CHIMPCHIP_DB<- function(prefix,
+                                          objTarget,
+                                          dbconn,
+                                          datacache,
+                                          schema="CHIP_DB",
+                                          class="CHIMPChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.COELICOLORCHIP_DB<- function(prefix,
+                                          objTarget,
+                                          dbconn,
+                                          datacache,
+                                          schema="COELICOLORCHIP_DB",
+                                          class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+
+
+createAnnObjs.MALARIACHIP_DB<- function(prefix,
+                                          objTarget,
+                                          dbconn,
+                                          datacache,
+                                          schema="MALARIACHIP_DB",
+                                          class="ChipDb"){
+  createAnnObjs.NCBI_DB(prefix,objTarget,dbconn,datacache,schema,class)
+}
+

@@ -419,13 +419,17 @@ getSpeciesFromSchema <- function(schema){
 ## helper to translate schema to assoicated org package
 getOrgPkgForSchema <- function(schema){
   species <- switch(EXPR = schema,
+                    "ANOPHELESCHIP_DB" = "org.Ag.eg.db",
                     "ARABIDOPSISCHIP_DB"="org.At.tair",
                     "BOVINECHIP_DB"="org.Bt.eg",
                     "CANINECHIP_DB"="org.Cf.eg",
                     "CHICKENCHIP_DB"="org.Gg.eg",
+                    "CHIMPCHIP_DB" = "org.Pt.eg.db",
+                    "COELICOLORCHIP_DB" = "org.Sco.eg.db",
                     "ECOLICHIP_DB"="org.EcK12.eg",
                     "FLYCHIP_DB"="org.Dm.eg",
                     "HUMANCHIP_DB"="org.Hs.eg",
+                    "MALARIACHIP_DB" = "org.Pf.plasmo.db",
                     "MOUSECHIP_DB"="org.Mm.eg",
                     "PIGCHIP_DB"="org.Ss.eg",
                     "RATCHIP_DB"="org.Rn.eg",
