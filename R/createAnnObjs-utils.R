@@ -164,9 +164,13 @@ createREJECTORF <- function(dbconn)
 createMAPCOUNTS <- function(dbconn, prefix)
 {
     data <- dbGetTable(dbconn, "map_counts", "WHERE map_name != 'TOTAL' ORDER BY map_name")
-    MAPCOUNTS <- data[["count"]]
-    names(MAPCOUNTS) <- paste0(prefix, data[["map_name"]])
-    MAPCOUNTS
+    if(dim(data)[1]!=0){
+        MAPCOUNTS <- data[["count"]]
+        names(MAPCOUNTS) <- paste0(prefix, data[["map_name"]])
+        return(MAPCOUNTS)
+    }else{
+        return(integer())
+    }
 }
 
 ### Rename all objects in the 'envir' environment by prefixing them
