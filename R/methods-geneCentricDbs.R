@@ -834,11 +834,22 @@
 ## to pull out multiple fields at once. (like GO)
 
 .noSchemaSelect <- function(x, keys=NULL, cols=NULL, keytype){
-    
+
     ## 1st pool all the fields we need to extract
     fields <- unique(c(cols, keytype))
     ## Then get the tables to go with each one.
     tabs <- sapply(fields, .deriveTableNameFromField, x=x)
+
+    if(class(x)=="ChipDb"){
+        y <- x
+        ## then flip to using the org package, and actually attach to that.
+        x <- .getOrgPkg(x)
+        try(.attachDB(x,y), silent=TRUE) ## not a disaster if we fail
+        ## because we have a "y", keytype must be extra specific.
+        if(keytype=="PROBEID") keytype <- "c.probes.PROBEID"
+        
+    }
+    
     ## make fully qualified fields
     f.fields <- paste(tabs, fields, sep=".")
     ## Make non-redundant list of tables to visit
@@ -880,7 +891,7 @@
     if (!is.character(keys))
         stop("'keys' must be a character vector")   
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
-    if(schema=="NOSCHEMA_DB"){
+    if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
         .noSchemaSelect(x, keys, cols, keytype)
     }else{
         .legacySelect(x, keys, cols, keytype, jointype)
@@ -992,18 +1003,24 @@ setMethod("select", "GODb",
   tables[!tables %in% c("metadata","map_metadata","map_counts")]
 }
 
-.noSchemaCols <- function(x, baseType){
+.noSchemaCols <- function(x){
+  if(class(x)=="ChipDb"){
+      y <- x ## The old switcheroo
+      x <- .getOrgPkg(x)  
+  }
   con <- dbConn(x)
   tables <- .getDataTables(con)
   cols <- unique(unlist(sapply(tables, FUN=dbListFields, con=con)))
-  cols[!cols %in% "_id"]
+  cols <- cols[!cols %in% "_id"]
+  if(exists('y')){cols <- c("PROBEID", cols)}
+  cols
 }
 
 ## general .cols function
 .cols <- function(x, baseType){
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
-    if(schema=="NOSCHEMA_DB"){
-        .noSchemaCols(x, baseType)
+    if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
+        .noSchemaCols(x)
     }else{
         .legacyCols(x, baseType)
     }
