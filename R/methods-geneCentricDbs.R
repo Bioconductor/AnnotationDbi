@@ -727,12 +727,6 @@
   cols
 }
 
-.testIfKeysAreOfProposedKeytype <- function(x, keys, keytype){
-  ktKeys = keys(x, keytype=keytype)
-  if(!(any(ktKeys %in% keys))){
-    stop("None of the keys entered are valid keys for the keytype specified.")
-  }
-}
 
 ## helper looks at cols and trys to warn users about many:1 relationships
 .warnAboutManyToOneRelationships <- function(cols){
@@ -744,13 +738,9 @@
         msg = paste("You have selected the following columns that can have a many to one relationship with the primary key: ", paste(problemCols,collapse=", "),". Because you have selected more than a few such columns there is a risk that this selection may balloon up into a very large result as the number of rows returned multiplies accordingly. To experience smaller/more manageable results and faster retrieval times, you might want to consider selecting these columns separately.") 
         warning(paste(strwrap(msg, exdent=2), collapse="\n"),
                 immediate.=TRUE, call.=FALSE)
-    }    
+    }
 }
 
-.testForValidKeytype <- function(x, keytype){
-  pkts <- keytypes(x)
-  if(!(keytype %in% pkts)){ stop("Please choose a valid keytype") }
-}
 
 ## the core of the select method for GO org and chip packages.
 .legacySelect <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
@@ -762,10 +752,6 @@
   }
   if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
   if(is.null(cols)) cols <- columns(x) ## if no cols provided: use them all
-  ## check that the keytype matches the keys
-  .testIfKeysAreOfProposedKeytype(x, keys, keytype)
-  ## And that the keytype is valid
-  .testForValidKeytype(x, keytype)
   
   ## call .simplifyCols to ensure we use same colnames as columns()
   cols <- .simplifyCols(x, cols)
@@ -833,25 +819,33 @@
 ## A simple strategy will work EXCEPT for the weird case where I need
 ## to pull out multiple fields at once. (like GO)
 
+## Do I need to pay attention to the order??? - it seems that I don't...
+.appendGenesToTabs <- function(tabs){
+    names <- names(tabs)
+    tabs <- c("genes",tabs)
+    names(tabs) <- c("GID", names)
+    tabs
+}
+
 .noSchemaSelect <- function(x, keys=NULL, cols=NULL, keytype){
 
     ## 1st pool all the fields we need to extract
     fields <- unique(c(cols, keytype))
     ## Then get the tables to go with each one.
     tabs <- sapply(fields, .deriveTableNameFromField, x=x)
+    ## make fully qualified fields of these tabs (the ones we want to extract)
+    f.fields <- paste(tabs, fields, sep=".")
 
+    ## if it's a Chip package, attach and point to org package for x
     if(class(x)=="ChipDb"){
         y <- x
         ## then flip to using the org package, and actually attach to that.
         x <- .getOrgPkg(x)
-        try(.attachDB(x,y), silent=TRUE) ## not a disaster if we fail
-        ## because we have a "y", keytype must be extra specific.
-        if(keytype=="PROBEID") keytype <- "c.probes.PROBEID"
-        
+        try(.attachDB(x,y), silent=TRUE) ## not a disaster if we fail        
+        ## Also make sure we include the genes table (only needed for the join)
+        if(!("genes" %in% tabs)) tabs <- .appendGenesToTabs(tabs)
     }
     
-    ## make fully qualified fields
-    f.fields <- paste(tabs, fields, sep=".")
     ## Make non-redundant list of tables to visit
     nrTabs <- unique(tabs)
     ## Now join to each table
@@ -860,7 +854,13 @@
             sql <- paste("SELECT ",paste(f.fields, collapse=","),
                          " FROM",tabs[1])
         }else{
-            sql <- c(sql, paste("LEFT JOIN ",nrTabs[i],"USING (_id)"))
+            ## IF we see c.probes in nrTabs[i], it means we have to
+            ## use gene_id instead.
+            if("c.probes" %in% nrTabs[i]){
+                sql <- c(sql, paste("LEFT JOIN ",nrTabs[i],"USING (GID)"))
+            }else{
+                sql <- c(sql, paste("LEFT JOIN ",nrTabs[i],"USING (_id)"))
+            }
         }
     }
     sql <- paste(sql, collapse=" ")
@@ -876,20 +876,53 @@
     .resort(res, keys, jointype=keytype, fields)
 }
 
+###############################################################################
+## HELPERS for argument validation {in select() and keys()}
+
 .isSingleString <- function(x){
     is.atomic(x) && length(x) == 1L && is.character(x)
 }
 
-## TODO for chip support: 1) the following needs to decide based on the schema of x (if its an orgDb) OR of the associated orgDb (if it's a chipDb) 2) attach clause needs to be added to .noSchemaSelect for when it's a chipDb that has a noSchema based orgDb.  Old school chipDbs (even if made the new way), should already work as expected using .legacySelect().
+.testForValidKeytype <- function(x, keytype){
+  pkts <- keytypes(x)
+  if(!(keytype %in% pkts)){
+      msg <- paste0("Invalid keytype: ",keytype,". Please use the keytypes method to see a listing of valid arguments.")
+      stop(msg)
+  }
+}
+
+.testForValidCols <- function(x, cols){
+  pcols <- columns(x)
+  if(!all(cols %in% pcols) && !is.null(cols)){
+      badCols <- cols[!(cols %in% pcols)]
+      msg <- paste0("Invalid columns: ",paste(badCols, collapse=","),". Please use the columns method to see a listing of valid arguments.")
+      stop(msg)
+  }
+}
+
+.testForValidKeys <- function(x, keys, keytype){
+  ktKeys <- keys(x, keytype)
+  if(!(any(ktKeys %in% keys))){
+      msg <- paste0("None of the keys entered are valid keys for '",keytype,
+         "'. Please use the keys method to see a listing of valid arguments.")
+      stop(msg)
+  }
+}
+
 
 ## general select function
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
+    ## Some argument checking
     if (!.isSingleString(keytype)) 
         stop("'keytype' must be a single string")
+    .testForValidKeytype(x, keytype)
     if (!is.character(cols))
         stop("'columns' must be a character vector")
+    .testForValidCols(x, cols)
     if (!is.character(keys))
-        stop("'keys' must be a character vector")   
+        stop("'keys' must be a character vector")
+    .testForValidKeys(x, keys, keytype)
+    ## Now get the schema
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
     if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
         .noSchemaSelect(x, keys, cols, keytype)
@@ -1079,8 +1112,6 @@ setMethod("columns", "GODb",
   ## have to swap keytype
   ## keytype <- .swapSymbolExceptions(x, keytype)
   keytype <- .simplifyCols(x, keytype)
-
-  .testForValidKeytype(x, keytype)
   
   ## Some org packages may have entrez genes in weird places...
   centralID <- .getCentralID(x)
@@ -1123,8 +1154,16 @@ setMethod("columns", "GODb",
 
 ## special functions for newer NOSCHEMA_DB's
 .deriveTableNameFromField <- function(field, x){
+    if(class(x)=="ChipDb"){
+        y <- x ## Switcheroo
+        x <- .getOrgPkg(x)
+        try(.attachDB(x,y), silent=TRUE) ## not a disaster if we fail
+    }
     con <- dbConn(x)
     tables <- .getDataTables(con)
+    if(exists("y")){
+        tables <- c("c.probes", tables)
+    }
     colTabs <- sapply(tables, FUN=dbListFields, con=con)
     m <- unlist2(sapply(colTabs, match, field))  ## cannot ever be repeated
     tab <- names(m)[!is.na(m)]
@@ -1135,6 +1174,11 @@ setMethod("columns", "GODb",
 .noSchemaKeys <- function(x, keytype){
     tab <- .deriveTableNameFromField(field=keytype, x)
     ## So now we know table name (tab) and field (keytype)
+    if(class(x)=="ChipDb"){
+        y <- x ## Switcheroo
+        x <- .getOrgPkg(x)
+        try(.attachDB(x,y), silent=TRUE) ## not a disaster if we fail
+    }
     sql <- paste("SELECT",keytype,"FROM",tab)
     res <- dbQuery(dbConn(x), sql, 1L)
     res[!is.na(res)]
@@ -1145,8 +1189,9 @@ setMethod("columns", "GODb",
 .keys <- function(x, keytype){
     if (!.isSingleString(keytype)) 
         stop("'keytype' must be a a single string")
+    .testForValidKeytype(x, keytype)
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
-    if(schema=="NOSCHEMA_DB"){
+    if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
         .noSchemaKeys(x, keytype)
     }else{
         .legacyKeys(x, keytype)

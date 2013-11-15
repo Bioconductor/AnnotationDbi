@@ -348,8 +348,17 @@ setMethod("keys", "InparanoidDb",
 
 ## function for making select happen
 .selectInp <- function(x, keys, cols, keytype){
-  ## check that the keys are of the correct keytype.
-  .testIfKeysAreOfProposedKeytype(x, keys, keytype)
+  if (!.isSingleString(keytype)) 
+      stop("'keytype' must be a single string")
+  ## And that the keytype is valid
+  .testForValidKeytype(x, keytype)
+  if (!is.character(cols))
+      stop("'columns' must be a character vector")
+  .testForValidCols(x, cols)
+  if (!is.character(keys))
+      stop("'keys' must be a character vector")
+  .testForValidKeys(x, keys, keytype)
+    
   ## filter out keys that are not legit (just from the DB query)
   ktKeys = keys(x, keytype=keytype)
   qkeys <- keys[keys %in% ktKeys]
