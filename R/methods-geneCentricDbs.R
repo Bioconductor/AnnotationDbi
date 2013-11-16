@@ -909,10 +909,7 @@
   }
 }
 
-
-## general select function
-.select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
-    ## Some argument checking
+.testSelectArgs <- function(x, keys, cols, keytype){
     if (!.isSingleString(keytype)) 
         stop("'keytype' must be a single string")
     .testForValidKeytype(x, keytype)
@@ -922,6 +919,13 @@
     if (!is.character(keys))
         stop("'keys' must be a character vector")
     .testForValidKeys(x, keys, keytype)
+}
+
+
+## general select function
+.select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
+    ## Some argument checking
+    .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
     ## Now get the schema
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
     if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){

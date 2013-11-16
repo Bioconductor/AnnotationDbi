@@ -70,6 +70,8 @@ setMethod("columns", "ReactomeDb",
 )
 
 .keysReact <- function(x, keytype){
+  ## argument checking
+  .testForValidKeytype(x, keytype)
   sql <- switch(keytype,
                 "ENTREZID" = "SELECT gene_id FROM pathway2gene",
                 "GO" = "SELECT go_id FROM reactome2go",
@@ -257,17 +259,9 @@ setMethod("keys", "ReactomeDb",
 
 ## function for making select happen
 .selectReact <- function(x, keys, cols, keytype){
-  if (!.isSingleString(keytype)) 
-      stop("'keytype' must be a single string")
-  ## And that the keytype is valid
-  .testForValidKeytype(x, keytype)
-  if (!is.character(cols))
-      stop("'columns' must be a character vector")
-  .testForValidCols(x, cols)
-  if (!is.character(keys))
-      stop("'keys' must be a character vector")
-  .testForValidKeys(x, keys, keytype)
-    
+  ## Some argument checking
+  .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
+
   ## filter out keys that are not legit (just from the DB query)
   ktKeys = keys(x, keytype=keytype)
   qkeys <- keys[keys %in% ktKeys]
