@@ -880,10 +880,13 @@
 ## HELPERS for argument validation {in select() and keys()}
 
 .isSingleString <- function(x){
-    is.atomic(x) && length(x) == 1L && is.character(x)
+  is.atomic(x) && length(x) == 1L && is.character(x)
 }
 
 .testForValidKeytype <- function(x, keytype){
+  if(!.isSingleString(keytype)){
+      stop("'keytype' must be a a single string")
+  }
   pkts <- keytypes(x)
   if(!(keytype %in% pkts)){
       msg <- paste0("Invalid keytype: ",keytype,". Please use the keytypes method to see a listing of valid arguments.")
@@ -892,6 +895,9 @@
 }
 
 .testForValidCols <- function(x, cols){
+  if (!is.character(cols)){
+      stop("'columns' must be a character vector")
+  }
   pcols <- columns(x)
   if(!all(cols %in% pcols) && !is.null(cols)){
       badCols <- cols[!(cols %in% pcols)]
@@ -901,6 +907,9 @@
 }
 
 .testForValidKeys <- function(x, keys, keytype){
+  if (!is.character(keys)){
+      stop("'keys' must be a character vector")
+  }
   ktKeys <- keys(x, keytype)
   if(!(any(ktKeys %in% keys))){
       msg <- paste0("None of the keys entered are valid keys for '",keytype,
@@ -910,14 +919,8 @@
 }
 
 .testSelectArgs <- function(x, keys, cols, keytype){
-    if (!.isSingleString(keytype)) 
-        stop("'keytype' must be a single string")
     .testForValidKeytype(x, keytype)
-    if (!is.character(cols))
-        stop("'columns' must be a character vector")
     .testForValidCols(x, cols)
-    if (!is.character(keys))
-        stop("'keys' must be a character vector")
     .testForValidKeys(x, keys, keytype)
 }
 
@@ -1191,8 +1194,6 @@ setMethod("columns", "GODb",
 
 ## general keys function
 .keys <- function(x, keytype){
-    if (!.isSingleString(keytype)) 
-        stop("'keytype' must be a a single string")
     .testForValidKeytype(x, keytype)
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
     if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
