@@ -304,7 +304,7 @@ test_select11 <- function(){
   checkTrue(is.character(keys))
   keys <- keys(s, keytype="CHRLOC")
   checkTrue(length(keys) > 0)
-  checkTrue(is.numeric(keys))
+  checkTrue(is.character(keys))
 
   res <- select(s, "YAL003W", "GENENAME")
   checkTrue(dim(res)[1]>0)

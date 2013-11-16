@@ -1155,7 +1155,7 @@ setMethod("columns", "GODb",
                     "SELECT DISTINCT go_id FROM go_term", 1L),
                   .queryForKeys(x, keytype))
   }
-  res[!is.na(res)]
+  as.character(res[!is.na(res)])
 }
 
 
@@ -1188,7 +1188,7 @@ setMethod("columns", "GODb",
     }
     sql <- paste("SELECT",keytype,"FROM",tab)
     res <- dbQuery(dbConn(x), sql, 1L)
-    res[!is.na(res)]
+    as.character(res[!is.na(res)])
 }
 
 
@@ -1230,7 +1230,8 @@ smartKeys <-
     ## so we want to filter by column
     .keys1 <- function(x, keytype, ..., column)
         {   ## column acts as filter
-            k <- suppressWarnings(select(x, .keys(x, keytype), column, keytype))
+            k <- suppressWarnings(select(x, as.character(.keys(x, keytype)),
+                                         column, keytype))
             k[[keytype]][ !is.na(k[[column]]) ]
         }
     ## keys2 is for when we have a column, and a pattern to match on that
@@ -1239,7 +1240,8 @@ smartKeys <-
     .keys2 <- function(x, keytype, ..., pattern, column, fuzzy=FALSE)
         {   ## assumes 'pattern', 'column' present
             FUN <- if (fuzzy) agrep else grep
-            k <- suppressWarnings(select(x, .keys(x, keytype), column, keytype))
+            k <- suppressWarnings(select(x, as.character(.keys(x, keytype)),
+                                         column, keytype))
             k[[keytype]][ FUN(pattern, k[[column]], ...) ]
         }
 

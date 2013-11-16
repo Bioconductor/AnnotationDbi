@@ -195,7 +195,7 @@ setMethod("keytypes", "InparanoidDb", function(x){.inpCols(x)})
       res <- unique(c(res, rs)) ## should not be too bad
     }
   }
-  res
+  as.character(res)
 }
 
 setMethod("keys", "InparanoidDb",

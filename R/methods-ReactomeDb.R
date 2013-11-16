@@ -80,7 +80,7 @@ setMethod("columns", "ReactomeDb",
                 ## need proper reactome tables for this one:
                 "REACTOMEID" = "SELECT DB_ID FROM DatabaseObject", 
                 stop("No keytype specified for .keys"))
-  unique(dbQuery(dbConn(x), sql, 1L))
+  as.character(unique(dbQuery(dbConn(x), sql, 1L)))
 }
 
 setMethod("keys", "ReactomeDb",
