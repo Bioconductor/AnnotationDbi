@@ -6,6 +6,7 @@ import(RSQLite)
 import(BiocGenerics)
 importFrom(IRanges, metadata, isTRUEorFALSE, isSingleString, elementLengths)
 
+importFrom(GenomeInfoDb, genomeStyles, extractSeqlevels, mapSeqlevels)
 exportClasses(
     ## from R/AllClasses.R
     "Bimap",
