@@ -263,6 +263,9 @@ setClass("KEGGFrame", contains="AnnotFrame",
 .InparanoidDb <-
     setRefClass("InparanoidDb", contains="AnnotationDb")
 
+.Inparanoid8Db <-
+    setRefClass("Inparanoid8Db", contains="AnnotationDb")
+
 .GODb <-
     setRefClass("GODb", contains="AnnotationDb")
 
