@@ -89,9 +89,8 @@ setMethod("keytypes", "Inparanoid8Db", function(x){.inpCols8(x)})
     res <- as.vector(t(res))
   }else{
     res <- character()
- shortMap <- .makeShortNameMapping()
-    ## remove the baseSpecies from shortMap names to get all real tables
-    tables <- names(shortMap)[!(names(shortMap) %in% baseSpecies)]  
+    tables <- dbListTables(con)
+    tables <- tables[!(tables %in% c(baseSpecies,'metadata'))]
     for(i in seq_len(length(tables))){
       sql <- paste("SELECT inp_id FROM", tables[i],
                    paste0("WHERE species=='",baseShortCode,"'"))
@@ -271,68 +270,27 @@ setMethod("select", "Inparanoid8Db",
 
 
 
+## Then from the DB you can do this
+## library(AnnotationDbi); hom.Homo_sapiens.inp8.db <- loadDb('hom.Homo_sapiens.inp8.sqlite')
 
 
-## test:
-## library(hom.Hs.inp.db); i <- hom.Hs.inp.db;  cols(i); keytypes(i); k= head(keys(i, "MUS_MUSCULUS"));
+## test keytypes and columns()
+## keytypes(hom.Homo_sapiens.inp8.db)
+## columns(hom.Homo_sapiens.inp8.db)
+##  Results are OK...
 
-## select(i, keys=k, cols=c("APIS_MELLIFERA","AEDES_AEGYPTI"), keytype="MUS_MUSCULUS")
-
-## debug(AnnotationDbi:::.selectInp8)
-
-## debug(AnnotationDbi:::.extractWithSimpleInpQuery8)
-
-## debug(AnnotationDbi:::.collateInpQueryResults8)
-
-## working on keys - fixed
-## debug(AnnotationDbi:::.keysInp)
-## res2 <- head(keys(i, keytype="HOMO_SAPIENS"))
+## This *appears* to work
+## kp = head(keys(hom.Homo_sapiens.inp8.db, keytype="PONGO_ABELII"))
+## This will take longer but should work now.
+## k = head(keys(hom.Homo_sapiens.inp8.db, keytype="HOMO_SAPIENS"))
 
 
-
-## TODO: make a slew of unit tests similar to those for ReactomeDb
-
-
-
+## This doesn't work right (in part, because of 5 letter code holdover stuff)
+## I need to make some simpler methods for inparanoid8 stuff...
+## select(hom.Homo_sapiens.inp8.db, keys=k, columns="MUS_MUSCULUS", keytype="HOMO_SAPIENS")
 
 
-## this still no worky (and maybe it really shouldn't - because the use of
-## humans as a keytype means I have to start with the table (in their list)
-## that has the most human keys mapped and then go to the next and the next
-## etc.  In that case, the path I choose for them would influence the output.
-## I don't think we want that kind of responsibility...  For other keys, it's
-## OK, because it is a human centered DB, and the human IDs are therefore
-## natural as a universal key.  But when human IDs are the central ID And ALSO
-## the keytype - this creates a problem because that 1st step can change all
-## of the results...
-## So I am pretty confident that I want to ban the baseSpecies from the keytypes.
-## So TODO?: drop baseSpecies from the keytypes?
-## PROBLEM with this idea: HOMO_SAPIENS is a valid keytype for keys()! (and
-## really should be)
-## For now, I think it's OK if this works for keys (the answer is legit).  But
-## it will still not be listed as a legit keytype (even while one of the
-## methods works).
+## select(hom.Homo_sapiens.inp8.db, keys=kp, columns="MUS_MUSCULUS", keytype="PONGO_ABELII")
 
-## As for cols, I should be able to still have baseSpecies be a valid value
-## for cols.
-
-
-
-
-
-
-
-## library(hom.Hs.inp.db); i <- hom.Hs.inp.db;  cols(i); keytypes(i); k= head(keys(i, "MUS_MUSCULUS"));
-
-
-## now this works
-## select(i, keys=k, cols=c("APIS_MELLIFERA","HOMO_SAPIENS"), keytype="MUS_MUSCULUS")
-
-
-
-## And this too.
-## hk <- head(head(keys(i, keytype="HOMO_SAPIENS")))
-## select(i, keys=hk, cols=c("APIS_MELLIFERA","MUS_MUSCULUS"), keytype="HOMO_SAPIENS")
-
-
+## Seems to work!
 
