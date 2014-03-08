@@ -31,7 +31,6 @@ dbFileDisconnect <- function(dbconn)
 
 addToNamespaceAndExport <- function(x, value, pkgname)
 {
-    ## THIS ALSO cannot work (wrong scope to define function)
     prefix <- sub('.db','',pkgname)    
     dc <- eval(parse(text=paste0(pkgname,":::datacache")))
     warnIf <- function(){
