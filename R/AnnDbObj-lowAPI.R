@@ -38,7 +38,9 @@
 
 showQCData <- function(prefix, datacache){
      cat(paste0("Quality control information for ", prefix, ":\n\n\n"))
-     map_counts = createMAPCOUNTS(dbconn(datacache), prefix) 
+     map_counts <- createMAPCOUNTS(dbconn(datacache), prefix)
+     map_counts <- map_counts[!(names(map_counts) %in%
+                                c("org.Hs.egPFAM","org.Hs.egPROSITE"))] 
      cat("This package has the following mappings:\n\n")
      for(i in seq_len(length(map_counts))){
          mapname <- names(map_counts)[i]
@@ -59,7 +61,7 @@ showQCData <- function(prefix, datacache){
        "GOSOURCEDATE" = "Date for GO data: ",
        "KEGGSOURCEDATE" = "Date for KEGG data: ",
        "GPSOURCEDATE" = "Date for Golden Path data: ",
-       "IPISOURCEDATE" = "Date for IPI data: ",
+       ## "IPISOURCEDATE" = "Date for IPI data: ",
        "TAIRSOURCEDATE" = "Data for TAIR data: ",
        "YGSOURCEDATE" = "Date for SGD data: ",
        "FBSOURCEDATE" = "Date for Flybase data: ",

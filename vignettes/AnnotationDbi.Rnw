@@ -325,7 +325,7 @@ EGs = mget(rs, revmap(org.Hs.egREFSEQ), ifnotfound=NA)
 GOs = mget(unlist(EGs), org.Hs.egGO, ifnotfound=NA)
 GOs
 ##Extract the GOIDs from this list:
-GOIDs = unlist(unique(sapply(GOs, names)))
+GOIDs = as.character(unique(sapply(GOs, names)))
 ##Then look up what these terms are:
 Term(GOIDs)
 @
