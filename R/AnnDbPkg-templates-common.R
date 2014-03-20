@@ -29,6 +29,15 @@ dbFileDisconnect <- function(dbconn)
 ### Used at load time (in .onLoad) by the SQLite-based ann data package to
 ### dynamically add exported symbols to its namespace environment.
 
+.kosherPkg <- function(pkgname){
+    if(pkgname %in% c('PFAM.db','mpedbarray.db','pedbarrayv9.db',
+                      'pedbarrayv10.db/')){
+        return(FALSE)
+    }else{
+        return(TRUE)
+    }
+}
+
 addToNamespaceAndExport <- function(x, value, pkgname)
 {
     prefix <- sub('.db','',pkgname)    
@@ -47,7 +56,7 @@ addToNamespaceAndExport <- function(x, value, pkgname)
     }
     ns <- asNamespace(pkgname)    
     ## If they are 'PFAM' or 'PROSITE'
-    if(any(grepl("PFAM",x), grepl("PROSITE",x))){
+    if(any(grepl("PFAM",x), grepl("PROSITE",x)) &&  .kosherPkg(pkgname)){
         assign(x, value, envir=dc) ## stash it, for later retrieval
         makeActiveBinding(sym=x, fun=warnIf, env=ns)
     }else{
