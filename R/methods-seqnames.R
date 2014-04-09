@@ -1,134 +1,92 @@
 ###############################################################################
 ## Code to access the special chromosome name conventions DB.
-## The methods in this file are all about access to the seqnames.db database
+## The methods in this file are deprecated and now belong to GenomeInfoDb
 
-## setup for accessing the seqnames DB
-.seqnamesSetup <- function(){
-  require("RSQLite")
-  require("seqnames.db")
-  ## get a connection to this
-  db <- system.file("extdata","seqnames.sqlite",package="seqnames.db")
-  con <- dbConnect("SQLite", dbname=db)
-  con
+
+supportedSeqnameMappings <- 
+    function()
+{
+    txt <- "'supportedSeqnameMappings' is deprecated.
+           Use 'genomeStyles()' in 'GenomeInfoDb' instead." 
+    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    genomeStyles()
 }
 
-supportedSeqnameMappings <- function(){
-  con <- .seqnamesSetup()
-  tables <- dbListTables(con)
-  names(tables) <- tables
-  lapply(tables, function(table) dbReadTable(con, table))
+# same information displayed
+# in addition - auto, linear and sex chr mapping shown
+# displayed as one list for each organism (old: one list per style per organim)
+listAllSupportedStylesBySpecies <- function(species){
+    txt <- "'supportedSeqnameMappings' is deprecated.
+           Use 'genomeStyles(species)' in 'GenomeInfoDb' instead." 
+    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    genomeStyles(species)
 }
 
-getSeqnameStyle <- function(seqnames,
-                            select=c("first.best", "all.best", "all")){
-
-}
-
-setSeqnameStyle <- function(seqnames, style,
-                            select=c("first.best", "all.best", "all")){
-  if (!is.character(seqnames))
-    stop("'seqnames' must be a character vector")
-  if (!isSingleString(style))
-    stop("the supplied seqname style must be a single string")
-  select <- match.arg(select)
-  supported_styles <- supportedSeqnameStyles()
-  ## Get the target species (.e. species supporting the supplied style).
-  tmp <- unlist(supported_styles, use.names=FALSE)
-  compatible_species <- rep.int(names(supported_styles),
-                                elementLengths(supported_styles))
-  compatible_species <- compatible_species[tolower(tmp) == tolower(style)]
-  if (length(compatible_species) == 0L)
-    stop("supplied seqname style \"", style, "\" is not supported")
-  ## Walk all the seqname mappings to find the sequence renaming maps
-  ## compatible with the specified style.
-  seqname_mappings <- supportedSeqnameMappings()
-  ans <- lapply(compatible_species,
-    function(species) {
-      mapping <- seqname_mappings[[species]]
-      names(mapping) <- tolower(names(mapping))
-      to_seqnames <- mapping[[tolower(style)]]
-      lapply(mapping,
-        function(from_seqnames)
-          to_seqnames[match(seqnames, from_seqnames)])
-    })
-  ans_ncol <- length(seqnames)
-  ans <- matrix(unlist(ans, use.names=FALSE), ncol=ans_ncol, byrow=TRUE)
-  colnames(ans) <- seqnames
-  score <- rowSums(!is.na(ans))
-  idx <- score != 0L
-  if (select != "all")
-    idx <- idx & (score == max(score))  # keep only "best" rows
-  ans <- ans[idx, , drop=FALSE]
-  ## Remove duplicated rows.
-  ans <- as.matrix(unique(as.data.frame(ans, stringsAsFactors=FALSE)))
-  if (select != "first.best") {
-    rownames(ans) <- NULL
-    return(ans)
-  }
-  ans[1L, , drop=TRUE]
+# same information displayed
+# in addition - auto, linear and sex chr mapping shown
+# displayed as one list for each organism (old: one list per style per organim)
+listAllSupportedSeqnameStyles <- function(){
+    txt <- "'supportedSeqnameMappings' is deprecated.
+           Use 'genomeStyles()' in 'GenomeInfoDb' instead." 
+    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    genomeStyles()
 }
 
 ## A discovery method for users to learn the supported seqname styles
-supportedSeqnameStyles <- function(){
-  con <- .seqnamesSetup()
-  tables <- dbListTables(con)
-  getFields <- function(table, con){
-    fields <- dbListFields(con, table)
-  }
-  fields <- lapply(tables, getFields, con)
-  names(fields) <- tables
-  fields
+supportedSeqnameStyles <- 
+    function()
+{
+    txt <- "'supportedSeqnameStyles' is deprecated.
+       Use 'genomeStyles()' in 'GenomeInfoDb' instead." 
+    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    genomeStyles()
+}
+
+
+
+## This helper takes no arguments and just returns all the possible seqnames in the whole DB (in no particular order, just the unique set).
+supportedSeqnames <- function(){
+    txt <- "'isSupportedSeqnamesStyle' is deprecated."
+    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    genomeStyles()
 }
 
 ## check whether or not a style is really a supported seqnameStyle
-isSupportedSeqnamesStyle <- function(style, species){
-  species <- sub(" ", "_", species)
-  possible <- supportedSeqnameStyles()
-  availStyles <- possible[[species]]
-  style %in% availStyles
+isSupportedSeqnamesStyle <- 
+    function(style, species)
+{
+    txt <- "'isSupportedSeqnamesStyle' is deprecated."
+    .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
+  
+}
+
+testSeqnames <- 
+    function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sapiens")
+{
+    txt <- "'testSeqnames' is deprecated."
+    .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
 }
 
 
-## Tests:
-## library(TxDb.Athaliana.BioMart.plantsmart12); txdb = TxDb.Athaliana.BioMart.plantsmart12; isSupportedSeqnamesStyle("NCBI", species)
-## isSupportedSeqnamesStyle("UCSC", species)
+findSequenceRenamingMaps <- 
+    function(seqnames, style, best.only=TRUE, drop=TRUE)
+{
+    txt <- "'findSequenceRenamingMaps' is deprecated.
+           Use 'mapSeqlevels' in 'GenomeInfoDb' instead." 
+    .Deprecated("mapSeqlevels", msg=paste(strwrap(txt), collapse="\n"))
+    mapSeqlevels(seqnames, style, best.only=TRUE, drop=TRUE)
+}
 
-
-
-## A function for retrieving one type of data
-## usage: extractSeqnameSet("NCBI", "Rattus norvegicus")
-extractSeqnameSet <- function(style="UCSC", species="Homo sapiens"){
-  oriSpecies <- species
-  species <- sub(" ", "_", species)
-  con <- .seqnamesSetup()
-  ## quick test:
-  supNames <- supportedSeqnameStyles()
-  if(any(style %in% supNames[[species]])){
-    sql <- paste("SELECT",style,"FROM", species)
-    result <- as.character(t(dbGetQuery(con,sql)))
-  }else{stop("The style specified by '",style,
-             "' does not have a compatible entry for the species ",oriSpecies)}
-  result
+extractSeqnameSet <- 
+    function(style="UCSC", species="Homo sapiens")
+{
+    txt <- "'extractSeqnameSet' is deprecated.
+           Use 'extractSeqlevels()' in 'GenomeInfoDb' instead." 
+    .Deprecated("extractSeqlevels", msg=paste(strwrap(txt), collapse="\n"))
+    extractSeqlevels(style="UCSC", species="Homo sapiens")
 }
 
 
-## A function for testing if a vector of data is the correct thing
-## "TRUE" Usage example
-## .testSeqnames("NCBI",seqnames=c(1:20,"X","MT"),"Rattus norvegicus")
-## "FALSE" Usage example
-## .testSeqnames("NCBI",seqnames=c(1:22,"X","Y","MT"),"Rattus norvegicus")
-.testSeqnames <- function(style, seqnames, species){
-  ## trueSeq is expected to be the shorter (definitive) list.
-  trueSeq <- extractSeqnameSet(style=style,species=species)
-  all(trueSeq %in% seqnames)
-}
-
-## vectorized for multiple styles
-## examples
-## testSeqnames(c("ensembl","NCBI"),seqnames=c(1:22,"X","Y","MT"),"Rattus norvegicus")
-testSeqnames <- function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sapiens"){
-  unlist(lapply(styles, .testSeqnames, seqnames=seqnames, species=species))
-}
 
 
 ## Testing:
@@ -144,32 +102,21 @@ testSeqnames <- function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sa
 
 ## seqnames2 = (paste0("chr",1:22))
 
+## testSeqnames(c("ensembl","NCBI"),seqnames=c(1:22,"X","Y","MT"),"Rattus norvegicus")
 
 
-## This helper returns a full listing of all style listings in the entire DB.
-## NOTE: this code can probably be made a lot faster if I am willing for it to
-## be less pretty.
-listAllSupportedStylesBySpecies <- function(species){
-  styles <- supportedSeqnameStyles()[[species]]
-  res <- lapply(styles,extractSeqnameSet,species)
-  names(res) <- paste0(rep(species, length(styles)),"__" ,styles)
-  res
-}
 
 
-listAllSupportedSeqnameStyles <- function(){
-  species <- names(supportedSeqnameStyles())
-  ## then call extractSeqnameSet() for each style.
-  unlist(lapply(species,listAllSupportedStylesBySpecies), recursive=FALSE)
-}
 
 
-## This helper takes no arguments and just returns all the possible seqnames in the whole DB (in no particular order, just the unique set).
-supportedSeqnames <- function(){
-  res <- unique(unlist(listAllSupportedSeqnameStyles()))
-  names(res) <- NULL
-  res
-}
+
+
+
+
+
+
+
+
 
 
 
