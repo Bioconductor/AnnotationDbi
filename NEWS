@@ -1,42 +1,11 @@
  	**************************************************
 	*						 *
-	*	        1.26.x SERIES NEWS		 *
-	*						 *
-	**************************************************
-
-
-		CHANGES IN AnnotationDbi VERSION 1.26.x
-
-NEW FEATURES and API changes
-
-    o Support for new schemaless chip packages to allow more flexible
-    suport of non-model organisms in chip packages.
-
-    o Support for Inparanoid8 objects which contain data from the most
-    recent release of inparanoid.  These objects will be available
-    through the AnnotationHub.
-
-BUG FIXES AND CODE MAINTENANCE
-
-    o PFAM and PROSITE mappings are going away!  This is because these
-    mappings are tied to the now long defunct IPI ids.  Don't worry we
-    have you covered.  These ids will still be available with
-    select(), the mappings are just bad because they can't exist
-    without IPI ids (which we can no longer get).  So for the next
-    release if you try to use these mappings you will be warned about
-    it.  After that, you need to have made the switch to select().
-
-
-
-
- 	**************************************************
-	*						 *
 	*	        1.24.x SERIES NEWS		 *
 	*						 *
 	**************************************************
 
 
-		CHANGES IN AnnotationDbi VERSION 1.24.x
+		CHANGES IN AnnotationDbi VERSION 1.22.x
 
 NEW FEATURES and API changes
 

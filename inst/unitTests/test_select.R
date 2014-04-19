@@ -381,20 +381,15 @@ test_select15 <- function(){
   ## Another bug that seems to happen in post-processing...
   ## the code that resolves duplicated values is going a bit insane...
   ## (IOW .replaceValues())
-    if(all(.Platform$OS.type == 'windows', .Platform$r_arch == 'i386')){
-        ## Then don't do this test (you will run out of memory)
-    }else{
-        res <- select(x, keys="100008586", columns(x)) 
-        checkTrue(dim(res)[1]>0)
-        checkTrue(dim(res)[2]==30)
-        checkIdentical(c('ENTREZID','PFAM','IPI','PROSITE','ACCNUM','ALIAS',
-                         'CHR','CHRLOC','CHRLOCCHR','CHRLOCEND','ENZYME',
-                         'MAP','PATH','PMID','REFSEQ','SYMBOL','UNIGENE',
-                         'ENSEMBL','ENSEMBLPROT','ENSEMBLTRANS','GENENAME',
-                         'UNIPROT','GO','EVIDENCE','ONTOLOGY','GOALL',
-                         NA,'ONTOLOGYALL','OMIM','UCSCKG'),
-                       colnames(res))
-    }
+  res <- select(x, keys="100008586", columns(x)) 
+  checkTrue(dim(res)[1]>0)
+  checkTrue(dim(res)[2]==30)
+  checkIdentical(c('ENTREZID','PFAM','IPI','PROSITE','ACCNUM','ALIAS','CHR',
+                   'CHRLOC','CHRLOCCHR','CHRLOCEND','ENZYME','MAP','PATH',
+                   'PMID','REFSEQ','SYMBOL','UNIGENE','ENSEMBL','ENSEMBLPROT',
+                   'ENSEMBLTRANS','GENENAME','UNIPROT','GO','EVIDENCE',
+                   'ONTOLOGY','GOALL',NA,'ONTOLOGYALL','OMIM','UCSCKG'),
+                 colnames(res))
 }
 
 
