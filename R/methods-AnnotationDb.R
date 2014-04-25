@@ -68,6 +68,7 @@ setMethod("show", "AnnotationDb",
             cat("| ", metadata[i, "name"], ": ", metadata[i, "value"],
                 "\n", sep="")
         }
+        message("\n","Please see: help('select') for usage information", sep="")
     }
 )
 
