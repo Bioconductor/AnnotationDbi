@@ -185,6 +185,5 @@ export(
     listAllSupportedStylesBySpecies,
     listAllSupportedSeqnameStyles,
     supportedSeqnames,
-    species,
-    cols ## just for deprecating cols everywhere - remove after 2.13 release
+    species
 )
