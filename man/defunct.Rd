@@ -1,27 +1,44 @@
+
 \name{AnnotationDbi-defunct}
 \alias{AnnotationDbi-defunct}
-\title{Defunct Functions in Package \pkg{AnnotationDbi}}
-%------ PLEASE: put \alias{.} here for  EACH !
-\alias{makeARABIDOPSISCHIP_DB}
-\alias{makeCHICKENCHIP_DB}
-\alias{makeCHICKENCHIP_DB}
-\alias{makePIGCHIP_DB}
-\alias{makeWORMCHIP_DB}
-\alias{makeBOVINECHIP_DB}
-\alias{makeCANINECHIP_DB}
-\alias{makeECOLICHIP_DB}
-\alias{makeZEBRAFISHCHIP_DB}
-\alias{makeYEASTCHIP_DB}
-\alias{makeFLYCHIP_DB}
-\alias{makeRATCHIP_DB}
-\alias{makeMOUSECHIP_DB}
-\alias{makeHUMANCHIP_DB}
-%
+\title{Defunct Functions in package \pkg{AnnotationDbi}}
+
+\alias{determineDefaultSeqnameStyle}
+\alias{determineDefaultSeqnameStyle,TranscriptDb-method}
+\alias{supportedSeqnameMappings}
+\alias{listAllSupportedStylesBySpecies}
+\alias{listAllSupportedSeqnameStyles}
+\alias{supportedSeqnameStyles}
+\alias{supportedSeqnames}
+\alias{isSupportedSeqnamesStyle}
+\alias{testSeqnames}
+\alias{findSequenceRenamingMaps}
+\alias{extractSeqnameSet}
+
 \description{
-  The functions or variables listed here are no longer part of the AnnotationDbi package.
+  The functions or variables listed are defunct and should no
+  longer be used.
 }
+
+\details{
+
+  The following functions are defunct; use the replacement indicated below:
+  \itemize{
+
+    \item{supportedSeqnameMappings: \code{\link[GenomeInfoDb]{genomeStyles}}}
+    \item{listAllSupportedStylesBySpecies: \code{\link[GenomeInfoDb]{genomeStyles}}}
+    \item{listAllSupportedSeqnameStyles: \code{\link[GenomeInfoDb]{genomeStyles}}}
+    \item{supportedSeqnameStyles: \code{\link[GenomeInfoDb]{genomeStyles}}}
+    \item{supportedSeqnames: \code{\link[GenomeInfoDb]{genomeStyles}}}
+    
+    \item{isSupportedSeqnamesStyle}
+    \item{testSeqnames}
+    
+    \item{findSequenceRenamingMaps: \code{\link[GenomeInfoDb]{mapSeqlevels}}}
+    \item{extractSeqnameSet: \code{\link[GenomeInfoDb]{extractSeqlevels}}}
+  }
+}
+
 \seealso{
-  \code{\link{Defunct}}
+  \code{\link{Deprecated}}
 }
-
-

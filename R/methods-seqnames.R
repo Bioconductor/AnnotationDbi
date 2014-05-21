@@ -6,9 +6,9 @@
 supportedSeqnameMappings <- 
     function()
 {
-    txt <- "'supportedSeqnameMappings' is deprecated.
+    txt <- "'supportedSeqnameMappings' is defunct.
            Use 'genomeStyles()' in 'GenomeInfoDb' instead." 
-    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    .Defunct("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
     genomeStyles()
 }
 
@@ -16,9 +16,9 @@ supportedSeqnameMappings <-
 # in addition - auto, linear and sex chr mapping shown
 # displayed as one list for each organism (old: one list per style per organim)
 listAllSupportedStylesBySpecies <- function(species){
-    txt <- "'supportedSeqnameMappings' is deprecated.
+    txt <- "'supportedSeqnameMappings' is defunct.
            Use 'genomeStyles(species)' in 'GenomeInfoDb' instead." 
-    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    .Defunct("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
     genomeStyles(species)
 }
 
@@ -26,9 +26,9 @@ listAllSupportedStylesBySpecies <- function(species){
 # in addition - auto, linear and sex chr mapping shown
 # displayed as one list for each organism (old: one list per style per organim)
 listAllSupportedSeqnameStyles <- function(){
-    txt <- "'supportedSeqnameMappings' is deprecated.
+    txt <- "'supportedSeqnameMappings' is defunct.
            Use 'genomeStyles()' in 'GenomeInfoDb' instead." 
-    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    .Defunct("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
     genomeStyles()
 }
 
@@ -36,9 +36,9 @@ listAllSupportedSeqnameStyles <- function(){
 supportedSeqnameStyles <- 
     function()
 {
-    txt <- "'supportedSeqnameStyles' is deprecated.
+    txt <- "'supportedSeqnameStyles' is defunct.
        Use 'genomeStyles()' in 'GenomeInfoDb' instead." 
-    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    .Defunct("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
     genomeStyles()
 }
 
@@ -46,8 +46,8 @@ supportedSeqnameStyles <-
 
 ## This helper takes no arguments and just returns all the possible seqnames in the whole DB (in no particular order, just the unique set).
 supportedSeqnames <- function(){
-    txt <- "'isSupportedSeqnamesStyle' is deprecated."
-    .Deprecated("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
+    txt <- "'isSupportedSeqnamesStyle' is defunct."
+    .Defunct("genomeStyles", msg=paste(strwrap(txt), collapse="\n"))
     genomeStyles()
 }
 
@@ -55,34 +55,34 @@ supportedSeqnames <- function(){
 isSupportedSeqnamesStyle <- 
     function(style, species)
 {
-    txt <- "'isSupportedSeqnamesStyle' is deprecated."
-    .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
+    txt <- "'isSupportedSeqnamesStyle' is defunct."
+    .Defunct( msg=paste(strwrap(txt), collapse="\n"))
   
 }
 
 testSeqnames <- 
     function(styles=c("ensembl", "UCSC"), seqnames, species="Homo sapiens")
 {
-    txt <- "'testSeqnames' is deprecated."
-    .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
+    txt <- "'testSeqnames' is defunct."
+    .Defunct( msg=paste(strwrap(txt), collapse="\n"))
 }
 
 
 findSequenceRenamingMaps <- 
     function(seqnames, style, best.only=TRUE, drop=TRUE)
 {
-    txt <- "'findSequenceRenamingMaps' is deprecated.
+    txt <- "'findSequenceRenamingMaps' is defunct.
            Use 'mapSeqlevels' in 'GenomeInfoDb' instead." 
-    .Deprecated("mapSeqlevels", msg=paste(strwrap(txt), collapse="\n"))
+    .Defunct("mapSeqlevels", msg=paste(strwrap(txt), collapse="\n"))
     mapSeqlevels(seqnames, style, best.only=TRUE, drop=TRUE)
 }
 
 extractSeqnameSet <- 
     function(style="UCSC", species="Homo sapiens")
 {
-    txt <- "'extractSeqnameSet' is deprecated.
+    txt <- "'extractSeqnameSet' is defunct.
            Use 'extractSeqlevels()' in 'GenomeInfoDb' instead." 
-    .Deprecated("extractSeqlevels", msg=paste(strwrap(txt), collapse="\n"))
+    .Defunct("extractSeqlevels", msg=paste(strwrap(txt), collapse="\n"))
     extractSeqlevels(style="UCSC", species="Homo sapiens")
 }
 
