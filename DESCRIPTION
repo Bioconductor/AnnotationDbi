@@ -2,7 +2,7 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.27.7
+Version: 1.27.8
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer
  <maintainer@bioconductor.org>
@@ -31,6 +31,6 @@ Collate: 00RTobjs.R unlist2.R AllGenerics.R AllClasses.R FlatBimap.R
         AnnDbPkg-checker.R print.probetable.R makeMap.R inpIDMapper.R
         test_AnnotationDbi_package.R
 License: Artistic-2.0
-biocViews: Annotation, Infrastructure
+biocViews: Annotation, Microarray, Sequencing, GenomeAnnotation
 VignetteBuilder: knitr
 Packaged: 2014-05-16 20:58:15 UTC; mcarlson
