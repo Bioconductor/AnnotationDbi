@@ -86,7 +86,7 @@ can make use of a new set of methods to more easily access their
 contents.  These four methods are named: \Rfunction{columns},
 \Rfunction{keytypes}, \Rfunction{keys} and \Rfunction{select}.  And they are
 described in this vignette.  They can currently be used with all chip,
-organism, and \Rclass{TranscriptDb} packages along with the popular
+organism, and \Rclass{TxDb} packages along with the popular
 GO.db package.
 
 For the older less popular packages, there are still conventient ways
@@ -110,7 +110,7 @@ object named exactly the same as the package itself.  These objects
 are collectively called \Rclass{AnntoationDb} objects for the class
 that they all inherit from.  The more specific classes (the ones that
 you will actually see in the wild) have names like \Rclass{OrgDb},
-\Rclass{ChipDb} or \Rclass{TranscriptDb} objects.  These names
+\Rclass{ChipDb} or \Rclass{TxDb} objects.  These names
 correspond to the kind of package (and underlying schema) being
 represented.  The methods that can be applied to all of these objects
 are \Rfunction{columns}, \Rfunction{keys}, \Rfunction{keytypes} and
@@ -295,20 +295,20 @@ select(GO.db, keys=GOIDs, columns="DEFINITION", keytype="GOID")
 
 
 
-\subsection{Using select with TranscriptDb packages}
+\subsection{Using select with TxDb packages}
 
-A \Rclass{TranscriptDb} package (a 'TxDb' package) connects a set of genomic
+A \Rclass{TxDb} package (a 'TxDb' package) connects a set of genomic
 coordinates to various transcript oriented features.  The package can
 also contain Identifiers to features such as genes and transcripts,
 and the internal schema describes the relationships between these
-different elements.  All TranscriptDb containing packages follow a
+different elements.  All TxDb containing packages follow a
 specific naming scheme that tells where the data came from as well as
 which build of the genome it comes from.
 
 
-%% select exercise TranscriptDb
+%% select exercise TxDb
 \begin{Exercise}
-  Display the \Rclass{TranscriptDb} object for the 
+  Display the \Rclass{TxDb} object for the 
   \Biocpkg{TxDb.Hsapiens.UCSC.hg19.knownGene} package.
   
   As before, use the \Rfunction{columns} and \Rfunction{keytypes} methods to
@@ -333,12 +333,12 @@ select(txdb, keys=keys, columns=cols, keytype="GENEID")
 \end{Solution}
 
 As is widely known, in addition to providing access via the
-\Rfunction{select} method, \Rclass{TranscriptDb} objects also provide
+\Rfunction{select} method, \Rclass{TxDb} objects also provide
 access via the more familiar \Rfunction{transcripts},
 \Rfunction{exons}, \Rfunction{cds}, \Rfunction{transcriptsBy},
 \Rfunction{exonsBy} and \Rfunction{cdsBy} methods.  For those who do
 not yet know about these other methods, more can be learned by seeing
-the vignette called: \emph{Making and Utilizing TranscriptDb Objects}
+the vignette called: \emph{Making and Utilizing TxDb Objects}
 in the \Rpackage{GenomicFeatures} package.
 
 

@@ -114,6 +114,12 @@ setMethod(loadDb, c("character", "missing", "missing"),
             stop("the database is missing 'Db type' metadata\n  error: ",
                  conditionMessage(err))
         })
+        ## TEMP: On 07/25/2014 TranscriptDb was renamed TxDb so we need to
+        ## replace with TxDb until there are no more SQLite db files around
+        ## that have 'Db type' set to 'TranscriptDb' (will take a couple of
+        ## years).
+        if (dbType == "TranscriptDb")
+            dbType <- "TxDb"
         ## H.P.: 'Supporting package' is the new name for the 'package' entry
         ## (as of Feb 10, 2012). For now we keep backward compatibility with
         ## 'package' but at some point (in 1 year? 2 years?), this won't be
@@ -124,8 +130,8 @@ setMethod(loadDb, c("character", "missing", "missing"),
             tryCatch({
                 .getMetaValue(conn, "package")
             }, error=function(err2) {
-                ## TEMP: if it's a TranscriptDb or FeatureDb, lets give it a pass.
-                if(dbType == "TranscriptDb" || dbType == "FeatureDb")
+                ## TEMP: if it's a TxDb or FeatureDb, lets give it a pass.
+                if(dbType == "TxDb" || dbType == "FeatureDb")
                   return("GenomicFeatures")
                 stop("no 'Supporting package' entry found ",
                      "in 'metadata' table of database:\n  ", file)

@@ -1554,7 +1554,7 @@ setMethod("keytypes", "GODb",
 ## that are actually not available as a bimap (reactome) and 4) I would really
 ## like to be able to transparently pull data from another resource and just
 ## have it appear to be in one place.  Sort of like we currently do for
-## microRNAs with TranscriptDbs
+## microRNAs with TxDbs
 
 
 ## Really radical thoughts:

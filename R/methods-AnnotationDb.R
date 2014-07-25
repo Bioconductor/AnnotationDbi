@@ -221,6 +221,6 @@ cols <- function(x){
 ## conn = dbConnect(SQLite(), fl)
 ## loadDb(fl)                                 ## bug
 ## loadFeatures(fl)                           ## other bug
-## GenomicFeatures:::TranscriptDb(conn)       ## bug
+## GenomicFeatures:::TxDb(conn)               ## bug
 ## AnnotationDbi:::loadDb(fl)                 ## other bug
 
