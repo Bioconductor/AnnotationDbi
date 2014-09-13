@@ -58,65 +58,9 @@ createAnnObjs <- function(class, seeds, seed0, envir=NULL)
 
 ## Function to get all these create statements out of the namespace.
 createAnnObjs.SchemaChoice = function(schema, prefix, target, dbconn, datacache){
-    switch(schema,
-           "ORGANISM_DB" = return(AnnotationDbi:::createAnnObjs.ORGANISM_DB(prefix, target, dbconn, datacache)),
-
-           "HUMANCROSSCHIP_DB" = return(AnnotationDbi:::createAnnObjs.HUMANCROSSCHIP_DB(prefix, target, dbconn, datacache)),
-           
-           "ANOPHELESCHIP_DB" = return(AnnotationDbi:::createAnnObjs.ANOPHELESCHIP_DB(prefix, target, dbconn, datacache)),
-           "ARABIDOPSISCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.ARABIDOPSISCHIP_DB(prefix, target, dbconn, datacache)),
-           "BOVINECHIP_DB"  = return(AnnotationDbi:::createAnnObjs.BOVINECHIP_DB(prefix, target, dbconn, datacache)),
-           "CANINECHIP_DB"  = return(AnnotationDbi:::createAnnObjs.CANINECHIP_DB(prefix, target, dbconn, datacache)),
-           "CHICKENCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.CHICKENCHIP_DB(prefix, target, dbconn, datacache)),
-           "CHIMPCHIP_DB" = return(AnnotationDbi:::createAnnObjs.CHIMPCHIP_DB(prefix, target, dbconn, datacache)),
-           "COELICOLORCHIP_DB" = return(AnnotationDbi:::createAnnObjs.COELICOLORCHIP_DB(prefix, target, dbconn, datacache)),
-           "ECOLICHIP_DB"  = return(AnnotationDbi:::createAnnObjs.ECOLICHIP_DB(prefix, target, dbconn, datacache)),
-           "FLYCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.FLYCHIP_DB(prefix, target, dbconn, datacache)),
-           "HUMANCHIP_DB" = return(AnnotationDbi:::createAnnObjs.HUMANCHIP_DB(prefix, target, dbconn, datacache)),
-           "MALARIACHIP_DB" = return(AnnotationDbi:::createAnnObjs.MALARIACHIP_DB(prefix, target, dbconn, datacache)),
-           "MOUSECHIP_DB"  = return(AnnotationDbi:::createAnnObjs.MOUSECHIP_DB(prefix, target, dbconn, datacache)),
-           "PIGCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.PIGCHIP_DB(prefix, target, dbconn, datacache)),
-           "RATCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.RATCHIP_DB(prefix, target, dbconn, datacache)),
-           "RHESUSCHIP_DB" = return(AnnotationDbi:::createAnnObjs.RHESUSCHIP_DB(prefix, target, dbconn, datacache)),
-           "WORMCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.WORMCHIP_DB(prefix, target, dbconn, datacache)),
-           "XENOPUSCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.XENOPUSCHIP_DB(prefix, target, dbconn, datacache)),
-           "YEASTCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.YEASTCHIP_DB(prefix, target, dbconn, datacache)),
-           "ZEBRAFISHCHIP_DB"  = return(AnnotationDbi:::createAnnObjs.ZEBRAFISHCHIP_DB(prefix, target, dbconn, datacache)),
-           
-           "ANOPHELES_DB"  = return(AnnotationDbi:::createAnnObjs.ANOPHELES_DB(prefix, target, dbconn, datacache)),
-           "ARABIDOPSIS_DB"  = return(AnnotationDbi:::createAnnObjs.ARABIDOPSIS_DB(prefix, target, dbconn, datacache)),
-           "BOVINE_DB"  = return(AnnotationDbi:::createAnnObjs.BOVINE_DB(prefix, target, dbconn, datacache)),
-           "CANINE_DB"  = return(AnnotationDbi:::createAnnObjs.CANINE_DB(prefix, target, dbconn, datacache)),
-           "CHICKEN_DB"  = return(AnnotationDbi:::createAnnObjs.CHICKEN_DB(prefix, target, dbconn, datacache)),
-           "CHIMP_DB"  = return(AnnotationDbi:::createAnnObjs.CHIMP_DB(prefix, target, dbconn, datacache)),
-           "COELICOLOR_DB"  = return(AnnotationDbi:::createAnnObjs.COELICOLOR_DB(prefix, target, dbconn, datacache)),
-           "ECOLI_DB"  = return(AnnotationDbi:::createAnnObjs.ECOLI_DB(prefix, target, dbconn, datacache)),
-           "FLY_DB"  = return(AnnotationDbi:::createAnnObjs.FLY_DB(prefix, target, dbconn, datacache)),
-           "HUMAN_DB"  = return(AnnotationDbi:::createAnnObjs.HUMAN_DB(prefix, target, dbconn, datacache)),           
-           "MALARIA_DB"  = return(AnnotationDbi:::createAnnObjs.MALARIA_DB(prefix, target, dbconn, datacache)),
-           "MOUSE_DB"  = return(AnnotationDbi:::createAnnObjs.MOUSE_DB(prefix, target, dbconn, datacache)),
-           "PIG_DB"  = return(AnnotationDbi:::createAnnObjs.PIG_DB(prefix, target, dbconn, datacache)),
-           "RAT_DB"  = return(AnnotationDbi:::createAnnObjs.RAT_DB(prefix, target, dbconn, datacache)),
-           "RHESUS_DB"  = return(AnnotationDbi:::createAnnObjs.RHESUS_DB(prefix, target, dbconn, datacache)),
-           "WORM_DB"  = return(AnnotationDbi:::createAnnObjs.WORM_DB(prefix, target, dbconn, datacache)),
-           "XENOPUS_DB"  = return(AnnotationDbi:::createAnnObjs.XENOPUS_DB(prefix, target, dbconn, datacache)),
-           "YEAST_DB"  = return(AnnotationDbi:::createAnnObjs.YEAST_DB(prefix, target, dbconn, datacache)),
-           "ZEBRAFISH_DB"  = return(AnnotationDbi:::createAnnObjs.ZEBRAFISH_DB(prefix, target, dbconn, datacache)),
-           
-           "GO_DB"  = return(AnnotationDbi:::createAnnObjs.GO_DB(prefix, target, dbconn, datacache)),
-
-           "KEGG_DB"  = return(AnnotationDbi:::createAnnObjs.KEGG_DB(prefix, target, dbconn, datacache)),
-
-           "INPARANOID_DB"  = return(AnnotationDbi:::createAnnObjs.INPARANOID_DB(prefix, target, dbconn, datacache)),
-           
-           "PFAM_DB"  = return(AnnotationDbi:::createAnnObjs.PFAM_DB(prefix, target, dbconn, datacache)),
-           
-           "AFFYHUEX_DB"  = return(AnnotationDbi:::createAnnObjs.AFFYHUEX_DB(prefix, target, dbconn, datacache))
-          )
+    FUN <- get(paste0("createAnnObjs.", schema))
+    FUN(prefix, target, dbconn, datacache)
 }
-
-
-
 
 createAnnDbBimap <- function(seed, seed0)
 {

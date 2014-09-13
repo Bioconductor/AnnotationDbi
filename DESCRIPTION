@@ -2,14 +2,14 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.27.9
+Version: 1.27.10
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer
  <maintainer@bioconductor.org>
-Depends: R (>= 2.7.0), methods, utils, BiocGenerics (>= 0.11.2),
+Depends: R (>= 2.7.0), methods, utils, stats4, BiocGenerics (>= 0.11.2),
         Biobase (>= 1.17.0), GenomeInfoDb(>= 0.99.17)
-Imports: methods, utils, DBI, RSQLite, BiocGenerics, Biobase,
-        S4Vectors, IRanges
+Imports: methods, utils, DBI, RSQLite, stats4, BiocGenerics, Biobase,
+        S4Vectors
 Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db,
         org.Sc.sgd.db, org.At.tair.db, KEGG.db, RUnit,
         TxDb.Hsapiens.UCSC.hg19.knownGene, hom.Hs.inp.db, org.Hs.eg.db,

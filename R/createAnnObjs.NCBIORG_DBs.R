@@ -355,7 +355,7 @@ NCBIORG_DB_AnnDbBimap_seeds <- list(
                 Rattribnames=c(Ontology="NULL")
             )
         ),
-        rightTables=AnnotationDbi:::Go3tablenames()
+        rightTables=Go3tablenames()
     )
 )
 ## return this

@@ -31,7 +31,7 @@
 ## ALSO: I will need a way to deduce the org package that goes with each chip
 ## package. hgu95av2ORGPKG will (for example) get you this.  DONE:
 .getOrgPkg <- function(x){
-  pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
+  pkgname <- sub(".db$","", packageName(x))
   orgPkgName <- eval(parse(text=paste0(pkgname, "ORGPKG")))
   orgPkgName <- paste0(orgPkgName,".db")
   eval(parse(text=orgPkgName))
@@ -39,7 +39,7 @@
 
 ## This gets the exact path to the chip DB.
 .getChipDbFile <- function(x){
-  pkgname <- sub(".db$","", AnnotationDbi:::packageName(x))
+  pkgname <- sub(".db$","", packageName(x))
   eval(call(paste0(pkgname, "_dbfile")))
 }
 
@@ -1267,21 +1267,21 @@ setMethod("keys", "OrgDb",
       if(missing(keytype)){
         keytype <- .chooseCentralOrgPkgSymbol(x)
       }
-      smartKeys(x=x, keytype=keytype, ..., FUN=AnnotationDbi:::.keys)
+      smartKeys(x=x, keytype=keytype, ..., FUN=.keys)
   }
 )
 
 setMethod("keys", "ChipDb",
     function(x, keytype, ...){
       if(missing(keytype)) keytype <- "PROBEID"
-      smartKeys(x=x, keytype=keytype, ..., FUN=AnnotationDbi:::.keys)
+      smartKeys(x=x, keytype=keytype, ..., FUN=.keys)
   }
 )
 
 setMethod("keys", "GODb",
     function(x, keytype, ...){
       if(missing(keytype)) keytype <- "GOID"
-      smartKeys(x=x, keytype=keytype, ..., FUN=AnnotationDbi:::.keys)
+      smartKeys(x=x, keytype=keytype, ..., FUN=.keys)
   }
 )
 

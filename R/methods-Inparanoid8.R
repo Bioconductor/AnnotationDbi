@@ -34,7 +34,7 @@
 
 ## helpers
 .getLCcolnames8 <- function(x){
-  con <- AnnotationDbi:::dbConn(x)
+  con <- dbConn(x)
   list <- dbListTables(con)
   ## drop unwanted tables
   unwanted <- c("metadata")

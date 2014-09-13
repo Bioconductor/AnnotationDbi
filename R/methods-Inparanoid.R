@@ -129,7 +129,7 @@
 
 ## helpers
 .getLCcolnames <- function(x){
-  con <- AnnotationDbi:::dbConn(x)
+  con <- dbConn(x)
   list <- dbListTables(con)
   ## drop unwanted tables
   unwanted <- c("map_counts","map_metadata","metadata")

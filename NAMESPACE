@@ -1,11 +1,11 @@
 import(methods)
 import(utils)
+importFrom(stats4, summary)
 import(Biobase)
 import(DBI)
 import(RSQLite)
 import(BiocGenerics)
-importFrom(S4Vectors, isTRUEorFALSE, isSingleString, metadata)
-importFrom(IRanges, elementLengths)
+importFrom(S4Vectors, isTRUEorFALSE, isSingleString, metadata, elementLengths)
 
 importFrom(GenomeInfoDb, genomeStyles, extractSeqlevels, mapSeqlevels)
 exportClasses(
@@ -169,9 +169,6 @@ export(
     intraIDMapper,
     idConverter,
  
-    #Needs to be exported from RSQLite
-    summary,
-
     ## AnnotationDb
     metadata,
 
