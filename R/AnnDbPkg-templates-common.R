@@ -71,7 +71,9 @@ addToNamespaceAndExport <- function(x, value, pkgname)
         msg = wmsg(paste0(bimapName,
  " is defunct because up to date IPI IDs are no longer available.\n",
  "Please use select() if you need access to PFAM or PROSITE accessions. \n"))
-        .Defunct(msg=msg)
+        if(interactive()){
+            .Defunct(msg=msg)
+        }
     }
     ns <- asNamespace(pkgname)    
     ## If they are 'PFAM' or 'PROSITE'

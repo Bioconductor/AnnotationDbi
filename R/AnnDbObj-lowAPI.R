@@ -39,8 +39,8 @@
 showQCData <- function(prefix, datacache){
      cat(paste0("Quality control information for ", prefix, ":\n\n\n"))
      map_counts <- createMAPCOUNTS(dbconn(datacache), prefix)
-     map_counts <- map_counts[!(names(map_counts) %in%
-                                c("org.Hs.egPFAM","org.Hs.egPROSITE"))] 
+     map_counts <- map_counts[!grepl('PFAM$', names(map_counts)) &
+                              !grepl('PROSITE$', names(map_counts))]
      cat("This package has the following mappings:\n\n")
      for(i in seq_len(length(map_counts))){
          mapname <- names(map_counts)[i]

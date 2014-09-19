@@ -69,6 +69,10 @@ checkMAPCOUNTS <- function(pkgname)
     prefix <- substr(pkgname, 1, nchar(pkgname) - 3)
     getMap <- function(mapname) get(mapname, envir=asNamespace(pkgname))
     MAPCOUNTS <- getMap(paste0(prefix, "MAPCOUNTS"))
+    ## remove defunct MAPCOUNTS
+    MAPCOUNTS <- MAPCOUNTS[!grepl('PFAM$', names(MAPCOUNTS)) &
+                           !grepl('PROSITE$', names(MAPCOUNTS))]
+    ## Then continue
     for (mapname in names(MAPCOUNTS)) {
         cat("Counting mapped keys for map ", mapname, ":\n", sep="")
         map <- getMap(mapname)

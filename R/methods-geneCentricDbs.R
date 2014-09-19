@@ -10,7 +10,7 @@
 ## And one for keys and select to warn if the user tries to use them
 .checkForDeprecatedKeytype <- function(keytype){
     if(any(.listDeprecatedKeytypes() %in% keytype )){
-        message(wmsg(paste0(keytype,
+        warning(wmsg(paste0(keytype,
     " is deprecated as the data is better accessed from another location. \n",
     "Please use an appropriate TxDb object or package for this kind of data.")))
     }
