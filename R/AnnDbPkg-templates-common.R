@@ -31,34 +31,56 @@ dbFileDisconnect <- function(dbconn)
 
 .kosherPkg <- function(pkgname){
     if(pkgname %in% c('PFAM.db','mpedbarray.db','pedbarrayv9.db',
-                      'pedbarrayv10.db/')){
+                      'pedbarrayv10.db','humanCHRLOC','mouseCHRLOC',
+                      'ratCHRLOC')){
         return(FALSE)
     }else{
         return(TRUE)
     }
 }
 
+
+
 addToNamespaceAndExport <- function(x, value, pkgname)
 {
     prefix <- sub('.db','',pkgname)    
     dc <- eval(parse(text=paste0(pkgname,":::datacache")))
-    warnIf <- function(){
+    warnIfDep <- function(){
+        if(grepl("CHR$",x)){
+            bimapName <- paste0(prefix,"CHR")
+        }else if(grepl("CHRLENGTHS",x)){
+            bimapName <- paste0(prefix,"CHRLENGTHS")
+        }else if(grepl("CHRLOC",x)){
+            bimapName <- paste0(prefix,"CHRLOC")
+        }else if(grepl("CHRLOCEND",x)){
+            bimapName <- paste0(prefix,"CHRLOCEND")
+        }
+        x <- dc[[bimapName]]
+        message(wmsg(bimapName,
+ " is deprecated as the data is better accessed from another location.\n",
+ "Please use an appropriate TxDb object or package for this kind of data. \n"))
+        x
+    }
+    warnIfDef <- function(){
         if(grepl("PFAM",x)){
             bimapName <- paste0(prefix,"PFAM")
         }else{
              bimapName <- paste0(prefix,"PROSITE")
         }
         x <- dc[[bimapName]]
-        message(bimapName,
- " is deprecated because up to date IPI IDs are no longer available.\n",
- "Please use select() if you need access to PFAM or PROSITE accessions. \n")   
-        x
+        msg = wmsg(paste0(bimapName,
+ " is defunct because up to date IPI IDs are no longer available.\n",
+ "Please use select() if you need access to PFAM or PROSITE accessions. \n"))
+        .Defunct(msg=msg)
     }
     ns <- asNamespace(pkgname)    
     ## If they are 'PFAM' or 'PROSITE'
-    if(any(grepl("PFAM",x), grepl("PROSITE",x)) &&  .kosherPkg(pkgname)){
+    if(grepl("CHR",x) &&  .kosherPkg(pkgname)){
         assign(x, value, envir=dc) ## stash it, for later retrieval
-        makeActiveBinding(sym=x, fun=warnIf, env=ns)
+        makeActiveBinding(sym=x, fun=warnIfDep, env=ns)
+    }else if(any(grepl("PFAM",x), grepl("PROSITE",x)) &&  .kosherPkg(pkgname)){
+        assign(x, value, envir=dc) ## stash it
+        makeActiveBinding(sym=x, fun=warnIfDef, env=ns)
     }else{
         assign(x, value, envir=ns) ## Older way of doing this.
     }

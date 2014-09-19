@@ -1,3 +1,21 @@
+## Three helpers for deprecating keytypes
+## One to just list the bum keytypes
+.listDeprecatedKeytypes <- function(){
+    c('CHR','CHRLOC','CHRLOCEND')
+}
+## Another for keytypes to remove unwanted keytypes
+.filterDeprecatedKeytypes <- function(keytypes){
+    keytypes[!(keytypes %in% .listDeprecatedKeytypes())]
+}
+## And one for keys and select to warn if the user tries to use them
+.checkForDeprecatedKeytype <- function(keytype){
+    if(any(.listDeprecatedKeytypes() %in% keytype )){
+        message(wmsg(paste0(keytype,
+    " is deprecated as the data is better accessed from another location. \n",
+    "Please use an appropriate TxDb object or package for this kind of data.")))
+    }
+}
+
 ## Need an accessor for getting the central ID for a DB (when appropriate)
 .getCentralID <- function(x){
   as.character(dbQuery(dbConn(x),
@@ -887,7 +905,8 @@
   if(!.isSingleString(keytype)){
       stop("'keytype' must be a a single string")
   }
-  pkts <- keytypes(x)
+  ## deprecated keytypes are still technically 'valid'
+  pkts <- c(keytypes(x), .listDeprecatedKeytypes())
   if(!(keytype %in% pkts)){
       msg <- paste0("Invalid keytype: ",keytype,". Please use the keytypes method to see a listing of valid arguments.")
       stop(msg)
@@ -1194,6 +1213,7 @@ setMethod("columns", "GODb",
 
 ## general keys function
 .keys <- function(x, keytype){
+    .checkForDeprecatedKeytype(keytype)
     .testForValidKeytype(x, keytype)
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
     if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
@@ -1358,12 +1378,18 @@ setMethod("keys", "GODb",
 
 setMethod("keytypes", "OrgDb",
     ## function(x) .filterKeytypes(x, baseType="ENTREZID", keytypesBlackList)
-    function(x) .cols(x, baseType="ENTREZID")
+    function(x){ 
+        kts <- .cols(x, baseType="ENTREZID")
+        .filterDeprecatedKeytypes(kts)
+    }
 )
 
 setMethod("keytypes", "ChipDb",
     ## function(x) .filterKeytypes(x, baseType="PROBEID", keytypesBlackList) 
-    function(x) .cols(x, baseType="ENTREZID")
+    function(x){ 
+        kts <- .cols(x, baseType="ENTREZID")
+        .filterDeprecatedKeytypes(kts)
+    }          
 )
 
 setMethod("keytypes", "GODb",
@@ -1620,3 +1646,24 @@ setMethod("keytypes", "GODb",
 ## select(org.Hs.eg.db,sym,"PFAM",keytype="ALIAS");
 
 ## Problem: our code that filters rows needs to drop the keytype column before filtering NAs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#######################################################################
+## Some testing of my deprecation:
+## library(org.Hs.eg.db);  k = head(keys(org.Hs.eg.db, 'ENTREZID')); k; 
+## head(keys(org.Hs.eg.db, 'CHR'));
+## select(org.Hs.eg.db, k, 'SYMBOL', 'ENTREZID');
+## head(select(org.Hs.eg.db, k[1], 'SYMBOL', 'CHR'));
+
