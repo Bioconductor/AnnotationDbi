@@ -77,7 +77,6 @@
 \alias{Rkeys<-,FlatBimap-method}
 \alias{Rkeys<-,AnnDbBimap-method}
 
-\alias{subset}
 \alias{subset,Bimap-method}
 \alias{subset,AnnDbBimap-method}
 
@@ -99,24 +98,26 @@
 }
 
 \usage{
-  ## Getting or setting the direction of a Bimap object
-  direction(x)
-  direction(x) <- value
-  revmap(x, ...)
+## Getting or setting the direction of a Bimap object
+direction(x)
+direction(x) <- value
+revmap(x, ...)
 
-  ## Getting, counting or setting the left or right keys (or mapped
-  ## keys only) of a Bimap object
-  Lkeys(x)
-  Rkeys(x)
-  Llength(x)
-  Rlength(x)
-  mappedLkeys(x)
-  mappedRkeys(x)
-  count.mappedLkeys(x)
-  count.mappedRkeys(x)
-  Lkeys(x) <- value
-  Rkeys(x) <- value
-  subset(x, ...)
+## Getting, counting or setting the left or right keys (or mapped
+## keys only) of a Bimap object
+Lkeys(x)
+Rkeys(x)
+Llength(x)
+Rlength(x)
+mappedLkeys(x)
+mappedRkeys(x)
+count.mappedLkeys(x)
+count.mappedRkeys(x)
+Lkeys(x) <- value
+Rkeys(x) <- value
+\S4method{subset}{Bimap}(x, Lkeys = NULL, Rkeys = NULL, drop.invalid.keys = FALSE)
+\S4method{subset}{AnnDbBimap}(x, Lkeys = NULL, Rkeys = NULL, drop.invalid.keys = FALSE, 
+    objName = NULL)
 
 }
 
@@ -130,7 +131,9 @@
     A character vector containing the new keys (must be a subset of the
     current keys) in \code{Lkeys(x) <- value} and \code{Rkeys(x) <- value}.
   }
-  \item{...}{
+  \item{Lkeys, Rkeys, drop.invalid.keys, objName, ...}{Extra arguments
+    for \code{revmap} and \code{subset}.
+    
     Extra argument for \code{revmap} can be:
     \describe{
       \item{\code{objName}}{

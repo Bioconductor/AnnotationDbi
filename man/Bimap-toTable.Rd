@@ -19,10 +19,7 @@
 
 \alias{dim,Bimap-method}
 
-\alias{head}
 \alias{head,FlatBimap-method}
-
-\alias{tail}
 \alias{tail,FlatBimap-method}
 
 \alias{links}
@@ -85,8 +82,8 @@
   nrow(x)
   ncol(x)
   #dim(x)
-  head(x, ...)
-  tail(x, ...)
+  \S4method{head}{FlatBimap}(x, ...)
+  \S4method{tail}{FlatBimap}(x, ...)
 
   ## Extract only the links of the map
   links(x)

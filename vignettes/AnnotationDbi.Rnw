@@ -368,16 +368,6 @@ toTable(revx)[1:6, ]
 Notice however that the Lkeys are always on the left (1st col), the Rkeys
 always in the 2nd col
 
-There can be more than 2 columns in the returned data frame:
-
-  3 cols:
-<<threecols>>=
-toTable(hgu95av2PFAM)[1:6, ]  # the right values are tagged
-as.list(hgu95av2PFAM["1000_at"])
-@ 
-
-But the Rkeys are ALWAYS in the 2nd col.
-
 For length() and keys(), the result does depend on the direction, hence we refer to these as 'directed methods':
 
 <<directedMethods>>=
