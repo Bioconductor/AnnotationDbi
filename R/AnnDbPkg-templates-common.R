@@ -48,11 +48,11 @@ addToNamespaceAndExport <- function(x, value, pkgname)
     warnIfDep <- function(){
         if(grepl("CHR$",x)){
             bimapName <- paste0(prefix,"CHR")
-        }else if(grepl("CHRLENGTHS",x)){
+        }else if(grepl("CHRLENGTHS$",x)){
             bimapName <- paste0(prefix,"CHRLENGTHS")
-        }else if(grepl("CHRLOC",x)){
+        }else if(grepl("CHRLOC$",x)){
             bimapName <- paste0(prefix,"CHRLOC")
-        }else if(grepl("CHRLOCEND",x)){
+        }else if(grepl("CHRLOCEND$",x)){
             bimapName <- paste0(prefix,"CHRLOCEND")
         }
         x <- dc[[bimapName]]
