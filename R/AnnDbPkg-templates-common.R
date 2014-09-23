@@ -56,8 +56,8 @@ addToNamespaceAndExport <- function(x, value, pkgname)
             bimapName <- paste0(prefix,"CHRLOCEND")
         }
         x <- dc[[bimapName]]
-        message(wmsg(bimapName,
- " is deprecated as the data is better accessed from another location.\n",
+        warning(wmsg(bimapName,
+ " is deprecated. ",
  "Please use an appropriate TxDb object or package for this kind of data. \n"))
         x
     }
@@ -69,18 +69,19 @@ addToNamespaceAndExport <- function(x, value, pkgname)
         }
         x <- dc[[bimapName]]
         msg = wmsg(paste0(bimapName,
- " is defunct because up to date IPI IDs are no longer available.\n",
+ " is defunct. ",
  "Please use select() if you need access to PFAM or PROSITE accessions. \n"))
         if(interactive()){
             .Defunct(msg=msg)
         }
     }
-    ns <- asNamespace(pkgname)    
-    ## If they are 'PFAM' or 'PROSITE'
-    if(grepl("CHR",x) &&  .kosherPkg(pkgname)){
-        assign(x, value, envir=dc) ## stash it, for later retrieval
-        makeActiveBinding(sym=x, fun=warnIfDep, env=ns)
-    }else if(any(grepl("PFAM",x), grepl("PROSITE",x)) &&  .kosherPkg(pkgname)){
+    ns <- asNamespace(pkgname)
+    ## Uncomment after the release
+    ## if(grepl("CHR",x) &&  .kosherPkg(pkgname)){
+    ##     assign(x, value, envir=dc) ## stash it, for later retrieval
+    ##     makeActiveBinding(sym=x, fun=warnIfDep, env=ns)
+    ## }else
+    if(any(grepl("PFAM",x), grepl("PROSITE",x)) &&  .kosherPkg(pkgname)){
         assign(x, value, envir=dc) ## stash it
         makeActiveBinding(sym=x, fun=warnIfDef, env=ns)
     }else{

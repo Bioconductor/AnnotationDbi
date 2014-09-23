@@ -1,7 +1,7 @@
 ## Three helpers for deprecating keytypes
 ## One to just list the bum keytypes
 .listDeprecatedKeytypes <- function(){
-    c('CHR','CHRLOC','CHRLOCEND')
+##    c('CHR','CHRLOC','CHRLOCEND') ## Uncomment after the release
 }
 ## Another for keytypes to remove unwanted keytypes
 .filterDeprecatedKeytypes <- function(keytypes){
@@ -11,7 +11,7 @@
 .checkForDeprecatedKeytype <- function(keytype){
     if(any(.listDeprecatedKeytypes() %in% keytype )){
         warning(wmsg(paste0(keytype,
-    " is deprecated as the data is better accessed from another location. \n",
+    " is deprecated. ",
     "Please use an appropriate TxDb object or package for this kind of data.")))
     }
 }
