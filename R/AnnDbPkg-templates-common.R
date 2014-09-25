@@ -12,7 +12,7 @@ dbFileConnect <- function(dbfile)
     ## We should not need to explicitly library(RSQLite) because it's in
     ## Depends and Imports but this seems to make 'R CMD check hgu95av2.db' happier.
     library(RSQLite)
-    dbConnect(SQLite(), dbname=dbfile, cache_size=64000, synchronous=0,
+    dbConnect(SQLite(), dbname=dbfile, cache_size=64000, synchronous="off",
               flags=SQLITE_RO)
 }
 
