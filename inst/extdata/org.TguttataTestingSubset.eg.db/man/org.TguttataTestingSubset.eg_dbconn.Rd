@@ -79,7 +79,7 @@
   ## The connection object returned by org.TguttataTestingSubset.eg_dbconn() was
   ## created with:
   dbConnect(SQLite(), dbname=org.TguttataTestingSubset.eg_dbfile(), cache_size=64000,
-  synchronous=0)
+  synchronous="off")
 
   org.TguttataTestingSubset.eg_dbschema()
 
