@@ -182,5 +182,6 @@ export(
     listAllSupportedStylesBySpecies,
     listAllSupportedSeqnameStyles,
     supportedSeqnames,
-    species
+    species,
+    createSimpleBimap
 )

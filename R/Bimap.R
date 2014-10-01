@@ -1410,3 +1410,35 @@ makeFlatBimapUsingSelect <- function(x, col){
 }
 
 ## Herve says that I in fact want to have no NAs (and be unique) in the Rkey and Lkeys, and that I ALSO do not want ANY NAs in either column of @data.  So I have modified this function accordingly
+
+
+
+
+
+
+
+
+## OLD method for making bimaps (probably should deprecate this after the release)
+##Makes a simpleBimap for tables that are added outside of standard AnnotationForge Schemas.
+##This function requires that the bimap map from a single table in the DB.
+createSimpleBimap <- function(tablename, Lcolname, Rcolname,
+                              datacache,
+                              objName=as.character(NA),
+                              objTarget=as.character(NA))
+{
+    seed <- list(
+                 objName=objName,
+                 objTarget=objTarget,
+                 Class="AnnDbBimap",
+                 L2Rchain=list(
+                   list(
+                        tablename=tablename,
+                        Lcolname=Lcolname,
+                        Rcolname=Rcolname
+                        )
+                   ),
+                 datacache=datacache
+                 )
+    AnnotationDbi:::createAnnDbBimap(seed, list())
+}
+
