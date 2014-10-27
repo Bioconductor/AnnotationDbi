@@ -220,7 +220,7 @@ setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), fu
   ##populate it with the stuff in frame:
   clnVals = frame
   sqlIns <- "INSERT INTO data (go_id, evidence, gene_id) VALUES (?,?,?)"
-  dbBeginTransaction(con)
+  dbBegin(con)
   rset <- dbSendPreparedQuery(con, sqlIns, clnVals)
   dbClearResult(rset)
   dbCommit(con)

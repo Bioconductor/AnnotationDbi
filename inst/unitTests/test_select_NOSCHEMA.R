@@ -59,13 +59,13 @@ test_keytypes <- function(){
     checkTrue(all(sort(res) == sort(finchCols)))
 }
 
-test_keys<- function(){
+test_keys<- function(){                                          ## BOOM
     ## most basic case
     res <- keys(x, "CHROMOSOME")
     checkTrue(all(sort(res) == sort(finchCsomes)))
     
     res <- head(keys(x, "GID"), n=2)
-    checkTrue(all(res==c("100008579","100008580")))
+    checkTrue(all(res==c("751582", "751583")))
     
     res <- head(keys(x, "SYMBOL", pattern="BDNF"))
     checkTrue(res=="BDNF")

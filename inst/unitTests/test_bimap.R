@@ -3,22 +3,24 @@ require(RUnit)
 ## map is just to represent a classic Bimap
 map  <- org.Hs.egSYMBOL
 ## map2 represents an AnnotationDbMap mapping made by some other process for BC
-## map2 <- new("AnnotationDbMap", AnnotDb=org.Hs.eg.db, columns="ONTOLOGY")
+## map2 <- new("AnnotationDbMap", AnnotDb=org.Hs.eg.db, columns="SYMBOL")
+map3 <- AnnotationDbi:::makeFlatBimapUsingSelect(org.Hs.eg.db, col="SYMBOL")
+## And another map object expected by most other tests.
 map2 <- AnnotationDbi:::makeFlatBimapUsingSelect(org.Hs.eg.db, col="ONTOLOGY")
 
 ##map3 <- AnnotationDbi:::flatten(map)
 
 
-## test ls
+## test ls 
 test_ls <- function(){
   res <- ls(map)
   checkTrue(is.character(res))
   checkTrue(length(res) > 0)
-  checkEquals(c("1","10","100"), head(res,n=3))
-  res2 <- ls(map2)
+  checkEquals(c("1","2","3"), head(res,n=3))
+  res2 <- ls(map3)
   checkTrue(is.character(res2))
   checkTrue(length(res2) > 0)
-  checkEquals(c("1","10","100"), head(res,n=3))
+  checkEquals(c("1","2","3"), head(res2,n=3))
 }
 
 ## test Lkeys and Rkeys

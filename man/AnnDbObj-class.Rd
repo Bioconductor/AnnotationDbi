@@ -121,13 +121,8 @@
   ## Then you may need to know how to list results objects
   dbListResults(hgu95av2_dbconn())      #for listing results objects
 
-  ## Sometimes you may want to see all the SQLite databases that are
-  ## presently connected in your session. To do that you have to specify
-  ## the driver:
-  library("RSQLite")
-  drvr <- dbDriver("SQLite")        #gets the driver for SQLite
-  dbListConnections(drvr)         #List all DB Connections using drvr
 
+  ## You can also list the fields by using this connection
   dbListFields(hgu95av2_dbconn(), "probes")
   dbListFields(hgu95av2_dbconn(), "genes")
   dbschema(hgu95av2ENTREZID)        # same as hgu95av2_dbschema()
