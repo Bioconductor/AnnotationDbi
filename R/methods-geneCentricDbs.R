@@ -1695,7 +1695,7 @@ suppressWarnings( res <- select(x, keys=keys, columns=column, keytype=keytype) )
     ## internal helper to toss out multiply matching things
     .filtMults <- function(data){
         idx <- sapply(data, FUN=function(x){
-            if(length(x)==1){x=TRUE}else{x=FALSE}; x })
+            if(length(x)==1){x=FALSE}else{x=TRUE}; x })
         data[idx]
     }
     
@@ -1704,7 +1704,7 @@ suppressWarnings( res <- select(x, keys=keys, columns=column, keytype=keytype) )
         res <- sapply(res, FUN=returnVal)
     }else{
         res <- switch(returnVal,
-            "filterMultiples"=.filtMults(data),
+            "filterMultiples"=.filtMults(res),
             "NAMultiples"=sapply(res, FUN=function(x){
                 if(length(x)>1){return(NA)}else{return(x)} }),
             "CharacterList" = as(res, 'CharacterList'),
