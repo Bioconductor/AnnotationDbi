@@ -89,6 +89,6 @@ setGeneric("select", signature="x",
 
 
 setGeneric("mapIds", signature="x",
-           function(x, keys, column, keytype, returnVal, ...) standardGeneric("mapIds"))
+           function(x, keys, column, keytype, ..., multiVals) standardGeneric("mapIds"))
 
 

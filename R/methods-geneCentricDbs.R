@@ -1663,21 +1663,21 @@ setMethod("keytypes", "GODb",
 ## and one set of keys.  Then it will return either the 1st match for each, 
 ## filter out based on a rule OR return a CharacterList
 
-## If the user instead gives a test function for 'returnVal', then it will 
+## If the user instead gives a test function for 'multiVals', then it will 
 ## be applied to all the resulting matches (should take a vector and return 
 ## a result)
 
 ## Future ideas:
-## Add 'filter' as a later option for returnVal which just means that the user needs to provide an actual function for the returnVal
+## Add 'filter' as a later option for multiVals which just means that the user needs to provide an actual function for the multiVals
 ## Add some of the arguments that are now supported by 'keys' to this function.
 
-setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, 
-            returnVal=c("filterMultiples","NAMultiples","first", 
-                        "CharacterList"), ...){
-    if(missing(returnVal)) returnVal <- 'first'
-    ## make sure we have reasonable value for returnVal.
-    if(!is.function(returnVal)){
-       match.arg(returnVal)
+setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
+            multiVals=c("filter","asNA","first", 
+                        "CharacterList")){
+    if(missing(multiVals)) multiVals <- 'first'
+    ## make sure we have reasonable value for multiVals.
+    if(!is.function(multiVals)){
+       match.arg(multiVals)
     }        
     ## 1st we have to insist that they NOT use more than one column 
     ## or keytype
@@ -1700,12 +1700,12 @@ suppressWarnings( res <- select(x, keys=keys, columns=column, keytype=keytype) )
     }
     
     ## If it's a function then call that
-    if(is.function(returnVal)){
-        res <- sapply(res, FUN=returnVal)
+    if(is.function(multiVals)){
+        res <- sapply(res, FUN=multiVals)
     }else{
-        res <- switch(returnVal,
-            "filterMultiples"=.filtMults(res),
-            "NAMultiples"=sapply(res, FUN=function(x){
+        res <- switch(multiVals,
+            "filter"=.filtMults(res),
+            "asNA"=sapply(res, FUN=function(x){
                 if(length(x)>1){return(NA)}else{return(x)} }),
             "CharacterList" = as(res, 'CharacterList'),
             "first" = sapply(res, FUN=function(x){x[[1]]})
@@ -1716,8 +1716,8 @@ suppressWarnings( res <- select(x, keys=keys, columns=column, keytype=keytype) )
 })
 
 ## TODO: add option to replace multi-matches with NAs or to just remove them.
-## To cleanly handle having 'returnVal' being EITHER a FUN or something else:
-## DO like: if(is.function(returnVal)){}else{match.arg(returnVal)}
+## To cleanly handle having 'multiVals' being EITHER a FUN or something else:
+## DO like: if(is.function(multiVals)){}else{match.arg(multiVals)}
 
 
 
