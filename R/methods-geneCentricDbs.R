@@ -1663,39 +1663,61 @@ setMethod("keytypes", "GODb",
 ## and one set of keys.  Then it will return either the 1st match for each, 
 ## filter out based on a rule OR return a CharacterList
 
+## If the user instead gives a test function for 'returnVal', then it will 
+## be applied to all the resulting matches (should take a vector and return 
+## a result)
+
+## Future ideas:
 ## Add 'filter' as a later option for returnVal which just means that the user needs to provide an actual function for the returnVal
 ## Add some of the arguments that are now supported by 'keys' to this function.
 
 setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, 
-            returnVal=c("first", "CharacterList"), ...){
-        ## right now: Just verify that returnVal is reasonable.
-        match.arg(returnVal)
-        ## later we will need to be a little smarter since 'fiter' will be 
-        ## an actual function
-        
-        ## 1st we have to insist that they NOT use more than one column 
-        ## or keytype        
-        if(length(keys)<1){stop(wmsg(
-            "mapIds must have at least one key to match against."))}
-        if(length(column)>1){stop(wmsg("mapIds can only use one column."))}
-        if(length(keytype)>1){stop(wmsg("mapIds can only use one keytype."))}
-        
-        ## next call select()
-        res <- select(x, keys=keys, columns=column, keytype=keytype)
-        ## then split accordingly
-        res <- split(res[[column]], f=res[[keytype]])
-        
-        ## then massage the return value based on what was requested.
-        if(missing(returnVal) || returnVal=="first"){
-            res <- sapply(res, FUN=function(x){x[[1]]})
-        }
-        if(returnVal=="CharacterList"){
-            res <- as(res, 'CharacterList')
-        }
+            returnVal=c("filterMultiples","NAMultiples","first", 
+                        "CharacterList"), ...){
+    if(missing(returnVal)) returnVal <- 'first'
+    ## make sure we have reasonable value for returnVal.
+    if(!is.function(returnVal)){
+       match.arg(returnVal)
+    }        
+    ## 1st we have to insist that they NOT use more than one column 
+    ## or keytype
+    if(length(keys)<1){stop(wmsg(
+        "mapIds must have at least one key to match against."))}
+    if(length(column)>1){stop(wmsg("mapIds can only use one column."))}
+    if(length(keytype)>1){stop(wmsg("mapIds can only use one keytype."))}
+    
+    ## next call select()
+    ## TODO: remove the suppressWarnings() call once you get rid of that warning
+suppressWarnings( res <- select(x, keys=keys, columns=column, keytype=keytype) )
+    ## then split accordingly
+    res <- split(res[[column]], f=res[[keytype]])
+
+    ## internal helper to toss out multiply matching things
+    .filtMults <- function(data){
+        idx <- sapply(data, FUN=function(x){
+            if(length(x)==1){x=TRUE}else{x=FALSE}; x })
+        data[idx]
     }
-)
+    
+    ## If it's a function then call that
+    if(is.function(returnVal)){
+        res <- sapply(res, FUN=returnVal)
+    }else{
+        res <- switch(returnVal,
+            "filterMultiples"=.filtMults(data),
+            "NAMultiples"=sapply(res, FUN=function(x){
+                if(length(x)>1){return(NA)}else{return(x)} }),
+            "CharacterList" = as(res, 'CharacterList'),
+            "first" = sapply(res, FUN=function(x){x[[1]]})
+            )
+    }
+    ## names will already be present
+    res
+})
 
-
+## TODO: add option to replace multi-matches with NAs or to just remove them.
+## To cleanly handle having 'returnVal' being EITHER a FUN or something else:
+## DO like: if(is.function(returnVal)){}else{match.arg(returnVal)}
 
 
 

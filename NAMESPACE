@@ -128,7 +128,8 @@ exportMethods(
     "species",
     "columns",
     "keytypes",
-    "select"
+    "select",
+    "mapIds"
 )
 
 export(
