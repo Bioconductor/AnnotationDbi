@@ -1625,16 +1625,6 @@ setMethod("keytypes", "GODb",
 
 
 
-
-
-
-
-
-
-
-
-
-
 ## fieldNames <- c("gene_id","accession","accession")
 ## expectedCols <- c("ENTREZID","ACCNUM","REFSEQ")
 ## type <- 
@@ -1651,19 +1641,65 @@ setMethod("keytypes", "GODb",
 
 
 
-
-
-
-
-
-
-
-
-
 #######################################################################
 ## Some testing of my deprecation:
 ## library(org.Hs.eg.db);  k = head(keys(org.Hs.eg.db, 'ENTREZID')); k; 
 ## head(keys(org.Hs.eg.db, 'CHR'));
 ## select(org.Hs.eg.db, k, 'SYMBOL', 'ENTREZID');
 ## head(select(org.Hs.eg.db, k[1], 'SYMBOL', 'CHR'));
+
+
+
+
+
+
+
+
+
+
+
+## new method for mapping Ids (idea to return a vector)
+## This method will just get all data for one column, one keytype 
+## and one set of keys.  Then it will return either the 1st match for each, 
+## filter out based on a rule OR return a CharacterList
+
+## Add 'filter' as a later option for returnVal which just means that the user needs to provide an actual function for the returnVal
+## Add some of the arguments that are now supported by 'keys' to this function.
+
+setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, 
+            returnVal=c("first", "CharacterList"), ...){
+        ## right now: Just verify that returnVal is reasonable.
+        match.arg(returnVal)
+        ## later we will need to be a little smarter since 'fiter' will be 
+        ## an actual function
+        
+        ## 1st we have to insist that they NOT use more than one column 
+        ## or keytype        
+        if(length(keys)<1){stop(wmsg(
+            "mapIds must have at least one key to match against."))}
+        if(length(column)>1){stop(wmsg("mapIds can only use one column."))}
+        if(length(keytype)>1){stop(wmsg("mapIds can only use one keytype."))}
+        
+        ## next call select()
+        res <- select(x, keys=keys, columns=column, keytype=keytype)
+        ## then split accordingly
+        res <- split(res[[column]], f=res[[keytype]])
+        
+        ## then massage the return value based on what was requested.
+        if(missing(returnVal) || returnVal=="first"){
+            res <- sapply(res, FUN=function(x){x[[1]]})
+        }
+        if(returnVal=="CharacterList"){
+            res <- as(res, 'CharacterList')
+        }
+    }
+)
+
+
+
+
+
+
+
+
 
