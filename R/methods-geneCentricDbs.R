@@ -1695,8 +1695,8 @@ suppressWarnings( res <- select(x, keys=keys, columns=column, keytype=keytype) )
     ## internal helper to toss out multiply matching things
     .filtMults <- function(data){
         idx <- sapply(data, FUN=function(x){
-            if(length(x)==1){x=FALSE}else{x=TRUE}; x })
-        data[idx]
+            if(length(x)==1){x=TRUE}else{x=FALSE}; x })
+        unlist(data[idx])
     }
     
     ## If it's a function then call that
