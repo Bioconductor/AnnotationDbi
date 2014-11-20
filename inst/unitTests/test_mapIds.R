@@ -18,6 +18,15 @@ test_mapIds_default <- function(){
 
 ## test other return types.
 
+## "list"
+test_mapIds_CharacterList <- function(){
+    res <- mapIds(org.Hs.eg.db, keys=k, column='ALIAS', keytype='ENTREZID', 
+                  multiVals="list")
+    checkTrue(length(res) == length(k))
+    checkTrue(res[[1]][1] == "A1B")
+    checkTrue(class(res)=='list')
+}
+
 ## "CharacterList"
 test_mapIds_CharacterList <- function(){
     res <- mapIds(org.Hs.eg.db, keys=k, column='ALIAS', keytype='ENTREZID', 

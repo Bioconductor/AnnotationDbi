@@ -688,15 +688,18 @@
         ind = match(keys, tab[[jointype]])
         tab <- tab[ind,,drop=FALSE]
         rownames(tab) <- NULL
-    } else if (!keyTest && rowTest) {
-        txt <- "'select' resulted in 1:many mapping between keys and
-                return rows"
-        warning(paste(strwrap(txt), collapse="\n"))
-    } else if (keyTest && rowTest) { ## User will get data "as is"
-        txt <- "'select' and duplicate query keys resulted in 1:many
-                mapping between keys and return rows"
-        warning(paste(strwrap(txt), collapse="\n"))
     }
+    ## We no longer aim to warn about these.  
+    ## Relevant manual pages may need to be more emphatic.
+#     else if (!keyTest && rowTest) {
+#         txt <- "'select' resulted in 1:many mapping between keys and
+#                 return rows"
+#         warning(paste(strwrap(txt), collapse="\n"))
+#     } else if (keyTest && rowTest) { ## User will get data "as is"
+#         txt <- "'select' and duplicate query keys resulted in 1:many
+#                 mapping between keys and return rows"
+#         warning(paste(strwrap(txt), collapse="\n"))
+#     }
     tab
 }
 
@@ -1672,8 +1675,7 @@ setMethod("keytypes", "GODb",
 ## Add some of the arguments that are now supported by 'keys' to this function.
 
 setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
-            multiVals=c("filter","asNA","first", 
-                        "CharacterList")){
+            multiVals=c("filter","asNA","first","list","CharacterList")){
     if(missing(multiVals)) multiVals <- 'first'
     ## make sure we have reasonable value for multiVals.
     if(!is.function(multiVals)){
@@ -1688,7 +1690,7 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
     
     ## next call select()
     ## TODO: remove the suppressWarnings() call once you get rid of that warning
-suppressWarnings( res <- select(x, keys=keys, columns=column, keytype=keytype) )
+    res <- select(x, keys=keys, columns=column, keytype=keytype) 
     ## then split accordingly
     res <- split(res[[column]], f=res[[keytype]])
 
@@ -1704,6 +1706,7 @@ suppressWarnings( res <- select(x, keys=keys, columns=column, keytype=keytype) )
         res <- sapply(res, FUN=multiVals)
     }else{
         res <- switch(multiVals,
+            "list"=res,
             "filter"=.filtMults(res),
             "asNA"=sapply(res, FUN=function(x){
                 if(length(x)>1){return(NA)}else{return(x)} }),

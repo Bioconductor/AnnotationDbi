@@ -63,6 +63,11 @@
 \alias{select,Inparanoid8Db-method}
 \alias{select,ReactomeDb-method}
 
+% mapIds should work for anything with select defined...
+\alias{mapIds}
+\alias{mapIds,AnnotationDb-method}
+
+
 
 
 \title{AnnotationDb objects and their progeny, methods etc.}
@@ -100,6 +105,9 @@
   parameters for selected \code{keys} and \code{columns} and \code{keytype}
   arguments.
 
+  \code{mapIds} gets the mapped ids (column) for a set of keys that are of a 
+  particular keytype.  Usually returned as a named character vector.
+
   \code{saveDb} will take an AnnotationDb object and save the database
   to the file specified by the path passed in to the \code{file}
   argument.
@@ -118,6 +126,7 @@
   keytypes(x)
   keys(x, keytype, ...)
   select(x, keys, columns, keytype, ...)
+  mapIds(x, keys, column, keytype, ..., multiVals)
   saveDb(x, file)
   loadDb(file, dbType, dbPackage, ...)
 }
@@ -136,6 +145,8 @@
     with the keys argument. For the \code{keys} method this is used to
     indicate which kind of keys are desired from \code{keys}
   }
+  \item{column}{the column to search on (for \code{mapIds}).  Different from 
+    \code{columns} in that it can only have a single element for the value}
   \item{file}{an \code{sqlite} file path.  A string the represents the
   full name you want for your sqlite database and also where to put it.}
   \item{dbType}{dbType - not required}
@@ -149,6 +160,18 @@
 	have a value for the thing specified by the column argument.}
       \item{fuzzy:}{TRUE or FALSE value.  Use fuzzy matching? (this is
 	used with pattern by the keys method)}
+    }
+  }
+  \item{multiVals}{What should \code{mapIds} do when there are multiple values         
+  that could be returned?  Options include:
+    \describe{
+      \item{first:}{This value means that when there are multiple matches only the 1st thing that comes back will be returned. This is the default behavior}
+      \item{list:}{This will just returns a list object to the end user}
+      \item{filter:}{This will remove all elements that contain multiple matches and will therefore return a shorter vector than what came in whenever some of the keys match more than one value}
+      \item{asNA:}{This will return an NA value whenever there are multiple matches}
+      \item{CharacterList:}{This just returns a SimpleCharacterList object}
+      \item{FUN:}{You can also supply a function to the \code{multiVals} argument for custom behaviors.  The function must take a single argument and return a single value.  This function will be applied to all the elements and will serve a 'rule' that for which thing to keep when there is more than one element.  So for example this example function will always grab the last element in each result: \code{ last <- function(x){x[[length(x)]]} }
+      }
     }
   }
 }
@@ -188,6 +211,17 @@ keytypes(hgu95av2.db)
 ## the keytype to "UNIGENE" and passing in unigene keys:
 select(hgu95av2.db, keys=keyunis, columns = c("SYMBOL","UNIGENE"),
        keytype="UNIGENE")
+
+keys <- head(keys(hgu95av2.db, 'ENTREZID'))
+## get a default result (captures only the 1st element)
+mapIds(hgu95av2.db, keys=keys, column='ALIAS', keytype='ENTREZID')
+## or use a different option
+mapIds(hgu95av2.db, keys=keys, column='ALIAS', keytype='ENTREZID', 
+    multiVals="CharacterList")
+## Or define your own function
+last <- function(x){x[[length(x)]]}
+mapIds(hgu95av2.db, keys=keys, column='ALIAS', keytype='ENTREZID', 
+    multiVals=last)
 
 }
 

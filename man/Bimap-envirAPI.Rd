@@ -41,7 +41,8 @@
 }
 
 \usage{
-  ls(name, pos, envir, all.names, pattern)
+  ls(name, pos = -1L, envir = as.environment(pos), all.names = FALSE, pattern, 
+  sorted = TRUE)
   exists(x, where, envir, frame, mode, inherits)
   get(x, pos, envir, mode, inherits)
   #x[[i]]
@@ -121,6 +122,9 @@
   \item{prob}{
     A vector of probability weights for obtaining the elements of the map
     being sampled.
+  }
+  \item{sorted}{
+    Ignored
   }
 }
 
