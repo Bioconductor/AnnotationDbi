@@ -102,8 +102,17 @@
   it will return the keys from that keytype.
   
   \code{select} will retrieve the data as a data.frame based on
-  parameters for selected \code{keys} and \code{columns} and \code{keytype}
-  arguments.
+  parameters for selected \code{keys} \code{columns} and \code{keytype}
+  arguments.  Users should be warned that if you call \code{select} and request 
+  columns that have multiple matches for your keys, select will return a 
+  data.frame with one row for each possible match.  This has the effect that if 
+  you request multiple columns and some of them have a many to one relationship 
+  to the keys, things will continue to multiply accordingly.  So it's not a good 
+  idea to request a large number of columns unless you know that what you are 
+  asking for should have a one to one relationship with the initial set of keys.
+  In general, if you need to retrieve a column (like GO) that has a many to one 
+  relationship to the original keys, it is most useful to extract that 
+  separately.
 
   \code{mapIds} gets the mapped ids (column) for a set of keys that are of a 
   particular keytype.  Usually returned as a named character vector.
