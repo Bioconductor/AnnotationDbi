@@ -37,6 +37,7 @@ opts_chunk$set(tidy=FALSE)
 
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \maketitle
 
@@ -115,6 +116,12 @@ correspond to the kind of package (and underlying schema) being
 represented.  The methods that can be applied to all of these objects
 are \Rfunction{columns}, \Rfunction{keys}, \Rfunction{keytypes} and
 \Rfunction{select}.
+
+In addition, another accessor has recently been added which allows extraction of 
+one column at at time.  the \Rfunction{mapIds} method allows users to extract 
+data into either a named character vector, a list or even a SimpleCharacterList.  
+This method should work with all the different kinds of \Rclass{AnntoationDb} 
+objects described below.
 
 
 \subsection{ChipDb objects and the select method}
@@ -196,6 +203,16 @@ select(hgu95av2.db, keys=k, columns=c("SYMBOL","GENENAME"), keytype="PROBEID")
 And as you can see, when you call the code above, select will try to
 return a data.frame with all the things you asked for matched up to
 each other.
+
+Finally if you wanted to extract only one column of data you could instead use 
+the mapIds method like this:
+
+<<mapIdsChip>>=
+#1st get some example keys
+k <- head(keys(hgu95av2.db,keytype="PROBEID"))
+# then call mapIds
+mapIds(hgu95av2.db, keys=k, column=c("GENENAME"), keytype="PROBEID")
+@ 
 
 \subsection{OrgDb objects and the select method}
 An organism level package (an `org' package) uses a central gene
