@@ -28,7 +28,6 @@ BiocStyle::latex()
 \title{AnnotationDbi: Introduction To Bioconductor Annotation Packages}
 \author{Marc Carlson}
 
-%% \SweaveOpts{keep.source=TRUE}
 
 <<include=FALSE>>=
 library(knitr)
@@ -37,7 +36,6 @@ opts_chunk$set(tidy=FALSE)
 
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 
 \maketitle
 

@@ -22,7 +22,6 @@ BiocStyle::latex()
 \title{How to use bimaps from the ".db" annotation packages}
 \author{Marc Carlson, Herve Pages, Seth Falcon, Nianhua Li}
 
-%% \SweaveOpts{keep.source=TRUE}
 
 <<include=FALSE>>=
 library(knitr)
