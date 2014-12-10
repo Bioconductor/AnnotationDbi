@@ -95,7 +95,9 @@ setMethod(loadDb, c("character", "character", "character"),
 {
     require(dbPackage, character.only=TRUE)
     db <- getClassDef(dbType, where=getNamespace(dbPackage))
-    new(db, conn = dbConnect(SQLite(), file), ...)
+    conn <-  dbConnect(SQLite(), file, cache_size=64000,
+                       synchronous="off", flags=SQLITE_RO)
+    new(db, conn=conn, ...)
 })
 
 
@@ -106,7 +108,8 @@ setMethod(loadDb, c("character", "missing", "missing"),
     ## conn <- dbConnect(SQLite(), file)
     ## sql <- 'SELECT value FROM metadata WHERE name="Db type"'
     ## dbType <- dbGetQuery(conn, sql)[[1]]
-    conn <- dbConnect(SQLite(), file)
+    conn <- dbConnect(SQLite(), file, cache_size=64000, synchronous="off",
+                      flags=SQLITE_RO)
     if(dbExistsTable(conn, "metadata")) {
         dbType <- tryCatch({
             .getMetaValue(conn, "Db type")
