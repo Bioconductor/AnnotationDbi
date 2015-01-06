@@ -77,10 +77,10 @@ addToNamespaceAndExport <- function(x, value, pkgname)
     }
     ns <- asNamespace(pkgname)
     ## Uncomment after the release
-    ## if(grepl("CHR",x) &&  .kosherPkg(pkgname)){
-    ##     assign(x, value, envir=dc) ## stash it, for later retrieval
-    ##     makeActiveBinding(sym=x, fun=warnIfDep, env=ns)
-    ## }else
+    if(grepl("CHR",x) &&  .kosherPkg(pkgname)){
+        assign(x, value, envir=dc) ## stash it, for later retrieval
+        makeActiveBinding(sym=x, fun=warnIfDep, env=ns)
+    }else
     if(any(grepl("PFAM",x), grepl("PROSITE",x)) &&  .kosherPkg(pkgname)){
         assign(x, value, envir=dc) ## stash it
         makeActiveBinding(sym=x, fun=warnIfDef, env=ns)

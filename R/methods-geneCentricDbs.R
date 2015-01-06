@@ -1,7 +1,7 @@
 ## Three helpers for deprecating keytypes
 ## One to just list the bum keytypes
 .listDeprecatedKeytypes <- function(){
-##    c('CHR','CHRLOC','CHRLOCEND') ## Uncomment after the release
+   c('CHR','CHRLOC','CHRLOCEND') ## Uncomment after the release
 }
 ## Another for keytypes to remove unwanted keytypes
 .filterDeprecatedKeytypes <- function(keytypes){
