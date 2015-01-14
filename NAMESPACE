@@ -124,7 +124,6 @@ exportMethods(
 
     ##Methods for AnnotationDb
     "saveDb",
-    "loadDb",
     "species",
     "columns",
     "keytypes",
@@ -150,6 +149,9 @@ export(
     dbFileDisconnect,
     #addToNamespaceAndExport,
     mergeToNamespaceAndExport,
+
+    ## from R/loadDb.R
+    loadDb,
 
     ## from the R/createAnnObjs.*_DB.R files
     createAnnObjs.SchemaChoice,

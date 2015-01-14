@@ -115,8 +115,8 @@ packages, users can use the \Rfunction{available.dbschemas} function.
 This list will also tell you which model organisms are supported.
 
 <<<available schemas, results='hide'>>=
-require(org.Hs.eg.db)
-require(AnnotationForge)
+library(org.Hs.eg.db)
+library(AnnotationForge)
 available.dbschemas()
 @ 
 
@@ -145,7 +145,7 @@ options(continue=" ", prompt="R> ", width=72L)
 @ 
 
 <<setup, results='hide'>>=
-library("hgu95av2.db")
+library(hgu95av2.db)
 @ 
 
 The same basic set of objects is provided with the db packages:
@@ -162,7 +162,7 @@ an organism package was also loaded and then use the approriate
 "\_dbschema" methods to the schema for the \Rpackage{hgu95av2.db} and
 \Rpackage{org.Hs.eg.db} packages.
 <<Question #1, echo=FALSE, results='hide'>>=
-library("hgu95av2.db")
+library(hgu95av2.db)
 search()
 hgu95av2_dbschema()
 org.Hs.eg_dbschema()

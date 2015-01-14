@@ -81,68 +81,49 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
     NULL
 }
 
-
-## Two methods allow me to conceal the extra arguments and break the
-## chicken-egg problem
-
-## This is the hidden method (the one we won't usually use)
-## it only exists so that we can have a loadDb method for each sub-class.
-## we don't really intent do use the "character, character, character" method
-## in practice (though I guess you could if you really wanted to do extra
-## typing)
-setMethod(loadDb, c("character", "character", "character"),
-    function(file, dbType, dbPackage, ...)
+.attach_supporting_pkg <- function(conn, db_type)
 {
-    require(dbPackage, character.only=TRUE)
-    db <- getClassDef(dbType, where=getNamespace(dbPackage))
-    conn <-  dbConnect(SQLite(), file, cache_size=64000,
-                       synchronous="off", flags=SQLITE_RO)
-    new(db, conn=conn, ...)
-})
-
-
-## This is the method people will use
-setMethod(loadDb, c("character", "missing", "missing"),
-    function(file, dbType, dbPackage, ...)
-{
-    ## conn <- dbConnect(SQLite(), file)
-    ## sql <- 'SELECT value FROM metadata WHERE name="Db type"'
-    ## dbType <- dbGetQuery(conn, sql)[[1]]
-    conn <- dbConnect(SQLite(), file, cache_size=64000, synchronous="off",
-                      flags=SQLITE_RO)
-    if(dbExistsTable(conn, "metadata")) {
-        dbType <- tryCatch({
-            .getMetaValue(conn, "Db type")
-        }, error=function(err) {
-            stop("the database is missing 'Db type' metadata\n  error: ",
-                 conditionMessage(err))
-        })
-        ## TEMP: On 07/25/2014 TranscriptDb was renamed TxDb so we need to
-        ## replace with TxDb until there are no more SQLite db files around
-        ## that have 'Db type' set to 'TranscriptDb' (will take a couple of
-        ## years).
-        if (dbType == "TranscriptDb")
-            dbType <- "TxDb"
-        ## H.P.: 'Supporting package' is the new name for the 'package' entry
-        ## (as of Feb 10, 2012). For now we keep backward compatibility with
-        ## 'package' but at some point (in 1 year? 2 years?), this won't be
-        ## needed anymore.
-        dbPackage <- tryCatch({
-            .getMetaValue(conn, "Supporting package")
-        }, error=function(err1) {
-            tryCatch({
-                .getMetaValue(conn, "package")
-            }, error=function(err2) {
-                ## TEMP: if it's a TxDb or FeatureDb, lets give it a pass.
-                if(dbType == "TxDb" || dbType == "FeatureDb")
-                  return("GenomicFeatures")
-                stop("no 'Supporting package' entry found ",
-                     "in 'metadata' table of database:\n  ", file)
-            })
-        })
+    supporting_pkg <- try(.getMetaValue(conn, "Supporting package"),
+                          silent=TRUE)
+    if (is(supporting_pkg, "try-error")) {
+        if (is.null(getClassDef(db_type)))
+            stop("this db is of type ", db_type, " but this is not ",
+                 "a defined class")
+    } else {
+        if (!suppressWarnings(require(supporting_pkg, character.only=TRUE)))
+            stop("this db is of type ", db_type, " and requires the ",
+                 supporting_pkg, " package before it can be loaded")
     }
-    dbDisconnect(conn)
-    loadDb(file, dbType, dbPackage, ...)
-})
+}
 
+### We distinguish 2 uses of loadDb():
+###   1. By the end-user for loading a standalone .sqlite file. In that case
+###      'packageName' should NOT be specified.
+###   2. By the .onLoad() hook of an annotation package. In that case
+###      'packageName' must be specified and indicate the name of the
+###      annotation package.
+loadDb <- function(file, packageName=NA)
+{
+    conn <- dbConnect(SQLite(), file, cache_size=64000L, synchronous="off",
+                      flags=SQLITE_RO)
+    stopifnot(dbExistsTable(conn, "metadata"))
+    db_type <- .getMetaValue(conn, "Db type")
+    if (identical(packageName, NA)) {
+        ## loadDb() was called by the end-user.
+        ## The user doesn't necessarily have the supporting package in his/her
+        ## search path so we try to attach it for him/her in order to get
+        ## access to the definition of the class specified in 'db_type'.
+        .attach_supporting_pkg(conn, db_type)
+        packageName <- character(0)
+    } else {
+        ## loadDb() was called by the .onLoad() hook of package 'packageName'.
+        ## This package *should* import the supporting package so we should
+        ## already have access to the definition of the class specified in
+        ## 'db_type'. There is no need to import the namespace of the
+        ## supporting package.
+        if (!(isSingleString(packageName) && packageName != ""))
+            stop("'packageName' must be NA or a single non-empty string")
+    }
+    new(db_type, conn=conn, packageName=packageName)
+}
 

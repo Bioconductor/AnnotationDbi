@@ -13,8 +13,6 @@
 
 % Accessor-like methods
 \alias{loadDb}
-\alias{loadDb,character,character,character-method}
-\alias{loadDb,character,missing,missing-method}
 \alias{dbConn,AnnotationDb-method}
 \alias{saveDb}
 \alias{saveDb,AnnotationDb-method}
@@ -137,7 +135,7 @@
   select(x, keys, columns, keytype, ...)
   mapIds(x, keys, column, keytype, ..., multiVals)
   saveDb(x, file)
-  loadDb(file, dbType, dbPackage, ...)
+  loadDb(file, packageName=NA)
 }
 
 \arguments{
@@ -156,10 +154,6 @@
   }
   \item{column}{the column to search on (for \code{mapIds}).  Different from 
     \code{columns} in that it can only have a single element for the value}
-  \item{file}{an \code{sqlite} file path.  A string the represents the
-  full name you want for your sqlite database and also where to put it.}
-  \item{dbType}{dbType - not required}
-  \item{dbPackage}{dbPackage - not required}
   \item{...}{other arguments.  These include:
     \describe{
       \item{pattern:}{the pattern to match (used by keys)}
@@ -183,6 +177,9 @@
       }
     }
   }
+  \item{file}{an \code{sqlite} file path.  A string the represents the
+  full name you want for your sqlite database and also where to put it.}
+  \item{packageName}{for internal use only}
 }
 
 \value{
