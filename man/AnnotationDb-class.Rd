@@ -13,7 +13,7 @@
 
 % Accessor-like methods
 \alias{loadDb}
-\alias{dbConn,AnnotationDb-method}
+\alias{dbconn,AnnotationDb-method}
 \alias{saveDb}
 \alias{saveDb,AnnotationDb-method}
 \alias{show,AnnotationDb-method}
@@ -21,6 +21,7 @@
 \alias{names,AnnotationDb-method}
 \alias{species}
 \alias{species,AnnotationDb-method}
+\alias{dbfile,AnnotationDb-method}
 
 
 % select and select related methods
@@ -125,7 +126,11 @@
 
   \code{species} shows the genus and species label currently attached to
   the \code{AnnotationDb} objects database.
-  
+
+  \code{dbfile} gets the database file associated with an object.
+
+  \code{dbconn} gets the datebase connection associated with an object.
+
 }
 
 \usage{
@@ -228,7 +233,10 @@ mapIds(hgu95av2.db, keys=keys, column='ALIAS', keytype='ENTREZID',
 last <- function(x){x[[length(x)]]}
 mapIds(hgu95av2.db, keys=keys, column='ALIAS', keytype='ENTREZID', 
     multiVals=last)
-
+    
+## For other ways to access the DB, you can use dbfile() or dbconn() to extract
+dbconn(hgu95av2.db)
+dbfile(hgu95av2.db)
 }
 
 

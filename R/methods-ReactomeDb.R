@@ -80,7 +80,7 @@ setMethod("columns", "ReactomeDb",
                 ## need proper reactome tables for this one:
                 "REACTOMEID" = "SELECT DB_ID FROM DatabaseObject", 
                 stop("No keytype specified for .keys"))
-  as.character(unique(dbQuery(dbConn(x), sql, 1L)))
+  as.character(unique(dbQuery(dbconn(x), sql, 1L)))
 }
 
 setMethod("keys", "ReactomeDb",
@@ -231,7 +231,7 @@ setMethod("keys", "ReactomeDb",
   sql <- paste("SELECT * FROM", table, "WHERE", colType,"IN",
                paste0('("',paste(keys, collapse='","'),'")') )
   ## then extract it
-  dbQuery(dbConn(x), sql)
+  dbQuery(dbconn(x), sql)
 }
 
 ## this calls .extractWithSimpleQuery for each table and merges results
@@ -305,7 +305,7 @@ setMethod("keys", "ReactomeDb",
   ## create a join for these tables.
   ## TODO: add keys to this query.
   ## sql <- paste("SELECT * FROM",joins, collapse=" UNION ")  
-  ## res <- dbQuery(dbConn(x), sql, 1L)
+  ## res <- dbQuery(dbconn(x), sql, 1L)
 
   
   ## TODO: sort the results

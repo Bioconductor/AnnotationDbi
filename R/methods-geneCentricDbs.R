@@ -18,7 +18,7 @@
 
 ## Need an accessor for getting the central ID for a DB (when appropriate)
 .getCentralID <- function(x){
-  as.character(dbQuery(dbConn(x),
+  as.character(dbQuery(dbconn(x),
                        "SELECT value FROM metadata WHERE name='CENTRALID'"))
 }
 
@@ -481,7 +481,7 @@
   chipDb <- .getChipDbFile(y)
   chipSQL <- paste0("ATTACH '",chipDb,"' AS c")
   #message(chipSQL)
-  dbQuery(dbConn(x), chipSQL)
+  dbQuery(dbconn(x), chipSQL)
 }
 
 
@@ -602,10 +602,10 @@
     y <- x ## save for test below
     x <- .getOrgPkg(x) ## then flip to using the org package
   }
-  res <- dbQuery(dbConn(x), sql)
+  res <- dbQuery(dbconn(x), sql)
   ## then cleanup by doing a detach:
   if(exists("y", inherits=FALSE)){ ## I should not have to use inherits=FALSE?
-    dbQuery(dbConn(x), "DETACH DATABASE c")
+    dbQuery(dbconn(x), "DETACH DATABASE c")
   }
   ## then subset to only relevant cols
   res[,(colnames(res) %in% headerTables)]
@@ -892,7 +892,7 @@
     where <- paste("WHERE ",fullKeytype,"in (",strKeys,")" )
     sql <- paste(sql, where)
     ## then call that
-    res <- dbQuery(dbConn(x), sql)    
+    res <- dbQuery(dbconn(x), sql)    
     ## cleanup and re-organize
     .resort(res, keys, jointype=keytype, fields)
 }
@@ -1070,7 +1070,7 @@ setMethod("select", "GODb",
       y <- x ## The old switcheroo
       x <- .getOrgPkg(x)  
   }
-  con <- dbConn(x)
+  con <- dbconn(x)
   tables <- .getDataTables(con)
   cols <- unique(unlist(sapply(tables, FUN=dbListFields, con=con)))
   cols <- cols[!cols %in% "_id"]
@@ -1132,7 +1132,7 @@ setMethod("columns", "GODb",
   table <- .getDBLocs(x, keytype)
   field <- .getDBLocs(x, keytype, value="field")
   sql <- paste("SELECT DISTINCT",field,"FROM",table)
-  res <- dbQuery(dbConn(x), sql)
+  res <- dbQuery(dbconn(x), sql)
   t(res)
 }
 
@@ -1153,11 +1153,11 @@ setMethod("columns", "GODb",
   ## now decide
   if(class(x) == "OrgDb"){
     res <- switch(EXPR = keytype,
-                  "ENTREZID" = dbQuery(dbConn(x),
+                  "ENTREZID" = dbQuery(dbconn(x),
                     paste("SELECT gene_id FROM", EGgeneTable), 1L),
-                  "TAIR" = dbQuery(dbConn(x),
+                  "TAIR" = dbQuery(dbconn(x),
                     "SELECT gene_id FROM genes", 1L),
-                  "ORF" = dbQuery(dbConn(x),
+                  "ORF" = dbQuery(dbconn(x),
                     "SELECT systematic_name FROM sgd", 1L),
                   "PROBEID" =
                      stop("PROBEID is not supported for Organism packages"),
@@ -1165,15 +1165,15 @@ setMethod("columns", "GODb",
   }
   if(class(x) == "ChipDb"){
     res <- switch(EXPR = keytype,
-                  "ENTREZID" = dbQuery(dbConn(x),
+                  "ENTREZID" = dbQuery(dbconn(x),
                     "SELECT gene_id FROM probes", 1L),
-                  "PROBEID" =  dbQuery(dbConn(x),
+                  "PROBEID" =  dbQuery(dbconn(x),
                     "SELECT DISTINCT probe_id FROM probes", 1L),
                   .queryForKeys(x, keytype))
   }
   if(class(x) == "GODb"){
     res <- switch(EXPR = keytype,
-                  "GOID" =  dbQuery(dbConn(x),
+                  "GOID" =  dbQuery(dbconn(x),
                     "SELECT DISTINCT go_id FROM go_term", 1L),
                   .queryForKeys(x, keytype))
   }
@@ -1188,7 +1188,7 @@ setMethod("columns", "GODb",
         x <- .getOrgPkg(x)
         try(.attachDB(x,y), silent=TRUE) ## not a disaster if we fail
     }
-    con <- dbConn(x)
+    con <- dbconn(x)
     tables <- .getDataTables(con)
     if(exists("y")){
         tables <- c("c.probes", tables)
@@ -1209,7 +1209,7 @@ setMethod("columns", "GODb",
         try(.attachDB(x,y), silent=TRUE) ## not a disaster if we fail
     }
     sql <- paste("SELECT",keytype,"FROM",tab)
-    res <- dbQuery(dbConn(x), sql, 1L)
+    res <- dbQuery(dbconn(x), sql, 1L)
     as.character(res[!is.na(res)])
 }
 
@@ -1421,7 +1421,7 @@ setMethod("keytypes", "GODb",
 ## library(org.Hs.eg.db)
 ## ls(2)
 
-## con = AnnotationDbi:::dbConn(org.Hs.eg.db)
+## con = AnnotationDbi:::dbconn(org.Hs.eg.db)
 ## keys = head(keys(org.Hs.egCHR))
 
 

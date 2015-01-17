@@ -129,7 +129,7 @@
 
 ## helpers
 .getLCcolnames <- function(x){
-  con <- dbConn(x)
+  con <- dbconn(x)
   list <- dbListTables(con)
   ## drop unwanted tables
   unwanted <- c("map_counts","map_metadata","metadata")
@@ -176,7 +176,7 @@ setMethod("keytypes", "InparanoidDb", function(x){.inpCols(x)})
   baseSpecies <- .getBaseSpecies(x)
   baseFiveCode <- .getBaseFiveCode(baseSpecies)
   ## get connection to DB
-  con <- dbConn(x)
+  con <- dbconn(x)
   if(baseSpecies != lckeytype){
     sql <- paste("SELECT inp_id FROM", lckeytype,
                  paste0("WHERE species!='",baseFiveCode,"'"))
@@ -258,7 +258,7 @@ setMethod("keys", "InparanoidDb",
 ##                "AND",inTableClause,"IN",               
 ##                paste0("('",paste(keys, collapse="','"),"')"))
 ##   ## then extract
-##   res <- dbQuery(dbConn(x), sql)
+##   res <- dbQuery(dbconn(x), sql)
 ## }
 
 
@@ -295,8 +295,8 @@ setMethod("keys", "InparanoidDb",
   }
   
   ## then extract
-  resBase <- dbQuery(dbConn(x), subQueryBase)
-  resAlt <- dbQuery(dbConn(x), subQueryAlt)
+  resBase <- dbQuery(dbconn(x), subQueryBase)
+  resAlt <- dbQuery(dbconn(x), subQueryAlt)
   ## then merge as an inner join on clust_id for each
   res <- merge(resBase, resAlt, by.x="clust_id", by.y="clust_id")
   res <- res[,c("inp_id.x","inp_id.y")]

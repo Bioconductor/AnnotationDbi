@@ -34,7 +34,7 @@
 
 ## helpers
 .getLCcolnames8 <- function(x){
-  con <- dbConn(x)
+  con <- dbconn(x)
   list <- dbListTables(con)
   ## drop unwanted tables
   unwanted <- c("metadata")
@@ -81,7 +81,7 @@ setMethod("keytypes", "Inparanoid8Db", function(x){.inpCols8(x)})
   baseSpecies <- .getBaseSpecies8(x)
   baseShortCode <- .getBaseShortCode(baseSpecies)
   ## get connection to DB
-  con <- dbConn(x)
+  con <- dbconn(x)
   if(baseSpecies != lckeytype){
     sql <- paste("SELECT inp_id FROM", lckeytype,
                  paste0("WHERE species!='",baseShortCode,"'"))
@@ -163,8 +163,8 @@ setMethod("keys", "Inparanoid8Db",
   }
   
   ## then extract
-  resBase <- dbQuery(dbConn(x), subQueryBase)
-  resAlt <- dbQuery(dbConn(x), subQueryAlt)
+  resBase <- dbQuery(dbconn(x), subQueryBase)
+  resAlt <- dbQuery(dbconn(x), subQueryAlt)
   ## then merge as an inner join on clust_id for each
   res <- merge(resBase, resAlt, by.x="clust_id", by.y="clust_id")
   res <- res[,c("inp_id.x","inp_id.y")]

@@ -20,14 +20,14 @@ AnnotationDb <-
 ## txdbConn <- function(txdb) .getConn(txdb@envir)
 
 
-## On the fence about whether or not to export dbConn(), it could be useful,
-## but it is also quite similar to say: org.Hs.eg_dbconn(), so if we export
-## it, it will have to deprecate the older ways.  For now, I will just call it
-## using AnnotationDbi:::dbConn(db), Also AnnDbBiMaps have something called
-## dbconn() (lowercase "c") - blergh...
-setMethod("dbConn", "AnnotationDb",
-    function(x) x$conn
-)
+# ## On the fence about whether or not to export dbconn(), it could be useful,
+# ## but it is also quite similar to say: org.Hs.eg_dbconn(), so if we export
+# ## it, it will have to deprecate the older ways.  For now, I will just call it
+# ## using AnnotationDbi:::dbconn(db), Also AnnDbBiMaps have something called
+# ## dbconn() (lowercase "c") - blergh...
+# setMethod("dbconn", "AnnotationDb",
+#     function(x) x$conn
+# )
 
 ## Accesor for packageName
 setMethod("packageName", "AnnotationDb",
@@ -36,21 +36,21 @@ setMethod("packageName", "AnnotationDb",
 
 ## Overload metadata for AnnotationDb
 setMethod("metadata", "AnnotationDb",
-    function(x) dbReadTable(dbConn(x), "metadata")
+    function(x) dbReadTable(dbconn(x), "metadata")
 )
 
 
 ## Get the species AnnotationDb
 setMethod("species", "AnnotationDb",
     function(x){
-      res <- as.character(dbEasyQuery(dbConn(x),
+      res <- as.character(dbEasyQuery(dbconn(x),
         "SELECT value FROM metadata WHERE name='ORGANISM'"))
       if(res == "character(0)"){ ## then try again.
-        res <- as.character(dbEasyQuery(dbConn(x),
+        res <- as.character(dbEasyQuery(dbconn(x),
          "SELECT value FROM metadata WHERE name='Organism'"))
       }
       if(res == "character(0)"){ ## then try again.
-        res <- as.character(dbEasyQuery(dbConn(x),
+        res <- as.character(dbEasyQuery(dbconn(x),
          "SELECT value FROM metadata WHERE name='Genus and Species'"))
       }
       res
@@ -77,7 +77,7 @@ setMethod("saveDb", "AnnotationDb",
     {
         if (!isSingleString(file))
           stop("'file' must be a single string")
-        sqliteCopyDatabase(dbConn(x), file)
+        sqliteCopyDatabase(dbconn(x), file)
     }
 )
 
@@ -223,4 +223,36 @@ cols <- function(x){
 ## loadFeatures(fl)                           ## other bug
 ## GenomicFeatures:::TxDb(conn)               ## bug
 ## AnnotationDbi:::loadDb(fl)                 ## other bug
+
+
+
+
+
+
+
+## TODO: add option to replace multi-matches with NAs or to just remove them.
+## To cleanly handle having 'multiVals' being EITHER a FUN or something else:
+## DO like: if(is.function(multiVals)){}else{match.arg(multiVals)}
+
+###############################################################################
+## New method just to make it easier to access the sqlite file (and thus make 
+## it easier to make use of great new stuff like dplyr)
+
+## Basically I want this thing to return the sqlite file name path as a string
+
+## Get the species AnnotationDb
+## And this should always work because ALL of these things should have a conn 
+## slot and those connection objects all know where the sqlite file is...
+setMethod("dbfile", "AnnotationDb",
+          function(x){
+              x$conn@dbname
+          }
+)
+
+## Lets make a dbconn() method for AnnotationDb objects (and export it)
+setMethod("dbconn", "AnnotationDb",
+          function(x){ 
+              x$conn 
+          }
+)
 

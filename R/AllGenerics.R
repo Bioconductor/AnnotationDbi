@@ -68,7 +68,8 @@ setGeneric("flatten", function(x, ...) standardGeneric("flatten"))
 setGeneric("saveDb", signature="x",
            function(x, file) standardGeneric("saveDb"))
 
-setGeneric("dbConn", function(x) standardGeneric("dbConn"))
+## Don't do this.  There is already a dbconn() method.  So use that one.
+##setGeneric("dbConn", function(x) standardGeneric("dbConn"))
 
 setGeneric("packageName", function(x) standardGeneric("packageName"))
 
@@ -87,5 +88,4 @@ setGeneric("select", signature="x",
 
 setGeneric("mapIds", signature="x",
            function(x, keys, column, keytype, ..., multiVals) standardGeneric("mapIds"))
-
 
