@@ -108,6 +108,12 @@ loadDb <- function(file, packageName=NA)
                       flags=SQLITE_RO)
     stopifnot(dbExistsTable(conn, "metadata"))
     db_type <- .getMetaValue(conn, "Db type")
+    ## TEMP: On 07/25/2014 TranscriptDb was renamed TxDb so we need to
+    ## replace with TxDb until there are no more SQLite db files around
+    ## that have 'Db type' set to 'TranscriptDb' (will take a couple of
+    ## years).
+    if (db_type == "TranscriptDb")
+        db_type <- "TxDb"
     if (identical(packageName, NA)) {
         ## loadDb() was called by the end-user.
         ## The user doesn't necessarily have the supporting package in his/her
