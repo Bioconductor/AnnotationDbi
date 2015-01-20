@@ -5,7 +5,8 @@ import(Biobase)
 import(DBI)
 import(RSQLite)
 import(BiocGenerics)
-importFrom(S4Vectors, isTRUEorFALSE, isSingleString, metadata, elementLengths)
+importFrom(S4Vectors, isTRUEorFALSE, isSingleString, metadata, elementLengths,
+           wmsg)
 
 importFrom(GenomeInfoDb, genomeStyles, extractSeqlevels, mapSeqlevels)
 exportClasses(
