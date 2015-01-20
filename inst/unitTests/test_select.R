@@ -407,3 +407,16 @@ test_select16 <- function(){
 }
 ## TODO: figure out why in this weird corner case there is an extra col for
 ## GOALL called 'NA'...
+
+
+
+test_dbconn_and_dbfile <- function(){
+    resc <- dbconn(org.Hs.eg.db)
+    m <- dbGetQuery(resc, "SELECT * FROM metadata")
+    checkTrue(dim(m)[2] ==2)
+    checkTrue(dim(m)[1] > 10)
+              
+    resf <- dbfile(org.Hs.eg.db)
+    mf <- dbGetQuery(dbConnect(SQLite(), resf), "SELECT * FROM metadata")
+    checkTrue(all(mf == m))
+}
