@@ -73,8 +73,6 @@ setGeneric("saveDb", signature="x",
 
 setGeneric("packageName", function(x) standardGeneric("packageName"))
 
-setGeneric("species", function(x) standardGeneric("species"))
-
 setGeneric("columns", signature="x",
            function(x) standardGeneric("columns"))
 
