@@ -42,15 +42,15 @@ setMethod("metadata", "AnnotationDb",
 
 ## Get the species AnnotationDb
 setMethod("species", "AnnotationDb",
-    function(x){
-      res <- as.character(dbEasyQuery(dbconn(x),
+    function(object){
+      res <- as.character(dbEasyQuery(dbconn(object),
         "SELECT value FROM metadata WHERE name='ORGANISM'"))
       if(res == "character(0)"){ ## then try again.
-        res <- as.character(dbEasyQuery(dbconn(x),
+        res <- as.character(dbEasyQuery(dbconn(object),
          "SELECT value FROM metadata WHERE name='Organism'"))
       }
       if(res == "character(0)"){ ## then try again.
-        res <- as.character(dbEasyQuery(dbconn(x),
+        res <- as.character(dbEasyQuery(dbconn(object),
          "SELECT value FROM metadata WHERE name='Genus and Species'"))
       }
       res
