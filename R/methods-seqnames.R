@@ -1,7 +1,9 @@
 ###############################################################################
 ## Code to access the special chromosome name conventions DB.
 ## The methods in this file are deprecated and now belong to GenomeInfoDb
-
+##
+## IMPORTANT NOTE: Please don't forget to drop dependency on GenomeInfoDb when
+## this file goes away (in BioC 3.2). Thanks!  H.
 
 supportedSeqnameMappings <- 
     function()
@@ -103,21 +105,4 @@ extractSeqnameSet <-
 ## seqnames2 = (paste0("chr",1:22))
 
 ## testSeqnames(c("ensembl","NCBI"),seqnames=c(1:22,"X","Y","MT"),"Rattus norvegicus")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
