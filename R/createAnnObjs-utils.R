@@ -169,6 +169,17 @@ makeSeedList <- function(species, fields)
 ## Below are helper functions to define helpful startup messages for
 ## especially ornery packages:
 
+## TODO: for these organsism add a waring about Blast2GO (being stale)
+## taxIDList = c("Canis_familiaris"="9615",
+##                 "Sus_Scrofa"="9823",
+##                 "Anopheles_gambiae"="180454",
+##                 "Xenopus_laevis"="8355",
+##                 "Macaca_mulatta"="9544",
+##                 "Pan_troglodytes"="9598")
+## ##                 "Escherichia_coli_K12"="511145")
+
+
+
 choosePackage <- function(pkgType){
 ## defines a blackList to choose the type of message based on the pkg name.
 ## If you are not in the blackList, then we don't need a message.
@@ -204,6 +215,16 @@ choosePackage <- function(pkgType){
                  ## Pass given on 11/8/10
                  ## "hs25kresogen.db" = "deprecatedSimonDeBernard",
                  ## "mm24kresogen.db" = "deprecatedSimonDeBernard",
+                 "org.Cf.eg" = "B2GOstale",
+                 "org.Ss.eg" = "B2GOstale",
+                 "org.Ag.eg" = "B2GOstale",
+                 "org.Xl.eg" = "B2GOstale",
+                 "org.Mmu.eg" = "B2GOstale",
+                 "org.Pt.eg" = "B2GOstale",
+                 "canine.db" = "B2GOstale",
+                 "canine2.db" = "B2GOstale",
+                 "xlaevis.db" = "B2GOstale",
+                 ## End of the B2GO warnings (remove once problem is resolved)
                  "org.Sco.eg.db" = "deprecated",
                  "KEGG.db" = "keggstale",
                  "NO_MESSAGE_TYPE"
@@ -244,13 +265,20 @@ annotMessage <- function(msgType, pkgType){
 		  "illumina_XXX_ARRAYADDRESS mapping to convert between", 
 		  "BeadIDs and Illumina IDs. \n\n  *_XXX_ here refers to the",
   		  "species and version for this platform"),
-                "keggstale" = paste("\n",pkgType,"contains mappings based on older",
+                "keggstale" = paste("\n",pkgType,"contains mappings based on",
+                  " older",
                   "data because the original resource was removed from the",
                   "the public domain before the most recent update was",
                   "produced. This package should now be considered deprecated",
                   "and future versions of Bioconductor may not have it",
                   "available.  Users who want more current data are encouraged",
                   "to look at the KEGGREST or reactome.db packages"),
+                "B2GOstale" = paste("\n",pkgType,"contains GO mappings based",
+                  "on older data",
+                  "because the Blast2GO data resource was removed from",
+                  "the public domain just before the most recent update was",
+                  "produced. We are working on an alternative means to get",
+                  "this kind of data before the next release."),
                 "exon_probeset" = paste("\n",pkgType,"is based on exon",
                   "probesets. For a more gene-centric view, use the",
                   "transcriptcluster version of this package."),
