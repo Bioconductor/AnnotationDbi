@@ -76,7 +76,8 @@ setMethod("columns", "ReactomeDb",
                 "ENTREZID" = "SELECT gene_id FROM pathway2gene",
                 "GO" = "SELECT go_id FROM reactome2go",
                 "PATHNAME" = "SELECT path_name FROM pathway2name",
-                "PATHID" = "SELECT DB_ID FROM pathway2name",
+                "PATHID" = paste0("SELECT DB_ID FROM pathway2name UNION ",
+                  "SELECT DB_ID FROM pathway2gene"), 
                 ## need proper reactome tables for this one:
                 "REACTOMEID" = "SELECT DB_ID FROM DatabaseObject", 
                 stop("No keytype specified for .keys"))
