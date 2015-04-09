@@ -1697,8 +1697,8 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
     ## next call select()
     ## TODO: remove the suppressWarnings() call once you get rid of that warning
     res <- select(x, keys=keys, columns=column, keytype=keytype) 
-    ## then split accordingly
-    res <- split(res[[column]], f=res[[keytype]])
+    ## then split accordingly (and return sorted by initial keys)
+    res <- split(res[[column]], f=res[[keytype]])[keys]
 
     ## internal helper to toss out multiply matching things
     .filtMults <- function(data){
