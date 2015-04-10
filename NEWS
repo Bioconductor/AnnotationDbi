@@ -1,11 +1,36 @@
  	**************************************************
 	*						 *
+	*	        1.30.x SERIES NEWS		 *
+	*						 *
+	**************************************************
+
+
+		CHANGES IN AnnotationDbi VERSION 1.30.x
+
+NEW FEATURES and API changes
+
+    o Adds mapIds() which allows users who miss mget() to extract data  
+    from AnnnotationDb objects: but without the dangers of using mget() 
+    (which fails if you pass in a bad key)
+
+    o Adds dbconn() and dbfile() methods to the list of things that 
+    AnnotationDb derived objects shoould always be expected to support
+
+BUG FIXES AND CODE MAINTENANCE
+
+    o loadDb() now is smarter about whether or not it attaches a supporting 
+    package 
+
+
+
+ 	**************************************************
+	*						 *
 	*	        1.24.x SERIES NEWS		 *
 	*						 *
 	**************************************************
 
 
-		CHANGES IN AnnotationDbi VERSION 1.22.x
+		CHANGES IN AnnotationDbi VERSION 1.24.x
 
 NEW FEATURES and API changes
 
