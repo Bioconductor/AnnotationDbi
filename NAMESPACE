@@ -8,11 +8,6 @@ import(BiocGenerics)
 importFrom(S4Vectors, isTRUEorFALSE, isSingleString, metadata, elementLengths,
            wmsg)
 
-## IMPORTANT NOTE: Please don't forget to remove this and to drop dependency on
-## GenomeInfoDb when the R/methods-seqnames.R file (and all the defunct stuff
-## in it) goes away (in BioC 3.2). Thanks!  H.
-importFrom(GenomeInfoDb, genomeStyles, extractSeqlevels, mapSeqlevels)
-
 exportClasses(
     ## from R/AllClasses.R
     "Bimap",
@@ -180,15 +175,5 @@ export(
     ## AnnotationDb
     metadata,
 
-    ## seqnames.db
-    supportedSeqnameMappings,
-    findSequenceRenamingMaps,
-    supportedSeqnameStyles,
-    extractSeqnameSet,
-    testSeqnames,
-    isSupportedSeqnamesStyle,
-    listAllSupportedStylesBySpecies,
-    listAllSupportedSeqnameStyles,
-    supportedSeqnames,
     createSimpleBimap
 )

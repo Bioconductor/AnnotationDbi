@@ -2,12 +2,12 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.31.0
+Version: 1.31.1
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer
  <maintainer@bioconductor.org>
 Depends: R (>= 2.7.0), methods, utils, stats4, BiocGenerics (>= 0.13.8),
-        Biobase (>= 1.17.0), GenomeInfoDb(>= 0.99.17)
+        Biobase (>= 1.17.0)
 Imports: methods, utils, DBI, RSQLite, stats4, BiocGenerics, Biobase,
         S4Vectors
 Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db,
@@ -18,8 +18,8 @@ Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db,
 Collate: 00RTobjs.R unlist2.R AllGenerics.R AllClasses.R FlatBimap.R
         SQL.R AnnDbObj-lowAPI.R Bimap.R GOTerms.R BimapFormatting.R
         Bimap-envirAPI.R flatten.R methods-AnnotationDb.R
-        methods-seqnames.R methods-geneCentricDbs.R
-        methods-ReactomeDb.R methods-Inparanoid.R methods-Inparanoid8.R
+        methods-geneCentricDbs.R methods-ReactomeDb.R
+        methods-Inparanoid.R methods-Inparanoid8.R
         loadDb.R createAnnObjs-utils.R createAnnObjs.NCBIORG_DBs.R
         createAnnObjs.NCBICHIP_DBs.R createAnnObjs.ORGANISM_DB.R
         createAnnObjs.YEASTCHIP_DB.R createAnnObjs.COELICOLOR_DB.R
