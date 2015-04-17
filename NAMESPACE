@@ -1,12 +1,12 @@
 import(methods)
 import(utils)
 importFrom(stats4, summary)
-import(Biobase)
 import(DBI)
 import(RSQLite)
 import(BiocGenerics)
-importFrom(S4Vectors, isTRUEorFALSE, isSingleString, metadata, elementLengths,
-           wmsg)
+import(Biobase)
+import(S4Vectors)
+import(IRanges)
 
 exportClasses(
     ## from R/AllClasses.R
