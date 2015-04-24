@@ -20,22 +20,25 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "ls" new generic.
 ###
-.ls <- function(name, pos, envir, all.names, pattern){
+.ls <- function(name, pos, envir, all.names, pattern, sorted){
         keys <- keys(name)
         if (!missing(pattern))
             keys <- keys[grep(pattern, keys)]
+        if (sorted)
+            keys <- sort(keys)
         keys
 }
 
 setMethod("ls", signature(name="Bimap"),
-    function(name, pos, envir, all.names, pattern){
+    function(name, pos=-1L, envir=as.environment(pos), all.names=FALSE,
+             pattern, sorted=TRUE){
         if (!missing(pos))
           warning("ignoring 'pos' argument")
         if (!missing(envir))
           warning("ignoring 'envir' argument")
         if (!missing(all.names))
           warning("ignoring 'all.names' argument")
-        .ls(name, pos, envir, all.names, pattern)
+        .ls(name, pos, envir, all.names, pattern, sorted)
     }
 )
 

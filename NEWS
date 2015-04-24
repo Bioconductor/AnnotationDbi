@@ -11,6 +11,9 @@ NEW FEATURES and API changes
 
     o columns() and keytypes() sort their return values.
 
+    o ls() on a Bimap option returns keys in sort()ed order, by
+    default
+
  	**************************************************
 	*						 *
 	*	        1.30.x SERIES NEWS		 *

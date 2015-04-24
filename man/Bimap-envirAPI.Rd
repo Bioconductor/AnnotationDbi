@@ -41,8 +41,8 @@
 }
 
 \usage{
-  ls(name, pos = -1L, envir = as.environment(pos), all.names = FALSE, pattern, 
-  sorted = TRUE)
+  ls(name, pos = -1L, envir = as.environment(pos), all.names = FALSE,
+     pattern, sorted = TRUE)
   exists(x, where, envir, frame, mode, inherits)
   get(x, pos, envir, mode, inherits)
   #x[[i]]
@@ -63,18 +63,12 @@
     A key as a literal character string or a name (possibly backtick quoted)
     for \code{x$name}.
   }
-  \item{pos}{
+  \item{pos, envir, all.names, USE.NAMES, where, frame, mode, inherits}{
     Ignored.
   }
   \item{envir}{
     Ignored for \code{ls}. A \link{Bimap} object for \code{mget},
     \code{get} and \code{exists}.
-  }
-  \item{all.names}{
-    Ignored.
-  }
-  \item{USE.NAMES}{
-    Ignored.
   }
   \item{pattern}{
     An optional regular expression. Only keys matching 'pattern' are returned.
@@ -83,18 +77,6 @@
     The key(s) to search for for \code{exists}, \code{get} and \code{mget}.
     A \link{Bimap} object for \code{[[} and \code{x$name}.
     A \link{Bimap} object or an environment for \code{sample}.
-  }
-  \item{where}{
-    Ignored.
-  }
-  \item{frame}{
-    Ignored.
-  }
-  \item{mode}{
-    Ignored.
-  }
-  \item{inherits}{
-    Ignored.
   }
   \item{i}{
     Single key specifying the map element to extract.
@@ -124,7 +106,8 @@
     being sampled.
   }
   \item{sorted}{
-    Ignored
+    \code{logical(1)}. When TRUE (default), return primary keys in
+    sorted order.
   }
 }
 
