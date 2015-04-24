@@ -385,13 +385,13 @@ test_select15 <- function(){
         res <- select(x, keys="100008586", columns(x)) 
         checkTrue(dim(res)[1]>0)
         checkTrue(dim(res)[2]==30)
-        checkIdentical(c('ENTREZID','PFAM','IPI','PROSITE','ACCNUM','ALIAS',
-                         'CHR', 'CHRLOC','CHRLOCCHR','CHRLOCEND','ENZYME',
-                         'MAP','PATH','PMID','REFSEQ','SYMBOL','UNIGENE',
-                         'ENSEMBL','ENSEMBLPROT','ENSEMBLTRANS','GENENAME',
-                         'UNIPROT','GO','EVIDENCE','ONTOLOGY','GOALL',NA,
-                         'ONTOLOGYALL','OMIM','UCSCKG'),
-                       colnames(res))
+        exp <- c("ENTREZID", "ACCNUM", "ALIAS", "CHR", "CHRLOC",
+                 "CHRLOCCHR", "CHRLOCEND", "ENSEMBL", "ENSEMBLPROT",
+                 "ENSEMBLTRANS", "ENZYME", "EVIDENCE", "EVIDENCEALL",
+                 "GENENAME", "GO", "ONTOLOGY", "GOALL", NA, "IPI",
+                 "MAP", "OMIM", "PATH", "PFAM", "PMID", "PROSITE",
+                 "REFSEQ", "SYMBOL", "UCSCKG", "UNIGENE", "UNIPROT")
+        checkIdentical(exp, colnames(res))
     }
 }
 

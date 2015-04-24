@@ -1,5 +1,18 @@
  	**************************************************
 	*						 *
+	*	        1.31.x SERIES NEWS		 *
+	*						 *
+	**************************************************
+
+
+		CHANGES IN AnnotationDbi VERSION 1.31.x
+
+NEW FEATURES and API changes
+
+    o columns() and keytypes() sort their return values.
+
+ 	**************************************************
+	*						 *
 	*	        1.30.x SERIES NEWS		 *
 	*						 *
 	**************************************************

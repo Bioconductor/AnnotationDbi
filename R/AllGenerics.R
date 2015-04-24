@@ -73,17 +73,19 @@ setGeneric("saveDb", signature="x",
 
 setGeneric("packageName", function(x) standardGeneric("packageName"))
 
-setGeneric("columns", signature="x",
-           function(x) standardGeneric("columns"))
-
-setGeneric("keytypes", signature="x",
-           function(x) standardGeneric("keytypes"))
+setGeneric("columns", signature="x", function(x) {
+    value <- standardGeneric("columns")
+    sort(value)
+})
+           
+setGeneric("keytypes", signature="x", function(x) {
+    value <- standardGeneric("keytypes")
+    sort(value)
+})
 
 setGeneric("select", signature="x",
            function(x, keys, columns, keytype, ...) standardGeneric("select"))
 
-
-
 setGeneric("mapIds", signature="x",
-           function(x, keys, column, keytype, ..., multiVals) standardGeneric("mapIds"))
-
+           function(x, keys, column, keytype, ..., multiVals)
+               standardGeneric("mapIds"))
