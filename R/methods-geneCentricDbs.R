@@ -1734,19 +1734,3 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
 
 
 
-
-##################################
-## ISSUES WITH DBLocs (potentially affected functions):
-## debug(AnnotationDbi:::.generateQuery) 
-## debug(AnnotationDbi:::.extractData) 
-## debug(AnnotationDbi:::.legacySelect) 
-## debug(AnnotationDbi:::.queryForKeys)
-
-
-## Also: Do I have cases where I really want to use the non-fully qualified name?
-
-## starts out: A-OK (data comes back from .extractData() looking alright)
-## library(org.Hs.eg.db); res = select(org.Hs.eg.db, '1', c('GO','GOALL'),'ENTREZID')
-## colnames(res)
-
-
