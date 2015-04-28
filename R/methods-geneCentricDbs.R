@@ -469,11 +469,11 @@
 }
 
 
-.getFullyQualifiedDBLocs <- function(x, cols){
-  tables <- .getDBLocs(x, cols, value="table")
-  fields <- .getDBLocs(x, cols, value="field")
-  paste(tables, fields, sep=".")
-}
+## .getFullyQualifiedDBLocs <- function(x, cols){
+##   tables <- .getDBLocs(x, cols, value="table")
+##   fields <- .getDBLocs(x, cols, value="field")
+##   paste(tables, fields, sep=".")
+## }
 
 
 ## x is the org package object, y is the chip package object. 
@@ -497,7 +497,8 @@
     ## because we have a "y" defined, we have to define the dblocs this way:
     dblocs <- .getDBLocs(y, cols)
     ## Fully qualified keytype and species are set up like this
-    fullKeytype <- .getFullyQualifiedDBLocs(y, keytype)
+    ## fullKeytype <- .getFullyQualifiedDBLocs(y, keytype)
+    fullKeytype <- .getDBLocs(y, keytype, value = "full.field")
     species <- species(x)
     ## if we have c.probes in dblocs, then we MUST join to genes table
     if("c.probes" %in% dblocs && species(x)!="Saccharomyces cerevisiae"){
@@ -508,7 +509,8 @@
     }
   }else{ ## this means there is only an org pkg...
     dblocs <- .getDBLocs(x, cols)
-    fullKeytype <- .getFullyQualifiedDBLocs(x, keytype)
+    ## fullKeytype <- .getFullyQualifiedDBLocs(x, keytype)
+    fullKeytype <- .getDBLocs(x, keytype, value = "full.field")
     species <- species(x)
   }
   
@@ -1731,6 +1733,25 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
 
 
 
+##################################
+## ISSUES WITH DBLocs (why do I have two versions that get a fully qualified name? (do they both work?))
+## potentially affected functions:
+## debug(AnnotationDbi:::.generateQuery) 
+## debug(AnnotationDbi:::.extractData) 
+## debug(AnnotationDbi:::.legacySelect) 
+## debug(AnnotationDbi:::.queryForKeys)
+
+## Also: Do I have cases where I really want to use the non-fully qualified name?
+
+## starts out: A-OK (data comes back from .extractData() looking alright)
+## library(org.Hs.eg.db); res = select(org.Hs.eg.db, '1', c('GO','GOALL'),'ENTREZID')
+## colnames(res)
 
 
-
+## So 1st finding is that theses two functions are non-identical.
+## compare:
+## cols = c( "ENTREZID","GO","EVIDENCE","ONTOLOGY")
+## .getDBLocs(x, cols, value = "full.field")
+## VS this one: (which apparently sometimes does the WRONG thing!)
+## .getFullyQualifiedDBLocs(x, cols)
+## So I should probably get rid of the 2nd function (since I don't need it, and its not accurate)
