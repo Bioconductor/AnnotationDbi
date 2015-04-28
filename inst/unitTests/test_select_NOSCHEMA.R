@@ -1,7 +1,7 @@
 ## this will install a testDb stashed in the
 
 ## ## this is the package name
-## pkgName <- "org.TguttataTestingSubset.eg.db"
+## pkgName <- "org.testing.db"
 
 ## ## Get the package path
 ## pkgPath <- system.file("extdata", pkgName, package="AnnotationDbi")
@@ -9,8 +9,9 @@
 ## ## Then install it
 ## install.packages(pkgPath, repos=NULL)
 ## and load it
-library("org.TguttataTestingSubset.eg.db")
-x <- org.TguttataTestingSubset.eg.db
+install.packages(system.file('extdata','org.testing.db', package='AnnotationDbi'), repos=NULL)
+library("org.testing.db")
+x <- org.testing.db
 finchCsomes <- c(as.character(1:15),as.character(17:28),
                  "MT","Un","W","Z","4A","1A","1B")
 finchCols <- c("CHROMOSOME","SYMBOL","GENENAME","GID","GO","EVIDENCE",
