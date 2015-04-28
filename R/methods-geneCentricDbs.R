@@ -516,9 +516,11 @@
   
   ## Get fields
   if(exists("y", inherits=FALSE)){ ## IOW if it was a chip package at the top...
-    fields <- paste(.getDBLocs(y,cols,value="full.field"), collapse=",")
+    fields <- .getDBLocs(y,cols,value="full.field")
+    fields <- paste(paste(fields,paste0(fields,"'"),sep=" AS '"), collapse=",")
   }else{
-    fields <- paste(.getDBLocs(x,cols,value="full.field"), collapse=",")
+    fields <- .getDBLocs(x,cols,value="full.field")
+    fields <- paste(paste(fields,paste0(fields,"'"),sep=" AS '"), collapse=",")
   }
 
   
@@ -599,7 +601,7 @@
   #message(sql)
   ## get field names for relevant cols
   cols <- unique(c(keytype, cols))
-  headerTables <- .getDBLocs(x, cols, value="field")
+  headerTables <- .getDBLocs(x, cols, value="full.field")
   if(class(x)=="ChipDb"){
     y <- x ## save for test below
     x <- .getOrgPkg(x) ## then flip to using the org package
@@ -685,8 +687,8 @@
     ## AND if they are BOTH redundant how do I decide which row to expand?
     ## I think that I have to throw a warning and NOT do this step in that case?
     keyTest <- any(duplicated(keys))
-    rowTest <-  any(duplicated(tab[[jointype]]))         
-    if (keyTest && !rowTest) { ## Need to account for row dups
+##    rowTest <-  any(duplicated(tab[[jointype]]))         
+    if (keyTest ){ ##&& !rowTest) { ## Need to account for row dups
         ind = match(keys, tab[[jointype]])
         tab <- tab[ind,,drop=FALSE]
         rownames(tab) <- NULL
@@ -797,10 +799,10 @@
   
   ## these are the colnames we need to have gotten back from the DB
   expectedCols <- .expandCols(x, oriCols)
-  oriTabCols <- .getDBLocs(x, expectedCols, value="field")
+  oriTabCols <- .getDBLocs(x, expectedCols, value="full.field")
   
   ## I need to know the jointype...
-  jointype <- .getDBLocs(x, keytype, value="field")
+  jointype <- .getDBLocs(x, keytype, value="full.field")
 
   ## Remove suffixes in case there were dups
   res <- .filterSuffixes(res)
@@ -811,7 +813,7 @@
   if(all(expectedCols %in%  oriCols) &&
      any(oriCols != expectedCols) ){
     ## We need to make it so that oriTabCols is in the SAME order as oriCols
-    oriTabCols <- .getDBLocs(x, oriCols, value="field")
+    oriTabCols <- .getDBLocs(x, oriCols, value="full.field")
     ## then we need to make expectedCols to match oriCols
     expectedCols <- oriCols
   }
@@ -968,9 +970,9 @@
 ## Helper for setting the jointype to an appropriate default
 .chooseJoinType  <- function(x){
   if(.getCentralID(x) == "ORF" && species(x) == "Saccharomyces cerevisiae"){
-    jointype <- "systematic_name"
+    jointype <- "gene2systematic.systematic_name"
   }else{
-    jointype <- "gene_id"
+    jointype <- "genes.gene_id"
   }
   jointype
 }
@@ -1009,19 +1011,19 @@ setMethod("select", "ChipDb",
     function(x, keys, columns, keytype, ...){
 ##         if (missing(keytype)) keytype <- "PROBEID"
         kt <- "PROBEID"
-        .selectWarnJT(x, keys, columns, keytype, jointype="probe_id",
+        .selectWarnJT(x, keys, columns, keytype, jointype="probes.probe_id",
                       kt=kt, ...)
         ## put back following line after 2.13 releases
-        ##           .select(x, keys, columns, keytype, jointype="probe_id")
+        ##           .select(x, keys, columns, keytype, jointype="probes.probe_id")
     }
 )
 
 setMethod("select", "GODb",
     function(x, keys, columns, keytype, ...){
           if (missing(keytype)) keytype <- "GOID"
-          .selectWarnJT(x, keys, columns, keytype, jointype="go_id", ...)
+          .selectWarnJT(x, keys, columns, keytype, jointype="go_term.go_id", ...)
           ## put back following line after 2.13 releases
-##           .select(x, keys, columns, keytype, jointype="go_id")
+##           .select(x, keys, columns, keytype, jointype="go_term.go_id")
         }
 )
 
@@ -1734,12 +1736,12 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
 
 
 ##################################
-## ISSUES WITH DBLocs (why do I have two versions that get a fully qualified name? (do they both work?))
-## potentially affected functions:
+## ISSUES WITH DBLocs (potentially affected functions):
 ## debug(AnnotationDbi:::.generateQuery) 
 ## debug(AnnotationDbi:::.extractData) 
 ## debug(AnnotationDbi:::.legacySelect) 
 ## debug(AnnotationDbi:::.queryForKeys)
+
 
 ## Also: Do I have cases where I really want to use the non-fully qualified name?
 
@@ -1748,10 +1750,3 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
 ## colnames(res)
 
 
-## So 1st finding is that theses two functions are non-identical.
-## compare:
-## cols = c( "ENTREZID","GO","EVIDENCE","ONTOLOGY")
-## .getDBLocs(x, cols, value = "full.field")
-## VS this one: (which apparently sometimes does the WRONG thing!)
-## .getFullyQualifiedDBLocs(x, cols)
-## So I should probably get rid of the 2nd function (since I don't need it, and its not accurate)

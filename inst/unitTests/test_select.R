@@ -22,7 +22,7 @@ t <- org.At.tair.db
 s <- org.Sc.sgd.db
 cols <- c("CHR","PFAM","GO")
 keys <- c(1,10)
-jointype <- "gene_id"
+jointype <- "genes.gene_id" ## changed from 'gene_id'
 quiet <- suppressWarnings # quieten warnings from 1:many mappings in select()
 
 ## resort and friends are really important as they are generic enough to
@@ -31,7 +31,7 @@ test_generateExtraRows <- function(){
   ttab = data.frame(warpbreaks[1:10,])
   tkeys = ttab$breaks
   tkeys = c(26, tkeys[1:7], tkeys[7], 30, tkeys[8:10], tkeys[10])
-  res <- AnnotationDbi:::.generateExtraRows(ttab, tkeys, jointype)
+  res <- AnnotationDbi:::.generateExtraRows(ttab, tkeys, jointype='breaks')
   checkTrue(length(tkeys) == dim(res)[1])
 }
 
@@ -95,8 +95,9 @@ test_resort <- function() {
     keys <- c(1,10)
     res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)
     ## jumble res to simulate trouble
-    resRO = res[order(sort(res$gene_id,decreasing=TRUE)),]
-    reqCols <- c("gene_id","chromosome","symbol","pfam_id")
+    resRO = res[order(sort(res$genes.gene_id,decreasing=TRUE)),]
+    reqCols <- c("genes.gene_id","chromosomes.chromosome","gene_info.symbol",
+                 "pfam.pfam_id")
     Rres <- fun(resRO, keys, jointype, reqCols)
     checkIdentical(Rres$gene_id,Rres$gene_id)
     checkTrue(class(Rres) =="data.frame")
@@ -105,9 +106,9 @@ test_resort <- function() {
     keys <- c(1, keys, keys)
     cols <- c("CHR","SYMBOL")
     res <- AnnotationDbi:::.extractData(x, cols, keytype="ENTREZID", keys)
-    reqCols <- c("gene_id","chromosome","symbol")
+    reqCols <- c("genes.gene_id","chromosomes.chromosome","gene_info.symbol")
     res2 <- fun(res, keys, jointype, reqCols)
-    checkIdentical(as.numeric(as.character(res2$gene_id)),keys)
+    checkIdentical(as.numeric(as.character(res2$genes.gene_id)),keys)
     checkTrue(class(res) =="data.frame")
 }
 
@@ -388,7 +389,7 @@ test_select15 <- function(){
         exp <- c("ENTREZID", "ACCNUM", "ALIAS", "CHR", "CHRLOC",
                  "CHRLOCCHR", "CHRLOCEND", "ENSEMBL", "ENSEMBLPROT",
                  "ENSEMBLTRANS", "ENZYME", "EVIDENCE", "EVIDENCEALL",
-                 "GENENAME", "GO", "ONTOLOGY", "GOALL", NA, "IPI",
+                 "GENENAME", "GO", "ONTOLOGY", "GOALL", "ONTOLOGYALL", "IPI",
                  "MAP", "OMIM", "PATH", "PFAM", "PMID", "PROSITE",
                  "REFSEQ", "SYMBOL", "UCSCKG", "UNIGENE", "UNIPROT")
         checkIdentical(exp, colnames(res))
