@@ -9,13 +9,24 @@
 ## ## Then install it
 ## install.packages(pkgPath, repos=NULL)
 ## and load it
-install.packages(system.file('extdata','org.testing.db', package='AnnotationDbi'), repos=NULL)
-library("org.testing.db")
-x <- org.testing.db
-finchCsomes <- c(as.character(1:15),as.character(17:28),
-                 "MT","Un","W","Z","4A","1A","1B")
-finchCols <- c("CHROMOSOME","SYMBOL","GENENAME","GID","GO","EVIDENCE",
-               "ONTOLOGY","GOALL","EVIDENCEALL","ONTOLOGYALL")
+#####install.packages(system.file('extdata','org.testing.db', package='AnnotationDbi'), repos=NULL)
+
+.setUp <- function()
+{
+    if (!require(org.testing.db))
+    {
+        install.packages(system.file("extdata", "org.testing.db",
+          package="AnnotationDbi"), repos=NULL,
+          type="source", INSTALL_opts="--no-test-load")
+        library(org.testing.db)
+    }
+    x <<- org.testing.db
+    finchCsomes <<- c(as.character(1:15),as.character(17:28),
+                     "MT","Un","W","Z","4A","1A","1B")
+    finchCols <<- c("CHROMOSOME","SYMBOL","GENENAME","GID","GO","EVIDENCE",
+                   "ONTOLOGY","GOALL","EVIDENCEALL","ONTOLOGYALL")
+}
+
 
 ## lower level tests (more useful)
 test_keysLow <- function(){
