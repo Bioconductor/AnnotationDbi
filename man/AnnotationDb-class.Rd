@@ -133,6 +133,8 @@
 
   \code{dbconn} gets the datebase connection associated with an object.
 
+  \code{taxonomyId} gets the taxonomy ID associated with an object (if available).
+
 }
 
 \usage{
