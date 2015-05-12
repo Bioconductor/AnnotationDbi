@@ -53,6 +53,7 @@ exportMethods(
     ## from R/AnnDbObj-lowAPI.R
     "dbconn",
     "dbfile",
+    "taxonomyId",
     "dbmeta",
     "dbschema",
     "dbInfo",

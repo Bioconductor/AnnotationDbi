@@ -22,6 +22,8 @@
 \alias{species}
 \alias{species,AnnotationDb-method}
 \alias{dbfile,AnnotationDb-method}
+\alias{taxonomyId}
+\alias{taxonomyId,AnnotationDb-method}
 
 
 % select and select related methods
@@ -237,6 +239,9 @@ mapIds(hgu95av2.db, keys=keys, column='ALIAS', keytype='ENTREZID',
 ## For other ways to access the DB, you can use dbfile() or dbconn() to extract
 dbconn(hgu95av2.db)
 dbfile(hgu95av2.db)
+
+## Try to retrieve an associated taxonomyId 
+taxonomyId(hgu95av2.db)
 }
 
 
