@@ -932,11 +932,18 @@
   }
 }
 
-.testForValidKeys <- function(x, keys, keytype){
+## fks is an alternate vector of keys to consult for validity.
+## Normally this will be NULL and the test function should consult
+## keys for the supplied keytype
+.testForValidKeys <- function(x, keys, keytype, fks=NULL){
   if (!is.character(keys)){
       stop("'keys' must be a character vector")
   }
-  ktKeys <- keys(x, keytype)
+  if(is.null(fks)){  ## Normally, fks is just NULL and so we will call keys()
+      ktKeys <- keys(x, keytype)
+  }else{             ## This lets the caller say wait: use these keys instead 
+      ktKeys <- fks 
+  }
   if(!(any(ktKeys %in% keys))){
       msg <- paste0("None of the keys entered are valid keys for '",keytype,
          "'. Please use the keys method to see a listing of valid arguments.")
@@ -944,17 +951,24 @@
   }
 }
 
-.testSelectArgs <- function(x, keys, cols, keytype){
+.testSelectArgs <- function(x, keys, cols, keytype, fks=NULL){
     .testForValidKeytype(x, keytype)
     .testForValidCols(x, cols)
-    .testForValidKeys(x, keys, keytype)
+    .testForValidKeys(x, keys, keytype, fks)
 }
 
 
 ## general select function
-.select <- function(x, keys=NULL, cols=NULL, keytype, jointype){
+.select <- function(x, keys=NULL, cols=NULL, keytype, jointype, ...){
+    extraArgs <- list(...)
     ## Some argument checking
-    .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
+    if('fks' %in% names(extraArgs)){
+        ## if there is an extra 'fks' arg, then use it...
+        .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype,
+                        fks=extraArgs[["fks"]])
+    }else{
+        .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
+    }
     ## Now get the schema
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
     if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
@@ -994,36 +1008,29 @@
 
 setMethod("select", "OrgDb",
           function(x, keys, columns, keytype, ...) {
-##               if (missing(keytype)){
-##                   keytype <- .chooseCentralOrgPkgSymbol(x)
-##               }
-              kt <- .chooseCentralOrgPkgSymbol(x)
+              if (missing(keytype)) keytype <- .chooseCentralOrgPkgSymbol(x)
               jointype <- .chooseJoinType(x)
-
-              .selectWarnJT(x, keys, columns, keytype, jointype=jointype,
-                            kt=kt, ...)
-              ## put back following line after 2.13 releases
- ##              .select(x, keys, columns, keytype, jointype=jointype)
+              .select(x, keys, columns, keytype, jointype=jointype, ...)
+              ## .selectWarnJT(x, keys, columns, keytype, jointype=jointype,
+              ##               kt=kt, ...)
           }
 )
 
 setMethod("select", "ChipDb",
     function(x, keys, columns, keytype, ...){
-##         if (missing(keytype)) keytype <- "PROBEID"
-        kt <- "PROBEID"
-        .selectWarnJT(x, keys, columns, keytype, jointype="probes.probe_id",
-                      kt=kt, ...)
-        ## put back following line after 2.13 releases
-        ##           .select(x, keys, columns, keytype, jointype="probes.probe_id")
+        if (missing(keytype)) keytype <- "PROBEID"
+        .select(x, keys, columns, keytype, jointype="probes.probe_id", ...)
+        ## .selectWarnJT(x, keys, columns, keytype, jointype="probes.probe_id",
+        ##               kt=kt, ...)
     }
 )
 
 setMethod("select", "GODb",
     function(x, keys, columns, keytype, ...){
           if (missing(keytype)) keytype <- "GOID"
-          .selectWarnJT(x, keys, columns, keytype, jointype="go_term.go_id", ...)
-          ## put back following line after 2.13 releases
-##           .select(x, keys, columns, keytype, jointype="go_term.go_id")
+          .select(x, keys, columns, keytype, jointype="go_term.go_id", ...)
+          ## .selectWarnJT(x, keys, columns, keytype, jointype="go_term.go_id",
+          ## ...)
         }
 )
 
@@ -1739,7 +1746,7 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
     conn <- dbconn(x)
     res <- dbGetQuery(conn,
                       'SELECT value from metadata where name like "TAXID" or name like "Taxonomy ID"')
-    as.character(res)
+    as.integer(res)
 }
 
 setMethod("taxonomyId", "AnnotationDb", function(x){.taxonomyId(x)})

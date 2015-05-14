@@ -107,42 +107,42 @@ cols <- function(x){
     warning(paste(strwrap(msg, exdent=2), collapse="\n"))
 }
 
-##  Remove this select warning function after 2.13 has released
-.selectWarnJT <- function(x, keys, columns, keytype, ...){
+## ##  Remove this select warning function after 2.13 has released
+## .selectWarnJT <- function(x, keys, columns, keytype, ...){
     
-    ## remove condition after 2.13
-    extraArgs <- list(...)
-    if("cols" %in% names(extraArgs)){
-        ## warn the user about the old argument
-        .colsArgumentWarning()
-        ## then call it using cols in place of columns
-        ## in this case columns will hold the value meant for keytype?
-        if(missing(keytype)){
-            if(missing(columns)){
-                .select(x, keys, extraArgs[["cols"]], keytype=extraArgs[["kt"]],
-                        jointype=extraArgs[["jointype"]] )
-            }else{
-                .select(x, keys, extraArgs[["cols"]], keytype = columns,
-                        jointype=extraArgs[["jointype"]] )
-            }
-        }else{
-            if(missing(keytype)){
-                .select(x, keys, extraArgs[["cols"]], keytype=extraArgs[["kt"]],
-                        jointype=extraArgs[["jointype"]] )
-            }else{
-                .select(x, keys, extraArgs[["cols"]], keytype = keytype,
-                        jointype=extraArgs[["jointype"]] )
-            }
-        }
-    }else{
-        if(missing(keytype)){
-            .select(x, keys, columns, keytype=extraArgs[["kt"]],
-                    jointype=jointype)
-        }else{
-            .select(x, keys, columns, keytype, jointype=jointype)            
-        }
-    }
-}
+##     ## remove condition after 2.13
+##     extraArgs <- list(...)
+##     if("cols" %in% names(extraArgs)){
+##         ## warn the user about the old argument
+##         .colsArgumentWarning()
+##         ## then call it using cols in place of columns
+##         ## in this case columns will hold the value meant for keytype?
+##         if(missing(keytype)){
+##             if(missing(columns)){
+##                 .select(x, keys, extraArgs[["cols"]], keytype=extraArgs[["kt"]],
+##                         jointype=extraArgs[["jointype"]] )
+##             }else{
+##                 .select(x, keys, extraArgs[["cols"]], keytype = columns,
+##                         jointype=extraArgs[["jointype"]] )
+##             }
+##         }else{
+##             if(missing(keytype)){
+##                 .select(x, keys, extraArgs[["cols"]], keytype=extraArgs[["kt"]],
+##                         jointype=extraArgs[["jointype"]] )
+##             }else{
+##                 .select(x, keys, extraArgs[["cols"]], keytype = keytype,
+##                         jointype=extraArgs[["jointype"]] )
+##             }
+##         }
+##     }else{
+##         if(missing(keytype)){
+##             .select(x, keys, columns, keytype=extraArgs[["kt"]],
+##                     jointype=jointype)
+##         }else{
+##             .select(x, keys, columns, keytype, jointype=jointype)            
+##         }
+##     }
+## }
 
 ##  Remove this select warning function after 2.13 has released
 .selectWarnInp <- function(x, keys, columns, keytype, ...){
