@@ -1738,7 +1738,7 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
 .taxonomyId <- function(x){
     conn <- dbconn(x)
     res <- dbGetQuery(conn,
-                      'SELECT value from metadata where name like "TAXID"')
+                      'SELECT value from metadata where name like "TAXID" or name like "Taxonomy ID"')
     as.character(res)
 }
 
