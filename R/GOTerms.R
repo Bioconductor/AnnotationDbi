@@ -81,7 +81,7 @@ setMethod("Secondary", "GOTerms", function(object) object@Secondary)
                     WHERE go_id IN ('%s')",
                    field,
                    paste(ids, collapse="','"))
-    res <- dbGetQuery(GO_dbconn(), sql)
+    res <- dbGetQuery(GO.db::GO_dbconn(), sql)
     if(dim(res)[1]==0 && dim(res)[2]==0){
         stop("None of your IDs match IDs from GO.  Are you sure you have valid IDs?")
     }else{
@@ -110,7 +110,7 @@ setMethod("Definition", "character",function(object) .GOid2go_termField(object,"
     sql <- paste0("SELECT gt.go_id, gs.",field,"
                   FROM go_term AS gt, go_synonym AS gs
                   WHERE gt._id=gs._id AND go_id IN ('",paste(ids, collapse="','"),"')")
-    res <- dbGetQuery(GO_dbconn(), sql)
+    res <- dbGetQuery(GO.db::GO_dbconn(), sql)
     if(dim(res)[1]==0 && dim(res)[2]==0){
         stop("None of your IDs match IDs from GO.  Are you sure you have valid IDs?")
     }else{

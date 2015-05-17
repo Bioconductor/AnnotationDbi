@@ -63,7 +63,7 @@
     A key as a literal character string or a name (possibly backtick quoted)
     for \code{x$name}.
   }
-  \item{pos, envir, all.names, USE.NAMES, where, frame, mode, inherits}{
+  \item{pos, all.names, USE.NAMES, where, frame, mode, inherits}{
     Ignored.
   }
   \item{envir}{
