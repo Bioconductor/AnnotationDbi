@@ -11,10 +11,12 @@
 % Accessor-like methods
 
 \alias{dbconn}
+\alias{dbconn,SQLiteConnection-method}
 \alias{dbconn,environment-method}
 \alias{dbconn,AnnDbObj-method}
 
 \alias{dbfile}
+\alias{dbfile,SQLiteConnection-method}
 \alias{dbfile,environment-method}
 \alias{dbfile,AnnDbObj-method}
 

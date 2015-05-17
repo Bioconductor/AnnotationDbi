@@ -240,19 +240,8 @@ cols <- function(x){
 
 ## Basically I want this thing to return the sqlite file name path as a string
 
-## Get the species AnnotationDb
-## And this should always work because ALL of these things should have a conn 
-## slot and those connection objects all know where the sqlite file is...
-setMethod("dbfile", "AnnotationDb",
-          function(x){
-              x$conn@dbname
-          }
-)
+## make dbconn() and dbfile() methods for AnnotationDb objects (and export it)
+setMethod("dbconn", "AnnotationDb", function(x) x$conn)
+setMethod("dbfile", "AnnotationDb", function(x) dbfile(dbconn(x)))
 
-## Lets make a dbconn() method for AnnotationDb objects (and export it)
-setMethod("dbconn", "AnnotationDb",
-          function(x){ 
-              x$conn 
-          }
-)
 

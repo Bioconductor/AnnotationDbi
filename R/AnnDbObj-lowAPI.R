@@ -91,7 +91,7 @@ setMethod("dbconn", "AnnDbObj", function(x) dbconn(x@datacache))
 ###
 
 setMethod("dbfile", "environment", function(x) get("dbfile", envir=x))
-setMethod("dbfile", "AnnDbObj", function(x) dbfile(x@datacache))
+setMethod("dbfile", "AnnDbObj", function(x) dbfile(dbconn(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
