@@ -1710,7 +1710,9 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
     res <- select(x, keys=keys, columns=column, keytype=keytype) 
     ## then split accordingly (and return sorted by initial keys)
     res <- split(res[[column]], f=res[[keytype]])[keys]
-
+    if(keytype==column){
+        res <- lapply(res, as.character)
+    }
     ## internal helper to toss out multiply matching things
     .filtMults <- function(data){
         idx <- sapply(data, FUN=function(x){
@@ -1738,7 +1740,7 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
 ## TODO: add option to replace multi-matches with NAs or to just remove them.
 ## To cleanly handle having 'multiVals' being EITHER a FUN or something else:
 ## DO like: if(is.function(multiVals)){}else{match.arg(multiVals)}
-
+## trace(mapIds, browser(), signature='AnnotationDb')
 
 
 
