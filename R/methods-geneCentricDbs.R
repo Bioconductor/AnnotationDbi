@@ -1741,7 +1741,7 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
 ## To cleanly handle having 'multiVals' being EITHER a FUN or something else:
 ## DO like: if(is.function(multiVals)){}else{match.arg(multiVals)}
 ## trace(mapIds, browser(), signature='AnnotationDb')
-
+## library(org.Hs.eg.db); mapIds(org.Hs.eg.db, c('1','10'), 'ENTREZID', 'ENTREZID')
 
 
 .taxonomyId <- function(x){
