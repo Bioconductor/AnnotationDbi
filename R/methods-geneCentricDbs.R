@@ -1709,10 +1709,7 @@ setMethod("keytypes", "GODb",
     ## TODO: remove the suppressWarnings() call once you get rid of that warning
     res <- select(x, keys=keys, columns=column, keytype=keytype) 
     ## then split accordingly (and return sorted by initial keys)
-    res <- split(res[[column]], f=res[[keytype]])[keys]
-    if(keytype==column){
-        res <- lapply(res, as.character)
-    }
+    res <- as.character(split(res[[column]], f=res[[keytype]])[keys])
     ## internal helper to toss out multiply matching things
     .filtMults <- function(data){
         idx <- sapply(data, FUN=function(x){
