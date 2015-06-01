@@ -1691,7 +1691,7 @@ setMethod("keytypes", "GODb",
 ## Add 'filter' as a later option for multiVals which just means that the user needs to provide an actual function for the multiVals
 ## Add some of the arguments that are now supported by 'keys' to this function.
 
-setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
+.mapIds <- function(x, keys, column, keytype, ...,
             multiVals=c("filter","asNA","first","list","CharacterList")){
     if(missing(multiVals)) multiVals <- 'first'
     ## make sure we have reasonable value for multiVals.
@@ -1735,7 +1735,10 @@ setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
     }
     ## names will already be present
     res
-})
+}
+
+setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
+      multiVals){.mapIds(x, keys, column, keytype, ..., multiVals=multiVals)})
 
 ## TODO: add option to replace multi-matches with NAs or to just remove them.
 ## To cleanly handle having 'multiVals' being EITHER a FUN or something else:
