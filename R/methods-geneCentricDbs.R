@@ -947,29 +947,33 @@
   if(!(any(ktKeys %in% keys))){
       msg <- paste0("None of the keys entered are valid keys for '",keytype,
          "'. Please use the keys method to see a listing of valid arguments.")
-      stop(msg)
+      stop(msg) ## later when things are better, demote this to a warning()
   }
 }
 
-.testSelectArgs <- function(x, keys, cols, keytype, fks=NULL){
+.testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
+                            skipValidKeysTest=FALSE){
     .testForValidKeytype(x, keytype)
     .testForValidCols(x, cols)
-    .testForValidKeys(x, keys, keytype, fks)
+    ## I may need for this test to sometimes not happen...
+    if(skipValidKeysTest==FALSE){
+        .testForValidKeys(x, keys, keytype, fks)
+    }
 }
-
+## library(Homo.sapiens); select(Homo.sapiens, c('11'), 'SYMBOL', 'GENEID')
 
 ## general select function
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype, ...){
+    ## Some argument handling and checking
     extraArgs <- list(...)
-    ## Some argument checking
-    if('fks' %in% names(extraArgs)){
-        ## if there is an extra 'fks' arg, then use it...
-        .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype,
-                        fks=extraArgs[["fks"]])
-    }else{
-        .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
-    }
-    ## Now get the schema
+    if('fks' %in% names(extraArgs)){fks<-extraArgs[["fks"]]}else{fks<-NULL}
+    if('skipValidKeysTest' %in% names(extraArgs)){
+        skipValidKeysTest<-extraArgs[["skipValidKeysTest"]]}else{
+            skipValidKeysTest<-FALSE}
+    .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype,
+           fks=fks, skipValidKeysTest=skipValidKeysTest)
+    
+    ## Now get the schema and call select
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
     if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
         .noSchemaSelect(x, keys, cols, keytype)
