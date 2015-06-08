@@ -683,29 +683,36 @@
     ## 4 possibilities
     ## if there are not dups, then we skip this function.
     ## if(any(duplicated(keys)) ## expand the keys
-    ## if(any(duplicated(tab[[jointype]]))) ## expand the table...
+    ## if(any(duplicated(tab[[jointype]]))) ## some messages may apply
     ## AND if they are BOTH redundant how do I decide which row to expand?
     ## I think that I have to throw a warning and NOT do this step in that case?
     keyTest <- any(duplicated(keys))
-##    rowTest <-  any(duplicated(tab[[jointype]]))         
-    if (keyTest ){ ##&& !rowTest) { ## Need to account for row dups
+    rowTest <-  any(duplicated(tab[[jointype]]))         
+    if (keyTest ){ 
         ind = match(keys, tab[[jointype]])
         tab <- tab[ind,,drop=FALSE]
         rownames(tab) <- NULL
     }
-    ## We no longer aim to warn about these.  
-    ## Relevant manual pages may need to be more emphatic.
-#     else if (!keyTest && rowTest) {
-#         txt <- "'select' resulted in 1:many mapping between keys and
-#                 return rows"
-#         warning(paste(strwrap(txt), collapse="\n"))
-#     } else if (keyTest && rowTest) { ## User will get data "as is"
-#         txt <- "'select' and duplicate query keys resulted in 1:many
-#                 mapping between keys and return rows"
-#         warning(paste(strwrap(txt), collapse="\n"))
-#     }
+    ## We now just always give (terse) messages about relationship of
+    ## data to columns returned.
+    if(!keyTest && !rowTest) {
+        txt <- "'select()' returned 1:1 mapping between keys and columns"  
+    } else if (!keyTest && rowTest) {
+        txt <- "'select()' returned 1:many mapping between keys and columns"
+    } else if (keyTest && !rowTest) {
+        txt <- "'select()' returned many:1 mapping between keys and columns"
+    } else if (keyTest && rowTest) { ## User will get data "as is"
+        txt <- "'select()' returned many:many mapping between keys and columns"
+    }
+    message(paste(strwrap(txt), collapse="\n"))
     tab
 }
+
+##  select() returned 1:1 mapping between keys and columns
+##  select() returned 1:many mapping between keys and columns
+##  select() returned many:1 mapping between keys and columns
+## Also will want mesage for many:many
+
 
 ## .resort is the main function for cleaning up a table so that results look
 ## formatted the way we want them to.
@@ -785,11 +792,12 @@
   ## oriCols is a snapshot of col requests needed for column filter below
   oriCols <- unique(c(keytype, cols))
 
-  ## keys should NOT be NAs, but if they are, warn and then filter them.
-  if (any(is.na(keys))) {
-      warning("'NA' keys have been removed")
-      keys <- keys[!is.na(keys)]
-  }
+  ## NA keys are OK now
+  ## keys should NOT be NAs (internally) - but this is OK for users to do.
+##  if (any(is.na(keys))) {
+     ## warning("'NA' keys have been removed")
+     ## keys <- keys[!is.na(keys)]
+##  }
 
   ## Check if the user is selecting too many cols with many:1 relationships
   .warnAboutManyToOneRelationships(cols)
@@ -1711,7 +1719,8 @@ setMethod("keytypes", "GODb",
     
     ## next call select()
     ## TODO: remove the suppressWarnings() call once you get rid of that warning
-    res <- select(x, keys=keys, columns=column, keytype=keytype) 
+    suppressMessages(
+        res <- select(x, keys=keys, columns=column, keytype=keytype))
     ## then split accordingly (and return sorted by initial keys)
     res <- split(as.character(res[[column]]), f=res[[keytype]])[keys]
     ## internal helper to toss out multiply matching things

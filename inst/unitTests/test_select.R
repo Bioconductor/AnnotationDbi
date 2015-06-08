@@ -406,8 +406,50 @@ test_select16 <- function(){
     checkTrue(dim(res)[2]==2)
     checkIdentical(c('SYMBOL','PROBEID'), colnames(res))
 }
-## TODO: figure out why in this weird corner case there is an extra col for
-## GOALL called 'NA'...
+
+
+## NA values are now OK for legacySelect (in order to be consistent
+## with other select methods which have greater respect for incoming NA values
+test_select_NAsInNAsOut <- function(){
+    ## NAs in should result in NAs out.
+    ## Not that we like NAs but just because if possible: we want to
+    ## preserve the geometry of the keys coming in.
+    k=c('1', NA, NA, '10');
+    res <- select(x, k, 'SYMBOL', 'ENTREZID')
+    checkTrue(dim(res)[1]==4) 
+    checkTrue(dim(res)[2]==2)
+    checkIdentical(c('ENTREZID','SYMBOL'), colnames(res))
+    checkIdentical(k, res$ENTREZID)
+    checkTrue(any(is.na(res$SYMBOL)))
+}
+
+
+## Some new messages from AnnotationDbi:::.generateExtraRows()
+## where I am calling it internally...
+## these tests just make sure the right kinds of messages are being sent...
+test_select_XtoX <- function(){
+    k=c('1','1', NA, '10');
+    res <- tryCatch(select(org.Hs.eg.db, k, 'SYMBOL', 'ENTREZID'),
+                    message = function(x){return(x)})
+    checkTrue(grepl('many:1', res$message))
+    
+    res <- tryCatch(select(org.Hs.eg.db, '1', 'ALIAS', 'ENTREZID'),
+                    message = function(x){return(x)})
+    checkTrue(grepl('1:many', res$message))
+
+    res <- tryCatch(select(org.Hs.eg.db, k, 'ALIAS', 'ENTREZID'),
+                    message = function(x){return(x)})
+    checkTrue(grepl('many:many', res$message))
+
+    res <- tryCatch(select(org.Hs.eg.db, c('1','10'), 'SYMBOL', 'ENTREZID'),
+                    message = function(x){return(x)})
+    checkTrue(grepl('1:1', res$message))
+}
+
+
+## TODO: deal with any fallout from having new messages in select()
+## This will also cause me to have to silence select() in many places
+## to avoid annoying repeats of the
 
 
 
@@ -421,3 +463,7 @@ test_dbconn_and_dbfile <- function(){
     mf <- dbGetQuery(dbConnect(SQLite(), resf), "SELECT * FROM metadata")
     checkTrue(all(mf == m))
 }
+
+
+
+
