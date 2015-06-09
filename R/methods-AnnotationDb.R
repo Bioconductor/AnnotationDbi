@@ -78,6 +78,7 @@ setMethod("saveDb", "AnnotationDb",
         if (!isSingleString(file))
           stop("'file' must be a single string")
         sqliteCopyDatabase(dbconn(x), file)
+        return(x) ## return the thing you just saved.
     }
 )
 

@@ -792,12 +792,6 @@
   ## oriCols is a snapshot of col requests needed for column filter below
   oriCols <- unique(c(keytype, cols))
 
-  ## NA keys are OK now
-  ## keys should NOT be NAs (internally) - but this is OK for users to do.
-##  if (any(is.na(keys))) {
-     ## warning("'NA' keys have been removed")
-     ## keys <- keys[!is.na(keys)]
-##  }
 
   ## Check if the user is selecting too many cols with many:1 relationships
   .warnAboutManyToOneRelationships(cols)
