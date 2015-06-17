@@ -58,9 +58,22 @@
     \item{ALIAS:}{Commonly used gene symbols}
     \item{ARACYC:}{KEGG Identifiers for arabidopsis as indicated by aracyc}
     \item{ARACYCENZYME:}{Aracyc enzyme names as indicated by aracyc}
-    \item{CHR:}{Chromsome}
-    \item{CHRLOC:}{Chromosome and starting base of associated gene}
-    \item{CHRLOCEND:}{Chromosome and ending base of associated gene}
+    \item{CHR:}{Chromosome (deprecated for Bioc > 3.1) For this
+    information you should look at a TxDb or OrganismDb object and
+    search for an appropriate field like TXCHROM, EXONCHROM or
+    CDSCHROM.  This information can also be retrieved from these objects
+    using an appropriate range based accesor like transcripts,
+    transcriptsBy etc.}
+    \item{CHRLOC:}{Chromosome and starting base of associated gene
+    (deprecated for Bioc > 3.1) For this information you should look at
+    a TxDb or OrganismDb object and search for an appropriate field like
+    TXSTART etc. or even better use the associated range based accessors
+    like transcripts or transcriptsBy to get back GRanges objects.}
+    \item{CHRLOCEND:}{Chromosome and ending base of associated gene
+    (deprecated for Bioc > 3.1) For this information you should look at
+    a TxDb or OrganismDb object and search for an appropriate field like
+    TXEND etc. or even better use the associated range based accessors
+    like transcripts or transcriptsBy to get back GRanges objects.}
     \item{COMMON:}{Common name}
     \item{DESCRIPTION:}{The description of the associated gene}
     \item{ENSEMBL:}{The ensembl ID as indicated by ensembl}

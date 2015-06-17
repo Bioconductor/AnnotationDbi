@@ -385,12 +385,11 @@ test_select15 <- function(){
     if(!all(.Platform$OS.type == "windows", .Platform$r_arch == "i386")){
         res <- select(x, keys="100008586", columns(x)) 
         checkTrue(dim(res)[1]>0)
-        checkTrue(dim(res)[2]==30)
-        exp <- c("ENTREZID", "ACCNUM", "ALIAS", "CHR", "CHRLOC",
-                 "CHRLOCCHR", "CHRLOCEND", "ENSEMBL", "ENSEMBLPROT",
+        checkTrue(dim(res)[2]==26)
+        exp <- c("ENTREZID", "ACCNUM", "ALIAS", "ENSEMBL", "ENSEMBLPROT",
                  "ENSEMBLTRANS", "ENZYME", "EVIDENCE", "EVIDENCEALL",
-                 "GENENAME", "GO", "ONTOLOGY", "GOALL", "ONTOLOGYALL", "IPI",
-                 "MAP", "OMIM", "PATH", "PFAM", "PMID", "PROSITE",
+                 "GENENAME", "GO", "GOALL", "IPI", "MAP", "OMIM", 
+                 "ONTOLOGY", "ONTOLOGYALL", "PATH", "PFAM", "PMID", "PROSITE",
                  "REFSEQ", "SYMBOL", "UCSCKG", "UNIGENE", "UNIPROT")
         checkIdentical(exp, colnames(res))
     }
@@ -467,3 +466,5 @@ test_dbconn_and_dbfile <- function(){
 
 
 
+## Fast checking:
+## BiocGenerics:::testPackage(pattern="^test_select.*\\.R$")

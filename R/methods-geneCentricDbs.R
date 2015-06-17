@@ -7,14 +7,28 @@
 .filterDeprecatedKeytypes <- function(keytypes){
     keytypes[!(keytypes %in% .listDeprecatedKeytypes())]
 }
+
+## this is a 'standard' warning for people who try to use keys or cols
+## that are no longer valid due to being deprecated
+.deprecatedColsMessage <- function(){
+    depCols <- paste(.listDeprecatedKeytypes(), collapse="','")
+    warning(wmsg(paste0("Accessing gene location information via '",
+                        depCols,"' is deprecated. Please use a range ",
+                        "based accessor like genes(), or select() with ",
+                        "columns values like TXCHROM and TXSTART ",
+                        "on a TxDb or OrganismDb object instead.\n")))
+}
+
 ## And one for keys and select to warn if the user tries to use them
 .checkForDeprecatedKeytype <- function(keytype){
     if(any(.listDeprecatedKeytypes() %in% keytype )){
-        warning(wmsg(paste0(keytype,
-    " is deprecated. ",
-    "Please use an appropriate TxDb object or package for this kind of data.")))
+        .deprecatedColsMessage()
     }
 }
+
+
+
+
 
 ## Need an accessor for getting the central ID for a DB (when appropriate)
 .getCentralID <- function(x){
@@ -627,6 +641,9 @@
   blackList <- c(ALIAS="ALIAS2PROBE",
                  ALIAS="ALIAS2EG",
                  CHR="CHRLOCCHR")
+##                 CHR="CHRLOC",  ## Don't put cols here till removal is FINAL..
+##                 CHR="CHRLOCEND",
+##                 CHR="CHR")
   idx <- !(cols %in% blackList)
   unique(cols[idx])
 }
@@ -776,6 +793,11 @@
 
 ## the core of the select method for GO org and chip packages.
 .legacySelect <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
+  ## IF CHR, CHR or CHRLOC are requested then you must deny the
+  ## request as these are now deprecated
+  if(any(.listDeprecatedKeytypes() %in% cols)){
+      .deprecatedColsMessage()
+  }
   ## if asked for what they have, just return that.
   if(all(cols %in% keytype)  && length(cols)==1){
     res <- data.frame(keys=keys)
@@ -926,7 +948,7 @@
   if (!is.character(cols)){
       stop("'columns' must be a character vector")
   }
-  pcols <- columns(x)
+  pcols <- c(columns(x), .listDeprecatedKeytypes())
   if(!all(cols %in% pcols) && !is.null(cols)){
       badCols <- cols[!(cols %in% pcols)]
       msg <- paste0("Invalid columns: ",paste(badCols, collapse=","),". Please use the columns method to see a listing of valid arguments.")
@@ -1058,7 +1080,7 @@ setMethod("select", "GODb",
 ## cols methods return the list of things that users can ask for.  This can be
 ## just the table names, or it might be a list of mappings
 
-
+    
 .legacyCols <- function(x, baseType){
   ## cols <- .makeColAbbrs(x)
   cols <- names(.defineTables(x))
@@ -1066,8 +1088,11 @@ setMethod("select", "GODb",
     cols <- c(baseType, cols)
   }
   ## translate relevant short bimap names to "cute" names
-  ## cols <- .swapSymbolExceptions(x, cols) 
   cols <- .simplifyCols(x, cols)
+
+  ## filter out columns that have been deprecated here
+  hideCols <- .listDeprecatedKeytypes()
+  cols <- cols[!(cols %in% hideCols)]
   
   ## .cols does not care about your names
   names(cols) <- NULL
