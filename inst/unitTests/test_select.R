@@ -144,7 +144,7 @@ test_keys <- function(){
 }
 
 test_keys_advancedArgs <- function(){
-    k1 <- head(keys(x, keytype="SYMBOL"))
+    k1 <- keys(x, keytype="SYMBOL")
     checkTrue("A1BG" %in% k1)
     
     k2 <- keys(x, keytype="SYMBOL", pattern="BRCA")
