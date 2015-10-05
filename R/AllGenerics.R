@@ -53,8 +53,6 @@ setGeneric("Secondary", function(object) standardGeneric("Secondary"))
 
 
 ### Others (do whatever you want with them ;-)
-setGeneric("dbconn", function(x) standardGeneric("dbconn"))
-setGeneric("dbfile", function(x) standardGeneric("dbfile"))
 setGeneric("taxonomyId", function(x) standardGeneric("taxonomyId"))
 setGeneric("dbmeta", signature="x", function(x, name) standardGeneric("dbmeta"))
 setGeneric("dbschema", signature="x", function(x, file="", show.indices=FALSE) standardGeneric("dbschema"))
