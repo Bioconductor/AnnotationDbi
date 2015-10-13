@@ -56,13 +56,6 @@ addToNamespaceAndExport <- function(x, value, pkgname)
             bimapName <- paste0(prefix,"CHRLOCEND")
         }
         x <- dc[[bimapName]]
-        warning(wmsg(paste0("Accessing gene location information via '",
-                            bimapName,
-                            "' is deprecated. ",
-                            "Please use a range ",
-                            "based accessor like genes(), or select() with ",
-                            "columns values like TXCHROM and TXSTART ",
-                            "on a TxDb or OrganismDb object instead.\n")))
         x
     }
     warnIfDef <- function(){
