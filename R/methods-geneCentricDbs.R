@@ -26,10 +26,6 @@
     }
 }
 
-
-
-
-
 ## Need an accessor for getting the central ID for a DB (when appropriate)
 .getCentralID <- function(x){
   as.character(dbQuery(dbconn(x),
@@ -1699,71 +1695,48 @@ setMethod("keytypes", "GODb",
 ## select(org.Hs.eg.db, k, 'SYMBOL', 'ENTREZID');
 ## head(select(org.Hs.eg.db, k[1], 'SYMBOL', 'CHR'));
 
-
-
-
-
-
-
-
-
-
-
-## new method for mapping Ids (idea to return a vector)
 ## This method will just get all data for one column, one keytype 
 ## and one set of keys.  Then it will return either the 1st match for each, 
 ## filter out based on a rule OR return a CharacterList
 
-## If the user instead gives a test function for 'multiVals', then it will 
-## be applied to all the resulting matches (should take a vector and return 
-## a result)
+.mapIds <- function(x, keys, column, keytype, ..., multiVals=c("filter","asNA",
+                    "first","list","CharacterList")) {
+    if (missing(multiVals)) 
+        multiVals <- 'first'
+    if (!is.function(multiVals))
+        match.arg(multiVals)
+    if (length(keys) < 1)
+        stop(wmsg("mapIds must have at least one key to match against."))
+    if (length(column) > 1)
+        stop(wmsg("mapIds can only use one column."))
+    if (length(keytype) >1 )
+        stop(wmsg("mapIds can only use one keytype."))
+ 
+    ## select, split and sort by keys
+    res <- select(x, keys=keys, columns=column, keytype=keytype)
+    res <- split(res[[column]], f=res[[keytype]])[keys]
 
-## Future ideas:
-## Add 'filter' as a later option for multiVals which just means that the user needs to provide an actual function for the multiVals
-## Add some of the arguments that are now supported by 'keys' to this function.
-
-.mapIds <- function(x, keys, column, keytype, ...,
-            multiVals=c("filter","asNA","first","list","CharacterList")){
-    if(missing(multiVals)) multiVals <- 'first'
-    ## make sure we have reasonable value for multiVals.
-    if(!is.function(multiVals)){
-       match.arg(multiVals)
-    }        
-    ## 1st we have to insist that they NOT use more than one column 
-    ## or keytype
-    if(length(keys)<1){stop(wmsg(
-        "mapIds must have at least one key to match against."))}
-    if(length(column)>1){stop(wmsg("mapIds can only use one column."))}
-    if(length(keytype)>1){stop(wmsg("mapIds can only use one keytype."))}
-    
-    ## next call select()
-    ## TODO: remove the suppressWarnings() call once you get rid of that warning
-    suppressMessages(
-        res <- select(x, keys=keys, columns=column, keytype=keytype))
-    ## then split accordingly (and return sorted by initial keys)
-    res <- split(as.character(res[[column]]), f=res[[keytype]])[keys]
-    ## internal helper to toss out multiply matching things
-    .filtMults <- function(data){
-        idx <- sapply(data, FUN=function(x){
-            if(length(x)==1){x=TRUE}else{x=FALSE}; x })
+    ## handle multiple matches 
+    .filter <- function(data) {
+        idx <- elementLengths(data) == 1
         unlist(data[idx])
     }
-    
-    ## If it's a function then call that
-    if(is.function(multiVals)){
-        res <- sapply(res, FUN=multiVals)
-    }else{
-        res <- switch(multiVals,
-            "list"=res,
-            "filter"=.filtMults(res),
-            "asNA"=sapply(res, FUN=function(x){
-                if(length(x)>1){return(NA)}else{return(x)} }),
-            "CharacterList" = as(res, 'CharacterList'),
-            "first" = sapply(res, FUN=function(x){x[[1]]})
-            )
+    .asNA <- function(data) {
+        idx <- elementLengths(data) > 1
+        data[idx] <- NA
+        unlist(data)
     }
-    ## names will already be present
-    res
+    if (is.function(multiVals)) {
+        sapply(res, FUN=multiVals)
+    } else {
+        switch(multiVals,
+            "list" = res,
+            "filter" = .filter(res),
+            "asNA" = .asNA(res),
+            "CharacterList" = as(res, 'CharacterList'),
+            "first" = sapply(res, FUN=function(x) {x[[1]]})
+        )
+    }
 }
 
 setMethod("mapIds", "AnnotationDb", function(x, keys, column, keytype, ...,
