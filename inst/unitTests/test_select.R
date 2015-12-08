@@ -29,10 +29,12 @@ quiet <- suppressWarnings # quieten warnings from 1:many mappings in select()
 ## be reused elsewhere.
 test_generateExtraRows <- function(){
   ttab = data.frame(warpbreaks[1:10,])
+  ttab$breaks <- as.character(ttab$breaks)  
   tkeys = ttab$breaks
   tkeys = c(26, tkeys[1:7], tkeys[7], 30, tkeys[8:10], tkeys[10])
   res <- AnnotationDbi:::.generateExtraRows(ttab, tkeys, jointype='breaks')
-  checkTrue(length(tkeys) == dim(res)[1])
+  expLen <- sum(table(tkeys) * table(ttab$breaks))
+  checkTrue(expLen == dim(res)[1])
 }
 
 test_dropUnwantedRows <- function() {
