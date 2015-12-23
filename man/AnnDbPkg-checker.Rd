@@ -29,8 +29,7 @@
 }
 
 \examples{
-  checkMAPCOUNTS("hgu95av2.db")
-  checkMAPCOUNTS("GO.db")
+  checkMAPCOUNTS("org.Sc.sgd.db")
 }
 
 \keyword{utilities}
