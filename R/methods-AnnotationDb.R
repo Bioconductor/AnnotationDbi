@@ -90,131 +90,26 @@ setMethod("columns", "AnnotationDb",
     }
 )
 
-## Remove this special cols function after 2.13 has released
-cols <- function(x){
-    ## deprecation method
-    msg <- "'cols' has been deprecated and replaced by 'columns' for versions of Bioc that are higher than 2.13.  Please use 'columns' anywhere that you previously used 'cols'"
-    warning(paste(strwrap(msg, exdent=2), collapse="\n"))
-    
-    ## then call columns
-    columns(x)
-}
+cols <- function(x)
+    .Deprecated("columns")
 
-
-## Remove this special warning function after 2.13 has released
-.colsArgumentWarning <- function(){
-    ## deprecation method
-    msg <- "The 'cols' argument has been deprecated and replaced by 'columns' for versions of Bioc that are higher than 2.13.  Please use the 'columns' argument anywhere that you previously used 'cols'"
-    warning(paste(strwrap(msg, exdent=2), collapse="\n"))
-}
-
-## ##  Remove this select warning function after 2.13 has released
-## .selectWarnJT <- function(x, keys, columns, keytype, ...){
-    
-##     ## remove condition after 2.13
-##     extraArgs <- list(...)
-##     if("cols" %in% names(extraArgs)){
-##         ## warn the user about the old argument
-##         .colsArgumentWarning()
-##         ## then call it using cols in place of columns
-##         ## in this case columns will hold the value meant for keytype?
-##         if(missing(keytype)){
-##             if(missing(columns)){
-##                 .select(x, keys, extraArgs[["cols"]], keytype=extraArgs[["kt"]],
-##                         jointype=extraArgs[["jointype"]] )
-##             }else{
-##                 .select(x, keys, extraArgs[["cols"]], keytype = columns,
-##                         jointype=extraArgs[["jointype"]] )
-##             }
-##         }else{
-##             if(missing(keytype)){
-##                 .select(x, keys, extraArgs[["cols"]], keytype=extraArgs[["kt"]],
-##                         jointype=extraArgs[["jointype"]] )
-##             }else{
-##                 .select(x, keys, extraArgs[["cols"]], keytype = keytype,
-##                         jointype=extraArgs[["jointype"]] )
-##             }
-##         }
-##     }else{
-##         if(missing(keytype)){
-##             .select(x, keys, columns, keytype=extraArgs[["kt"]],
-##                     jointype=jointype)
-##         }else{
-##             .select(x, keys, columns, keytype, jointype=jointype)            
-##         }
-##     }
-## }
-
-##  Remove this select warning function after 2.13 has released
 .selectWarnInp <- function(x, keys, columns, keytype, ...){
-    
-    ## remove condition after 2.13
     extraArgs <- list(...)
-    if("cols" %in% names(extraArgs)){
-        ## warn the user about the old argument
-        .colsArgumentWarning()
-        ## then call it using cols in place of columns
-        if(missing(keytype)){
-            if(missing(columns)){
-                .selectInp(x, keys, extraArgs[["cols"]],
-                           keytype=extraArgs[["kt"]], ... )
-            }else{
-                .selectInp(x, keys, extraArgs[["cols"]], keytype = columns,
-                           ... )
-            }              
-        }else{
-            if(missing(keytype)){
-                .selectInp(x, keys, extraArgs[["cols"]],
-                           keytype=extraArgs[["kt"]], ... )
-            }else{
-                .selectInp(x, keys, extraArgs[["cols"]], keytype = keytype,
-                           ... )             
-            }
-        }
+    if(missing(keytype)){
+        .selectInp(x, keys, columns, keytype=extraArgs[["kt"]])
     }else{
-        if(missing(keytype)){
-            .selectInp(x, keys, columns, keytype=extraArgs[["kt"]])
-        }else{
-            .selectInp(x, keys, columns, keytype)
-        }
+        .selectInp(x, keys, columns, keytype)
     }
 }
-    
-##  Remove this select warning function after 2.13 has released
+ 
 .selectWarnReact <- function(x, keys, columns, keytype, ...){
-    
-    ## remove condition after 2.13
     extraArgs <- list(...)
-    if("cols" %in% names(extraArgs)){
-        ## warn the user about the old argument
-        .colsArgumentWarning()
-        ## then call it using cols in place of columns  
-        if(missing(keytype)){
-            if(missing(columns)){
-                .selectReact(x, keys, extraArgs[["cols"]],
-                             keytype=extraArgs[["kt"]], ... )
-            }else{
-                .selectReact(x, keys, extraArgs[["cols"]], keytype = columns,
-                             ... )
-            }
-        }else{
-            if(missing(keytype)){
-                .selectReact(x, keys, extraArgs[["cols"]],
-                             keytype=extraArgs[["kt"]], ... )
-            }else{
-                .selectReact(x, keys, extraArgs[["cols"]], keytype=keytype,
-                             ... )
-            }
-        }
+    if(missing(keytype)){
+        .selectReact(x, keys, columns, keytype=extraArgs[["kt"]])
     }else{
-        if(missing(keytype)){
-            .selectReact(x, keys, columns, keytype=extraArgs[["kt"]])
-        }else{
-            .selectReact(x, keys, columns, keytype)
-        }
+        .selectReact(x, keys, columns, keytype)
     }
 }
-
 
 ## library(AnnotationDbi)
 ## library(RSQLite)
@@ -224,11 +119,6 @@ cols <- function(x){
 ## loadFeatures(fl)                           ## other bug
 ## GenomicFeatures:::TxDb(conn)               ## bug
 ## AnnotationDbi:::loadDb(fl)                 ## other bug
-
-
-
-
-
 
 
 ## TODO: add option to replace multi-matches with NAs or to just remove them.
@@ -244,5 +134,3 @@ cols <- function(x){
 ## make dbconn() and dbfile() methods for AnnotationDb objects (and export it)
 setMethod("dbconn", "AnnotationDb", function(x) x$conn)
 setMethod("dbfile", "AnnotationDb", function(x) dbfile(dbconn(x)))
-
-
