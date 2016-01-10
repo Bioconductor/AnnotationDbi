@@ -10,8 +10,6 @@
 BiocStyle::latex()
 @
 
-
-
 %% Excercises and Questions
 \usepackage{theorem}
 \theoremstyle{break} \newtheorem{Ex}{Exercise}
@@ -22,12 +20,10 @@ BiocStyle::latex()
 \title{How to use bimaps from the ".db" annotation packages}
 \author{Marc Carlson, Herve Pages, Seth Falcon, Nianhua Li}
 
-
 <<include=FALSE>>=
 library(knitr)
 opts_chunk$set(tidy=FALSE)
 @
-
 
 \begin{document}
 
@@ -46,7 +42,6 @@ schemas for theses databases.  For each supported model organism, a
 standard gene centric database is maintained from public sources and
 is packaged up as an appropriate organism or "org" package.
 
-
 \subsubsection{Database Schemas}
 
 For developers, a lot of the benefits of having the information loaded
@@ -64,9 +59,8 @@ listed when you type the name of the package as a function to obtain
 quality control information.
 
 The code to make most kinds of the new database packages is also
-included in AnnotationDbi. Please see the vignette on SQLForge
-for more details on how to make additional database packages.
-
+included in AnnotationDbi. Please see the vignette on SQLForge for
+more details on how to make additional database packages.
 
 \subsubsection{Internal schema Design of org packages}
 
@@ -87,9 +81,9 @@ gene ID. But \_id is definitely NOT an entrez gene ID. The entrez gene
 IDs are in another table entirely, and can be connected to using the
 internal \_id just like all the other meaningful information inside
 these databases.  Each organism package is centered around one type of
-gene identifier.  This identifier is found as the gene\_id field in the
-genes table and is both the central ID for the database as well as the
-foreign key that chip packages should join to.
+gene identifier.  This identifier is found as the gene\_id field in
+the genes table and is both the central ID for the database as well as
+the foreign key that chip packages should join to.
 
 The chip packages are 'lightweight', and only contain information
 about the basic probe to gene mapping.  You might wonder how such
@@ -118,9 +112,7 @@ This list will also tell you which model organisms are supported.
 library(org.Hs.eg.db)
 library(AnnotationForge)
 available.dbschemas()
-@ 
-
-
+@
 
 \section{Examples}
 
@@ -142,25 +134,24 @@ accessing the annotation data.
 
 <<setup0, results='hide', echo=FALSE>>=
 options(continue=" ", prompt="R> ", width=72L)
-@ 
+@
 
 <<setup, results='hide'>>=
 library(hgu95av2.db)
-@ 
+@
 
 The same basic set of objects is provided with the db packages:
 
 <<objects>>=
 ls("package:hgu95av2.db")
-@ 
-
+@
 
 \begin{Ex}
-Start an R session and use the \Rfunction{library} function to load
-the \Rpackage{hgu95av2.db} software package.  Use search() to see that
-an organism package was also loaded and then use the approriate
-"\_dbschema" methods to the schema for the \Rpackage{hgu95av2.db} and
-\Rpackage{org.Hs.eg.db} packages.
+  Start an R session and use the \Rfunction{library} function to load
+  the \Rpackage{hgu95av2.db} software package.  Use search() to see
+  that an organism package was also loaded and then use the approriate
+  "\_dbschema" methods to the schema for the \Rpackage{hgu95av2.db}
+  and \Rpackage{org.Hs.eg.db} packages.
 <<Question #1, echo=FALSE, results='hide'>>=
 library(hgu95av2.db)
 search()
@@ -169,22 +160,20 @@ org.Hs.eg_dbschema()
 @
 \end{Ex}
 
-
-It is possible to call the package name as a function to
-get some QC information about it.
+It is possible to call the package name as a function to get some QC
+information about it.
 
 <<QAlisting>>=
 qcdata = capture.output(hgu95av2())
 head(qcdata, 20)
 @
 
-Alternatively, you can get similar information on how many items are in each
-of the provided maps by looking at the MAPCOUNTs:
+Alternatively, you can get similar information on how many items are
+in each of the provided maps by looking at the MAPCOUNTs:
 
 <<mapcounts, eval=FALSE>>=
 hgu95av2MAPCOUNTS
 @
-
 
 To demonstrate the \Rclass{environment} API, we'll start with a random
 sample of probe set IDs.
@@ -196,7 +185,7 @@ length(all_probes)
 set.seed(0xa1beef)
 probes <- sample(all_probes, 5)
 probes
-@ 
+@
 
 The usual ways of accessing annotation data are also available.
 
@@ -206,7 +195,7 @@ hgu95av2ENTREZID$"31882_at"
 
 syms <- unlist(mget(probes, hgu95av2SYMBOL))
 syms
-@ 
+@
 
 The annotation packages provide a huge variety of information in each
 package.  Some common types of information include gene symbols
@@ -216,20 +205,16 @@ CHRLOCEND).  Each mapping will have a manual page that you can read to
 describe the data in the mapping and where it came from.
 <<helpDemo, eval= FALSE, results='hide'>>=
 ?hgu95av2CHRLOC
-@ 
+@
 
 \begin{Ex}
-For the probes in 'probes' above, use the annotation mappings to find
-the chromosome start locations.
+  For the probes in 'probes' above, use the annotation mappings to
+  find the chromosome start locations.
 
 <<Question #2, echo=FALSE, results='hide'>>=
 mget(probes, hgu95av2CHRLOC, ifnotfound=NA)[1:2]
 @
 \end{Ex}
-
-
-
-
 
 \subsubsection{Manipulating Bimap Objects}
 
@@ -266,14 +251,14 @@ provide reverse mappings.
 
 <<show.revmap>>=
 unlist(mget(syms, revmap(hgu95av2SYMBOL)))
-@ 
+@
 
 So now that you know about the \Rfunction{revmap} function you might
 try something like this:
 
 <<thisworks>>=
 as.list(revmap(hgu95av2PATH)["00300"])
-@ 
+@
 
 Note that in the case of the PATH map, we don't need to use revmap(x)
 because hgu95av2.db already provides the PATH2PROBE map:
@@ -287,7 +272,7 @@ revx2
 identical(revx, revx2)
 
 as.list(revx["00300"])
-@ 
+@
 
 Note that most maps are reversible with \Rfunction{revmap}, but some
 (such as the more complex GO mappings), are not.  Why is this?
@@ -296,7 +281,8 @@ will always become the "key" on the newly reversed map.  And GO
 mappings have several distinct possibilities to choose from (GO ID,
 Evidence code or Ontology).  In non-reversible cases like this,
 AnnotationDbi will usually provide a pre-defined reverse map.  That
-way, you will always know what you are getting when you call \Rfunction{revmap}
+way, you will always know what you are getting when you call
+\Rfunction{revmap}
 
 While we are on the subject of GO and GO mappings, there are a series
 of special methods for GO mappings that can be called to find out
@@ -308,13 +294,13 @@ information about a particular GO ID.  For example:
 <<revmap2b>>=
 Term("GO:0000018")
 Definition("GO:0000018")
-@ 
+@
 
 \begin{Ex}
-Given the following set of RefSeq IDs:
-c("NG\_005114","NG\_007432","NG\_008063"), Find the Entrez Gene IDs that
-would correspond to those.  Then find the GO terms that are associated
-with those entrez gene IDs.
+  Given the following set of RefSeq IDs:
+  c("NG\_005114","NG\_007432","NG\_008063"), Find the Entrez Gene IDs
+  that would correspond to those.  Then find the GO terms that are
+  associated with those entrez gene IDs.
 
 \Rpackage{org.Hs.eg.db} packages.
 <<Question #3, echo=FALSE, results='hide'>>=
@@ -330,8 +316,6 @@ Term(GOIDs)
 @
 \end{Ex}
 
-
-
 \subsubsection{The Contents and Structure of Bimap Objects}
 
 Sometimes you may want to display or subset elements from an
@@ -341,7 +325,7 @@ data in table (\Rclass{data.frame}) format using \Rfunction{[} and
 
 <<toTable>>=
 head(toTable(hgu95av2GO[probes]))
-@ 
+@
 
 The \Rfunction{toTable} function will display all of the information
 in a \Rclass{Bimap}.  This includes both the left and right values
@@ -355,26 +339,27 @@ a data frame with one row for each link in the bimap that it is
 applied to.  It only reports the left and right keys along with any
 attributes that are attached to the edge between these two values.
 
-
 Note that the order of the cols returned by \Rfunction{toTable} does
-not depend on the direction of the map.  We refer to it as an 'undirected method':
+not depend on the direction of the map.  We refer to it as an
+'undirected method':
 
 <<undirectedMethod>>=
 toTable(x)[1:6, ]
 toTable(revx)[1:6, ]
-@ 
+@
 
-Notice however that the Lkeys are always on the left (1st col), the Rkeys
-always in the 2nd col
+Notice however that the Lkeys are always on the left (1st col), the
+Rkeys always in the 2nd col
 
-For length() and keys(), the result does depend on the direction, hence we refer to these as 'directed methods':
+For length() and keys(), the result does depend on the direction,
+hence we refer to these as 'directed methods':
 
 <<directedMethods>>=
 length(x)
 length(revx)
 allProbeSetIds <- keys(x)
 allKEGGIds <- keys(revx)
-@ 
+@
 
 There are more 'undirected' methods listed below:
 <<moreUndirectedMethods>>=
@@ -420,13 +405,11 @@ y = hgu95av2ENTREZID[isNA(hgu95av2ENTREZID)]     # usage like is.na()
 Lkeys(y)[1:4]
 @
 
-
-
-
 \begin{Ex}
-How many probesets do not have a GO mapping for the \Rpackage{hgu95av2.db}
-package?  How many have no mapping?  Find a probeset that has a GO mapping. Now look at the GO
-mappings for this probeset in table form.
+  How many probesets do not have a GO mapping for the
+  \Rpackage{hgu95av2.db} package?  How many have no mapping?  Find a
+  probeset that has a GO mapping. Now look at the GO mappings for this
+  probeset in table form.
 
 <<Question #4, echo=FALSE, results='hide'>>=
 
@@ -437,10 +420,7 @@ toTable(hgu95av2GO["1000_at"])
 @
 \end{Ex}
 
-
-
 \subsubsection{Some specific examples}
-
 
 Lets use what we have learned to get information about the probes that
 are are not assigned to a chromosome:
@@ -451,15 +431,14 @@ chroms <- Rkeys(x)[23:24]
 chroms
 Rkeys(x) <- chroms
 toTable(x)
-@ 
+@
 
 To get this in the classic named-list format:
 <<easy>>=
 z <- as.list(revmap(x)[chroms])
 names(z)
 z[["Y"]]
-@ 
-
+@
 
 Many of the common methods for accessing \Rclass{Bimap} objects return
 things in list format.  This can be convenient.  But you have to be
@@ -468,45 +447,42 @@ following will return multiple probes for each chromosome:
 <<evilUnlist>>=
 chrs = c("12","6")
 mget(chrs, revmap(hgu95av2CHR[1:30]), ifnotfound=NA)
-@ 
+@
 
 But look what happens here if we try to unlist that:
 <<evilUnlist2>>=
 unlist(mget(chrs, revmap(hgu95av2CHR[1:30]), ifnotfound=NA))
-@ 
+@
 
 Yuck!  One trick that will sometimes help is to use
 Rfunction{unlist2}.  But be careful here too.  Depending on what step
 comes next, Rfunction{unlist2} may not really help you...
 <<evilUnlist3>>=
 unlist2(mget(chrs, revmap(hgu95av2CHR[1:30]), ifnotfound=NA))
-@ 
+@
 
-
-Lets ask if the probes in 'pbids' mapped to cytogenetic location "18q11.2"?
+Lets ask if the probes in 'pbids' mapped to cytogenetic location
+"18q11.2"?
 
 <<cytogenetic2>>=
 x <- hgu95av2MAP
-pbids <- c("38912_at", "41654_at", "907_at", "2053_at", "2054_g_at", 
+pbids <- c("38912_at", "41654_at", "907_at", "2053_at", "2054_g_at",
            "40781_at")
 x <- subset(x, Lkeys=pbids, Rkeys="18q11.2")
 toTable(x)
-@ 
+@
 
 To coerce this map to a named vector:
 <<coerce>>=
   pb2cyto <- as.character(x)
   pb2cyto[pbids]
-@ 
+@
 
 The coercion of the reverse map works too but issues a warning because
 of the duplicated names for the reasons stated above:
 <<coercWarnings>>=
   cyto2pb <- as.character(revmap(x))
-@ 
-
-
-
+@
 
 \subsubsection{Accessing probes that map to multiple targets}
 
@@ -529,11 +505,11 @@ mapping).  Then treat the new mapping as you would any other mapping.
 <<multiProbes>>=
   ## How many probes?
   dim(hgu95av2ENTREZID)
-  ## Make a mapping with multiple probes exposed 
+  ## Make a mapping with multiple probes exposed
   multi <- toggleProbes(hgu95av2ENTREZID, "all")
   ## How many probes?
   dim(multi)
-@ 
+@
 
 If you then decide that you want to make a mapping that has only
 multiple mappings or you wish to revert one of your maps back to the
@@ -541,7 +517,7 @@ default state of only showing the single mappings then you can use
 \Rfunction{toggleProbes} to switch back and forth.
 
 <<multiProbes2>>=
-  ## Make a mapping with ONLY multiple probes exposed 
+  ## Make a mapping with ONLY multiple probes exposed
   multiOnly <- toggleProbes(multi, "multiple")
   ## How many probes?
   dim(multiOnly)
@@ -549,12 +525,12 @@ default state of only showing the single mappings then you can use
   ## Then make a mapping with ONLY single mapping probes
   singleOnly <- toggleProbes(multiOnly, "single")
   ## How many probes?
-  dim(singleOnly)  
-@ 
+  dim(singleOnly)
+@
 
 Finally, there are also a pair of test methods
-\Rfunction{hasMultiProbes} and \Rfunction{hasSingleProbes} that can
-be used to see what methods a mapping presently has exposed.
+\Rfunction{hasMultiProbes} and \Rfunction{hasSingleProbes} that can be
+used to see what methods a mapping presently has exposed.
 
 <<multiProbes3>>=
   ## Test the multiOnly mapping
@@ -564,9 +540,7 @@ be used to see what methods a mapping presently has exposed.
   ## Test the singleOnly mapping
   hasMultiProbes(singleOnly)
   hasSingleProbes(singleOnly)
-@ 
-
-
+@
 
 \subsubsection{Using SQL to access things directly}
 
@@ -594,7 +568,6 @@ SELECT gene\_id,\_id FROM genes WHERE gene\_id=1;
 
 Will only get records from the genes table where the gene\_id is = 1.
 
-
 Thirdly, you will want to know about an inner join:
 
 SELECT * FROM genes,chromosomes WHERE genes.\_id=chromosomes.\_id;
@@ -619,7 +592,6 @@ which fields we want:
 
 SELECT g.gene\_id,c.chromosome FROM genes AS g,chromosomes AS c WHERE g.\_id=c.\_id;
 
-
 Now you are most of the way there to being able to query the databases
 directly.  The only other thing you need to know is a little bit about
 how to access these databases from R.  With each package, you will
@@ -627,8 +599,8 @@ also get a method that will print the schema for its database, you can
 view this to see what sorts of tables are present etc.
 
 <<orgSchema, results='hide'>>=
-org.Hs.eg_dbschema() 
-@ 
+org.Hs.eg_dbschema()
+@
 
 To access the data in a database, you will need to connect to it.
 Fortunately, each package will automatically give you a connection
@@ -636,7 +608,7 @@ object to that database when it loads.
 
 <<connObj, results='hide'>>=
 org.Hs.eg_dbconn()
-@ 
+@
 
 You can use this connection object like this:
 
@@ -644,13 +616,12 @@ You can use this connection object like this:
 query <- "SELECT gene_id FROM genes LIMIT 10;"
 result = dbGetQuery(org.Hs.eg_dbconn(), query)
 result
-@ 
-
-
-
+@
 
 \begin{Ex}
-Retrieve the entrez gene ID and chromosome by using a database query.  Show how you could do the same thing by using \Rfunction{toTable}
+  Retrieve the entrez gene ID and chromosome by using a database
+  query.  Show how you could do the same thing by using
+  \Rfunction{toTable}
 
 <<Question #5, echo=FALSE, results='hide'>>=
 sql <- "SELECT gene_id, chromosome FROM genes AS g, chromosomes AS c WHERE g._id=c._id;"
@@ -660,19 +631,6 @@ dbGetQuery(org.Hs.eg_dbconn(),sql)[1:10,]
 toTable(org.Hs.egCHR)[1:10,]
 @
 \end{Ex}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 \subsubsection{Combining data from multiple annotation packages at the SQL level}
 
@@ -709,15 +667,15 @@ ans <- unlist(mget(wantedp, hgu95av2SYMBOL))
 })
 length(ans)
 ans[1:10]
-@ 
+@
 
 All of the above code could have been reduced to a single SQL query
 with the SQLite-based packages. But to put together this query, you
 would need to look 1st at the schema to know what tables are present:
 
 <<schema, results='hide'>>=
-hgu95av2_dbschema() 
-@ 
+hgu95av2_dbschema()
+@
 
 This function will give you an output of all the create table
 statements that were used to generate the hgu95av2 database.  In this
@@ -726,19 +684,18 @@ for the organism package that it depends on.  To learn what package it
 depends on, look at the ORGPKG value:
 
 <<schema2, results='hide'>>=
-hgu95av2ORGPKG 
-@ 
+hgu95av2ORGPKG
+@
 
 Then you can see that schema by looking at its schema method:
 
 <<schema3, results='hide'>>=
-org.Hs.eg_dbschema() 
-@ 
-
+org.Hs.eg_dbschema()
+@
 
 So now we can see that we want to connect the data in the go\_bp, and
 symbol tables from the org.Hs.eg.sqlite database along with the probes
-data in the hgu95av2.sqlite database.  How can we do that?  
+data in the hgu95av2.sqlite database.  How can we do that?
 
 It turns out that one of the great conveniences of SQLite is that it
 allows other databases to be `ATTACHed'.  Thus, we can keep our data
@@ -751,19 +708,16 @@ Fortunately, R provides a nice system independent way of getting that
 information.  Note that the name of the database is always the same as
 the name of the package, with the suffix '.sqlite'.:
 
-
 <<hgu95av2_org_join, tidy=FALSE>>=
 orgDBLoc = system.file("extdata", "org.Hs.eg.sqlite", package="org.Hs.eg.db")
 attachSQL = paste("ATTACH '", orgDBLoc, "' AS orgDB;", sep = "")
 dbGetQuery(hgu95av2_dbconn(), attachSQL)
 @
 
-
 Finally, you can assemble a cross-db sql query and use the helper
 function as follows.  Note that when we want to refer to tables in the
 attached database, we have to use the 'orgDB' prefix that we specified
 in the 'ATTACH' query above.:
-
 
 <<complexDb>>=
 system.time({
@@ -774,19 +728,20 @@ zz <- dbGetQuery(hgu95av2_dbconn(), SQL)
 dbGetQuery(hgu95av2_dbconn(), "DETACH orgDB"         )
 @
 
-
-
 \begin{Ex}
-Retrieve the entrez gene ID, chromosome location information and cytoband infomration by using a single database query.
+  Retrieve the entrez gene ID, chromosome location information and
+  cytoband infomration by using a single database query.
 <<Question #6, echo=FALSE, results='hide'>>=
 sql <- "SELECT gene_id, start_location, end_location, cytogenetic_location FROM genes AS g, chromosome_locations AS c, cytogenetic_locations AS cy WHERE g._id=c._id AND g._id=cy._id"
 dbGetQuery(org.Hs.eg_dbconn(),sql)[1:10,]
 @
 \end{Ex}
 
-
 \begin{Ex}
-Expand on the example in the text above to combine data from the \Rpackage{hgu95av2.db} and \Rpackage{org.Hs.eg.db} with the \Rpackage{GO.db} package so as to include the GO ID, and term definition in the output.
+  Expand on the example in the text above to combine data from the
+  \Rpackage{hgu95av2.db} and \Rpackage{org.Hs.eg.db} with the
+  \Rpackage{GO.db} package so as to include the GO ID, and term
+  definition in the output.
 <<Question #7, echo=FALSE, results='hide'>>=
 orgDBLoc = system.file("extdata", "org.Hs.eg.sqlite", package="org.Hs.eg.db")
 attachSQL = paste("ATTACH '", orgDBLoc, "' AS orgDB;", sep = "")
@@ -796,7 +751,12 @@ goDBLoc = system.file("extdata", "GO.sqlite", package="GO.db")
 attachSQL = paste("ATTACH '", goDBLoc, "' AS goDB;", sep = "")
 dbGetQuery(hgu95av2_dbconn(), attachSQL)
 
-SQL <- "SELECT DISTINCT p.probe_id, gi.symbol, gt.go_id, gt.definition  FROM probes AS p, orgDB.gene_info AS gi, orgDB.genes AS g, orgDB.go_bp AS bp, goDB.go_term AS gt  WHERE bp._id=g._id AND gi._id=g._id AND p.gene_id=g.gene_id AND bp.evidence IN ('IPI', 'IDA', 'IMP', 'IGI') AND gt.go_id=bp.go_id"
+SQL <- "SELECT DISTINCT p.probe_id, gi.symbol, gt.go_id, gt.definition
+    FROM probes 
+        AS p, orgDB.gene_info AS gi, orgDB.genes AS g, orgDB.go_bp 
+        AS bp, goDB.go_term AS gt  
+    WHERE bp._id=g._id AND gi._id=g._id AND p.gene_id=g.gene_id 
+        AND bp.evidence IN ('IPI', 'IDA', 'IMP', 'IGI') AND gt.go_id=bp.go_id"
 zz <- dbGetQuery(hgu95av2_dbconn(), SQL)
 
 dbGetQuery(hgu95av2_dbconn(), "DETACH orgDB")
@@ -804,32 +764,11 @@ dbGetQuery(hgu95av2_dbconn(), "DETACH goDB")
 @
 \end{Ex}
 
-
-
-The version number of R and packages loaded for generating the vignette were:
+The version number of R and packages loaded for generating the
+vignette were:
 
 <<SessionInfo, echo=FALSE>>=
 sessionInfo()
 @
 
-
-
 \end{document}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
