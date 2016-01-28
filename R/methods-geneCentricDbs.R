@@ -1722,11 +1722,11 @@ setMethod("keytypes", "GODb",
 
     ## handle multiple matches 
     .filter <- function(data) {
-        idx <- elementLengths(data) == 1
+        idx <- elementNROWS(data) == 1
         unlist(data[idx])
     }
     .asNA <- function(data) {
-        idx <- elementLengths(data) > 1
+        idx <- elementNROWS(data) > 1
         data[idx] <- NA
         unlist(data)
     }
