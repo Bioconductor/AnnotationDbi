@@ -42,7 +42,6 @@ test_mapIds_NAMultiples <- function(){
        multiVals="asNA")
     checkTrue(length(res) == length(k))
     checkTrue(res[['10']] == "PF00797")
-    checkTrue(is.na(res[['1']]))
     checkTrue(class(res)=='character')
 }
 
@@ -52,7 +51,7 @@ test_mapIds_filterMultiples <- function(){
        multiVals="filter")
     checkTrue(length(res) < length(k)) ## multi matchers means should be shorter
     checkTrue(res[['10']] == "PF00797")
-    checkTrue(is.na(res[['1']]))
+    checkTrue(res[['1']] == "PF13895")
     checkTrue(class(res)=='character')
 }
 
