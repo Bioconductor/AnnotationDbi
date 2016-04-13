@@ -1447,11 +1447,7 @@ setMethod("keytypes", "GODb",
     function(x) return(c("GOID","TERM","ONTOLOGY","DEFINITION")) ## only one type makes sense
 )
 
-
-
-
-
-## TODO:
+## Marc's TODO:
 ##X .5) make keytype so that it uses the mapping names instead of internal stuff
 ##X 1) make keytypes so that it returns all possible keytypes
 ##X 2) make keys() so that it gets correct keys for correct keytypes

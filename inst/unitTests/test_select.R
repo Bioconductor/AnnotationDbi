@@ -10,7 +10,7 @@
 ## in the annotations etc.
 
 ##  library(AnnotationDbi);AnnotationDbi:::.test()
-
+require(RSQLite)
 require(org.Hs.eg.db)
 require(org.At.tair.db)
 require(org.Sc.sgd.db)

@@ -1439,6 +1439,6 @@ createSimpleBimap <- function(tablename, Lcolname, Rcolname,
                    ),
                  datacache=datacache
                  )
-    AnnotationDbi:::createAnnDbBimap(seed, list())
+    createAnnDbBimap(seed, list())
 }
 

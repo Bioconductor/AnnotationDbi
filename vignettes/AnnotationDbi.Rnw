@@ -109,6 +109,7 @@ packages, users can use the \Rfunction{available.dbschemas} function.
 This list will also tell you which model organisms are supported.
 
 <<<available schemas, results='hide'>>=
+library(DBI)
 library(org.Hs.eg.db)
 library(AnnotationForge)
 available.dbschemas()

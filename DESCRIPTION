@@ -2,7 +2,7 @@ Package: AnnotationDbi
 Title: Annotation Database Interface
 Description: Provides user interface and database connection code
     for annotation data packages using SQLite data storage.
-Version: 1.33.8
+Version: 1.33.9
 Author: Herve Pages, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer
  <maintainer@bioconductor.org>
@@ -14,7 +14,7 @@ Suggests: DBI (>= 0.2-4), RSQLite (>= 0.6-4), hgu95av2.db, GO.db,
         org.Sc.sgd.db, org.At.tair.db, KEGG.db, RUnit,
         TxDb.Hsapiens.UCSC.hg19.knownGene, hom.Hs.inp.db, org.Hs.eg.db,
         reactome.db, AnnotationForge, graph, EnsDb.Hsapiens.v75,
-        BiocStyle, knitr
+        BiocStyle, knitr, org.testing.db
 Collate: 00RTobjs.R unlist2.R AllGenerics.R AllClasses.R FlatBimap.R
         SQL.R AnnDbObj-lowAPI.R Bimap.R GOTerms.R BimapFormatting.R
         Bimap-envirAPI.R flatten.R methods-AnnotationDb.R
