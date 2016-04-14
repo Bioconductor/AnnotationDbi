@@ -181,7 +181,6 @@
   if(species=="Anopheles gambiae"){
     ## drop unsupported mappings
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
-                                                        "ALIAS2EG",
                                                         "ALIAS2PROBE",
                                                         "MAP",
                                                         "CHRLOC",
@@ -273,7 +272,6 @@
   }
   if(species=="Macaca mulatta"){
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
-                                                        "ALIAS2EG",
                                                         "ALIAS2PROBE",
                                                         "MAP",
                                                         "UNIGENE",
@@ -309,7 +307,6 @@
   if(species=="Pan troglodytes"){
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2PROBE",
-                                                        "ALIAS2EG",
                                                         "MAP",
                                                         "UNIGENE",
                                                         "PFAM",
@@ -364,7 +361,6 @@
   if(species=="Xenopus laevis"){
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2PROBE",
-                                                        "ALIAS2EG",
                                                         "MAP",
                                                         "CHRLOC",
                                                         "CHRLOCEND",
