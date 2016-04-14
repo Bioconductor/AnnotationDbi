@@ -5,6 +5,7 @@
 ### Used at load time (in .onLoad).
 dbFileConnect <- function(dbfile)
 {
+    library(RSQLite)
     ## This is a protection against dbConnect() working even with non-existing
     ## files (for our use case, the .sqlite file _must_ exist):
     if (!file.exists(dbfile))
