@@ -5,7 +5,6 @@
 ### Used at load time (in .onLoad).
 dbFileConnect <- function(dbfile)
 {
-    library(RSQLite)
     ## This is a protection against dbConnect() working even with non-existing
     ## files (for our use case, the .sqlite file _must_ exist):
     if (!file.exists(dbfile))
@@ -20,10 +19,6 @@ dbFileDisconnect <- function(dbconn)
     dbDisconnect(dbconn)
 }
 
-
-
-    
-
 ### Used at load time (in .onLoad) by the SQLite-based ann data package to
 ### dynamically add exported symbols to its namespace environment.
 
@@ -36,8 +31,6 @@ dbFileDisconnect <- function(dbconn)
         return(TRUE)
     }
 }
-
-
 
 addToNamespaceAndExport <- function(x, value, pkgname)
 {
@@ -84,7 +77,6 @@ addToNamespaceAndExport <- function(x, value, pkgname)
     }
     namespaceExport(ns, x)
 }
-
 
 mergeToNamespaceAndExport <- function(envir, pkgname)
 {
