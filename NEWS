@@ -1,5 +1,19 @@
  	**************************************************
 	*						 *
+	*	        1.33.x SERIES NEWS		 *
+	*						 *
+	**************************************************
+
+
+		CHANGES IN AnnotationDbi VERSION 1.33.x
+
+BUG FIXES
+
+    o maps between chip and org pacakges work with loaded but not
+    attached pacakges.
+
+ 	**************************************************
+	*						 *
 	*	        1.31.x SERIES NEWS		 *
 	*						 *
 	**************************************************

@@ -59,16 +59,19 @@
 ## ALSO: I will need a way to deduce the org package that goes with each chip
 ## package. hgu95av2ORGPKG will (for example) get you this.  DONE:
 .getOrgPkg <- function(x){
-  pkgname <- sub(".db$","", packageName(x))
-  orgPkgName <- eval(parse(text=paste0(pkgname, "ORGPKG")))
-  orgPkgName <- paste0(orgPkgName,".db")
-  eval(parse(text=orgPkgName))
+    pkgname <- packageName(x)
+    orgsymbol <- sub(".db$","ORGPKG", pkgname)
+    orgroot <- get(orgsymbol, getNamespace(pkgname))
+    orgpkgname <- paste0(orgroot, ".db")
+    get(orgpkgname, loadNamespace(orgpkgname))
 }
 
 ## This gets the exact path to the chip DB.
 .getChipDbFile <- function(x){
-  pkgname <- sub(".db$","", packageName(x))
-  eval(call(paste0(pkgname, "_dbfile")))
+    pkgname <- packageName(x)
+    pkgroot <- sub(".db$","", pkgname)
+    filesymbol <- paste0(pkgroot, "_dbfile")
+    get(filesymbol, loadNamespace(pkgname))()
 }
 
 ## Limitation: I can only have ONE table and ONE field for each list name.
