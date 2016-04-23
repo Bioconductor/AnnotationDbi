@@ -9,7 +9,7 @@
 
 BUG FIXES
 
-    o maps between chip and org pacakges work with loaded but not
+    o maps between chip and org packages work with loaded but not
     attached pacakges.
 
  	**************************************************
