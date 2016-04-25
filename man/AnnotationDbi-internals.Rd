@@ -20,12 +20,16 @@
 \alias{initialize,L2Rlink-method}
 \alias{show,L2Rlink-method}
 
+\alias{dbGetTable}
 \alias{dbFileConnect}
 \alias{dbFileDisconnect}
 \alias{mergeToNamespaceAndExport}
 
 
 \alias{createAnnObjs.SchemaChoice}
+\alias{NCBICHIP_DB_SeedGenerator}
+\alias{getOrgPkgForSchema}
+\alias{filterSeeds}
 
 
 \title{AnnotationDbi internals}

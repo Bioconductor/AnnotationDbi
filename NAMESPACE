@@ -139,7 +139,7 @@ export(
     showQCData,
 
     ## from R/SQL.R
-    debugSQL,
+    debugSQL, dbGetTable,
 
     ## from R/GOTerms.R
     GOTerms,
@@ -151,12 +151,14 @@ export(
     #addToNamespaceAndExport,
     mergeToNamespaceAndExport,
 
+    ## from methods-geneCentricDbs
+    getOrgPkgForSchema,
+
     ## from R/loadDb.R
     loadDb,
 
     ## from the R/createAnnObjs.*_DB.R files
-    createAnnObjs.SchemaChoice,
-
+    createAnnObjs.SchemaChoice, NCBICHIP_DB_SeedGenerator, filterSeeds,
 
     ## from R/AnnDbPkg-checker.R
     #checkProperty0,

@@ -443,7 +443,7 @@ getOrgPkgForSchema <- function(schema){
 
 
 ## helper to filter seeds above based on the schema
-.filterSeeds <- function(allSeeds, schema, class){
+filterSeeds <- function(allSeeds, schema, class){
   ## logic to decide what to leave and what to keep:
   ## 1st get the schema name
   species <- getSpeciesFromSchema(schema)
@@ -536,7 +536,7 @@ createAnnObjs.NCBI_DB <- function(prefix,
     allSeeds <- NCBICHIP_DB_SeedGenerator(dbname)
   }  
   ## filter the seeds to match the schema
-  seeds <- .filterSeeds(allSeeds, schema, class)
+  seeds <- filterSeeds(allSeeds, schema, class)
   ## now make the bimaps
   ann_objs <- createAnnDbBimaps(seeds, seed0)
   
