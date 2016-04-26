@@ -990,7 +990,7 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
 
 setMethod("select", "OrgDb",
           function(x, keys, columns, keytype, ...) {
-              if (missing(keytype)) keytype <- .chooseCentralOrgPkgSymbol(x)
+              if (missing(keytype)) keytype <- chooseCentralOrgPkgSymbol(x)
               jointype <- .chooseJoinType(x)
               .select(x, keys, columns, keytype, jointype=jointype, ...)
               ## .selectWarnJT(x, keys, columns, keytype, jointype=jointype,

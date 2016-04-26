@@ -69,7 +69,7 @@ test_dropUnwantedRows <- function() {
 }
 
 test_resort <- function() {
-    fun <- AnnotationDbi:::.resort
+    fun <- resort_base ## from AnnotationDbi
 
     ## repeat keys returned
     keys <- letters[1:5]
