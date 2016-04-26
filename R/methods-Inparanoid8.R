@@ -73,7 +73,7 @@ setMethod("keytypes", "Inparanoid8Db", function(x){.inpCols8(x)})
 
 .keysInp8 <- function(x, keytype){
   ## argument checking
-  .testForValidKeytype(x, keytype)
+  testForValidKeytype(x, keytype)
   ## translate keytype back to table name
   tabNames <- .getTableNames8(x)
   lckeytype <- names(tabNames[tabNames %in% keytype])
@@ -219,7 +219,7 @@ setMethod("keys", "Inparanoid8Db",
 ## function for making select happen
 .selectInp8 <- function(x, keys, cols, keytype){
   ## Some argument checking
-  .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
+  testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
 
   ## filter out keys that are not legit (just from the DB query)
   ktKeys = keys(x, keytype=keytype)

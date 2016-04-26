@@ -168,7 +168,7 @@ setMethod("keytypes", "InparanoidDb", function(x){.inpCols(x)})
 
 .keysInp <- function(x, keytype){
   ## argument checking
-  .testForValidKeytype(x, keytype)
+  testForValidKeytype(x, keytype)
   ## translate keytype back to table name
   tabNames <- .getTableNames(x)
   lckeytype <- names(tabNames[tabNames %in% keytype])
@@ -351,7 +351,7 @@ setMethod("keys", "InparanoidDb",
 ## function for making select happen
 .selectInp <- function(x, keys, cols, keytype){
   ## Some argument checking
-  .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
+  testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
 
   ## filter out keys that are not legit (just from the DB query)
   ktKeys = keys(x, keytype=keytype)
@@ -370,7 +370,7 @@ setMethod("keys", "InparanoidDb",
   res <- .collateInpQueryResults(x, .UCToStandard(tables), qkeys, keytype,
                                  fiveMap, baseFiveCode, baseSpecies)
 
-  ## Setup to call .resort
+  ## Setup to call resort_base
   ## reqCols must have exactly the same stuff as in tables, but in same format
   ## as header from res
   reqCols <- fiveMap[toupper(names(fiveMap)) %in% tables]
@@ -381,7 +381,7 @@ setMethod("keys", "InparanoidDb",
   ## now drop any unrequested cols
   res <- res[,reqCols,drop=FALSE]
   ## And then resort/tidy etc.
-  res <- .resort(res, keys, jointype=colType, reqCols=reqCols)
+  res <- resort_base(res, keys, jointype=colType, reqCols=reqCols)
 
   ## Then match to the colnames
   colnames(res) <- toupper(names(fiveMap)[match(colnames(res),fiveMap)])

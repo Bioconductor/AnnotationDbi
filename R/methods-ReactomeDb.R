@@ -71,7 +71,7 @@ setMethod("columns", "ReactomeDb",
 
 .keysReact <- function(x, keytype){
   ## argument checking
-  .testForValidKeytype(x, keytype)
+  testForValidKeytype(x, keytype)
   sql <- switch(keytype,
                 "ENTREZID" = "SELECT gene_id FROM pathway2gene",
                 "GO" = "SELECT go_id FROM reactome2go",
@@ -261,7 +261,7 @@ setMethod("keys", "ReactomeDb",
 ## function for making select happen
 .selectReact <- function(x, keys, cols, keytype){
   ## Some argument checking
-  .testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
+  testSelectArgs(x, keys=keys, cols=cols, keytype=keytype)
 
   ## filter out keys that are not legit (just from the DB query)
   ktKeys = keys(x, keytype=keytype)
@@ -282,7 +282,7 @@ setMethod("keys", "ReactomeDb",
   res <- .collateQueryResults(x, tables, colType, qkeys, mergeID="DB_ID")
 
 
-  ## .resort just needs:
+  ## resort_base just needs:
   ## the results,
   ## ALL of the keys,
   ## the colname that matches the keys (jointype or colType) and
@@ -294,7 +294,7 @@ setMethod("keys", "ReactomeDb",
   ## now drop any unrequested cols
   res <- res[,reqCols,drop=FALSE]
   ## And then resort/tidy etc.
-  res <- .resort(res, keys, jointype=colType, reqCols=reqCols)
+  res <- resort_base(res, keys, jointype=colType, reqCols=reqCols)
 
   ## Capture relationship between uc and lc names
   names(reqCols) <- types
@@ -339,8 +339,8 @@ setMethod("select", "ReactomeDb",
 
 ## TODO:
 ## Change this to be either full outer joins, or devise a new strategy???
-## Remove repeated cols? (maybe done for me by .resort?)
-## .resort()
+## Remove repeated cols? (maybe done for me by resort_base?)
+## resort_base()
 ## translate names (needs some new functions.
 ## Add a WHERE IN clause to the end for filtering out the keys...
 
@@ -362,7 +362,7 @@ setMethod("select", "ReactomeDb",
 ## This above part is mostly "done" (except I have to pass keys in!)
 
 ## Next comes the part where I remap col names and re-order/resort the results.
-## 4) Use our method (.resort) to clean up
+## 4) Use our method (resort_base) to clean up
 ## 5) rename the columns (this should be mapped up near where we specify what tables/queries are needed to extract based on COLs)
 
 ## WHY DO IT THIS WAY?  Because if I write/generate a SQL query I end up
@@ -397,7 +397,7 @@ setMethod("select", "ReactomeDb",
 ## 4) remove columns that are not requested from the results - DONE
 
 ## Bugs:
-## 6) Do I have a .resort bug with keys becoming duplicated???  - fixed?
+## 6) Do I have a resort_base bug with keys becoming duplicated???  - fixed?
 
 ## 7) Add documentation aliases
 

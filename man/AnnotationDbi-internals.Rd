@@ -30,6 +30,11 @@
 \alias{NCBICHIP_DB_SeedGenerator}
 \alias{getOrgPkgForSchema}
 \alias{filterSeeds}
+\alias{chooseCentralOrgPkgSymbol}
+\alias{mapIds_base}
+\alias{resort_base}
+\alias{testForValidKeytype}
+\alias{testSelectArgs}
 
 
 \title{AnnotationDbi internals}

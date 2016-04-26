@@ -152,7 +152,9 @@ export(
     mergeToNamespaceAndExport,
 
     ## from methods-geneCentricDbs
-    getOrgPkgForSchema,
+    getOrgPkgForSchema, chooseCentralOrgPkgSymbol, 
+    mapIds_base, resort_base,
+    testForValidKeytype, testSelectArgs,
 
     ## from R/loadDb.R
     loadDb,
