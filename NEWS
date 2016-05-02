@@ -1,66 +1,78 @@
- 	**************************************************
-	*						 *
-	*	        1.33.x SERIES NEWS		 *
-	*						 *
-	**************************************************
+CHANGES IN VERSION 1.34.0
+-------------------------
+
+NEW FEATURES
+
+    o export ALIAS2EG symbol in NAMESPACE for frog, mosquito, chimp and 
+      rhesus OrgDbs
+
+    o add how to use EnsDb section to vignette
+
+MODIFICATIONS
+
+    o work on code base and exported functions
+      - break up code in geneCentricDbs file
+      - re-name and export functions used by select()
+        in AnnotationForge and GenomicFeatures
+      - re-name and export functions used by annotation package
+        builders in AnnotationForge
+
+    o remove library(RSQLite) from dbFileConnect()
+
+    o modify unit tests for new PFAM identifiers in Bioconductor 3.3
+
+    o use elementNROWS() instead of elementLengths()
+
+    o modify mapIds() to preserve data type returned from select()
+
+    o reduce time of AnnDbPkg-checker.Rd example
+
+BUG FIXES
+
+    o bugfix for select() and mapIds() when there are many:many mappings
+
+    o bugfix in test_generateExtraRows unit test.
 
 
-		CHANGES IN AnnotationDbi VERSION 1.33.x
+CHANGES IN VERSION 1.32.0
+-------------------------
 
 BUG FIXES
 
     o maps between chip and org packages work with loaded but not
-    attached pacakges.
-
- 	**************************************************
-	*						 *
-	*	        1.31.x SERIES NEWS		 *
-	*						 *
-	**************************************************
+    attached packages.
 
 
-		CHANGES IN AnnotationDbi VERSION 1.31.x
+CHANGES IN VERSION 1.31.0
+-------------------------
 
 NEW FEATURES and API changes
 
     o columns() and keytypes() sort their return values.
 
-    o ls() on a Bimap option returns keys in sort()ed order, by
-    default
-
- 	**************************************************
-	*						 *
-	*	        1.30.x SERIES NEWS		 *
-	*						 *
-	**************************************************
+    o ls() on a Bimap option returns keys in sort()ed order, by default
 
 
-		CHANGES IN AnnotationDbi VERSION 1.30.x
+CHANGES IN VERSION 1.30.0
+-------------------------
 
 NEW FEATURES and API changes
 
-    o Adds mapIds() which allows users who miss mget() to extract data  
-    from AnnnotationDb objects: but without the dangers of using mget() 
-    (which fails if you pass in a bad key)
+    o Adds mapIds() which allows users who miss mget() to extract data 
+      from AnnnotationDb objects: but without the dangers of using mget() 
+      (which fails if you pass in a bad key)
 
     o Adds dbconn() and dbfile() methods to the list of things that 
-    AnnotationDb derived objects shoould always be expected to support
+      AnnotationDb derived objects shoould always be expected to support
 
 BUG FIXES AND CODE MAINTENANCE
 
     o loadDb() now is smarter about whether or not it attaches a supporting 
-    package 
+      package 
 
 
-
- 	**************************************************
-	*						 *
-	*	        1.24.x SERIES NEWS		 *
-	*						 *
-	**************************************************
-
-
-		CHANGES IN AnnotationDbi VERSION 1.24.x
+CHANGES IN VERSION 1.24.0
+-------------------------
 
 NEW FEATURES and API changes
 
@@ -83,14 +95,8 @@ BUG FIXES AND CODE MAINTENANCE
     same except end with a 'prime'.
 
 
- 	**************************************************
-	*						 *
-	*	        1.22.x SERIES NEWS		 *
-	*						 *
-	**************************************************
-
-
-		CHANGES IN AnnotationDbi VERSION 1.22.x
+CHANGES IN VERSION 1.22.0
+-------------------------
 
 NEW FEATURES
 
