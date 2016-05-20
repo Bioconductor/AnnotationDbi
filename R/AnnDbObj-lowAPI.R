@@ -133,11 +133,21 @@ setMethod("dbschema", "DBIConnection",
                             package="AnnotationDbi")
         lines <- readLines(file)
         if(schema == "INPARANOID_DB"){
+            ## Remove the CREATE TABLE statement for the "central" organism
+            ## (e.g. Homo sapiens for hom.Hs.inp.db) as well as the 2 CREATE
+            ## INDEX statements for that table. That's 8 lines in total (6 for
+            ## the CREATE TABLE statement and 1 per CREATE INDEX statement).
+            ## The way this is done below is an ugly hack that is not robust
+            ## at all!
             organism <- dbmeta(x, "ORGANISM")
-            tableName <- tolower(sub(" ", "_", organism))
+            tableName <- sub(" ", "_", organism)
             ii <- grep(tableName, lines)
-            ii <- c(ii[1], ii[1]+1:5, ii[2],ii[3])
-            lines <- lines[-ii]
+            if (length(ii) != 0L) {
+                stopifnot(length(ii) == 3L)  # sanity check
+                ## Not robust at all!
+                ii <- c(ii[1]+1:5, ii)
+                lines <- lines[-ii]  # this removes 8 lines
+            }
         }
         if (!show.indices) {
             ## Remove the CREATE INDEX lines
