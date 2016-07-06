@@ -1070,7 +1070,7 @@ setMethod("select", "GODb",
   tables <- .getDataTables(con)
   cols <- unique(unlist(sapply(tables, FUN=dbListFields, con=con)))
   cols <- cols[!cols %in% "_id"]
-  if(exists('y')){cols <- c("PROBEID", cols)}
+  if(exists('y', inherits=FALSE)){cols <- c("PROBEID", cols)}
   cols
 }
 

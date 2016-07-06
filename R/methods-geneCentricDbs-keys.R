@@ -131,7 +131,7 @@ chooseCentralOrgPkgSymbol <- function(x){
     }
     con <- dbconn(x)
     tables <- .getDataTables(con)
-    if(exists("y")){
+    if(exists("y", inherits=FALSE)){
         tables <- c("c.probes", tables)
     }
     colTabs <- sapply(tables, FUN=dbListFields, con=con)

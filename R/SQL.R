@@ -491,7 +491,7 @@ dbUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
     SQLresultname <- .dbUniqueVals.SQLresultname(datacache,
                          tablename, colname, filter)
     if (!is.null(SQLresultname)) {
-        if (exists(SQLresultname, envir=datacache)) {
+        if (exists(SQLresultname, envir=datacache, inherits=FALSE)) {
             SQLresult <- get(SQLresultname, envir=datacache)
             if (get("debugSQL", envir=RTobjs))
                 cat("[debugSQL] Using cached result from SQL query: ", SQLresult$SQL, "\n", sep="")
@@ -521,7 +521,7 @@ dbCountUniqueVals <- function(conn, tablename, colname, filter, datacache=NULL)
     SQLresultname <- .dbUniqueVals.SQLresultname(datacache,
                          tablename, colname, filter)
     if (!is.null(SQLresultname)) {
-        if (exists(SQLresultname, envir=datacache)) {
+        if (exists(SQLresultname, envir=datacache, inherits=FALSE)) {
             SQLresult <- get(SQLresultname, envir=datacache)
             if (get("debugSQL", envir=RTobjs))
                 cat("[debugSQL] Using cached result from SQL query: ", SQLresult$SQL, "\n", sep="")
@@ -566,7 +566,7 @@ dbUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                          L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
     if (!is.null(SQLresultname)) {
-        if (exists(SQLresultname, envir=datacache)) {
+        if (exists(SQLresultname, envir=datacache, inherits=FALSE)) {
             SQLresult <- get(SQLresultname, envir=datacache)
             if (get("debugSQL", envir=RTobjs))
                 cat("[debugSQL] Using cached result from SQL query: ", SQLresult$SQL, "\n", sep="")
@@ -600,7 +600,7 @@ dbCountUniqueMappedKeys <- function(conn, L2Rchain, Lkeys, Rkeys,
                          L2Rchain, Lkeys, Rkeys,
                          SQLchunks$where, direction)
     if (!is.null(SQLresultname)) {
-        if (exists(SQLresultname, envir=datacache)) {
+        if (exists(SQLresultname, envir=datacache, inherits=FALSE)) {
             SQLresult <- get(SQLresultname, envir=datacache)
             if (get("debugSQL", envir=RTobjs))
                 cat("[debugSQL] Using cached result from SQL query: ", SQLresult$SQL, "\n", sep="")
