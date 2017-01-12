@@ -104,8 +104,7 @@ dbEasyQuery <- function(conn, SQL, j0=NA)
 ###      annotation package.
 loadDb <- function(file, packageName=NA)
 {
-    conn <- dbConnect(SQLite(), file, cache_size=64000L, synchronous="off",
-                      flags=SQLITE_RO)
+    conn <- dbFileConnect(file)
     stopifnot(dbExistsTable(conn, "metadata"))
     db_type <- .getMetaValue(conn, "Db type")
     ## TEMP: On 07/25/2014 TranscriptDb was renamed TxDb so we need to
