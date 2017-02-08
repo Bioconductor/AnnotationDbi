@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{How to use bimaps from the ".db" annotation packages}
+%\VignetteIndexEntry{2. (Deprecated) How to use bimaps from the ".db" annotation packages}
 %\VignetteDepends{hgu95av2.db}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
@@ -28,6 +28,11 @@ opts_chunk$set(tidy=FALSE)
 \begin{document}
 
 \maketitle
+
+\textbf{NOTE} The `bimap' interface to annotation resources is not
+recommend; instead, use the approach in the vignette
+\href{http://bioconductor.org/packages/release/bioc/vignettes/AnnotationDbi/inst/doc/IntroToAnnotationPackages.pdf}{Introduction
+  To Bioconductor Annotation Packages}.
 
 \section{Introduction}
 

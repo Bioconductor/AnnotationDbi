@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{AnnotationDbi: Introduction To Bioconductor Annotation Packages}
+%\VignetteIndexEntry{1. Introduction To Bioconductor Annotation Packages}
 %\VignetteDepends{org.Hs.eg.db, TxDb.Hsapiens.UCSC.hg19.knownGene, hom.Hs.inp.db, EnsDb.Hsapiens.v75}
 %\VignetteKeywords{annotation, database}
 %\VignettePackage{AnnotationDbi}
