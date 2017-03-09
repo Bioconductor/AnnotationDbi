@@ -221,10 +221,10 @@ setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), fu
   clnVals = frame
   sqlIns <- "INSERT INTO data (go_id, evidence, gene_id) VALUES (?,?,?)"
   dbBegin(con)
-  rset <- dbSendPreparedQuery(con, sqlIns, clnVals)
-  dbClearResult(rset)
-  dbCommit(con)
-
+  res <- dbSendQuery(con,sqlIns, params=unclass(unname(clnVals)))
+  dbClearResult(res)
+  dbCommit(con)  
+  
   ##Now I have to make a 'go_data' table from 'data' that to INSURE that all
   ##the GO IDs are also in GO.db...
   .attachGO(con)  
