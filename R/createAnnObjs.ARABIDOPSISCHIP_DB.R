@@ -103,6 +103,19 @@ ARABIDOPSISCHIP_DB_AnnDbBimap_seeds <- list(
             )
         )
     ),
+    list(
+        objName="ENTREZID",
+        Class="ProbeAnnDbBimap",
+        L2Rchain=list(
+            ARABIDOPSISCHIP_DB_L2Rlink1,
+            ARABIDOPSISCHIP_DB_L2Rlink2,
+            list(
+                tablename="entrez_genes",
+                Lcolname="_id",
+                Rcolname="gene_id"
+            )
+        )
+    ),
 ##     list(
 ##         objName="MULTIHIT",
 ##         Class="ProbeAgiAnnDbMap",
