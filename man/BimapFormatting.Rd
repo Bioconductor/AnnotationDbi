@@ -5,6 +5,7 @@
 \alias{as.list}
 \alias{as.list,FlatBimap-method}
 \alias{as.list,Bimap-method}
+\alias{as.list.Bimap}
 \alias{as.list,IpiAnnDbMap-method}
 \alias{as.list,AgiAnnDbMap-method}
 \alias{as.list,GoAnnDbBimap-method}

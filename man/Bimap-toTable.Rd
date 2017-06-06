@@ -6,6 +6,7 @@
 \alias{toTable,FlatBimap-method}
 \alias{toTable,Bimap-method}
 \alias{as.data.frame,Bimap-method}
+\alias{as.data.frame.Bimap}
 
 \alias{nrow}
 \alias{nrow,Bimap-method}

@@ -180,5 +180,12 @@ export(
     ## AnnotationDb
     metadata,
 
-    createSimpleBimap
+    createSimpleBimap,
+
+    ## S3 methods
+    as.list.Bimap,
+    as.data.frame.Bimap
 )
+
+S3method(as.list, Bimap)
+S3method(as.data.frame, Bimap)

@@ -241,6 +241,8 @@
 ### The "as.list" methods.
 ###
 
+as.list.Bimap <- function(x, ...) as.list(x)
+
 setMethod("as.list", "FlatBimap",
     function(x, ...)
     {

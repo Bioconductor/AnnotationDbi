@@ -1103,6 +1103,8 @@ setMethod("toTable", "Bimap",
     }
 )
 
+as.data.frame.Bimap <- function(x, row.names = NULL, optional = FALSE, ...)
+    as.data.frame(x, row.names=row.names, optional=optional, ...)
 
 setMethod("as.data.frame", "Bimap", toTable)
 
