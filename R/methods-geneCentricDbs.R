@@ -917,6 +917,9 @@ testForValidKeytype <- function(x, keytype){
   if (!is.character(keys)){
       stop("'keys' must be a character vector")
   }
+  if (length(keys) == 0L) {
+      return()
+  }
   if(is.null(fks)){  ## Normally, fks is just NULL and so we will call keys()
       ktKeys <- keys(x, keytype)
   }else{             ## This lets the caller say wait: use these keys instead 
