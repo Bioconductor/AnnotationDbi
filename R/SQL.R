@@ -276,7 +276,7 @@ L2Rchain.colnames <- function(L2Rchain)
             altDB = dbList[i]
             altDBFile = system.file("extdata", paste0(altDB,".sqlite"), package=paste0(altDB,".db"))
             SQL <- paste0("ATTACH DATABASE '",altDBFile,"' AS ", .mangleDBName(altDB),";")
-            dbQuery(dbconn, SQL)
+            dbAttach(dbconn, SQL)
         }
 }
 
@@ -402,6 +402,12 @@ dbQuery <- function(conn, SQL, j0=NA)
     else
         data0[[j0]]
 }
+
+dbAttach <- function(conn, SQL){
+    obj <- dbSendStatement(conn, SQL)
+    dbClearResult(obj)
+}
+
 
 dbGetTable <- function(conn, tablename, extra.SQL=NULL)
 {

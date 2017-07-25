@@ -445,7 +445,7 @@
   chipDb <- .getChipDbFile(y)
   chipSQL <- paste0("ATTACH '",chipDb,"' AS c")
   #message(chipSQL)
-  dbQuery(dbconn(x), chipSQL)
+  dbAttach(dbconn(x), chipSQL)
 }
 
 
@@ -573,7 +573,7 @@
   res <- dbQuery(dbconn(x), sql)
   ## then cleanup by doing a detach:
   if(exists("y", inherits=FALSE)){ ## I should not have to use inherits=FALSE?
-    dbQuery(dbconn(x), "DETACH DATABASE c")
+    dbAttach(dbconn(x), "DETACH DATABASE c")
   }
   ## then subset to only relevant cols
   res[,(colnames(res) %in% headerTables)]

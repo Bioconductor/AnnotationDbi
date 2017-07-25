@@ -160,7 +160,7 @@ setMethod("show", "GOTerms",
 .attachGO <- function(con){
   GOLoc = system.file("extdata", "GO.sqlite", package="GO.db")
   attachSQL = paste0("ATTACH '", GOLoc, "' AS go;")
-  dbGetQuery(con, attachSQL)
+  dbAttach(con, attachSQL)
 }
 
 
@@ -291,7 +291,7 @@ setMethod("getGOFrameData", "GOAllFrame", function(x){x@data})
 .attachKEGG <- function(con){
   KEGGLoc = system.file("extdata", "KEGG.sqlite", package="KEGG.db")
   attachSQL = paste0("ATTACH '", KEGGLoc, "' AS kegg;")
-  dbGetQuery(con, attachSQL)
+  dbAttach(con, attachSQL)
 }
 
 
