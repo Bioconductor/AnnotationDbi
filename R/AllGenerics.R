@@ -46,7 +46,6 @@ setGeneric("getKEGGFrameData", function(x) standardGeneric("getKEGGFrameData"))
 
 setGeneric("GOID", function(object) standardGeneric("GOID")) 
 setGeneric("Term", function(object) standardGeneric("Term"))
-setGeneric("Ontology", function(object) standardGeneric("Ontology"))
 setGeneric("Definition", function(object) standardGeneric("Definition"))
 setGeneric("Synonym", function(object) standardGeneric("Synonym"))
 setGeneric("Secondary", function(object) standardGeneric("Secondary"))
