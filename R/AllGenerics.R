@@ -61,6 +61,7 @@ setGeneric("Rtablename", function(x) standardGeneric("Rtablename"))
 setGeneric("Lfilter", function(x) standardGeneric("Lfilter"))
 setGeneric("Rfilter", function(x) standardGeneric("Rfilter"))
 setGeneric("flatten", function(x, ...) standardGeneric("flatten"))
+setGeneric("orgPackageName", function(x, ...) standardGeneric("orgPackageName"))
 
 ## AnnotationDb
 setGeneric("saveDb", signature="x",

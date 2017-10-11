@@ -129,7 +129,8 @@ exportMethods(
     "columns",
     "keytypes",
     "select",
-    "mapIds"
+    "mapIds",
+    "orgPackageName"
 )
 
 export(
