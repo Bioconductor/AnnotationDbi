@@ -11,16 +11,19 @@
 ## and load it
 #####install.packages(system.file('extdata','org.testing.db', package='AnnotationDbi'), repos=NULL)
 
+
+dir.create(testlib <- tempfile())
+
 .setUp <- function()
 {
-    if (!require(org.testing.db))
-    {
-        install.packages(system.file("extdata", "org.testing.db",
-          package="AnnotationDbi"), repos=NULL,
-          type="source", INSTALL_opts="--no-test-load")
-        library(org.testing.db)
-    }
-    x <<- org.testing.db
+    installed <- rownames(installed.packages(testlib))
+    if ("org.testing.db" %in% installed)
+        return()
+    pkg <- system.file("extdata", "org.testing.db", package="AnnotationDbi")
+    suppressPackageStartupMessages(install.packages(
+        pkg, lib = testlib, repos=NULL, type="source",
+        INSTALL_opts="--no-test-load", verbose = FALSE, quiet = TRUE
+    ))
     finchCsomes <<- c(as.character(1:15),as.character(17:28),
                      "MT","Un","W","Z","4A","1A","1B")
     finchCols <<- c("CHROMOSOME","SYMBOL","GENENAME","GID","GO","EVIDENCE",
@@ -30,12 +33,14 @@
 
 ## lower level tests (more useful)
 test_keysLow <- function(){
+    x <- org.testing.db::org.testing.db
     res <- unique(AnnotationDbi:::.noSchemaKeys(x, "CHROMOSOME"))
     checkTrue(all(sort(res) == sort(finchCsomes)))
 }
 
 
 test_selectLow <- function(){
+    x <- org.testing.db::org.testing.db
     keys <- "100008579"
     cols <- "SYMBOL"
     keytype <- "GID"
@@ -62,16 +67,19 @@ test_selectLow <- function(){
 
 ## high level tests (does this dispatch right etc.?)
 test_columns <- function(){
+    x <- org.testing.db::org.testing.db
     res <- columns(x)
     checkTrue(all(sort(res) == sort(finchCols)))
 }
 
 test_keytypes <- function(){
+    x <- org.testing.db::org.testing.db
     res <- keytypes(x)
     checkTrue(all(sort(res) == sort(finchCols)))
 }
 
 test_keys<- function(){                                          ## BOOM
+    x <- org.testing.db::org.testing.db
     ## most basic case
     res <- keys(x, "CHROMOSOME")
     checkTrue(all(sort(res) == sort(finchCsomes)))
@@ -91,6 +99,7 @@ test_keys<- function(){                                          ## BOOM
 
 
 test_select <- function(){
+    x <- org.testing.db::org.testing.db
     ## most basic case
     res <- select(x, keys="100008579",
                   columns="SYMBOL", keytype="GID")
