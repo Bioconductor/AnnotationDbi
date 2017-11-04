@@ -249,7 +249,7 @@ setMethod("keys", "Inparanoid8Db",
   ## now drop any unrequested cols
   res <- res[,reqCols,drop=FALSE]
   ## And then resort/tidy etc.
-  res <- .resort(res, keys, jointype=colType, reqCols=reqCols)
+  res <- resort_base(res, keys, jointype=colType, reqCols=reqCols)
 
   ## Then match to the colnames
   colnames(res) <- toupper(names(shortMap)[match(colnames(res),shortMap)])

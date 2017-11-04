@@ -74,7 +74,6 @@ setMethod("Secondary", "GOTerms", function(object) object@Secondary)
 
 ##.GOid2go_termField() retrieves ids of type field from go_term
 .GOid2go_termField <- function(ids, field){
-    require("GO.db")
 ##     message(cat("Before SQL \n")) ##test
     sql <- sprintf("SELECT go_id, %s
                     FROM go_term
@@ -106,7 +105,6 @@ setMethod("Definition", "character",function(object) .GOid2go_termField(object,"
 
 ##.GOid2go_synonymField() retrieves ids of type field from go_synonym
 .GOid2go_synonymField <- function(ids, field){
-    require("GO.db")
     sql <- paste0("SELECT gt.go_id, gs.",field,"
                   FROM go_term AS gt, go_synonym AS gs
                   WHERE gt._id=gs._id AND go_id IN ('",paste(ids, collapse="','"),"')")
@@ -158,6 +156,7 @@ setMethod("show", "GOTerms",
 ###
 
 .attachGO <- function(con){
+  requireNamespace("GO.db")
   GOLoc = system.file("extdata", "GO.sqlite", package="GO.db")
   attachSQL = paste0("ATTACH '", GOLoc, "' AS go;")
   dbAttach(con, attachSQL)
@@ -165,8 +164,6 @@ setMethod("show", "GOTerms",
 
 
 .testGOFrame <- function(x, organism=""){
-  require(RSQLite)
-  require(GO.db)
   drv <- dbDriver("SQLite")
   con <- dbConnect(drv)
   ##Test that some GOIDs are real and that the evidence codes are legit.
@@ -208,8 +205,6 @@ setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), fu
 
 ## Helper method for converting GOFrame type data.frames into GOAllFrame objects
 .convertGOtoGO2ALL = function(frame, type = c("BP","CC","MF")){
-  require(RSQLite)
-  require(GO.db)
   drv <- dbDriver("SQLite")
   con <- dbConnect(drv)
   ##require type to be legit
@@ -289,6 +284,7 @@ setMethod("getGOFrameData", "GOAllFrame", function(x){x@data})
 ###
 
 .attachKEGG <- function(con){
+  requireNamespace("KEGG.db")
   KEGGLoc = system.file("extdata", "KEGG.sqlite", package="KEGG.db")
   attachSQL = paste0("ATTACH '", KEGGLoc, "' AS kegg;")
   dbAttach(con, attachSQL)
@@ -296,8 +292,6 @@ setMethod("getGOFrameData", "GOAllFrame", function(x){x@data})
 
 
 .testKEGGFrame <- function(x, organism=""){
-  require(RSQLite)
-  require(KEGG.db)
   drv <- dbDriver("SQLite")
   con <- dbConnect(drv)
   ##Test that some KEGGIDs are real and that the evidence codes are legit.
@@ -319,8 +313,8 @@ setMethod("getGOFrameData", "GOAllFrame", function(x){x@data})
    }else{new("KEGGFrame", data = x)}
 }
 
-setMethod("KEGGFrame", signature=signature(x="data.frame", organism="character"), function(x, organism){.testKEGGFrame(x, organism)})
-setMethod("KEGGFrame", signature=signature(x="data.frame", organism="missing"), function(x){.testKEGGFrame(x)})
+setMethod("KEGGFrame", c(x="data.frame", organism="character"), .testKEGGFrame)
+setMethod("KEGGFrame", c(x="data.frame", organism="missing"), .testKEGGFrame)
 
 ## Method to access the data in a KEGGFrame object
 setMethod("getKEGGFrameData", "KEGGFrame", function(x){x@data})
@@ -336,14 +330,12 @@ setMethod("getKEGGFrameData", "KEGGFrame", function(x){x@data})
 
 makeGOGraph <- function(ont = c("bp","mf","cc")){
     match.arg(ont)
-    require(graph)
-    require(GO.db)
     df <- switch(ont,
-                 "bp"= toTable(GOBPPARENTS),
-                 "mf"= toTable(GOMFPARENTS),
-                 "cc"= toTable(GOCCPARENTS)
+                 "bp"= toTable(GO.db::GOBPPARENTS),
+                 "mf"= toTable(GO.db::GOMFPARENTS),
+                 "cc"= toTable(GO.db::GOCCPARENTS)
                  )
-    ftM2graphNEL(as.matrix(df[, 1:2]), W=rep(1,dim(df)[1])) 
+    graph::ftM2graphNEL(as.matrix(df[, 1:2]), W=rep(1,dim(df)[1])) 
 }
 
 ## f = makeGOGraph("bp")

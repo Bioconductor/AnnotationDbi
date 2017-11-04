@@ -282,7 +282,7 @@ annotMessage <- function(msgType, pkgType){
                 "exon_probeset" = paste("\n",pkgType,"is based on exon",
                   "probesets. For a more gene-centric view, use the",
                   "transcriptcluster version of this package."),
-                "unsupported" = paste("\n Warning from",pkgName,": the data",
+                "unsupported" = paste("\n The data",
                   "in this package are based on mapping files labeled as",
                   "'unsupported' by their source."),
                 "lumi" = paste("\n",pkgType,"is using or is likely to",
