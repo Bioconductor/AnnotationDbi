@@ -13,6 +13,7 @@
 
 
 dir.create(testlib <- tempfile())
+old_libPaths <- NULL
 
 .setUp <- function()
 {
@@ -24,12 +25,16 @@ dir.create(testlib <- tempfile())
         pkg, lib = testlib, repos=NULL, type="source",
         INSTALL_opts="--no-test-load", verbose = FALSE, quiet = TRUE
     ))
+    old_libPaths <<- .libPaths()
+    .libPaths(c(testlib, old_libPaths))
     finchCsomes <<- c(as.character(1:15),as.character(17:28),
                      "MT","Un","W","Z","4A","1A","1B")
     finchCols <<- c("CHROMOSOME","SYMBOL","GENENAME","GID","GO","EVIDENCE",
                    "ONTOLOGY","GOALL","EVIDENCEALL","ONTOLOGYALL")
 }
 
+.tearDown <- function()
+    .libPaths(old_libPaths)
 
 ## lower level tests (more useful)
 test_keysLow <- function(){
