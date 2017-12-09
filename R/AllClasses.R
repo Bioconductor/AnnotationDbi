@@ -249,10 +249,16 @@ setClass("KEGGFrame", contains="AnnotFrame",
 ##############################################################################
 ## Annotations will be the base virtual class for all the annotation packages
 ## in the project.
-.AnnotationDb <-
-    setRefClass("AnnotationDb",
-        fields=list(conn="SQLiteConnection", packageName="character"),
-                )
+.AnnotationDb <- setRefClass(
+    "AnnotationDb",
+    fields=list(
+        conn="SQLiteConnection", packageName="character"
+    ),
+    methods = list(finalize = function() {
+        if (RSQLite::dbIsValid(.self$conn))
+            RSQLite::dbDisconnect(.self$conn)
+    })
+)
 
 .OrgDb <-
     setRefClass("OrgDb", contains="AnnotationDb")
