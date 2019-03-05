@@ -21,7 +21,7 @@ make_eg_to_go_map(chip)
 \value{
   Either a \code{Go3AnnDbMap} or a \code{RevGo3AnnDbMap}.
 }
-\author{Seth Falcon and Herve Pages}
+\author{Seth Falcon and Hervé Pagès}
 \examples{
 library("hgu95av2.db")
 

@@ -15,7 +15,7 @@
 
 ## If cols() indicates potential danger, then the plan is to message()
 ## the user (or use warning("",immediately=TRUE)) and tell them that
-## what they are doing is going to maybe take a long time.  Herve has
+## what they are doing is going to maybe take a long time.  Hervé has
 ## suggested that I could just use count() at the front of the same
 ## query and just pre-call that to get a message that tells them how
 ## bad it is (so that they can escape if they wish).  Paul asked me to

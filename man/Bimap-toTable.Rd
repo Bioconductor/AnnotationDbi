@@ -197,7 +197,7 @@
   A named integer vector for \code{nhit}.
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \link{Bimap},

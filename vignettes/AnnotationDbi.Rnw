@@ -18,7 +18,7 @@ BiocStyle::latex()
 \newenvironment{solution}{\color{blue}}{\bigskip}
 
 \title{How to use bimaps from the ".db" annotation packages}
-\author{Marc Carlson, Herve Pages, Seth Falcon, Nianhua Li}
+\author{Marc Carlson, Hervé Pagès, Seth Falcon, Nianhua Li}
 
 <<include=FALSE>>=
 library(knitr)

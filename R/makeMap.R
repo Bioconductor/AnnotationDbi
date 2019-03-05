@@ -22,7 +22,7 @@ make_go_to_eg_map <- function(chip) {
     revmap(map)
 }
 
-## Notes from Herve:
+## Notes by Hervé:
 ## 1) First define the left-to-right path that you need to take to go from
 ##    the ENZYME space to the ENTREZID space. You can look at the
 ##    hgu95av2ENZYME2PROBE/hgu95av2ENTREZID slots for this or consult

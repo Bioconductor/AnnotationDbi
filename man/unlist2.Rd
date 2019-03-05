@@ -25,7 +25,7 @@
   highly recommended to use \code{unlist2} instead.
 }
 
-\author{Herve Pages}
+\author{Hervé Pagès}
 
 \seealso{
   \code{\link{unlist}}

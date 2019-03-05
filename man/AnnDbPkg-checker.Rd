@@ -22,7 +22,7 @@
 }
 
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \code{\link[AnnotationForge:AnnDbPkg-maker]{AnnDbPkg-maker}}

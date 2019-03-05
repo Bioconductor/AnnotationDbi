@@ -21,7 +21,7 @@ toSQLStringSet(names)
   SQL value list.  Each element is single quoted and elements are
   comma separated.
 }
-\author{Herve Pages}
+\author{Hervé Pagès}
 \note{
   Do not use \code{sQuote} for generating SQL as that function is
   intended for display purposes only.  In some locales, \code{sQuote}

@@ -1390,7 +1390,7 @@ setMethod("setInpBimapFilter", "InpAnnDbBimap",
 ## compatibility provided by getAnnMap() in the annotate package.
 
 
-## I need to check with Herve if my assumptions here are correct that I
+## I need to check with Hervé if my assumptions here are correct that I
 ## Don't want any NAs in @data OR in @Rkeys and @Lkeys???
 ## Maybe I don't want NAs in only one or the other?
 ## And maybe the answer is in how mappedLkeys and mappedRkeys work?
@@ -1411,7 +1411,7 @@ makeFlatBimapUsingSelect <- function(x, col){
 
 }
 
-## Herve says that I in fact want to have no NAs (and be unique) in the Rkey and Lkeys, and that I ALSO do not want ANY NAs in either column of @data.  So I have modified this function accordingly
+## Hervé says that I in fact want to have no NAs (and be unique) in the Rkey and Lkeys, and that I ALSO do not want ANY NAs in either column of @data.  So I have modified this function accordingly
 
 
 

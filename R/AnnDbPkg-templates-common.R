@@ -89,6 +89,6 @@ mergeToNamespaceAndExport <- function(envir, pkgname)
 ## goodies in it?  Anonymous env?
 ## new.env(parent=emptyenv())
 
-## Herve reminded me that we have this datacache env already.  So I will just use that...
+## Hervé reminded me that we have this datacache env already.  So I will just use that...
 
 ##

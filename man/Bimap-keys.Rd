@@ -118,7 +118,7 @@
   A \link{Bimap} object of the same subtype as \code{x} for \code{x[i]}.
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \link{Bimap},

@@ -226,7 +226,7 @@ Rkeys(x) <- value
   \code{count.mappedLkeys} and \code{count.mappedRkeys}.
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \link{Bimap},
