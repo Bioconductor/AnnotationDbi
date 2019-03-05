@@ -79,7 +79,7 @@
 
 \usage{
   ## Extract all the columns of the map (links + right attributes)
-  toTable(x)
+  toTable(x, ...)
   nrow(x)
   ncol(x)
   #dim(x)

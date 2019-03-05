@@ -1103,10 +1103,21 @@ setMethod("toTable", "Bimap",
     }
 )
 
-as.data.frame.Bimap <- function(x, row.names = NULL, optional = FALSE, ...)
-    as.data.frame(x, row.names=row.names, optional=optional, ...)
+as.data.frame.Bimap <- function(x, row.names=NULL, optional=FALSE, ...)
+{
+    if (!is.null(row.names))
+        warning(wmsg("the \"as.data.frame\" method for Bimap objects ",
+                     "ignores the 'row.names' argument"))
+    if (!identical(optional, FALSE))
+        warning(wmsg("the \"as.data.frame\" method for Bimap objects ",
+                     "ignores the 'optional' argument"))
+    if (length(list(...)) != 0L)
+        stop(wmsg("the \"as.data.frame\" method for Bimap objects ",
+                  "doesn't take any extra argument"))
+    toTable(x)
+}
 
-setMethod("as.data.frame", "Bimap", toTable)
+setMethod("as.data.frame", "Bimap", as.data.frame.Bimap)
 
 
 

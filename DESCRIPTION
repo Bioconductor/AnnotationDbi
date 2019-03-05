@@ -6,7 +6,7 @@ Version: 1.45.1
 Encoding: UTF-8
 Author: Hervé Pagès, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer <maintainer@bioconductor.org>
-Depends: R (>= 2.7.0), methods, utils, stats4, BiocGenerics (>= 0.23.1),
+Depends: R (>= 2.7.0), methods, utils, stats4, BiocGenerics (>= 0.29.2),
 	Biobase (>= 1.17.0), IRanges
 Imports: DBI, RSQLite, S4Vectors (>= 0.9.25)
 Suggests: hgu95av2.db, GO.db, org.Sc.sgd.db, org.At.tair.db, KEGG.db,
