@@ -43,6 +43,10 @@ test_mapIds_NAMultiples <- function(){
     checkTrue(length(res) == length(k))
     checkTrue(res[['10']] == "PF00797")
     checkTrue(class(res)=='character')
+
+    res <- mapIds(org.Hs.eg.db, "2", "PFAM", "ENTREZID", multiVals = "asNA")
+    checkTrue(is.character(res))
+    checkIdentical(length(res), 1L)
 }
 
 ## "filterMultiples"
@@ -53,6 +57,10 @@ test_mapIds_filterMultiples <- function(){
     checkTrue(res[['10']] == "PF00797")
     checkTrue(res[['1']] == "PF13895")
     checkTrue(class(res)=='character')
+
+    res <- mapIds(org.Hs.eg.db, "2", "PFAM", "ENTREZID", multiVals = "filter")
+    checkTrue(is.character(res))
+    checkIdentical(length(res), 0L)
 }
 
 
