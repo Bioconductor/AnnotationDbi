@@ -1134,11 +1134,13 @@ mapIds_base <- function(x, keys, column, keytype, ..., multiVals=c("filter",
     ## handle multiple matches 
     .filter <- function(data) {
         idx <- elementNROWS(data) == 1
-        unlist(data[idx])
+        nms <- names(data)[idx]
+        data <- as.character(unlist(data[idx]))
+        setNames(data, nms)
     }
     .asNA <- function(data) {
         idx <- elementNROWS(data) > 1
-        data[idx] <- NA
+        data[idx] <- NA_character_
         unlist(data)
     }
     if (is.function(multiVals)) {
