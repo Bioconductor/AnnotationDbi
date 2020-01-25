@@ -177,7 +177,10 @@ setMethod("exists", signature(x="ANY", where="Bimap", envir="missing"),
           stop("wrong argument for subsetting an object of class ",
                sQuote(class(x)))
       val <- mget(i, envir=x, ifnotfound=NA)[[1]]
-      if (!isS4(val) && is.na(val) && !(i %in% keys(x)))
+      # We could just do '!(i %in% keys(x))' but checking 'identical(val, NA)'
+      # first is very cheap and will fail most of the time thus preventing
+      # evaluation of '!(i %in% keys(x))' which is a lot more expensive.
+      if (identical(val, NA) && !(i %in% keys(x)))
           val <- NULL
       val
 }
