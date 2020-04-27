@@ -1,7 +1,7 @@
 Package: AnnotationDbi
 Title: Manipulation of SQLite-based annotations in Bioconductor
 Description: Implements a user-friendly interface for querying SQLite-based annotation data packages.
-Version: 1.50.0
+Version: 1.51.0
 Encoding: UTF-8
 Author: Hervé Pagès, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer <maintainer@bioconductor.org>
