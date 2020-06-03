@@ -746,76 +746,82 @@ resort_base <- function(tab, keys, jointype, reqCols) {
 
 
 ## the core of the select method for GO org and chip packages.
-.legacySelect <- function(x, keys=NULL, cols=NULL, keytype, jointype) {
-  ## IF CHR, CHR or CHRLOC are requested then you must deny the
-  ## request as these are now deprecated
-  if(any(.listDeprecatedKeytypes() %in% cols)){
-      .deprecatedColsMessage()
-  }
-  ## if asked for what they have, just return that.
-  if(all(cols %in% keytype)  && length(cols)==1){
-    res <- data.frame(keys=keys)
-    colnames(res) <- cols
-    return(res)
-  }
-  if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
-  if(is.null(cols)) cols <- columns(x) ## if no cols provided: use them all
+.legacySelect <- function(x, keys=NULL, cols=NULL, keytype, jointype, multiVals=NULL)
+{
+    if (is.null(multiVals)) {
+        ## IF CHR, CHR or CHRLOC are requested then you must deny the
+        ## request as these are now deprecated
+        if(any(.listDeprecatedKeytypes() %in% cols)){
+            .deprecatedColsMessage()
+        }
+        ## if asked for what they have, just return that.
+        if(all(cols %in% keytype)  && length(cols)==1){
+            res <- data.frame(keys=keys)
+            colnames(res) <- cols
+            return(res)
+        }
+        if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
+        if(is.null(cols)) cols <- columns(x) ## if no cols provided: use them all
   
-  ## call .simplifyCols to ensure we use same colnames as columns()
-  cols <- .simplifyCols(x, cols)
-  ## keytype <- .swapSymbolExceptions(x, keytype)
-  keytype <- .simplifyCols(x, keytype)
-  ## oriCols is a snapshot of col requests needed for column filter below
-  oriCols <- unique(c(keytype, cols))
+        ## call .simplifyCols to ensure we use same colnames as columns()
+        cols <- .simplifyCols(x, cols)
+        ## keytype <- .swapSymbolExceptions(x, keytype)
+        keytype <- .simplifyCols(x, keytype)
+        ## oriCols is a snapshot of col requests needed for column filter below
+        oriCols <- unique(c(keytype, cols))
 
 
-  ## Check if the user is selecting too many cols with many:1 relationships
-  .warnAboutManyToOneRelationships(cols)
+        ## Check if the user is selecting too many cols with many:1 relationships
+        .warnAboutManyToOneRelationships(cols)
 
-  ## Generate query and extract the data
-  res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
+        ## Generate query and extract the data
+        res <- .extractData(x, cols=cols, keytype=keytype, keys=keys)
   
-  ## these are the colnames we need to have gotten back from the DB
-  expectedCols <- .expandCols(x, oriCols)
-  oriTabCols <- .getDBLocs(x, expectedCols, value="full.field")
+        ## these are the colnames we need to have gotten back from the DB
+        expectedCols <- .expandCols(x, oriCols)
+        oriTabCols <- .getDBLocs(x, expectedCols, value="full.field")
   
-  ## I need to know the jointype...
-  jointype <- .getDBLocs(x, keytype, value="full.field")
+        ## I need to know the jointype...
+        jointype <- .getDBLocs(x, keytype, value="full.field")
 
-  ## Remove suffixes in case there were dups
-  res <- .filterSuffixes(res)
-
-  
-  ## If we can, then we should re-arrange to make sure cols come back in same
-  ## order as they asked for initially.  Expanded cols cannot be re-arranged.
-  if(all(expectedCols %in%  oriCols) &&
-     any(oriCols != expectedCols) ){
-    ## We need to make it so that oriTabCols is in the SAME order as oriCols
-    oriTabCols <- .getDBLocs(x, oriCols, value="full.field")
-    ## then we need to make expectedCols to match oriCols
-    expectedCols <- oriCols
-  }
+        ## Remove suffixes in case there were dups
+        res <- .filterSuffixes(res)
 
   
-  ## Then if any suffixes were actually removed, it means there were duplicated
-  ## cols.  Duplicated cols means I have to do some label swapping.
-  if( length(oriTabCols) < length(colnames(res))){
-    oriTabCols <- .adjustForDupColNames(res, expectedCols) ## BADNESS!
-    colnames(res) <- .adjustForDupColNames(res, expectedCols)
-  }
-  
-  
-  ## resort_base will resort the rows relative to the jointype etc.
-  if(dim(res)[1]>0){
-    res <- resort_base(res, keys, jointype, oriTabCols)
-  }
+        ## If we can, then we should re-arrange to make sure cols come back in same
+        ## order as they asked for initially.  Expanded cols cannot be re-arranged.
+        if(all(expectedCols %in%  oriCols) && any(oriCols != expectedCols) ){
+            ## We need to make it so that oriTabCols is in the SAME order as oriCols
+            oriTabCols <- .getDBLocs(x, oriCols, value="full.field")
+            ## then we need to make expectedCols to match oriCols
+            expectedCols <- oriCols
+        }
 
-  colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
   
-  rownames(res) <- NULL
-  res
+        ## Then if any suffixes were actually removed, it means there were duplicated
+        ## cols.  Duplicated cols means I have to do some label swapping.
+        if( length(oriTabCols) < length(colnames(res))){
+            oriTabCols <- .adjustForDupColNames(res, expectedCols) ## BADNESS!
+            colnames(res) <- .adjustForDupColNames(res, expectedCols)
+        }
+  
+  
+        ## resort_base will resort the rows relative to the jointype etc.
+        if(dim(res)[1]>0){
+            res <- resort_base(res, keys, jointype, oriTabCols)
+        }
+
+        colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
+  
+        rownames(res) <- NULL
+        res
+    } else {
+        anno <- as.data.frame(
+            lapply(cols, function(columns) mapIds(x, keys, columns, keytype))
+        )
+        anno
+    }
 }
-
 
 ## This just needs to generate a simple query and then return the
 ## results with no _id's
@@ -944,7 +950,8 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
 ## library(Homo.sapiens); select(Homo.sapiens, c('11'), 'SYMBOL', 'GENEID')
 
 ## general select function
-.select <- function(x, keys=NULL, cols=NULL, keytype, jointype, ...){
+.select <- function(x, keys=NULL, cols=NULL, keytype, jointype, multiVals = NULL, ...)
+{
     ## Some argument handling and checking
     extraArgs <- list(...)
     if('fks' %in% names(extraArgs)){fks<-extraArgs[["fks"]]}else{fks<-NULL}
@@ -959,7 +966,7 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
     if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
         .noSchemaSelect(x, keys, cols, keytype)
     }else{
-        .legacySelect(x, keys, cols, keytype, jointype)
+        .legacySelect(x, keys, cols, keytype, jointype, multiVals)
     }
 }
 
