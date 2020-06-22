@@ -82,7 +82,7 @@ setGeneric("keytypes", signature="x", function(x) {
 })
 
 setGeneric("select", signature="x",
-    function(x, keys, columns, keytype, ..., multiVals)
+    function(x, keys, columns, keytype, ...)
         standardGeneric("select")
 )
 

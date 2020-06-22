@@ -141,7 +141,7 @@
   columns(x)
   keytypes(x)
   keys(x, keytype, ...)
-  select(x, keys, columns, keytype, ..., multiVals)
+  select(x, keys, columns, keytype, ...)
   mapIds(x, keys, column, keytype, ..., multiVals)
   saveDb(x, file)
   loadDb(file, packageName=NA)
