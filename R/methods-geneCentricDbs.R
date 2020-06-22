@@ -646,7 +646,7 @@
 }
 
 ## Create extra rows
-.generateExtraRows <- function(tab, keys, jointype) {
+.generateExtraRows <- function(tab, keys, jointype, verbose = TRUE) {
     ## 4 possibilities
     ## if there are not dups, then we skip this function.
     ## if(any(duplicated(keys)) ## expand the keys
@@ -664,18 +664,22 @@
         ind <- unlist(indlst[keys])
         tab <- tab[ind,]
     }
-    ## We now just always give (terse) messages about relationship of
-    ## data to columns returned.
-    if(!keyTest && !rowTest) {
-        txt <- "'select()' returned 1:1 mapping between keys and columns"  
-    } else if (!keyTest && rowTest) {
-        txt <- "'select()' returned 1:many mapping between keys and columns"
-    } else if (keyTest && !rowTest) {
-        txt <- "'select()' returned many:1 mapping between keys and columns"
-    } else if (keyTest && rowTest) { ## User will get data "as is"
-        txt <- "'select()' returned many:many mapping between keys and columns"
+
+    if (verbose) {
+        ## We now just always give (terse) messages about relationship of
+        ## data to columns returned.
+        if(!keyTest && !rowTest) {
+            txt <- "1:1 mapping between keys and columns"
+        } else if (!keyTest && rowTest) {
+            txt <- "1:many mapping between keys and columns"
+        } else if (keyTest && !rowTest) {
+            txt <- "many:1 mapping between keys and columns"
+        } else if (keyTest && rowTest) { ## User will get data "as is"
+            txt <- "many:many mapping between keys and columns"
+        }
+        txt <- paste0("'select()' returned ", txt)
+        message(paste(strwrap(txt), collapse="\n"))
     }
-    message(paste(strwrap(txt), collapse="\n"))
     tab
 }
 
@@ -687,14 +691,14 @@
 ## .resort() was renamed resort_base()
 ## resort_base() is the main function for cleaning up a table so that 
 ## results look formatted the way we want them to.
-resort_base <- function(tab, keys, jointype, reqCols) {
+resort_base <- function(tab, keys, jointype, reqCols, verbose = TRUE) {
     if (jointype %in% colnames(tab)) {
         tab <- .dropUnwantedRows(tab, keys, jointype)
         ## rearrange to make sure cols are in correct order
         tab <- .resortColumns(tab, jointype, reqCols)
     }
     ## Duplicate any rows as appropriate (based on those keys)
-    .generateExtraRows(tab, keys, jointype)
+    .generateExtraRows(tab, keys, jointype, verbose)
 }
 
 
@@ -745,7 +749,8 @@ resort_base <- function(tab, keys, jointype, reqCols) {
 }
 
 ## the core of the select method for GO org and chip packages.
-.legacySelect <- function(x, keys=NULL, cols=NULL, keytype, jointype)
+.selectAll <-
+    function(x, keys=NULL, cols=NULL, keytype, jointype, verbose = TRUE)
 {
     ## IF CHR, CHR or CHRLOC are requested then you must deny the
     ## request as these are now deprecated
@@ -803,8 +808,8 @@ resort_base <- function(tab, keys, jointype, reqCols) {
     }
   
     ## resort_base will resort the rows relative to the jointype etc.
-    if(dim(res)[1]>0){
-        res <- resort_base(res, keys, jointype, oriTabCols)
+    if (dim(res)[1] > 0) {
+        res <- resort_base(res, keys, jointype, oriTabCols, verbose)
     }
 
     colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
@@ -833,7 +838,7 @@ resort_base <- function(tab, keys, jointype, reqCols) {
     tabs
 }
 
-.noSchemaSelect <- function(x, keys=NULL, cols=NULL, keytype){
+.noSchemaSelect <- function(x, keys=NULL, cols=NULL, keytype, verbose = TRUE){
 
     ## 1st pool all the fields we need to extract
     fields <- unique(c(cols, keytype))
@@ -879,7 +884,7 @@ resort_base <- function(tab, keys, jointype, reqCols) {
     ## then call that
     res <- dbQuery(dbconn(x), sql)    
     ## cleanup and re-organize
-    resort_base(res, keys, jointype=keytype, fields)
+    resort_base(res, keys, jointype=keytype, fields, verbose)
 }
 
 ###############################################################################
@@ -1124,8 +1129,11 @@ setMethod("columns", "GODb",
 ## and one set of keys.  Then it will return either the 1st match for each, 
 ## filter out based on a rule OR return a CharacterList
 
-mapIds_base <- function(x, keys, column, keytype, ..., multiVals=c("filter",
-                        "asNA", "first","list","CharacterList")) {
+mapIds_base <-
+    function(x, keys, column, keytype, ...,
+             multiVals=c("filter", "asNA", "first", "list", "CharacterList"),
+             verbose = TRUE)
+{
     if (missing(multiVals)) 
         multiVals <- 'first'
     if (!is.function(multiVals))
@@ -1138,7 +1146,9 @@ mapIds_base <- function(x, keys, column, keytype, ..., multiVals=c("filter",
         stop(wmsg("mapIds can only use one keytype."))
 
     ## select, split and sort by keys
-    res <- select(x, keys=unique(keys), columns=column, keytype=keytype)
+    res <- select(
+        x, keys=unique(keys), columns=column, keytype=keytype, verbose = verbose
+    )
     res <- split(res[[column]], f=res[[keytype]])[keys]
 
     ## handle multiple matches 
