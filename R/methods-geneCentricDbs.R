@@ -744,23 +744,24 @@ resort_base <- function(tab, keys, jointype, reqCols) {
     }
 }
 
-
 ## the core of the select method for GO org and chip packages.
 .legacySelect <- function(x, keys=NULL, cols=NULL, keytype, jointype)
 {
     ## IF CHR, CHR or CHRLOC are requested then you must deny the
     ## request as these are now deprecated
-    if(any(.listDeprecatedKeytypes() %in% cols)){
+    if (any(.listDeprecatedKeytypes() %in% cols)) {
         .deprecatedColsMessage()
     }
     ## if asked for what they have, just return that.
-    if(all(cols %in% keytype)  && length(cols)==1){
+    if (all(cols %in% keytype)  && length(cols)==1) {
         res <- data.frame(keys=keys)
         colnames(res) <- cols
         return(res)
     }
-    if(is.null(keys)) keys <- keys(x) ## if no keys provided: use them all
-    if(is.null(cols)) cols <- columns(x) ## if no cols provided: use them all
+    if (is.null(keys))
+        keys <- keys(x) ## if no keys provided: use them all
+    if (is.null(cols))
+        cols <- columns(x) ## if no cols provided: use them all
   
     ## call .simplifyCols to ensure we use same colnames as columns()
     cols <- .simplifyCols(x, cols)
@@ -768,7 +769,6 @@ resort_base <- function(tab, keys, jointype, reqCols) {
     keytype <- .simplifyCols(x, keytype)
     ## oriCols is a snapshot of col requests needed for column filter below
     oriCols <- unique(c(keytype, cols))
-
 
     ## Check if the user is selecting too many cols with many:1 relationships
     .warnAboutManyToOneRelationships(cols)
@@ -785,25 +785,22 @@ resort_base <- function(tab, keys, jointype, reqCols) {
 
     ## Remove suffixes in case there were dups
     res <- .filterSuffixes(res)
-
   
     ## If we can, then we should re-arrange to make sure cols come back in same
     ## order as they asked for initially.  Expanded cols cannot be re-arranged.
-    if(all(expectedCols %in%  oriCols) && any(oriCols != expectedCols) ){
+    if (all(expectedCols %in%  oriCols) && any(oriCols != expectedCols)) {
         ## We need to make it so that oriTabCols is in the SAME order as oriCols
         oriTabCols <- .getDBLocs(x, oriCols, value="full.field")
         ## then we need to make expectedCols to match oriCols
         expectedCols <- oriCols
     }
-
   
     ## Then if any suffixes were actually removed, it means there were duplicated
     ## cols.  Duplicated cols means I have to do some label swapping.
-    if( length(oriTabCols) < length(colnames(res))){
+    if (length(oriTabCols) < length(colnames(res))) {
         oriTabCols <- .adjustForDupColNames(res, expectedCols) ## BADNESS!
         colnames(res) <- .adjustForDupColNames(res, expectedCols)
     }
-  
   
     ## resort_base will resort the rows relative to the jointype etc.
     if(dim(res)[1]>0){
@@ -811,10 +808,9 @@ resort_base <- function(tab, keys, jointype, reqCols) {
     }
 
     colnames(res) <- expectedCols[match(colnames(res), oriTabCols)]
-  
     rownames(res) <- NULL
     res
-} 
+}
 
 .multiValsSelect <- function(x, keys, cols, keytype, jointype, multiVals)
 {
@@ -948,19 +944,26 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
         .testForValidKeys(x, keys, keytype, fks)
     }
 }
-## library(Homo.sapiens); select(Homo.sapiens, c('11'), 'SYMBOL', 'GENEID')
 
 ## general select function
 .select <- function(x, keys=NULL, cols=NULL, keytype, jointype, multiVals = NULL, ...)
 {
     ## Some argument handling and checking
     extraArgs <- list(...)
-    if('fks' %in% names(extraArgs)){fks<-extraArgs[["fks"]]}else{fks<-NULL}
-    if('skipValidKeysTest' %in% names(extraArgs)){
-        skipValidKeysTest<-extraArgs[["skipValidKeysTest"]]}else{
-            skipValidKeysTest<-FALSE}
-    testSelectArgs(x, keys=keys, cols=cols, keytype=keytype,
-           fks=fks, skipValidKeysTest=skipValidKeysTest)
+    if ('fks' %in% names(extraArgs)) {
+        fks<-extraArgs[["fks"]]
+    } else {
+        fks<-NULL
+    }
+    if ('skipValidKeysTest' %in% names(extraArgs)) {
+        skipValidKeysTest<-extraArgs[["skipValidKeysTest"]]
+    } else {
+        skipValidKeysTest<-FALSE
+    }
+    testSelectArgs(
+        x, keys=keys, cols=cols, keytype=keytype,
+        fks=fks, skipValidKeysTest=skipValidKeysTest
+    )
     
     ## Now get the schema and call select
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
@@ -972,9 +975,6 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
         .multiValsSelect(x, keys, cols, keytype, jointype, multiVals)
     }
 }
-
-
-
 
 ## Helper for setting the jointype to an appropriate default
 .chooseJoinType  <- function(x){
