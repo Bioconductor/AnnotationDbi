@@ -136,7 +136,9 @@
   ##Get yeast uniprot IDs in exchange for uniprot IDs from human
   YeastUPs = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT")
   ##Get yeast uniprot IDs but only return one ID per initial ID
-  YeastUPSingles = inpIDMapper(ids, "HOMSA", "SACCE", destIDType="UNIPROT", keepMultDestIDMatches = FALSE)
+  YeastUPSingles = inpIDMapper(
+    ids, "HOMSA", "SACCE", destIDType="UNIPROT", keepMultDestIDMatches = FALSE
+  )
 
   ##Test out the intraIDMapper function:
   HumanEGs = intraIDMapper(ids, species="HOMSA", srcIDType="UNIPROT",

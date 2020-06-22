@@ -1,6 +1,6 @@
 import(methods)
 import(utils)
-importFrom(stats4, summary)
+importFrom(stats4, summary, setNames)
 import(DBI)
 import(RSQLite)
 import(BiocGenerics)
