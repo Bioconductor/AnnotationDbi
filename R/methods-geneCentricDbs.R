@@ -817,12 +817,29 @@ resort_base <- function(tab, keys, jointype, reqCols, verbose = TRUE) {
     res
 }
 
-.multiValsSelect <- function(x, keys, cols, keytype, jointype, multiVals)
+.selectMultiVals <- function(x, keys, cols, keytype, multiVals, verbose = TRUE)
 {
-    anno <- as.data.frame(
-        lapply(cols, function(columns) mapIds(x, keys, columns, keytype))
-    )
-    anno
+    cols <- setdiff(cols, keytype)
+    anno <- lapply(cols, function(col) {
+        map <- mapIds(
+            x, keys, col, keytype, multiVals = multiVals, verbose = verbose
+        )
+        unname(map)
+    })
+
+    if (!all(lengths(anno) == length(keys))) {
+        bad <- cols[lengths(anno) != length(keys)]
+        stop(
+            "lengths of mapped identifiers not all equal to length of keys\n",
+            if (is.character(multiVals))
+                paste0("    multiVals = '", multiVals, "'\n"),
+            "    non-conforming columns: '", paste(bad, collapse = "', '"), "'"
+        )
+    }
+
+    anno <- c(list(keys), anno)
+    names(anno) <- c(keytype, cols)
+    DataFrame(lapply(anno, I))
 }
 
 ## This just needs to generate a simple query and then return the
@@ -951,7 +968,9 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
 }
 
 ## general select function
-.select <- function(x, keys=NULL, cols=NULL, keytype, jointype, multiVals = NULL, ...)
+.select <-
+    function(x, keys=NULL, cols=NULL, keytype, jointype, ..., multiVals,
+             verbose = TRUE)
 {
     ## Some argument handling and checking
     extraArgs <- list(...)
@@ -972,12 +991,16 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
     
     ## Now get the schema and call select
     schema <- metadata(x)[metadata(x)$name=="DBSCHEMA",]$value
-    if(schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB"){
+    if (schema=="NOSCHEMA_DB" || schema=="NOCHIPSCHEMA_DB") {
+        if (!missing(multiVals))
+            warning("'multiVals=' not supported for this schema")
         .noSchemaSelect(x, keys, cols, keytype)
-    }else if (is.null(multiVals)){
-        .legacySelect(x, keys, cols, keytype, jointype)
-    } else{
-        .multiValsSelect(x, keys, cols, keytype, jointype, multiVals)
+    } else if (missing(multiVals)) {
+        .selectAll(x, keys, cols, keytype, jointype, verbose = verbose)
+    } else {
+        if (missing(verbose))
+            verbose <- FALSE
+        .selectMultiVals(x, keys, cols, keytype, multiVals, verbose = verbose)
     }
 }
 
@@ -1007,32 +1030,31 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
 
 
 setMethod("select", "OrgDb",
-          function(x, keys, columns, keytype, ...) {
-              if (missing(keytype)) keytype <- chooseCentralOrgPkgSymbol(x)
-              jointype <- .chooseJoinType(x)
-              .select(x, keys, columns, keytype, jointype=jointype, ...)
-              ## .selectWarnJT(x, keys, columns, keytype, jointype=jointype,
-              ##               kt=kt, ...)
-          }
-)
+          function(x, keys, columns, keytype, ..., multiVals)
+{
+    if (missing(keytype))
+        keytype <- chooseCentralOrgPkgSymbol(x)
+    jointype <- .chooseJoinType(x)
+    .select(x, keys, columns, keytype, jointype, ..., multiVals = multiVals)
+})
 
 setMethod("select", "ChipDb",
-    function(x, keys, columns, keytype, ...){
-        if (missing(keytype)) keytype <- "PROBEID"
-        .select(x, keys, columns, keytype, jointype="probes.probe_id", ...)
-        ## .selectWarnJT(x, keys, columns, keytype, jointype="probes.probe_id",
-        ##               kt=kt, ...)
-    }
-)
+    function(x, keys, columns, keytype, ..., multiVals)
+{
+    if (missing(keytype))
+        keytype <- "PROBEID"
+    jointype <- "probes.probe_id"
+    .select(x, keys, columns, keytype, jointype, ..., multiVals = multiVals)
+})
 
 setMethod("select", "GODb",
-    function(x, keys, columns, keytype, ...){
-          if (missing(keytype)) keytype <- "GOID"
-          .select(x, keys, columns, keytype, jointype="go_term.go_id", ...)
-          ## .selectWarnJT(x, keys, columns, keytype, jointype="go_term.go_id",
-          ## ...)
-        }
-)
+    function(x, keys, columns, keytype, ..., multiVals)
+{
+    if (missing(keytype))
+        keytype <- "GOID"
+    jointype <- "go_term.go_id"
+    .select(x, keys, columns, keytype, jointype, ..., multiVals = multiVals)
+})
 
 
 
@@ -1178,8 +1200,9 @@ mapIds_base <-
 
 setMethod("mapIds", "AnnotationDb", 
     function(x, keys, column, keytype, ..., multiVals)
-        mapIds_base(x, keys, column, keytype, ..., multiVals=multiVals)
-)
+{
+    mapIds_base(x, keys, column, keytype, ..., multiVals=multiVals)
+})
 
 ## TODO: add option to replace multi-matches with NAs or to just remove them.
 ## To cleanly handle having 'multiVals' being EITHER a FUN or something else:

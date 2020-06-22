@@ -141,7 +141,7 @@
   columns(x)
   keytypes(x)
   keys(x, keytype, ...)
-  select(x, keys, columns, keytype, ...)
+  select(x, keys, columns, keytype, ..., multiVals)
   mapIds(x, keys, column, keytype, ..., multiVals)
   saveDb(x, file)
   loadDb(file, packageName=NA)
@@ -174,17 +174,35 @@
 	used with pattern by the keys method)}
     }
   }
-  \item{multiVals}{What should \code{mapIds} do when there are multiple values         
-  that could be returned?  Options include:
+
+  \item{multiVals}{What should \code{select} and \code{mapIds} do when
+    there are multiple values that could be returned?  Options include:
     \describe{
-      \item{first:}{This value means that when there are multiple matches only the 1st thing that comes back will be returned. This is the default behavior}
+      \item{first:}{This value means that when there are multiple
+        matches only the 1st thing that comes back will be
+        returned. This is the default behavior}
+
       \item{list:}{This will just returns a list object to the end user}
-      \item{filter:}{This will remove all elements that contain multiple matches and will therefore return a shorter vector than what came in whenever some of the keys match more than one value}
-      \item{asNA:}{This will return an NA value whenever there are multiple matches}
+
+      \item{filter:}{This will remove all elements that contain multiple
+        matches and will therefore return a shorter vector than what
+        came in whenever some of the keys match more than one value}
+
+      \item{asNA:}{This will return an NA value whenever there are
+        multiple matches}
+
       \item{CharacterList:}{This just returns a SimpleCharacterList object}
-      \item{FUN:}{You can also supply a function to the \code{multiVals} argument for custom behaviors.  The function must take a single argument and return a single value.  This function will be applied to all the elements and will serve a 'rule' that for which thing to keep when there is more than one element.  So for example this example function will always grab the last element in each result: \code{ last <- function(x){x[[length(x)]]} }
-      }
+
+      \item{FUN:}{You can also supply a function to the \code{multiVals}
+        argument for custom behaviors.  The function must take a single
+        argument and return a single value.  This function will be
+        applied to all the elements and will serve a 'rule' that for
+        which thing to keep when there is more than one element.  So for
+        example this example function will always grab the last element
+        in each result: \code{ last <- function(x){x[[length(x)]]} }}
     }
+    \code{select} only supports \code{multiVals} arguments that return
+    exactly one value for each key.
   }
   \item{file}{an \code{sqlite} file path.  A string the represents the
   full name you want for your sqlite database and also where to put it.}
