@@ -43,7 +43,7 @@ addToNamespaceAndExport <- function(x, value, pkgname)
  " is defunct. ",
  "Please use select() if you need access to PFAM or PROSITE accessions. \n"))
         if(interactive()){
-            .Defunct(msg=msg)
+            stop(msg)
         }
     }
     ns <- asNamespace(pkgname)
