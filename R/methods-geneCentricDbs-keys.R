@@ -135,7 +135,7 @@ chooseCentralOrgPkgSymbol <- function(x){
         tables <- c("c.probes", tables)
     }
     colTabs <- sapply(tables, FUN=dbListFields, con=con)
-    colTabs <- colTabs[-grep("go_[mcb].+", names(colTabs))]
+    colTabs <- colTabs[grep("go_[mcb].+", names(colTabs), invert = TRUE)]
     m <- unlist2(sapply(colTabs, match, field))  ## cannot ever be repeated
     tab <- names(m)[!is.na(m)]
     if(length(tab)!=1){stop("Two fields in the source DB have the same name.")}
