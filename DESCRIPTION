@@ -1,7 +1,12 @@
 Package: AnnotationDbi
 Title: Manipulation of SQLite-based annotations in Bioconductor
 Description: Implements a user-friendly interface for querying SQLite-based annotation data packages.
+biocViews: Annotation, Microarray, Sequencing, GenomeAnnotation
+URL: https://bioconductor.org/packages/AnnotationDbi
+Video: https://www.youtube.com/watch?v=8qvGNTVz3Ik
+BugReports: https://github.com/Bioconductor/AnnotationDbi/issues
 Version: 1.51.3
+License: Artistic-2.0
 Encoding: UTF-8
 Author: Hervé Pagès, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer <maintainer@bioconductor.org>
@@ -12,6 +17,7 @@ Suggests: hgu95av2.db, GO.db, org.Sc.sgd.db, org.At.tair.db, KEGG.db,
 	RUnit, TxDb.Hsapiens.UCSC.hg19.knownGene, hom.Hs.inp.db,
 	org.Hs.eg.db, reactome.db, AnnotationForge, graph,
 	EnsDb.Hsapiens.v75, BiocStyle, knitr
+VignetteBuilder: knitr
 Collate: 00RTobjs.R AllGenerics.R AllClasses.R
         unlist2.R utils.R SQL.R FlatBimap.R
 	AnnDbObj-lowAPI.R Bimap.R GOTerms.R BimapFormatting.R
@@ -30,8 +36,3 @@ Collate: 00RTobjs.R AllGenerics.R AllClasses.R
 	createAnnObjs.PFAM_DB.R AnnDbPkg-templates-common.R
 	AnnDbPkg-checker.R print.probetable.R makeMap.R inpIDMapper.R
 	test_AnnotationDbi_package.R
-License: Artistic-2.0
-biocViews: Annotation, Microarray, Sequencing, GenomeAnnotation
-VignetteBuilder: knitr
-Packaged: 2014-05-16 20:58:15 UTC; mcarlson
-Video: https://www.youtube.com/watch?v=8qvGNTVz3Ik
