@@ -7,6 +7,8 @@ import(BiocGenerics)
 import(Biobase)
 import(S4Vectors)
 import(IRanges)
+importFrom(tibble, as_tibble)
+importFrom(KEGGREST, keggList)
 
 exportClasses(
     ## from R/AllClasses.R
