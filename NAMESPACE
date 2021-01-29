@@ -7,6 +7,7 @@ import(BiocGenerics)
 import(Biobase)
 import(S4Vectors)
 import(IRanges)
+importFrom(stats, setNames)
 importFrom(tibble, as_tibble)
 importFrom(KEGGREST, keggList)
 
