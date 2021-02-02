@@ -12,7 +12,7 @@ Author: Hervé Pagès, Marc Carlson, Seth Falcon, Nianhua Li
 Maintainer: Bioconductor Package Maintainer <maintainer@bioconductor.org>
 Depends: R (>= 2.7.0), methods, utils, stats4, BiocGenerics (>= 0.29.2),
 	Biobase (>= 1.17.0), IRanges
-Imports: DBI, RSQLite, S4Vectors (>= 0.9.25), stats, tibble, KEGGREST
+Imports: DBI, RSQLite, S4Vectors (>= 0.9.25), stats, KEGGREST
 Suggests: hgu95av2.db, GO.db, org.Sc.sgd.db, org.At.tair.db,
 	RUnit, TxDb.Hsapiens.UCSC.hg19.knownGene,
 	org.Hs.eg.db, reactome.db, AnnotationForge, graph,
