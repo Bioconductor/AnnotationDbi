@@ -34,7 +34,6 @@ exportClasses(
     "AnnotationDb",
     "OrgDb",
     "ChipDb",
-    "InparanoidDb",
     "GODb",
     "ReactomeDb",
 

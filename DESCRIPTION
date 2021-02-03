@@ -25,14 +25,13 @@ Collate: 00RTobjs.R AllGenerics.R AllClasses.R
 	methods-SQLiteConnection.R
 	methods-geneCentricDbs.R methods-geneCentricDbs-keys.R
 	methods-ReactomeDb.R
-	methods-Inparanoid.R methods-Inparanoid8.R
 	loadDb.R createAnnObjs-utils.R createAnnObjs.NCBIORG_DBs.R
 	createAnnObjs.NCBICHIP_DBs.R createAnnObjs.ORGANISM_DB.R
 	createAnnObjs.YEASTCHIP_DB.R createAnnObjs.COELICOLOR_DB.R
 	createAnnObjs.ARABIDOPSISCHIP_DB.R createAnnObjs.MALARIA_DB.R
 	createAnnObjs.YEAST_DB.R createAnnObjs.YEASTNCBI_DB.R
 	createAnnObjs.ARABIDOPSIS_DB.R createAnnObjs.GO_DB.R
-	createAnnObjs.KEGG_DB.R createAnnObjs.INPARANOID_DB.R
+	createAnnObjs.KEGG_DB.R
 	createAnnObjs.PFAM_DB.R AnnDbPkg-templates-common.R
 	AnnDbPkg-checker.R print.probetable.R makeMap.R inpIDMapper.R
 	test_AnnotationDbi_package.R
