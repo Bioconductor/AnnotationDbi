@@ -138,15 +138,6 @@ setClass("AnnDbBimap",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Inparanoid Bimap
-###
-### This class is just needed so we can encapsulate some methods that are
-### required for this more specialized set of packages.
-setClass("InpAnnDbBimap", contains="AnnDbBimap")
-
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### GO-related bimaps.
 ###
 
@@ -265,12 +256,6 @@ setClass("KEGGFrame", contains="AnnotFrame",
 
 .ChipDb <-
     setRefClass("ChipDb", contains="AnnotationDb")
-
-.InparanoidDb <-
-    setRefClass("InparanoidDb", contains="AnnotationDb")
-
-.Inparanoid8Db <-
-    setRefClass("Inparanoid8Db", contains="AnnotationDb")
 
 .GODb <-
     setRefClass("GODb", contains="AnnotationDb")

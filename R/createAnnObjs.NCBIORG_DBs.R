@@ -391,7 +391,6 @@ getSpeciesFromSchema <- function(schema){
                     "GO_DB"=NA,
                     "HUMANCHIP_DB"="Homo sapiens",
                     "HUMAN_DB"="Homo sapiens",
-                    "INPARANOID_DB"=NA,
                     "KEGG_DB"=NA,
                     "MALARIA_DB"="Plasmodium falciparum",
                     "MOUSECHIP_DB"="Mus musculus",
