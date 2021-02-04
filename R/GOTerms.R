@@ -316,7 +316,11 @@ setMethod("KEGGFrame", c(x="data.frame", organism="missing"), .testKEGGFrame)
 ## Method to access the data in a KEGGFrame object
 setMethod("getKEGGFrameData", "KEGGFrame", function(x){x@data})
 
-
+organismKEGGFrame <- function() {
+    org <- data.frame(keggList("organism")[,c("species", "organism")])
+    org$species <- gsub("\\s*\\([^\\)]+\\)", "", org$species)
+    org
+}
 
 #######################################################################
 ## Now add a convenience method to just represent the GO as a graph.
