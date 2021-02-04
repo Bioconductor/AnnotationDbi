@@ -1,3 +1,22 @@
+CHANGES IN VERSION 1.53.0
+-------------------------
+
+NEW FEATURES
+
+    o organismKEGGFrame() provides a data.frame of species names and KEGG orgs
+
+MODIFICATIONS
+
+    o Conversion from KEGG.db (which was deprecated) to KEGGREST
+    - This involved changing how KEGG Ids checked when creating a KEGGFrame 
+    object.
+
+    o Removal of any use of Inparanoid data/structures since the hom.*.inp.db 
+    packages have been removed. The data is extremely outdated and there is no 
+    replacement for it.
+    - Removed the InparanoidDb object and all of the methods
+
+
 CHANGES IN VERSION 1.36.0
 -------------------------
 
