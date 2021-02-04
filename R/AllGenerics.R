@@ -33,7 +33,6 @@ setGeneric("toggleProbes", signature="x", function(x, value) standardGeneric("to
 setGeneric("hasMultiProbes", function(x) standardGeneric("hasMultiProbes"))
 setGeneric("hasSingleProbes", function(x) standardGeneric("hasSingleProbes"))
 setGeneric("getBimapFilters", function(x) standardGeneric("getBimapFilters"))
-setGeneric("setInpBimapFilter", signature="x", function(x, value) standardGeneric("setInpBimapFilter"))
 setGeneric("toLList", function(x) standardGeneric("toLList"))
 setGeneric("toRList", function(x) standardGeneric("toRList"))
 setGeneric("toList", function(x) standardGeneric("toList"))

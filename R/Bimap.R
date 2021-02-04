@@ -1366,29 +1366,6 @@ setMethod("getBimapFilters", "AnnDbBimap",
 
 
 
-##usage: foo = setInpBimapFilter(oriMapping, newFilter)
-##sets the filter to be newFilter on foo
-##only have a method for InpAnnDbBimaps for now...
-## library(hom.Dm.inp.db);getBimapFilters(hom.Dm.inpANOGA)
-## f80 = setInpBimapFilter(hom.Dm.inpANOGA, "80%")
-## f90 = setInpBimapFilter(f80, "90%")
-## hom.Dm.inpANOGA@L2Rchain[[1]]
-
-setMethod("setInpBimapFilter", "InpAnnDbBimap",
-##     function(x, value){L2Rchain.bimapFilterReplace(x@L2Rchain, value)})                 
-    function(x, value) {
-      ans = x
-      ori_filt_1 = x@L2Rchain[[1]]@filter
-      ori_filt_2 = x@L2Rchain[[2]]@filter      
-      species_filt_1 = gsub("{seed_status}=.+AND","", ori_filt_1, perl=TRUE)
-      species_filt_2 = gsub("{seed_status}=.+AND","", ori_filt_2, perl=TRUE)
-      new_filt_1 = as.character(paste0("{seed_status}='",value,"' AND",species_filt_1))
-      new_filt_2 = as.character(paste0("{seed_status}='",value,"' AND",species_filt_2))
-      ans@L2Rchain[[1]]@filter = new_filt_1
-      ans@L2Rchain[[2]]@filter = new_filt_2
-      ans
-    })
-
 
 
 

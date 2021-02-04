@@ -27,8 +27,6 @@
 
 \alias{getBimapFilters}
 \alias{getBimapFilters,AnnDbBimap-method}
-\alias{setInpBimapFilter}
-\alias{setInpBimapFilter,InpAnnDbBimap-method}
 
 
 \title{Methods for getting/setting the filters on a Bimap object}
@@ -56,8 +54,6 @@
 
   ## Looking at the SQL filter values for a Bimap
   getBimapFilters(x)
-  ## Setting the filter on an InpAnnDbBimap object
-  setInpBimapFilter(x,value)
 }
 
 \arguments{
@@ -82,14 +78,6 @@
 
   \code{getBimapFilters(x)} will list all the SQL filters applied to a
   Bimap object.
-
-  \code{setInpBimapFilters(x)} will allow you to pass a value as a
-  character string which will be used as a filter.  In order to be
-  useful with the InpAnnDbBimap objects provided in the inparanoid
-  packages, this value needs to be a to digit number written as a
-  percentage.  So for example "80%" or "95%" would be acceptable.  This
-  is owing to the nature of the inparanoid data set.
-  
 }
 
 \value{
@@ -132,18 +120,6 @@
   OnlySingleProbes = toggleProbes(OnlyMultiProbes, "single")
   hasMultiProbes(OnlySingleProbes)
   hasSingleProbes(OnlySingleProbes)
-
-
-  ## List the filters on the inparanoid mapping 
-  # library(hom.Dm.inp.db)
-  # getBimapFilters(hom.Dm.inpANOGA)
-
-  ## Here is how you can make a mapping with a
-  ##different filter than the default:
-  # f80 = setInpBimapFilter(hom.Dm.inpANOGA, "80%")
-  # dim(hom.Dm.inpANOGA)
-  # dim(f80)
-
 }
 
 \keyword{methods}

@@ -88,7 +88,7 @@ exportMethods(
     "ncol", "dim",
     "toggleProbes",
     "hasMultiProbes","hasSingleProbes",
-    "getBimapFilters","setInpBimapFilter",
+    "getBimapFilters",
 
     ## from R/GOTerms.R
     "GOID",
