@@ -173,6 +173,7 @@ export(
     make_eg_to_go_map,
     make_go_to_eg_map,
     toSQLStringSet,
+    organsimKEGGFrame,
 
     #Convenience function to allow automatic mapping of IDs:
     inpIDMapper,
