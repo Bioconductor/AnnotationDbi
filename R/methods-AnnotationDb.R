@@ -93,15 +93,6 @@ setMethod("columns", "AnnotationDb",
 cols <- function(x)
     .Deprecated("columns")
 
-.selectWarnInp <- function(x, keys, columns, keytype, ...){
-    extraArgs <- list(...)
-    if(missing(keytype)){
-        .selectInp(x, keys, columns, keytype=extraArgs[["kt"]])
-    }else{
-        .selectInp(x, keys, columns, keytype)
-    }
-}
- 
 .selectWarnReact <- function(x, keys, columns, keytype, ...){
     extraArgs <- list(...)
     if(missing(keytype)){
