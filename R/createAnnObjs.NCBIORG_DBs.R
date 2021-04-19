@@ -144,18 +144,19 @@ NCBIORG_DB_AnnDbBimap_seeds <- list(
             )
         )
     ),
-    list(
-        objName="UNIGENE",
-        Class="AnnDbBimap",
-        L2Rchain=list(
-            NCBIORG_DB_L2Rlink1,
-            list(
-                tablename="unigene",
-                Lcolname="_id",
-                Rcolname="unigene_id"
-            )
-        )
-    ),
+    ## removed UniGene in Bioc 3.13
+    ## list(
+    ##     objName="UNIGENE",
+    ##     Class="AnnDbBimap",
+    ##     L2Rchain=list(
+    ##         NCBIORG_DB_L2Rlink1,
+    ##         list(
+    ##             tablename="unigene",
+    ##             Lcolname="_id",
+    ##             Rcolname="unigene_id"
+    ##         )
+    ##     )
+    ## ),
     list(
         objName="CHRLOC",
         Class="AnnDbMap",
@@ -480,7 +481,7 @@ filterSeeds <- function(allSeeds, schema, class){
   ## only do that if they exist.
   if(class=="OrgDb"){
     revMapables <- c("ACCNUM","ENZYME","MAP","OMIM","PATH","PMID","REFSEQ",
-                     "SYMBOL","UNIGENE","ENSEMBL","ENSEMBLPROT", "ENSEMBLTRANS",
+                     "SYMBOL","ENSEMBL","ENSEMBLPROT", "ENSEMBLTRANS",
                      "MGI","FLYBASE","FLYBASECG","FLYBASEPROT","GO")
   }else if (class=="ChipDb"){
     revMapables <- c("ENZYME","PATH","PMID","ENSEMBL","MGI","FLYBASE",

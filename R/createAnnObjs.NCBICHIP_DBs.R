@@ -178,20 +178,21 @@ NCBICHIP_DB_AnnDbBimap_seeds <- list(
             )
         )
     ),
-    list(
-        objName="UNIGENE",
-        Class="ProbeAnnDbBimap",
-        L2Rchain=list(
-            NCBICHIP_DB_L2Rlink1,
-            NCBICHIP_DB_L2Rlink2,
-            list(
-                tablename="unigene",
-                Lcolname="_id",
-                Rcolname="unigene_id",
-                altDB=orgPkg
-            )
-        )
-    ),
+    ## removed UniGene in Bioc 3.13
+    ## list(
+    ##     objName="UNIGENE",
+    ##     Class="ProbeAnnDbBimap",
+    ##     L2Rchain=list(
+    ##         NCBICHIP_DB_L2Rlink1,
+    ##         NCBICHIP_DB_L2Rlink2,
+    ##         list(
+    ##             tablename="unigene",
+    ##             Lcolname="_id",
+    ##             Rcolname="unigene_id",
+    ##             altDB=orgPkg
+    ##         )
+    ##     )
+    ## ),
     list(
         objName="CHRLOC",
         Class="ProbeAnnDbMap",
