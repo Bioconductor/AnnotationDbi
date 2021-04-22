@@ -281,7 +281,7 @@ annotMessage <- function(msgType, pkgType){
                                      "package instead."),
                 "plasmo" = paste("\n", pkgType, "is based on old data that are",
                                  "no longer updated and will be deprecated in",
-                                 "the next release (Bioc 3.14).",
+                                 "the next release (Bioc 3.14)."),
                 "NO_MESSAGE_TYPE" = ""
                 )
 
