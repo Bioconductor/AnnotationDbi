@@ -157,6 +157,19 @@ NCBIORG_DB_AnnDbBimap_seeds <- list(
     ##         )
     ##     )
     ## ),
+    ## Added Gene type in Bioc 3.13
+    list(
+        objName="GENETYPE",
+        Class="AnnDbBimap",
+        L2Rchain=list(
+            NCBIORG_DB_L2Rlink1,
+            list(
+                tablename="genetype",
+                Lcolname="_id",
+                Rcolname="gene_type"
+            )
+        )
+    ),
     list(
         objName="CHRLOC",
         Class="AnnDbMap",
