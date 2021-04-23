@@ -217,7 +217,7 @@ setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), fu
   type <- match.arg(type)
     
   ##Now Make a table
-  dbGetQuery(con, "CREATE TABLE data (go_id VARCHAR(10), evidence VARCHAR(3), gene_id INTEGER)")
+  dbExecute(con, "CREATE TABLE data (go_id VARCHAR(10), evidence VARCHAR(3), gene_id INTEGER)")
   ##populate it with the stuff in frame:
   clnVals = frame
   sqlIns <- "INSERT INTO data (go_id, evidence, gene_id) VALUES (?,?,?)"
@@ -233,17 +233,17 @@ setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), fu
     SELECT t.go_id AS go_id, g.evidence as evidence, g.gene_id AS gene_id
     FROM data AS g, go.go_term AS t
     WHERE g.go_id=t.go_id AND t.ontology='",toupper(type),"'")
-  dbGetQuery(con,go_dataSQL)
-  dbGetQuery(con,"CREATE INDEX gdgo on go_data(go_id)")
+  dbExecute(con,go_dataSQL)
+  dbExecute(con,"CREATE INDEX gdgo on go_data(go_id)")
 
   ##Now I have to make the literal table from GO
   offspringSQL <- paste0("CREATE TABLE go_offspring_literal as
       SELECT t1.go_id AS go_id, t2.go_id AS offspring_id
       FROM   go.go_",tolower(type),"_offspring as o, go.go_term as t1, go.go_term as t2 
       WHERE  o._id = t1._id AND o._offspring_id = t2._id")
-  dbGetQuery(con, offspringSQL)
-  dbGetQuery(con,"CREATE INDEX literalo on go_offspring_literal(offspring_id)")
-  dbGetQuery(con,"CREATE INDEX literalgo on go_offspring_literal(go_id)")
+  dbExecute(con, offspringSQL)
+  dbExecute(con,"CREATE INDEX literalo on go_offspring_literal(offspring_id)")
+  dbExecute(con,"CREATE INDEX literalgo on go_offspring_literal(go_id)")
 
   ##Now I need to make the final table:
   finalSQL = paste0("CREATE TABLE go_all_data as
@@ -257,7 +257,7 @@ setMethod("GOFrame", signature=signature(x="data.frame", organism="missing"), fu
   UNION
    SELECT go_id, evidence, gene_id
    FROM   go_data")
-  dbGetQuery(con,finalSQL)
+  dbExecute(con,finalSQL)
   ##And return
   res =  dbGetQuery(con, "SELECT * FROM go_all_data")
   dbDisconnect(con)
