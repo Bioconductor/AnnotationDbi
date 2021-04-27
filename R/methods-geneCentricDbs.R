@@ -143,6 +143,7 @@
                                                         "MAP",
                                                         "CHRLOC",
                                                         "CHRLOCEND",
+                                                        "GENETYPE",
                                                         "CHRLOCCHR",
                                                         "PFAM",
                                                         "IPI",
@@ -180,6 +181,7 @@
     .defTables <- c(.defTables, list("WORMBASE" = c("wormbase","wormbase_id")))
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
                                                         "PFAM",
+                                                        "GENENAME",
                                                         "IPI",
                                                         "PROSITE") )]
   }
@@ -199,7 +201,7 @@
   }
   if(species=="Danio rerio"){
     .defTables <- c(.defTables, list("ZFIN" = c("zfin","zfin_id")))
-    .defTables <- .defTables[!(names(.defTables) %in% c("MAP"))]
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP","GENETYPE"))]
   }
   if(species=="Escherichia coli"){
     .defTables <- .defTables[!(names(.defTables) %in% c("CHR",
@@ -248,6 +250,7 @@
                                                         "CHRLOC",
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
+                                                        "GENETYPE",
                                                         "MAP",
                                                         "PMID",
                                                         "REFSEQ",
@@ -322,6 +325,7 @@
                                                         "CHRLOC",
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
+                                                        "GENETYPE",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE",
