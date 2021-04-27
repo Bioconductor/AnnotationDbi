@@ -232,7 +232,6 @@
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2PROBE",
                                                         "MAP",
-                                                        "GENETYPE",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE"))]
