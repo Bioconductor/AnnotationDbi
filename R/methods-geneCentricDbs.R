@@ -181,7 +181,7 @@
     .defTables <- c(.defTables, list("WORMBASE" = c("wormbase","wormbase_id")))
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
                                                         "PFAM",
-                                                        "GENENAME",
+                                                        "GENETYPE",
                                                         "IPI",
                                                         "PROSITE") )]
   }
