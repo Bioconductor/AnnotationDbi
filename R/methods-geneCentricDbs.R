@@ -325,7 +325,6 @@
                                                         "CHRLOC",
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
-                                                        "GENETYPE",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE",
