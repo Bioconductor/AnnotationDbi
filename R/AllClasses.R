@@ -263,6 +263,9 @@ setClass("KEGGFrame", contains="AnnotFrame",
 .ReactomeDb <-
     setRefClass("ReactomeDb", contains="AnnotationDb")
 
+.OrthologyDb <-
+    setRefClass("OrthologyDb", contains = "AnnotationDb")
+
 
 
 
