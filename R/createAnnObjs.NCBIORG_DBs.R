@@ -547,7 +547,10 @@ createAnnObjs.NCBI_DB <- function(prefix,
   }else if (class=="ChipDb"){
     dbname <- getOrgPkgForSchema(schema)
     allSeeds <- NCBICHIP_DB_SeedGenerator(dbname)
-  }  
+  }  else {
+      ## for Orthology.eg.db we just want to return
+      return(NULL)
+  }
   ## filter the seeds to match the schema
   seeds <- filterSeeds(allSeeds, schema, class)
   ## now make the bimaps
