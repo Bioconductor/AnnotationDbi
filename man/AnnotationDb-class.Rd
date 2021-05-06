@@ -10,6 +10,7 @@
 \alias{InparanoidDb-class}
 \alias{OrgDb-class}
 \alias{ReactomeDb-class}
+\alias{OrthologyDb-class}
 
 % Accessor-like methods
 \alias{loadDb}
@@ -36,6 +37,7 @@
 \alias{columns,InparanoidDb-method}
 \alias{columns,Inparanoid8Db-method}
 \alias{columns,ReactomeDb-method}
+\alias{columns,OrthologyDb-method}
 
 \alias{keytypes}
 \alias{keytypes,OrgDb-method}
@@ -44,6 +46,7 @@
 \alias{keytypes,InparanoidDb-method}
 \alias{keytypes,Inparanoid8Db-method}
 \alias{keytypes,ReactomeDb-method}
+\alias{keytypes,OrthologyDb-method}
 
 % \alias{keys} %Not aliased here because it is already aliased in Bimap-keys.Rd
 % \alias{keys,AnnotationDb-method}
@@ -54,6 +57,7 @@
 \alias{keys,InparanoidDb-method}
 \alias{keys,Inparanoid8Db-method}
 \alias{keys,ReactomeDb-method}
+\alias{keys,OrthologyDb-method}
 
 \alias{select}
 % \alias{select,AnnotationDb-method}
@@ -63,6 +67,7 @@
 \alias{select,InparanoidDb-method}
 \alias{select,Inparanoid8Db-method}
 \alias{select,ReactomeDb-method}
+\alias{select,OrthologyDb-method}
 
 % mapIds should work for anything with select defined...
 \alias{mapIds}
@@ -85,7 +90,7 @@
   extract data from an \code{AnnotationDb} object (or any object derived
   from the parent class).  Examples of classes derived from the
   \code{AnnotationDb} object include (but are not limited to):
-  \code{ChipDb}, \code{OrgDb} \code{GODb}, \code{InparanoidDb} and
+  \code{ChipDb}, \code{OrgDb} \code{GODb}, \code{OrthologyDb} and
   \code{ReactomeDb}.
 
   \code{columns} shows which kinds of data can be returned for the

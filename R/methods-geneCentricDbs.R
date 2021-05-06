@@ -966,8 +966,6 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
 }
 
 
-
-
 ## Helper for setting the jointype to an appropriate default
 .chooseJoinType  <- function(x){
   if(.getCentralID(x) == "ORF" && species(x) == "Saccharomyces cerevisiae"){
@@ -1019,6 +1017,20 @@ setMethod("select", "GODb",
           ## .selectWarnJT(x, keys, columns, keytype, jointype="go_term.go_id",
           ## ...)
         }
+)
+
+setMethod("select", "OrthologyDb",
+          function(x, keys, columns, keytype, ...){
+    if(length(columns > 1L)){
+        warning(paste("The columns argument was", length(columns),
+                      "long. Only using the first item", columns[1]), call. = FALSE)
+        columns <- columns[1]
+    }
+    if (missing(keytype)){
+        warning("Default mapping from Homo sapiens is being made.", call. = FALSE)
+        keytype <- "Homo.sapiens"
+    .selectOnto(x, keys, columns, keytype, ...)
+}
 )
 
 
@@ -1104,6 +1116,12 @@ setMethod("columns", "ChipDb",
 setMethod("columns", "GODb",
     function(x) .cols(x) ## does not have a missing baseType
 )
+
+## for the OrthologyDb package, the columns and keytypes are the same thing - the species names
+setMethod("columns", "OrthologyDb",
+          function(x)
+    .justFirstUpper(dbGetQuery(dbconn(x), "select name from names;")[,1])
+    )
 
 #######################################################################
 ## Some testing of my deprecation:
