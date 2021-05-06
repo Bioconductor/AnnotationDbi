@@ -24,7 +24,7 @@ Collate: 00RTobjs.R AllGenerics.R AllClasses.R
 	Bimap-envirAPI.R flatten.R methods-AnnotationDb.R
 	methods-SQLiteConnection.R
 	methods-geneCentricDbs.R methods-geneCentricDbs-keys.R
-	methods-ReactomeDb.R
+	methods-ReactomeDb.R methods-OrthologyDb.R
 	loadDb.R createAnnObjs-utils.R createAnnObjs.NCBIORG_DBs.R
 	createAnnObjs.NCBICHIP_DBs.R createAnnObjs.ORGANISM_DB.R
 	createAnnObjs.YEASTCHIP_DB.R createAnnObjs.COELICOLOR_DB.R
