@@ -1029,6 +1029,7 @@ setMethod("select", "OrthologyDb",
     if (missing(keytype)){
         warning("Default mapping from Homo sapiens is being made.", call. = FALSE)
         keytype <- "Homo.sapiens"
+    }
     .selectOnto(x, keys, columns, keytype, ...)
 }
 )
