@@ -1021,7 +1021,7 @@ setMethod("select", "GODb",
 
 setMethod("select", "OrthologyDb",
           function(x, keys, columns, keytype, ...){
-    if(length(columns > 1L)){
+    if(length(columns) > 1L){
         warning(paste("The columns argument was", length(columns),
                       "long. Only using the first item", columns[1]), call. = FALSE)
         columns <- columns[1]
