@@ -392,7 +392,7 @@ test_select15 <- function(){
                  "ENSEMBLTRANS", "ENZYME", "EVIDENCE", "EVIDENCEALL",
                  "GENENAME", "GO", "GOALL", "IPI", "MAP", "OMIM", 
                  "ONTOLOGY", "ONTOLOGYALL", "PATH", "PFAM", "PMID", "PROSITE",
-                 "REFSEQ", "SYMBOL", "UCSCKG", "UNIGENE", "UNIPROT")
+                 "REFSEQ", "SYMBOL", "UCSCKG", "GENETYPE", "UNIPROT")
         checkIdentical(exp, colnames(res))
     }
 }

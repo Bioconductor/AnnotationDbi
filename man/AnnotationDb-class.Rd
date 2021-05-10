@@ -219,18 +219,18 @@ columns(hgu95av2.db)
 ## get the 1st 6 possible keys
 keys <- head( keys(hgu95av2.db) )
 keys
-## lookup gene symbol and unigene ID for the 1st 6 keys
-select(hgu95av2.db, keys=keys, columns = c("SYMBOL","UNIGENE"))
+## lookup gene symbol and gene type for the 1st 6 keys
+select(hgu95av2.db, keys=keys, columns = c("SYMBOL","GENETYPE"))
 
-## get keys based on unigene
-keyunis <- head( keys(hgu95av2.db, keytype="UNIGENE") )
-keyunis
+## get keys based on RefSeq
+keyref <- head( keys(hgu95av2.db, keytype="REFSEQ") )
+keyref
 ## list supported key types
 keytypes(hgu95av2.db)
-## lookup gene symbol and unigene ID based on unigene IDs by setting
-## the keytype to "UNIGENE" and passing in unigene keys:
-select(hgu95av2.db, keys=keyunis, columns = c("SYMBOL","UNIGENE"),
-       keytype="UNIGENE")
+## lookup gene symbol and refseq ID based on refseq IDs by setting
+## the keytype to "REFSEQ" and passing in refseq keys:
+select(hgu95av2.db, keys=keyref, columns = c("SYMBOL","REFSEQ"),
+       keytype="REFSEQ")
 
 keys <- head(keys(hgu95av2.db, 'ENTREZID'))
 ## get a default result (captures only the 1st element)
