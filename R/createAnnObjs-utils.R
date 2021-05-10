@@ -196,6 +196,16 @@ choosePackage <- function(pkgType){
                  ## End of the B2GO warnings (remove once problem is resolved)
                  "org.Sco.eg.db" = "deprecated",
                  "KEGG.db" = "keggstale",
+                 ## deprecation of inparanoid and plasmo packages
+                 "hom.Hs.inp.db" = "inparanoid",
+                 "hom.Mm.inp.db" = "inparanoid",
+                 "hom.Rn.inp.db" = "inparanoid",
+                 "hom.Dm.inp.db" = "inparanoid",
+                 "hom.Sc.inp.db" = "inparanoid",
+                 "hom.At.inp.db" = "inparanoid",
+                 "hom.Ce.inp.db" = "inparanoid",
+                 "hom.Dr.inp.db" = "inparanoid",
+                 "org.Pf.plasmo.db" = "plasmo",
                  "NO_MESSAGE_TYPE"
                 )
 }
@@ -264,7 +274,14 @@ annotMessage <- function(msgType, pkgType){
                   "sources/packages in order to cover all the species that",
                   "are represented by probes on this platform."),
 		"hg19" = paste("\n The",pkgType,"package was build to match",
- 		   "the HG19 build."),
+                               "the HG19 build."),
+                "inparanoid" = paste("\n", pkgType, "is based on old data",
+                                     "that are no longer updated and will be",
+                                     "deprecated. Please use the orthology.eg.db",
+                                     "package instead."),
+                "plasmo" = paste("\n", pkgType, "is based on old data that are",
+                                 "no longer updated and will be deprecated in",
+                                 "the next release (Bioc 3.14)."),
                 "NO_MESSAGE_TYPE" = ""
                 )
 

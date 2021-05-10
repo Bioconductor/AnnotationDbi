@@ -111,7 +111,7 @@
                      "PMID" = c("pubmed","pubmed_id"),
                      "REFSEQ" = c("refseq","accession"),
                      "SYMBOL" = c("gene_info","symbol"),
-                     "UNIGENE" = c("unigene","unigene_id"),
+                     "GENETYPE" = c("genetype","gene_type"),
                      "ENSEMBL" = c("ensembl","ensembl_id"),
                      "ENSEMBLPROT" = c("ensembl_prot","prot_id"),
                      "ENSEMBLTRANS" = c("ensembl_trans","trans_id"),
@@ -143,6 +143,7 @@
                                                         "MAP",
                                                         "CHRLOC",
                                                         "CHRLOCEND",
+                                                        "GENETYPE",
                                                         "CHRLOCCHR",
                                                         "PFAM",
                                                         "IPI",
@@ -159,7 +160,7 @@
                                                         "ALIAS2EG",
                                                         "ALIAS2PROBE",
                                                         "MAP",
-                                                        "UNIGENE",
+                                                        "GENETYPE",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE",
@@ -180,6 +181,7 @@
     .defTables <- c(.defTables, list("WORMBASE" = c("wormbase","wormbase_id")))
     .defTables <- .defTables[!(names(.defTables) %in% c("MAP",
                                                         "PFAM",
+                                                        "GENETYPE",
                                                         "IPI",
                                                         "PROSITE") )]
   }
@@ -199,12 +201,12 @@
   }
   if(species=="Danio rerio"){
     .defTables <- c(.defTables, list("ZFIN" = c("zfin","zfin_id")))
-    .defTables <- .defTables[!(names(.defTables) %in% c("MAP"))]
+    .defTables <- .defTables[!(names(.defTables) %in% c("MAP","GENETYPE"))]
   }
   if(species=="Escherichia coli"){
     .defTables <- .defTables[!(names(.defTables) %in% c("CHR",
                                                         "MAP",
-                                                        "UNIGENE",
+                                                        "GENETYPE",
                                                         "CHRLOC",
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
@@ -232,7 +234,6 @@
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2PROBE",
                                                         "MAP",
-                                                        "UNIGENE",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE"))]
@@ -249,10 +250,11 @@
                                                         "CHRLOC",
                                                         "CHRLOCEND",
                                                         "CHRLOCCHR",
+                                                        "GENETYPE",
                                                         "MAP",
                                                         "PMID",
                                                         "REFSEQ",
-                                                        "UNIGENE",
+                                                        "GENETYPE",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE",
@@ -266,7 +268,7 @@
     .defTables <- .defTables[!(names(.defTables) %in% c("ALIAS",
                                                         "ALIAS2PROBE",
                                                         "MAP",
-                                                        "UNIGENE",
+                                                        "GENETYPE",
                                                         "PFAM",
                                                         "IPI",
                                                         "PROSITE") )]
@@ -286,7 +288,7 @@
     .defTables <- .defTables[!(names(.defTables) %in% c("ACCNUM",
                                                         "MAP",
                                                         "SYMBOL",
-                                                        "UNIGENE",
+                                                        "GENETYPE",
                                                         "PROSITE",
                                                         "ALIAS",
                                                         "ALIAS2EG",
@@ -361,7 +363,7 @@
                      "PMID" = c("pubmed","pubmed_id"),
                      "REFSEQ" = c("refseq","accession"),
                      "SYMBOL" = c("gene_info","symbol"),
-                     "UNIGENE" = c("unigene","unigene_id"),
+                     "GENETYPE" = c("genetype","gene_type"),
                      "GENENAME" = c("gene_info","gene_name"),
                      "GO" = c("go","go_id"),
                      "EVIDENCE" = c("go","evidence"),
@@ -964,8 +966,6 @@ testSelectArgs <- function(x, keys, cols, keytype, fks=NULL,
 }
 
 
-
-
 ## Helper for setting the jointype to an appropriate default
 .chooseJoinType  <- function(x){
   if(.getCentralID(x) == "ORF" && species(x) == "Saccharomyces cerevisiae"){
@@ -1017,6 +1017,21 @@ setMethod("select", "GODb",
           ## .selectWarnJT(x, keys, columns, keytype, jointype="go_term.go_id",
           ## ...)
         }
+)
+
+setMethod("select", "OrthologyDb",
+          function(x, keys, columns, keytype, ...){
+    if(length(columns) > 1L){
+        warning(paste("The columns argument was", length(columns),
+                      "long. Only using the first item", columns[1]), call. = FALSE)
+        columns <- columns[1]
+    }
+    if (missing(keytype)){
+        warning("Default mapping from Homo sapiens is being made.", call. = FALSE)
+        keytype <- "Homo.sapiens"
+    }
+    .selectOnto(x, keys, columns, keytype, ...)
+}
 )
 
 
@@ -1102,6 +1117,12 @@ setMethod("columns", "ChipDb",
 setMethod("columns", "GODb",
     function(x) .cols(x) ## does not have a missing baseType
 )
+
+## for the OrthologyDb package, the columns and keytypes are the same thing - the species names
+setMethod("columns", "OrthologyDb",
+          function(x)
+    .justFirstUpper(dbGetQuery(dbconn(x), "select name from names;")[,1])
+    )
 
 #######################################################################
 ## Some testing of my deprecation:

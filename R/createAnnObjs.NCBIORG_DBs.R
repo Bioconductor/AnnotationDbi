@@ -144,15 +144,29 @@ NCBIORG_DB_AnnDbBimap_seeds <- list(
             )
         )
     ),
+    ## removed UniGene in Bioc 3.13
+    ## list(
+    ##     objName="UNIGENE",
+    ##     Class="AnnDbBimap",
+    ##     L2Rchain=list(
+    ##         NCBIORG_DB_L2Rlink1,
+    ##         list(
+    ##             tablename="unigene",
+    ##             Lcolname="_id",
+    ##             Rcolname="unigene_id"
+    ##         )
+    ##     )
+    ## ),
+    ## Added Gene type in Bioc 3.13
     list(
-        objName="UNIGENE",
+        objName="GENETYPE",
         Class="AnnDbBimap",
         L2Rchain=list(
             NCBIORG_DB_L2Rlink1,
             list(
-                tablename="unigene",
+                tablename="genetype",
                 Lcolname="_id",
-                Rcolname="unigene_id"
+                Rcolname="gene_type"
             )
         )
     ),
@@ -480,7 +494,7 @@ filterSeeds <- function(allSeeds, schema, class){
   ## only do that if they exist.
   if(class=="OrgDb"){
     revMapables <- c("ACCNUM","ENZYME","MAP","OMIM","PATH","PMID","REFSEQ",
-                     "SYMBOL","UNIGENE","ENSEMBL","ENSEMBLPROT", "ENSEMBLTRANS",
+                     "SYMBOL","ENSEMBL","ENSEMBLPROT", "ENSEMBLTRANS",
                      "MGI","FLYBASE","FLYBASECG","FLYBASEPROT","GO")
   }else if (class=="ChipDb"){
     revMapables <- c("ENZYME","PATH","PMID","ENSEMBL","MGI","FLYBASE",
@@ -533,7 +547,10 @@ createAnnObjs.NCBI_DB <- function(prefix,
   }else if (class=="ChipDb"){
     dbname <- getOrgPkgForSchema(schema)
     allSeeds <- NCBICHIP_DB_SeedGenerator(dbname)
-  }  
+  }  else {
+      ## for Orthology.eg.db we just want to return
+      return(NULL)
+  }
   ## filter the seeds to match the schema
   seeds <- filterSeeds(allSeeds, schema, class)
   ## now make the bimaps

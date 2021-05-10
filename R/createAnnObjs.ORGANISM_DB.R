@@ -105,9 +105,9 @@ getDBMaps <- function(dbconn){
               rawtabs, invert=TRUE)
   tabs <- rawtabs[idx]
   ## I require a reference frame
-  objNames = c("ACCNUM",    "ALIAS2EG",     "CHR",        "ENZYME",   "GENENAME",   "MAP",                   "OMIM",   "PATH",    "PMID",      "REFSEQ",    "SYMBOL",    "UNIGENE",    "ENSEMBL",    "ENSEMBLPROT",  "ENSEMBLTRANS",  "UNIPROT")
-  tables   = c("accessions","alias",        "chromosomes","ec",       "gene_info",  "cytogenetic_locations", "omim",   "kegg",    "pubmed",    "refseq",    "gene_info", "unigene",    "ensembl",    "ensembl_prot", "ensembl_trans", "uniprot")
-  fields   = c("accession", "alias_symbol", "chromosome", "ec_number", "gene_name", "cytogenetic_location",  "omim_id","path_id", "pubmed_id", "accession", "symbol",     "unigene_id", "ensembl_id", "prot_id",      "trans_id",      "uniprot_id")
+  objNames = c("ACCNUM",    "ALIAS2EG",     "CHR",        "ENZYME",   "GENENAME",   "MAP",                   "OMIM",   "PATH",    "PMID",      "REFSEQ",    "SYMBOL",    "GENETYPE",    "ENSEMBL",    "ENSEMBLPROT",  "ENSEMBLTRANS",  "UNIPROT")
+  tables   = c("accessions","alias",        "chromosomes","ec",       "gene_info",  "cytogenetic_locations", "omim",   "kegg",    "pubmed",    "refseq",    "gene_info", "genetype",    "ensembl",    "ensembl_prot", "ensembl_trans", "uniprot")
+  fields   = c("accession", "alias_symbol", "chromosome", "ec_number", "gene_name", "cytogenetic_location",  "omim_id","path_id", "pubmed_id", "accession", "symbol",     "gene_type", "ensembl_id", "prot_id",      "trans_id",      "uniprot_id")
   possibleMaps <- data.frame(objName=objNames, tables=tables,
                              fields=fields, stringsAsFactors=FALSE)
   ## subset to just ones that we see tables for

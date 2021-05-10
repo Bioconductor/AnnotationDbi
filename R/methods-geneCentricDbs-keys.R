@@ -250,6 +250,10 @@ setMethod("keys", "GODb",
   }
 )
 
+setMethod("keys", "OrthologyDb",
+          function(x, keytype, ...) 
+    .ontoKeys(x, keytype, ...)
+    )
 
 ## new uses for keys:
 ## now TERM is a real key? (TODO: someone tell the keytypes)
@@ -341,6 +345,12 @@ setMethod("keytypes", "GODb",
     function(x) return(c("GOID","TERM","ONTOLOGY","DEFINITION")) ## only one type makes sense
 )
 
+setMethod("keytypes", "OrthologyDb",
+          function(x) 
+    .justFirstUpper(dbGetQuery(dbconn(x), "select name from names;")[,1])
+    )
+
+    
 ## Marc's TODO:
 ##X .5) make keytype so that it uses the mapping names instead of internal stuff
 ##X 1) make keytypes so that it returns all possible keytypes
