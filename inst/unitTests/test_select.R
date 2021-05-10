@@ -390,9 +390,9 @@ test_select15 <- function(){
         checkTrue(dim(res)[2]==26)
         exp <- c("ENTREZID", "ACCNUM", "ALIAS", "ENSEMBL", "ENSEMBLPROT",
                  "ENSEMBLTRANS", "ENZYME", "EVIDENCE", "EVIDENCEALL",
-                 "GENENAME", "GO", "GOALL", "IPI", "MAP", "OMIM", 
+                 "GENENAME", "GENETYPE", "GO", "GOALL", "IPI", "MAP", "OMIM", 
                  "ONTOLOGY", "ONTOLOGYALL", "PATH", "PFAM", "PMID", "PROSITE",
-                 "REFSEQ", "SYMBOL", "UCSCKG", "GENETYPE", "UNIPROT")
+                 "REFSEQ", "SYMBOL", "UCSCKG", "UNIPROT")
         checkIdentical(exp, colnames(res))
     }
 }
