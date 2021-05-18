@@ -1,3 +1,17 @@
+CHANGES IN VERSION 1.54.0
+-------------------------
+
+NEW FEATURES
+
+    o There is a new replacement package for the Inparanoid orthology packages, called Orthology.eg.db
+    o This package uses NCBI orthology data to map NCBI Gene IDs between species using the usual select() interface
+
+MODIFICATIONS
+
+    o UniGene data have been removed from OrgDb and ChipDb packages
+    o Gene type data have been added to OrgDb and ChipDb packages
+    
+
 CHANGES IN VERSION 1.53.0
 -------------------------
 
