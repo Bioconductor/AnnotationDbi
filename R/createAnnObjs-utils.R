@@ -147,6 +147,8 @@ prefixAnnObjNames <- function(envir, prefix)
 ##                 "Pan_troglodytes"="9598")
 ## ##                 "Escherichia_coli_K12"="511145")
 
+## The above has been fixed, so we removed the warning for Bioc 3.13
+
 
 
 choosePackage <- function(pkgType){
@@ -184,15 +186,15 @@ choosePackage <- function(pkgType){
                  ## Pass given on 11/8/10
                  ## "hs25kresogen.db" = "deprecatedSimonDeBernard",
                  ## "mm24kresogen.db" = "deprecatedSimonDeBernard",
-                 "org.Cf.eg" = "B2GOstale",
-                 "org.Ss.eg" = "B2GOstale",
-                 "org.Ag.eg" = "B2GOstale",
-                 "org.Xl.eg" = "B2GOstale",
-                 "org.Mmu.eg" = "B2GOstale",
-                 "org.Pt.eg" = "B2GOstale",
-                 "canine.db" = "B2GOstale",
-                 "canine2.db" = "B2GOstale",
-                 "xlaevis.db" = "B2GOstale",
+                 ## "org.Cf.eg" = "B2GOstale",
+                 ## "org.Ss.eg" = "B2GOstale",
+                 ## "org.Ag.eg" = "B2GOstale",
+                 ## "org.Xl.eg" = "B2GOstale",
+                 ## "org.Mmu.eg" = "B2GOstale",
+                 ## "org.Pt.eg" = "B2GOstale",
+                 ## "canine.db" = "B2GOstale",
+                 ## "canine2.db" = "B2GOstale",
+                 ## "xlaevis.db" = "B2GOstale",
                  ## End of the B2GO warnings (remove once problem is resolved)
                  "org.Sco.eg.db" = "deprecated",
                  "KEGG.db" = "keggstale",
