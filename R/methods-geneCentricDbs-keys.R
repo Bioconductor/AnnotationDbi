@@ -134,7 +134,7 @@ chooseCentralOrgPkgSymbol <- function(x){
     if(exists("y", inherits=FALSE)){
         tables <- c("c.probes", tables)
     }
-    colTabs <- sapply(tables, FUN=dbListFields, con=con)
+    colTabs <- sapply(tables, FUN=dbListFields, con=con, simplify = FALSE)
     colTabs <- colTabs[grep("go_[mcb].+", names(colTabs), invert = TRUE)]
     m <- unlist2(sapply(colTabs, match, field))  ## cannot ever be repeated
     tab <- names(m)[!is.na(m)]
