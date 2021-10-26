@@ -5,7 +5,7 @@ biocViews: Annotation, Microarray, Sequencing, GenomeAnnotation
 URL: https://bioconductor.org/packages/AnnotationDbi
 Video: https://www.youtube.com/watch?v=8qvGNTVz3Ik
 BugReports: https://github.com/Bioconductor/AnnotationDbi/issues
-Version: 1.55.2
+Version: 1.56.0
 License: Artistic-2.0
 Encoding: UTF-8
 Author: Hervé Pagès, Marc Carlson, Seth Falcon, Nianhua Li
