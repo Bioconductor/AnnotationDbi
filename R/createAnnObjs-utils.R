@@ -282,8 +282,9 @@ annotMessage <- function(msgType, pkgType){
                                      "deprecated. Please use the orthology.eg.db",
                                      "package instead."),
                 "plasmo" = paste("\n", pkgType, "is based on old data that are",
-                                 "no longer updated and will be deprecated in",
-                                 "the next release (Bioc 3.14)."),
+                                 "no longer updated.", pkgType, "is deprecated",
+                                 "and will be removed from Bioconductor version",
+                                 "3.15."),
                 "NO_MESSAGE_TYPE" = ""
                 )
 
