@@ -211,6 +211,9 @@ setMethod("$", "Bimap", function(x, name) x[[name]])
 setMethod("contents", "Bimap",
     function(object, all.names)
     {
+        msg <- c("The contents() method for Bimap objects is deprecated. ",
+                 "Please use as.list() instead.")
+        .Deprecated(msg=c("  ", wmsg(msg)))
         if (!missing(all.names))
             warning("ignoring 'all.names' argument")
         as.list(object)

@@ -51,7 +51,6 @@
   ## Converting to a list
   mget(x, envir, mode, ifnotfound, inherits)
   eapply(env, FUN, ..., all.names, USE.NAMES)
-  #contents(object, all.names)
 
   ## Additional convenience method
   sample(x, size, replace=FALSE, prob=NULL, ...)
@@ -117,7 +116,6 @@
   \code{\link[base:get]{get}},
   \code{\link[base:get]{mget}},
   \code{\link[base:eapply]{eapply}},
-  \code{\link[Biobase:contents]{contents}},
   \code{\link[base:sample]{sample}},
   \link{BimapFormatting},
   \link{Bimap}
@@ -136,7 +134,6 @@
 
   mget(ls(x)[1:3], x)
   eapply(x, length)
-  contents(x)
 
   sample(x, 3)
 }

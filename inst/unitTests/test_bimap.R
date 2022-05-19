@@ -36,7 +36,6 @@ checkTrue(!any(is.na(lres2)))
 checkTrue(length(lres2) == length(unique(lres2)))
 }
 
-
 test_Rkeys <- function(){
 rres <- Rkeys(map)
 checkTrue(length(rres) >0)
@@ -48,7 +47,6 @@ checkTrue(length(rres2) >0)
 checkTrue(!any(is.na(rres2)))
 checkTrue(length(rres2) == length(unique(rres2)))
 }
-
 
 ## test revmap (add a test now that it seems to work...
 test_revmap <- function(){
@@ -79,8 +77,6 @@ test_mget <- function(){
   checkTrue(length(res3)==length(kr))
 }
 
-
-
 ## test as.list
 test_as.list <- function(){
   res <- as.list(map)
@@ -100,7 +96,6 @@ test_as.list <- function(){
   checkTrue(length(res3)==3)
 }
 
-
 ## test as.character
 test_as.character <- function(){
   res <- as.character(map)
@@ -117,7 +112,6 @@ test_as.character <- function(){
   checkEquals(res3[[1]][1], "1")
 }
 
-
 ## test eapply
 test_eapply <- function(){
   res <- eapply(map, length)
@@ -128,7 +122,6 @@ test_eapply <- function(){
   checkEquals(names(res2)[1], "1")
   checkTrue(res2[[1]][1] == 3)
 }
-
 
 ## test get
 test_get <- function(){
@@ -154,37 +147,32 @@ test_exists <- function(){
   checkTrue(exists("titi", map2) == FALSE)  
 }
 
-
 ## test "[["
 test_dblBrackets <- function(){
   res <- map[["1"]]
   checkTrue(res == "A1BG")
   res2 <- map2[["1"]]
+  checkEquals(res2, c("BP","CC","MF"))
+}
 
-  
 test_head <- function(){
-res <- head(map, n=3)
-checkTrue( class(res) == "AnnDbBimap" )
+  res <- head(map, n=3)
+  checkTrue( class(res) == "AnnDbBimap" )
 
-res2 <- head(map2, n=3)  ## implement Lkeys and Rkeys
-checkTrue( class(res2) == "data.frame" )
-checkTrue( dim(res2)[1] == 3 )
-checkTrue( dim(res2)[2] == 2 )
+  res2 <- head(map2, n=3)  ## implement Lkeys and Rkeys
+  checkTrue( class(res2) == "data.frame" )
+  checkTrue( dim(res2)[1] == 3 )
+  checkTrue( dim(res2)[2] == 2 )
 }
 
 test_tail <- function(){
-res <- tail(map, n=3)
-checkTrue( class(res) == "AnnDbBimap" )
+  res <- tail(map, n=3)
+  checkTrue( class(res) == "AnnDbBimap" )
 
-res2 <- tail(map2, n=3)
-checkTrue( class(res2) == "data.frame" )
-checkTrue( dim(res2)[1] == 3 )
-checkTrue( dim(res2)[2] == 2 )
-}
-
-
-
-  checkEquals(res2, c("BP","CC","MF"))
+  res2 <- tail(map2, n=3)
+  checkTrue( class(res2) == "data.frame" )
+  checkTrue( dim(res2)[1] == 3 )
+  checkTrue( dim(res2)[2] == 2 )
 }
 
 ## test "$"
@@ -194,7 +182,6 @@ test_Dollar <- function(){
   res2 <- map2$"1"
   checkEquals(res2, c("BP","CC","MF"))
 }
-
 
 ## test toTable as.data.frame
 test_toTable <- function(){
@@ -215,20 +202,6 @@ test_toTable <- function(){
   checkTrue(res2[1,2]=="BP")
 }
 
-
-test_contents <- function(){
-  res <- contents(map)
-  checkEquals(names(res)[1], "1")
-  checkEquals(res[[1]][1], "A1BG")
-  checkTrue(length(res)>1000)
-  
-  res2 <- contents(map2)
-  checkEquals(names(res2)[[1]], "1")
-  checkEquals(res2[[1]], c("BP","CC","MF"))
-  checkTrue(length(res2)>1000)
-}
-
-
 test_sample <- function(){
   res <- sample(map,size=2)
   checkTrue(length(res)==2)
@@ -238,9 +211,4 @@ test_sample <- function(){
   checkTrue(length(res2)==2)
   checkTrue(class(res2)=="list")
 }
-
-
-
-
-
 
