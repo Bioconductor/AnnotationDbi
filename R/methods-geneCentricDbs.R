@@ -1157,7 +1157,7 @@ mapIds_base <- function(x, keys, column, keytype, ..., multiVals=c("filter",
         idx <- elementNROWS(data) == 1
         nms <- names(data)[idx]
         data <- as.character(unlist(data[idx]))
-        setNames(data, nms)
+        stats::setNames(data, nms)
     }
     .asNA <- function(data) {
         idx <- elementNROWS(data) > 1
