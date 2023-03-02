@@ -46,7 +46,7 @@ is primarily concerned with describing the annotation resources that are
 availableas packages. More advanced users who wish to learn about how to make
 newannotation packages should see the vignette titled "Creating select
 Interfacesfor custom Annotation resources" from the 
-`r Biocpkg("AnnotationForge")`package.
+`r Biocpkg("AnnotationForge")` package.
 
 Gene centric `r Biocpkg("AnnotationDbi")` packages include: 
 
