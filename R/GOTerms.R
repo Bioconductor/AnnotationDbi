@@ -293,7 +293,8 @@ setMethod("getGOFrameData", "GOAllFrame", function(x){x@data})
     ##Test that some KEGGIDs are real and that the evidence codes are legit.
     KEGGIDs <- x[,1]
     kegg_query <- data.frame(keggList("pathway"))
-    realKEGGIDs <- substr(rownames(kegg_query), 4, 9)
+    ids <- rownames(kegg_query)
+    realKEGGIDs <- substr(ids, 4, nchar(ids))
 
     ##Test that the data.frame has some rows of data in it
     if(!dim(x)[1]>0){
