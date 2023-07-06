@@ -17,36 +17,18 @@ output:
   BiocStyle::html_document
 ---
 
-```{r  label = fig:dbtypes, echo = FALSE, fig.align="center", fig.cap = "Annotation Packages: the big picture", out.width = '60%'}
+```{r dbtypes, fig.cap = "Annotation Packages: the big picture", echo = FALSE, out.width = '60%'}
 knitr::include_graphics("databaseTypes.png")
 ```
 
-```{r echo=FALSE, include=FALSE}
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("BiocStyle", force = TRUE)
-```
-
-
-```{r include=FALSE}
-library(knitr)
-opts_chunk$set(tidy=FALSE)
-```
-
-
-```{r include=FALSE}
-library(BiocStyle)
-```
-
 *Bioconductor* provides extensive annotation resources. These can be
-*genecentric*, or *genome centric*. Annotations can be provided in packages
+*gene centric*, or *genome centric*. Annotations can be provided in packages
 curated by *Bioconductor*, or obtained from web-based resources. This vignette
 is primarily concerned with describing the annotation resources that are
-availableas packages. More advanced users who wish to learn about how to make
-newannotation packages should see the vignette titled "Creating select
-Interfacesfor custom Annotation resources" from the 
-`r Biocpkg("AnnotationForge")` package.
+available as packages. More advanced users who wish to learn about how to make
+new annotation packages should see the vignette titled "Creating select
+Interfaces for custom Annotation resources" from the `r
+Biocpkg("AnnotationForge")` package.
 
 Gene centric `r Biocpkg("AnnotationDbi")` packages include: 
 
@@ -69,12 +51,12 @@ Biocpkg("biomaRt")` package:
 sequence, SNPs, and etc.
 
 The most popular annotation packages have been modified so that they can make
-use of a new set of methods to more easily access their contents. These four
-methods are named: `columns`, `keytypes`, `keys` and `select`. And they are
+use of a new set of methods to more easily access their contents. These
+four methods are named: `columns`, `keytypes`, `keys` and `select`. And they are
 described in this vignette. They can currently be used with all chip, organism,
 and `TxDb` packages along with the popular GO.db package.
 
-For the older less popular packages, there are still conventient ways to
+For the older less popular packages, there are still convenient ways to
 retrieve the data. The *How to use bimaps from the ".db" annotation packages*
 vignette in the `r Biocpkg("AnnotationDbi")` package is a key reference for
 learnign about how to use bimap objects.
@@ -132,7 +114,8 @@ We can look at this object to learn more about it:
 hgu95av2.db
 ```
 
-If we want to know what kinds of data are retriveable via `select`, then we should use the `columns` method like this:
+If we want to know what kinds of data are retriveable via `select`, then we
+should use the `columns` method like this:
 
 ```{r columns}
 columns(hgu95av2.db)
@@ -146,7 +129,7 @@ page describing the different fields and what they mean.
 help("SYMBOL")
 ```
 
-If we are curious about what kinds of fields we could potentiall use as keys to
+If we are curious about what kinds of fields we could potentially use as keys to
 query the database, we can use the `keytypes` method. In a perfect world, this
 method will return values very similar to what was returned by `columns`, but in
 reality, some kinds of values make poor keys and so this list is often shorter.
@@ -192,7 +175,7 @@ mapIds(hgu95av2.db, keys=k, column=c("GENENAME"), keytype="PROBEID")
 An organism level package (an 'org' package) uses a central gene identifier
 (e.g. Entrez Gene id) and contains mappings between this identifier and other
 kinds of identifiers (e.g. GenBank or Uniprot accession number, RefSeq id,
-etc.).  The name of an org package is always of the form org.\<Ab>\.\<id>\.db
+etc.). The name of an org package is always of the form org.\<Ab>\.\<id>\.db
 (e.g.`r Biocpkg("org.Sc.sgd.db")`where \<Ab>\ is a 2-letter abbreviation of the
 organism (e.g.`r Biocpkg("Sc")` for *Saccharomyces cerevisiae*) and \<id>\ is an
 abbreviation (in lower-case) describing the type of central identifier (e.g.
