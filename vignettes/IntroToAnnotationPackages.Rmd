@@ -17,7 +17,7 @@ output:
   BiocStyle::html_document
 ---
 
-```{r dbtypes, fig.cap = "Annotation Packages: the big picture", echo = FALSE, out.width = '60%'}
+```{r dbtypes, fig.cap = "Annotation Packages: the big picture", echo = FALSE, fig.width=0.6}
 knitr::include_graphics("databaseTypes.png")
 ```
 
@@ -27,8 +27,8 @@ curated by *Bioconductor*, or obtained from web-based resources. This vignette
 is primarily concerned with describing the annotation resources that are
 available as packages. More advanced users who wish to learn about how to make
 new annotation packages should see the vignette titled "Creating select
-Interfaces for custom Annotation resources" from the `r
-Biocpkg("AnnotationForge")` package.
+Interfaces for custom Annotation resources" from the 
+`r Biocpkg("AnnotationForge")` package.
 
 Gene centric `r Biocpkg("AnnotationDbi")` packages include: 
 
@@ -44,8 +44,8 @@ Genome centric `r Biocpkg("GenomicFeatures")` packages include
 `r Biocpkg("EnsDb.Hsapiens.v75")`.
 -   Generic genome features: Can generate via `r Biocpkg("GenomicFeatures")`
 
-One web-based resource accesses [biomart](http://www.biomart.org/), via the `r
-Biocpkg("biomaRt")` package: 
+One web-based resource accesses [biomart](http://www.biomart.org/), via the 
+`r Biocpkg("biomaRt")` package: 
 
 - Query web-based \`biomart' resource for genes,
 sequence, SNPs, and etc.
@@ -54,7 +54,7 @@ The most popular annotation packages have been modified so that they can make
 use of a new set of methods to more easily access their contents. These
 four methods are named: `columns`, `keytypes`, `keys` and `select`. And they are
 described in this vignette. They can currently be used with all chip, organism,
-and `TxDb` packages along with the popular GO.db package.
+and `TxDb` packages along with the popular `r Biocpkg("GO.db")` package.
 
 For the older less popular packages, there are still convenient ways to
 retrieve the data. The *How to use bimaps from the ".db" annotation packages*
@@ -71,27 +71,27 @@ are based on have not themselves been updated.
 As previously mentioned, a new set of methods have been added that allow a
 simpler way of extracting identifier based annotations. All the annotation
 packages that support these new methods expose an object named exactly the same
-as the package itself. These objects are collectively called `AnnotationDb`
+as the package itself. These objects are collectively called *AnnotationDb*
 objects for the class that they all inherit from. The more specific classes (the
-ones that you will actually see in the wild) have names like `OrgDb`, `ChipDb`
-or `TxDb` objects. These names correspond to the kind of package (and underlying
+ones that you will actually see in the wild) have names like *OrgDb*, *ChipDb*
+or *TxDb* objects. These names correspond to the kind of package (and underlying
 schema) being represented. The methods that can be applied to all of these
 objects are `columns`, `keys`, `keytypes` and `select`.
 
 In addition, another accessor has recently been added which allows extraction of
-one column at at time. the `mapIds` method allows users to extract data into
+one column at a time. the `mapIds` method allows users to extract data into
 either a named character vector, a list or even a SimpleCharacterList. This
-method should work with all the different kinds of `AnnotationDb` objects
+method should work with all the different kinds of *AnnotationDb* objects
 described below.
 
 # ChipDb objects and the select method
 
-An extremely common kind of Annotation package is the so called platform based
-or chip based package type. This package is intended to make the manufacturer
-labels for a series of probes or probesets to a wide range of gene-based
-features. A package of this kind will load an `ChipDb` object. Below is a set of
-examples to show how you might use the standard 4 methods to interact with an
-object of this type.
+An extremely common kind of `r Biocpkg("Annotation")` package is the so called
+platform based or chip based package type. This package is intended to make the
+manufacturer labels for a series of probes or probesets to a wide range of
+gene-based features. A package of this kind will load an *ChipDb* object. Below
+is a set of examples to show how you might use the standard 4 methods to
+interact with an object of this type.
 
 First we need to load the package:
 
@@ -182,22 +182,23 @@ abbreviation (in lower-case) describing the type of central identifier (e.g.
 `r Biocpkg("sgd")` for gene identifiers assigned by the Saccharomyces Genome
 Database, or `r Biocpkg("eg")` for Entrez Gene ids).
 
-Just as the chip packages load a `ChipDb` object, the org packages will load a
-`OrgDb` object. The following exercise should acquaint you with the use of these
+Just as the chip packages load a *ChipDb* object, the org packages will load a
+*OrgDb* object. The following exercise should acquaint you with the use of these
 methods in the context of an organism package.
 
 **Exercise 1**
 
-Display the `OrgDb` object for the `r Biocpkg("org.Hs.eg.db")` package.
+*Display the OrgDb object for the `r Biocpkg("org.Hs.eg.db")`
+package.*
 
-Use the `columns` method to discover which sorts of annotations can be extracted
+*Use the `columns` method to discover which sorts of annotations can be extracted
 from it. Is this the same as the result from the `keytypes` method?  Use the
-`keytypes` method to find out.
+`keytypes` method to find out.*
 
-Finally, use the `keys` method to extract UNIPROT identifiers and then pass
+*Finally, use the `keys` method to extract UNIPROT identifiers and then pass
 those keys in to the `select` method in such a way that you extract the gene
 symbol and KEGG pathway information for each.  Use the help system as needed to
-learn which values to pass in to columns in order to achieve this.
+learn which values to pass in to columns in order to achieve this.*
 
 **Solution:**
 
@@ -222,20 +223,21 @@ hlep you to understand how that should generally work.
 
 **Exercise 2**
 
-Please run the following code snippet (which will load a fake data result that I
-have provided for the purposes of illustration):
+*Please run the following code snippet (which will load a fake data result that 
+I have provided for the purposes of illustration):*
 
 ```{r selectData}
 load(system.file("extdata", "resultTable.Rda", package="AnnotationDbi"))
 head(resultTable)
 ```
 
-The rownames of this table happen to provide entrez gene identifiers for each
+*The rownames of this table happen to provide entrez gene identifiers for each
 row (for human). Find the gene symbol and gene name for each of the rows in
-resultTable and then use the merge method to attach those annotations to it.
+resultTable and then use the merge method to attach those annotations to it.*
 
 
 **Solution:**
+
 ```{r}
 annots <- select(org.Hs.eg.db, keys=rownames(resultTable),
 columns=c("SYMBOL","GENENAME"), keytype="ENTREZID")
@@ -246,10 +248,10 @@ head(resultTable)
 
 # Using select with GO.db
 
-When you load the GO.db package, a `GODb` object is also loaded. This allows you
-to use the `columns`, `keys`, `keytypes` and `select` methods on the contents of
-the GO ontology. So if for example, you had a few GO IDs and wanted to know more
-about it, you could do it like this:
+When you load the ` r Biocpkg("GO.db")` package, a *GODb* object is also loaded.
+This allows you to use the `columns`, `keys`, `keytypes` and `select` methods on
+the contents of the GO ontology. So if for example, you had a few GO IDs and
+wanted to know more about it, you could do it like this:
 
 ```{r selectGO}
 library(GO.db)
@@ -259,24 +261,24 @@ select(GO.db, keys=GOIDs, columns="DEFINITION", keytype="GOID")
 
 # Using select with TxDb packages
 
-A `TxDb` package (a 'TxDb' package) connects a set of genomic coordinates to
-various transcript oriented features. The package can also contain Identifiers
-to features such as genes and transcripts, and the internal schema describes the
-relationships between these different elements. All TxDb containing packages
-follow a specific naming scheme that tells where the data came from as well as
-which build of the genome it comes from.
+A `r Biocpkg("TxDb")` package (a 'TxDb' package) connects a set of genomic
+coordinates to various transcript oriented features. The package can also
+contain Identifiers to features such as genes and transcripts, and the internal
+schema describes the relationships between these different elements. All TxDb
+containing packages follow a specific naming scheme that tells where the data
+came from as well as which build of the genome it comes from.
 
 **Exercise 3**
 
-Display the `TxDb` object for the `r Biocpkg("TxDb.Hsapiens.UCSC.hg19.knownGene")`
-package.
+*Display the TxDb object for the `r Biocpkg("TxDb.Hsapiens.UCSC.hg19.knownGene")`
+package.*
 
-As before, use the `columns` and `keytypes` methods to discover which sorts of
-annotations can be extracted from it.
+*As before, use the `columns` and `keytypes` methods to discover which sorts of
+annotations can be extracted from it.*
 
-Use the `keys` method to extract just a few gene identifiers and then pass those
+*Use the `keys` method to extract just a few gene identifiers and then pass those
 keys in to the `select` method in such a way that you extract the transcript ids
-and transcript starts for each.
+and transcript starts for each.*
 
 **Solution:**
 
@@ -292,7 +294,7 @@ select(txdb, keys=keys, columns=cols, keytype="GENEID")
 ```
 
 As is widely known, in addition to providing access via the `select` method,
-`TxDb` objects also provide access via the more familiar `transcripts`, `exons`,
+*TxDb* objects also provide access via the more familiar `transcripts`, `exons`,
 `cds`, `transcriptsBy`, `exonsBy` and `cdsBy` methods. For those who do not yet
 know about these other methods, more can be learned by seeing the vignette
 called: *Making and Utilizing TxDb Objects* in the 
@@ -300,25 +302,18 @@ called: *Making and Utilizing TxDb Objects* in the
 
 # Using select with EnsDb packages
 
-Similar to the `TxDb` objects/packages discussed in the previous section,
-`EnsDb` objects/packages provide genomic coordinates of gene models along with
+Similar to the *TxDb* objects/packages discussed in the previous section,
+*EnsDb* objects/packages provide genomic coordinates of gene models along with
 additional annotations (e.g. gene names, biotypes etc) but are tailored to
 annotations provided by Ensembl. The central methods `columns`, `keys`,
-`keytypes` and `select` are all implemented for `EnsDb` objects. In addition,
-these methods allow also the use of the `EnsDb` specific filtering framework to
+`keytypes` and `select` are all implemented for *EnsD* objects. In addition,
+these methods allow also the use of the *EnsDb* specific filtering framework to
 retrieve only selected information from the database (see vignette of the 
 `r Biocpkg("ensembldb")` package for more information).
 
 In the example below we first evaluate which columns, keys and keytypes are
-available for `EnsDb` objects and fetch then the transcript ids, genomic start
+available for *EnsDb* objects and fetch then the transcript ids, genomic start
 coordinate and transcript biotype for some genes.
-
-```{r}
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("EnsDb.Hsapiens.v75")
-```
 
 ```{r selectEnsDb}
 library(EnsDb.Hsapiens.v75)
@@ -340,7 +335,7 @@ select(edb, keys=keys, columns=c("TXID", "TXSEQSTART", "TXBIOTYPE"),
 ```
 
 We can modify the queries above to retrieve only genes encoded on chromosome Y.
-To this end we use filter objects available for `EnsDb` objects and its methods.
+To this end we use filter objects available for *EnsDb* objects and its methods.
 
 ```{r selectEnsDb.Y}
 ## Retrieve all gene IDs of all lincRNAs encoded on chromosome Y
