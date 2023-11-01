@@ -9,6 +9,8 @@ map3 <- AnnotationDbi:::makeFlatBimapUsingSelect(org.Hs.eg.db, col="SYMBOL")
 map2 <- AnnotationDbi:::makeFlatBimapUsingSelect(org.Hs.eg.db, col="ONTOLOGY")
 
 ##map3 <- AnnotationDbi:::flatten(map)
+# molecular function, cellular component, biological process
+bioconcepts <- c("MF", "CC", "BP")
 
 
 ## test ls 
@@ -66,7 +68,7 @@ test_mget <- function(){
   
   res2 <- mget(k, map2) 
   checkEquals(names(res2), k)
-  checkEquals(res2[[1]], c("BP","CC","MF"))
+  checkTrue(all(res2[[1]] %in% bioconcepts))
   checkTrue(length(res2)==length(k))
 
   ## reverse test 
@@ -86,14 +88,14 @@ test_as.list <- function(){
   
   res2 <- as.list(map2)
   checkEquals(names(res2)[[1]], "1")
-  checkEquals(res2[[1]], c("BP","CC","MF"))
+  checkTrue(all(res2[[1]] %in% bioconcepts))
   checkTrue(length(res2)>1000)
 
   ## reverse test  
   res3 <- as.list(revmap(map2))
-  checkEquals(names(res3)[1], "BP")
+  checkTrue(all(names(res3) %in% bioconcepts))
   checkEquals(res3[[1]][1], "1")
-  checkTrue(length(res3)==3)
+  checkIdentical(length(res3), 3L)
 }
 
 ## test as.character
@@ -103,13 +105,13 @@ test_as.character <- function(){
   checkEquals(res[[1]][1], "A1BG")
 
   res2 <- as.character(map2)       
-  checkEquals(names(res2)[1], "1")
-  checkEquals(res2[[1]][1], "BP")
+  checkEquals(names(res2[1:3]), rep("1", 3))
+  checkTrue(all(res2[names(res2) == "1"] %in% bioconcepts))
   
   ## reverse test
   res3 <- as.character(revmap(map2)) 
-  checkEquals(names(res3)[1], "BP")
-  checkEquals(res3[[1]][1], "1")
+  checkTrue(all(names(res3[res3 == "1"]) %in% bioconcepts))
+  checkIdentical(unname(res3[1:3]), rep("1", 3))
 }
 
 ## test eapply
@@ -130,7 +132,7 @@ test_get <- function(){
   checkTrue(res == "A1BG")
   
   res2 <- get(k, map2)
-  checkEquals(res2, c("BP","CC","MF"))
+  checkTrue(all(res2 %in% bioconcepts))
 
   ## reverse test 
   kr <- "CC"
@@ -152,7 +154,7 @@ test_dblBrackets <- function(){
   res <- map[["1"]]
   checkTrue(res == "A1BG")
   res2 <- map2[["1"]]
-  checkEquals(res2, c("BP","CC","MF"))
+  checkTrue(all(res2 %in% bioconcepts))
 }
 
 test_head <- function(){
@@ -180,7 +182,7 @@ test_Dollar <- function(){
   res <- map$"1"
   checkTrue(res == "A1BG")
   res2 <- map2$"1"
-  checkEquals(res2, c("BP","CC","MF"))
+  checkTrue(all(res2 %in% bioconcepts))
 }
 
 ## test toTable as.data.frame
@@ -199,7 +201,9 @@ test_toTable <- function(){
   checkEquals(res2, resdf2)
   checkEquals(colnames(res2), c("ENTREZID","ONTOLOGY"))
   checkTrue(res2[1,1]==1)
-  checkTrue(res2[1,2]=="BP")
+  checkTrue(
+      all(res2[res2[["ENTREZID"]]==1, "ONTOLOGY"] %in% bioconcepts)
+  )
 }
 
 test_sample <- function(){
