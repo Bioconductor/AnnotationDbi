@@ -68,7 +68,7 @@ test_mget <- function(){
   
   res2 <- mget(k, map2) 
   checkEquals(names(res2), k)
-  checkTrue(all(res2[[1]] %in% bioconcepts))
+  checkTrue(setequal(res2[[1]], bioconcepts))
   checkTrue(length(res2)==length(k))
 
   ## reverse test 
@@ -88,12 +88,12 @@ test_as.list <- function(){
   
   res2 <- as.list(map2)
   checkEquals(names(res2)[[1]], "1")
-  checkTrue(all(res2[[1]] %in% bioconcepts))
+  checkTrue(setequal(res2[[1]], bioconcepts))
   checkTrue(length(res2)>1000)
 
   ## reverse test  
   res3 <- as.list(revmap(map2))
-  checkTrue(all(names(res3) %in% bioconcepts))
+  checkTrue(setequal(names(res3), bioconcepts))
   checkEquals(res3[[1]][1], "1")
   checkIdentical(length(res3), 3L)
 }
@@ -106,11 +106,11 @@ test_as.character <- function(){
 
   res2 <- as.character(map2)       
   checkEquals(names(res2[1:3]), rep("1", 3))
-  checkTrue(all(res2[names(res2) == "1"] %in% bioconcepts))
+  checkTrue(setequal(res2[names(res2) == "1"], bioconcepts))
   
   ## reverse test
   res3 <- as.character(revmap(map2)) 
-  checkTrue(all(names(res3[res3 == "1"]) %in% bioconcepts))
+  checkTrue(setequal(names(res3[res3 == "1"]), bioconcepts))
   checkIdentical(unname(res3[1:3]), rep("1", 3))
 }
 
@@ -132,7 +132,7 @@ test_get <- function(){
   checkTrue(res == "A1BG")
   
   res2 <- get(k, map2)
-  checkTrue(all(res2 %in% bioconcepts))
+  checkTrue(setequal(res2, bioconcepts))
 
   ## reverse test 
   kr <- "CC"
@@ -154,7 +154,7 @@ test_dblBrackets <- function(){
   res <- map[["1"]]
   checkTrue(res == "A1BG")
   res2 <- map2[["1"]]
-  checkTrue(all(res2 %in% bioconcepts))
+  checkTrue(setequal(res2, bioconcepts))
 }
 
 test_head <- function(){
@@ -182,7 +182,7 @@ test_Dollar <- function(){
   res <- map$"1"
   checkTrue(res == "A1BG")
   res2 <- map2$"1"
-  checkTrue(all(res2 %in% bioconcepts))
+  checkTrue(setequal(res2, bioconcepts))
 }
 
 ## test toTable as.data.frame
@@ -202,7 +202,7 @@ test_toTable <- function(){
   checkEquals(colnames(res2), c("ENTREZID","ONTOLOGY"))
   checkTrue(res2[1,1]==1)
   checkTrue(
-      all(res2[res2[["ENTREZID"]]==1, "ONTOLOGY"] %in% bioconcepts)
+      setequal(res2[res2[["ENTREZID"]]==1, "ONTOLOGY"], bioconcepts)
   )
 }
 
