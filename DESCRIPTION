@@ -8,8 +8,15 @@ BugReports: https://github.com/Bioconductor/AnnotationDbi/issues
 Version: 1.65.2
 License: Artistic-2.0
 Encoding: UTF-8
-Author: Hervé Pagès, Marc Carlson, Seth Falcon, Nianhua Li
-Maintainer: Bioconductor Package Maintainer <maintainer@bioconductor.org>
+Authors@R: c(
+	person("Hervé", "Pagès", role="aut"),
+	person("Marc", "Carlson", role="aut"),
+	person("Seth", "Falcon", role="aut"),
+	person("Nianhua", "Li", role="aut"),
+	person("Bioconductor Package Maintainer", role="cre",
+    	  email="maintainer@bioconductor.org"),
+	person("Beryl", "Kanali", role="ctb",
+	  comment="Converted 'IntoToAnnotationPackages' vignette from Sweave to RMarkdown."))
 Depends: R (>= 2.7.0), methods, stats4, BiocGenerics (>= 0.29.2),
 	Biobase (>= 1.17.0), IRanges
 Imports: DBI, RSQLite, S4Vectors (>= 0.9.25), stats, KEGGREST
