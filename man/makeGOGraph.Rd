@@ -32,4 +32,3 @@
 \keyword{utilities}
 \keyword{manip}
 
-

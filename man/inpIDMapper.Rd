@@ -72,31 +72,30 @@
   scored as 100 according to the inparanoid algorithm.  This function
   automatically tries to join IDs by using FIVE different mappings in
   the sequence that follows:
-
-  1) initial IDs -> src organism Entrez Gene IDs
-  2) src organism Entrez Gene IDs -> sre organism Inparanoid ID
-  3) src organism Inparanoid ID -> dest organism Inparanoid ID
-  4) dest organism Inparanoid ID -> dest organism Entrez Gene ID
-  5) dest organism Entrez Gene ID -> final destination organism ID
-
+  \enumerate{
+    \item initial IDs -> src organism Entrez Gene IDs
+    \item src organism Entrez Gene IDs -> sre organism Inparanoid ID
+    \item src organism Inparanoid ID -> dest organism Inparanoid ID
+    \item dest organism Inparanoid ID -> dest organism Entrez Gene ID
+    \item dest organism Entrez Gene ID -> final destination organism ID
+  }
   You can simplify this mapping as a series of steps like this:
-
-  srcIDs ---> srcEGs ---> srcInp ---> destInp ---> destEGs ---> destIDs
+  \preformatted{  srcIDs ---> srcEGs ---> srcInp ---> destInp ---> destEGs ---> destIDs
          (1)         (2)         (3)          (4)          (5) 
-  
+  }
   There are two steps in this process where multiple mappings can really
   interfere with getting a clear answer.  It's no coincidence that these
   are also adjacent to the two places where we have to tie the identity
   to a single gene for each organism.  When this happens, any ambiguity
-  is confounding.  Preceding step \#2, it is critical that we only have
+  is confounding.  Preceding step (2), it is critical that we only have
   ONE entrez gene ID per initial ID, and the parameter
   keepMultGeneMatches can be used to toggle whether to drop any
   ambiguous matches (the default) or to keep the 1st one in the hope of
-  getting an additional hit.  A similar thing is done preceding step \#4,
+  getting an additional hit.  A similar thing is done preceding step (4),
   where we have to be sure that the protein IDs we are getting back have
   all mapped to only one gene.  We allow you to use the
   keepMultProtMatches parameter to make the same kind of decision as in
-  step \#2, again, the default is to drop anything that is ambiguous.
+  step (2), again, the default is to drop anything that is ambiguous.
 
 
   intraIDMapper - This is a convenience function to map within an
@@ -154,4 +153,3 @@
 }
 
 \keyword{manip}
-

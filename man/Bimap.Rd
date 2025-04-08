@@ -76,13 +76,11 @@
   \code{x} is a Bimap object.
 
   \describe{
-    \item{}{
-      \code{show(x)}:
+    \item{\code{show(x)}:}{
       Display minimal information about Bimap object \code{x}.
     }
 
-    \item{}{
-      \code{summary(x)}:
+    \item{\code{summary(x)}:}{
       Display a little bit more information about Bimap object \code{x}.
     }
   }

@@ -254,4 +254,3 @@ taxonomyId(hgu95av2.db)
 
 \keyword{classes}
 \keyword{methods}
-

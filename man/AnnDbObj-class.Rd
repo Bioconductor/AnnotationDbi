@@ -55,28 +55,24 @@
   \code{x} is an AnnDbObj object.
 
   \describe{
-    \item{}{
-      \code{dbconn(x)}:
+    \item{\code{dbconn(x)}:}{
       Return a connection object to the SQLite DB containing \code{x}'s data.
     }
   }
   \describe{
-    \item{}{
-      \code{dbfile(x)}:
+    \item{\code{dbfile(x)}:}{
       Return the path (character string) to the SQLite DB (file) containing
       \code{x}'s data.
     }
   }
   \describe{
-    \item{}{
-      \code{dbmeta(x, name)}:
+    \item{\code{dbmeta(x, name)}:}{
       Print the value of metadata whose name is 'name'.
       Also works if \code{x} is a DBIConnection object.
     }
   }
   \describe{
-    \item{}{
-      \code{dbschema(x, file="", show.indices=FALSE)}:
+    \item{\code{dbschema(x, file="", show.indices=FALSE)}:}{
       Print the schema definition of the SQLite DB.
       Also works if \code{x} is a DBIConnection object.
 
@@ -89,8 +85,7 @@
     }
   }
   \describe{
-    \item{}{
-      \code{dbInfo(x)}:
+    \item{\code{dbInfo(x)}:}{
       Prints other information about the SQLite DB.
       Also works if \code{x} is a DBIConnection object.
     }
@@ -167,4 +162,3 @@
 
 \keyword{classes}
 \keyword{methods}
-

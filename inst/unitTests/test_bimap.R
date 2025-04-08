@@ -13,7 +13,7 @@ map2 <- AnnotationDbi:::makeFlatBimapUsingSelect(org.Hs.eg.db, col="ONTOLOGY")
 bioconcepts <- c("MF", "CC", "BP")
 
 
-## test ls 
+## test ls
 test_ls <- function(){
   res <- ls(map)
   checkTrue(is.character(res))
@@ -27,27 +27,27 @@ test_ls <- function(){
 
 ## test Lkeys and Rkeys
 test_Lkeys <- function(){
-lres <- Lkeys(map)
-checkTrue(length(lres) >0)
-checkTrue(!any(is.na(lres)))
-checkTrue(length(lres) == length(unique(lres)))
+  lres <- Lkeys(map)
+  checkTrue(length(lres) >0)
+  checkTrue(!any(is.na(lres)))
+  checkTrue(length(lres) == length(unique(lres)))
 
-lres2 <- Lkeys(map2)  
-checkTrue(length(lres2) >0)
-checkTrue(!any(is.na(lres2)))
-checkTrue(length(lres2) == length(unique(lres2)))
+  lres2 <- Lkeys(map2)
+  checkTrue(length(lres2) >0)
+  checkTrue(!any(is.na(lres2)))
+  checkTrue(length(lres2) == length(unique(lres2)))
 }
 
 test_Rkeys <- function(){
-rres <- Rkeys(map)
-checkTrue(length(rres) >0)
-checkTrue(!any(is.na(rres)))
-checkTrue(length(rres) == length(unique(rres)))
+  rres <- Rkeys(map)
+  checkTrue(length(rres) >0)
+  checkTrue(!any(is.na(rres)))
+  checkTrue(length(rres) == length(unique(rres)))
 
-rres2 <- Rkeys(map2)
-checkTrue(length(rres2) >0)
-checkTrue(!any(is.na(rres2)))
-checkTrue(length(rres2) == length(unique(rres2)))
+  rres2 <- Rkeys(map2)
+  checkTrue(length(rres2) >0)
+  checkTrue(!any(is.na(rres2)))
+  checkTrue(length(rres2) == length(unique(rres2)))
 }
 
 ## test revmap (add a test now that it seems to work...
@@ -60,100 +60,101 @@ test_revmap <- function(){
 
 ## test mget
 test_mget <- function(){
-  k <- c("1","2")
+  k <- c("1", "2")
   res <- mget(k, map)
-  checkEquals(names(res), k)
-  checkEquals(res[[1]], "A1BG")
-  checkTrue(length(res)==length(k))
-  
-  res2 <- mget(k, map2) 
-  checkEquals(names(res2), k)
-  checkTrue(setequal(res2[[1]], bioconcepts))
-  checkTrue(length(res2)==length(k))
+  checkIdentical(names(res), k)
+  checkIdentical(res[[1]], "A1BG")
+  checkIdentical(res[[2]], "A2M")
+  checkTrue(length(res) == length(k))
 
-  ## reverse test 
-  kr <- c("CC","MF")
+  res2 <- mget(k, map2)
+  checkIdentical(names(res2), k)
+  checkTrue(setequal(res2[[2]], bioconcepts))
+  checkTrue(length(res2) == length(k))
+
+  ## reverse test
+  kr <- c("CC", "MF")
   res3 <- mget(kr, revmap(map2))
-  checkEquals(names(res3), kr)
-  checkEquals(res3[[1]][1], "1")
-  checkTrue(length(res3)==length(kr))
+  checkIdentical(names(res3), kr)
+  checkIdentical(res3[[1]][2], "2")
+  checkTrue(length(res3) == length(kr))
 }
 
 ## test as.list
 test_as.list <- function(){
   res <- as.list(map)
-  checkEquals(names(res)[1], "1")
-  checkEquals(res[[1]][1], "A1BG")
-  checkTrue(length(res)>1000)
-  
-  res2 <- as.list(map2)
-  checkEquals(names(res2)[[1]], "1")
-  checkTrue(setequal(res2[[1]], bioconcepts))
-  checkTrue(length(res2)>1000)
+  checkIdentical(names(res)[2], "2")
+  checkIdentical(res[[2]], "A2M")
+  checkTrue(length(res) > 1000)
 
-  ## reverse test  
+  res2 <- as.list(map2)
+  checkIdentical(names(res2)[2], "2")
+  checkTrue(setequal(res2[[2]], bioconcepts))
+  checkTrue(length(res2) > 1000)
+
+  ## reverse test
   res3 <- as.list(revmap(map2))
   checkTrue(setequal(names(res3), bioconcepts))
-  checkEquals(res3[[1]][1], "1")
+  checkIdentical(res3[[1]][2], "2")
   checkIdentical(length(res3), 3L)
 }
 
 ## test as.character
 test_as.character <- function(){
   res <- as.character(map)
-  checkEquals(names(res)[1], "1")
-  checkEquals(res[[1]][1], "A1BG")
+  checkIdentical(names(res)[2], "2")
+  checkIdentical(res[["2"]], "A2M")
 
-  res2 <- as.character(map2)       
-  checkEquals(names(res2[1:3]), rep("1", 3))
-  checkTrue(setequal(res2[names(res2) == "1"], bioconcepts))
-  
+  res2 <- as.character(map2)
+  checkIdentical(names(res2)[3:5], rep("2", 3))
+  checkTrue(setequal(res2[names(res2) == "2"], bioconcepts))
+
   ## reverse test
-  res3 <- as.character(revmap(map2)) 
-  checkTrue(setequal(names(res3[res3 == "1"]), bioconcepts))
-  checkIdentical(unname(res3[1:3]), rep("1", 3))
+  res3 <- as.character(revmap(map2))
+  checkTrue(setequal(names(res3[res3 == "2"]), bioconcepts))
+  checkIdentical(unname(res3[3:5]), rep("2", 3))
 }
 
 ## test eapply
 test_eapply <- function(){
   res <- eapply(map, length)
-  checkEquals(names(res)[1], "1")
-  checkTrue(res[[1]][1] == 1)
+  checkIdentical(names(res)[2], "2")
+  checkTrue(res[["2"]] == 1)
 
   res2 <- eapply(map2, length)
-  checkEquals(names(res2)[1], "1")
-  checkTrue(res2[[1]][1] == 3)
+  checkIdentical(names(res2)[2], "2")
+  checkTrue(res2[["2"]] == 3)
 }
 
 ## test get
 test_get <- function(){
-  k <- "1"
+  k <- "2"
   res <- get(k, map)
-  checkTrue(res == "A1BG")
-  
+  checkTrue(res == "A2M")
+
   res2 <- get(k, map2)
   checkTrue(setequal(res2, bioconcepts))
 
-  ## reverse test 
+  ## reverse test
   kr <- "CC"
   res3 <- get(kr, revmap(map2))
-  checkTrue(res3[[1]][1] == "1")
+  checkTrue(res3[2] == "2")
 }
 
 ## test exists
 test_exists <- function(){
-  checkTrue(exists("2", map) == TRUE)     
+  checkTrue(exists("2", map) == TRUE)
   checkTrue(exists("titi", map) == FALSE)
-  
-  checkTrue(exists("9", map2) == TRUE)  
-  checkTrue(exists("titi", map2) == FALSE)  
+
+  checkTrue(exists("9", map2) == TRUE)
+  checkTrue(exists("titi", map2) == FALSE)
 }
 
 ## test "[["
 test_dblBrackets <- function(){
-  res <- map[["1"]]
-  checkTrue(res == "A1BG")
-  res2 <- map2[["1"]]
+  res <- map[["2"]]
+  checkTrue(res == "A2M")
+  res2 <- map2[["2"]]
   checkTrue(setequal(res2, bioconcepts))
 }
 
@@ -179,9 +180,9 @@ test_tail <- function(){
 
 ## test "$"
 test_Dollar <- function(){
-  res <- map$"1"
-  checkTrue(res == "A1BG")
-  res2 <- map2$"1"
+  res <- map$"2"
+  checkTrue(res == "A2M")
+  res2 <- map2$"2"
   checkTrue(setequal(res2, bioconcepts))
 }
 
@@ -191,18 +192,18 @@ test_toTable <- function(){
   resdf <- as.data.frame(map)
   checkEquals(res, resdf)
   checkEquals(colnames(res), c("gene_id","symbol"))
-  checkTrue(res[1,1]==1)
-  checkTrue(res[1,2]=="A1BG")
-  
+  checkTrue(res[2, 1] == "2")
+  checkTrue(res[2, 2] == "A2M")
+
   ## So one potential issue I have is that I get the "wrong" sort of headings?
   ## this is largely a cosmetic issue though...
   res2 <- toTable(map2)
   resdf2 <- as.data.frame(map2)
   checkEquals(res2, resdf2)
   checkEquals(colnames(res2), c("ENTREZID","ONTOLOGY"))
-  checkTrue(res2[1,1]==1)
+  checkTrue(all(res2[3:5, 1] == "2"))
   checkTrue(
-      setequal(res2[res2[["ENTREZID"]]==1, "ONTOLOGY"], bioconcepts)
+      setequal(res2[res2[["ENTREZID"]] == "2", "ONTOLOGY"], bioconcepts)
   )
 }
 
@@ -210,7 +211,7 @@ test_sample <- function(){
   res <- sample(map,size=2)
   checkTrue(length(res)==2)
   checkTrue(class(res)=="list")
-  
+
   res2 <- sample(map2,size=2)
   checkTrue(length(res2)==2)
   checkTrue(class(res2)=="list")
