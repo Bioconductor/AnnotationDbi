@@ -331,13 +331,18 @@ organismKEGGFrame <- function() {
 ## weight of graph edges will always be 1 for each edge
 
 makeGOGraph <- function(ont = c("bp","mf","cc")){
+    .Deprecated()
     match.arg(ont)
     df <- switch(ont,
                  "bp"= toTable(GO.db::GOBPPARENTS),
                  "mf"= toTable(GO.db::GOMFPARENTS),
                  "cc"= toTable(GO.db::GOCCPARENTS)
                  )
-    graph::ftM2graphNEL(as.matrix(df[, 1:2]), W=rep(1,dim(df)[1])) 
+    ft <- as.matrix(df[, 1:2])
+    is_dup <- duplicatedIntegerPairs(selfmatch(ft[ , 1L]),
+                                     selfmatch(ft[ , 2L]))
+    ft <- ft[!is_dup, ]
+    graph::ftM2graphNEL(ft, W=rep.int(1, nrow(ft)))
 }
 
 ## f = makeGOGraph("bp")

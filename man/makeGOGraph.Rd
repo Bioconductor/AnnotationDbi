@@ -5,6 +5,8 @@
 \title{A convenience function to generate graphs based on the GO.db package}
 
 \description{
+  WARNING: \code{AnnotationDbi::makeGOGraph} is deprecated!
+
   \code{makeGOGraph} is a function to quickly convert any of the three Gene
   Ontologies in GO.db into a graphNEL object where each edge is given a
   weight of 1.
@@ -25,8 +27,10 @@
 }
 
 \examples{
+\dontrun{
   ## makes a GO graph from the CC ontology 
   f <- makeGOGraph("cc")
+}
 }
 
 \keyword{utilities}
