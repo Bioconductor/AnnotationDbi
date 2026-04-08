@@ -1,3 +1,4 @@
+%\SweaveUTF8
 %\VignetteIndexEntry{2. (Deprecated) How to use bimaps from the ".db" annotation packages}
 %\VignetteDepends{hgu95av2.db}
 %\VignetteKeywords{annotation, database}

@@ -49,7 +49,7 @@
   #x$name
 
   ## Converting to a list
-  mget(x, envir, mode, ifnotfound, inherits)
+  mget(x, envir = as.environment(pos), mode = "any", ifnotfound, inherits = FALSE, pos = -1L)
   eapply(env, FUN, ..., all.names, USE.NAMES)
 
   ## Additional convenience method

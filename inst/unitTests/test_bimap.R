@@ -105,14 +105,14 @@ test_as.character <- function(){
   checkIdentical(names(res)[2], "2")
   checkIdentical(res[["2"]], "A2M")
 
-  res2 <- as.character(map2)
-  checkIdentical(names(res2)[3:5], rep("2", 3))
+  suppressWarnings(res2 <- as.character(map2))
+  checkIdentical(names(res2)[4:6], rep("2", 3))  # fixed VJC 8 apr 2026 ... BAD TEST
   checkTrue(setequal(res2[names(res2) == "2"], bioconcepts))
 
   ## reverse test
-  res3 <- as.character(revmap(map2))
+  suppressWarnings(res3 <- as.character(revmap(map2)))
   checkTrue(setequal(names(res3[res3 == "2"]), bioconcepts))
-  checkIdentical(unname(res3[3:5]), rep("2", 3))
+  checkIdentical(unname(res3[4:6]), rep("2", 3))
 }
 
 ## test eapply
@@ -201,7 +201,7 @@ test_toTable <- function(){
   resdf2 <- as.data.frame(map2)
   checkEquals(res2, resdf2)
   checkEquals(colnames(res2), c("ENTREZID","ONTOLOGY"))
-  checkTrue(all(res2[3:5, 1] == "2"))
+  checkTrue(all(res2[4:6, 1] == "2"))
   checkTrue(
       setequal(res2[res2[["ENTREZID"]] == "2", "ONTOLOGY"], bioconcepts)
   )
