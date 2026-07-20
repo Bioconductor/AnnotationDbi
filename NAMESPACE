@@ -9,6 +9,8 @@ import(S4Vectors)
 import(IRanges)
 importFrom(KEGGREST, keggList)
 
+importFrom(BiocBaseUtils, lifeCycle)
+
 exportClasses(
     ## from R/AllClasses.R
     "Bimap",
@@ -172,7 +174,10 @@ export(
     make_eg_to_go_map,
     make_go_to_eg_map,
     toSQLStringSet,
+
+    ## helpers for KEGG data
     organismKEGGFrame,
+    genomeKEGGFrame,
 
     #Convenience function to allow automatic mapping of IDs:
     inpIDMapper,

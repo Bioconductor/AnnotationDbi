@@ -318,9 +318,21 @@ setMethod("KEGGFrame", c(x="data.frame", organism="missing"), .testKEGGFrame)
 setMethod("getKEGGFrameData", "KEGGFrame", function(x){x@data})
 
 organismKEGGFrame <- function() {
+    lifeCycle(
+        newfun = "genomeKEGGFrame",
+        package = "AnnotationDbi"
+    )
     org <- data.frame(keggList("organism")[,c("species", "organism")])
     org$species <- gsub("\\s*\\([^\\)]+\\)", "", org$species)
     org
+}
+
+genomeKEGGFrame <- function() {
+    keggtab <- keggList("genome") |>
+        as.data.frame()
+    keggtab[["species"]] <-
+        gsub("\\s*\\([^\\)]+\\)", "", keggtab[["organism"]])
+    keggtab
 }
 
 #######################################################################

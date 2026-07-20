@@ -1,6 +1,6 @@
 \name{organismKEGGFrame}
 \alias{organismKEGGFrame}
-\alias{organismKEGGFrame}
+\alias{genomeKEGGFrame}
 
 \title{A data frame that maps species names to KEGG organisms}
 \description{
@@ -9,6 +9,8 @@
 }
 \usage{
 organismKEGGFrame()
+
+genomeKEGGFrame()
 }
 
 \value{
@@ -16,6 +18,11 @@ organismKEGGFrame()
 }
 \author{Kayla Interdonato}
 \examples{
+## DEPRECATED
 query <- organismKEGGFrame()
 head(query)
+
+query <- genomeKEGGFrame()
+head(query)
+
 }
