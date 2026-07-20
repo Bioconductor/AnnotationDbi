@@ -1,10 +1,21 @@
+CHANGES IN VERSION 1.76.0
+-------------------------
+
+NEW FEATURES
+
+    o The `organismKEGGFrame` helper function is deprecated for
+    `genomeKEGGFrame` due to upstream API changes (@LiNk-NY)
+
+
 CHANGES IN VERSION 1.54.0
 -------------------------
 
 NEW FEATURES
 
-    o There is a new replacement package for the Inparanoid orthology packages, called Orthology.eg.db
-    o This package uses NCBI orthology data to map NCBI Gene IDs between species using the usual select() interface
+    o There is a new replacement package for the Inparanoid orthology packages,
+    called Orthology.eg.db
+    o This package uses NCBI orthology data to map NCBI Gene IDs between species
+    using the usual select() interface
 
 MODIFICATIONS
 
