@@ -18,11 +18,11 @@ genomeKEGGFrame()
 }
 \author{Kayla Interdonato}
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 ## DEPRECATED
 query <- organismKEGGFrame()
 head(query)
-
+\dontshow{\}) # examplesIf}
 query <- genomeKEGGFrame()
 head(query)
-
 }
