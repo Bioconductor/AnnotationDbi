@@ -92,7 +92,7 @@
   \code{length(mappedkeys(x))}.
   
   Two (almost) equivalent forms of subsetting a \link{Bimap} object
-  are provided: (1) by setting the keys explicitely and (2) by using
+  are provided: (1) by setting the keys explicitly and (2) by using
   the single bracket operator \code{[} for \link{Bimap} objects.
   Let's say the user wants to restrict the mapping to the subset of
   valid keys stored in character vector \code{mykeys}. This can be
