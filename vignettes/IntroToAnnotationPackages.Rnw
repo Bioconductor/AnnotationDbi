@@ -82,10 +82,10 @@ they are described in this vignette.  They can currently be used with
 all chip, organism, and \Rclass{TxDb} packages along with the popular
 GO.db package.
 
-For the older less popular packages, there are still conventient ways
+For the older less popular packages, there are still convenient ways
 to retrieve the data.  The \emph{How to use bimaps from the ".db"
   annotation packages} vignette in the \Rpackage{AnnotationDbi}
-package is a key reference for learnign about how to use bimap
+package is a key reference for learning about how to use bimap
 objects.
 
 Finally, all of the `.db' (and most other \Bioconductor{} annotation
@@ -100,7 +100,7 @@ As previously mentioned, a new set of methods have been added that
 allow a simpler way of extracting identifier based annotations.  All
 the annotation packages that support these new methods expose an
 object named exactly the same as the package itself.  These objects
-are collectively called \Rclass{AnntoationDb} objects for the class
+are collectively called \Rclass{AnnotationDb} objects for the class
 that they all inherit from.  The more specific classes (the ones that
 you will actually see in the wild) have names like \Rclass{OrgDb},
 \Rclass{ChipDb} or \Rclass{TxDb} objects.  These names correspond to
@@ -113,7 +113,7 @@ In addition, another accessor has recently been added which allows
 extraction of one column at at time.  the \Rfunction{mapIds} method
 allows users to extract data into either a named character vector, a
 list or even a SimpleCharacterList.  This method should work with all
-the different kinds of \Rclass{AnntoationDb} objects described below.
+the different kinds of \Rclass{AnnotationDb} objects described below.
 
 \section{ChipDb objects and the select method}
 
@@ -146,7 +146,7 @@ We can look at this object to learn more about it:
 hgu95av2.db
 @
 
-If we want to know what kinds of data are retriveable via
+If we want to know what kinds of data are retrievable via
 \Rfunction{select}, then we should use the \Rfunction{columns} method
 like this:
 
@@ -163,7 +163,7 @@ mean.
 help("SYMBOL")
 @
 
-If we are curious about what kinds of fields we could potentiall use
+If we are curious about what kinds of fields we could potentially use
 as keys to query the database, we can use the \Rfunction{keytypes}
 method.  In a perfect world, this method will return values very
 similar to what was returned by \Rfunction{columns}, but in reality,
@@ -259,7 +259,7 @@ select(org.Hs.eg.db, keys=uniKeys, columns=cols, keytype="UNIPROT")
 \end{Solution}
 
 So how could you use select to annotate your results? This next
-exercise should hlep you to understand how that should generally work.
+exercise should help you to understand how that should generally work.
 
 \begin{Exercise}
   Please run the following code snippet (which will load a fake data
